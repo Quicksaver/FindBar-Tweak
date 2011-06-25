@@ -1,0 +1,14 @@
+/* The :hover's trigger the effect, kind of a "just in case" thing where the transparency may not be done on page load, it happens sometimes */
+html.gridInScrollbar > scrollbar[orient="vertical"],
+html.gridInScrollbar > scrollbar[orient="vertical"]:hover { 
+	-moz-appearance: none !important; 
+	background: none !important; 
+}
+html.gridInScrollbar:not(.gridNasanightlaunch) > scrollbar[orient="vertical"] thumb,
+html.gridInScrollbar:not(.gridNasanightlaunch) > scrollbar[orient="vertical"]:hover thumb { 
+	opacity: 0.8 !important; 
+}
+html.gridInScrollbar.gridNasanightlaunch > scrollbar[orient="vertical"] thumb,
+html.gridInScrollbar.gridNasanightlaunch > scrollbar[orient="vertical"]:hover thumb { 
+	opacity: 0.75 !important; 
+}

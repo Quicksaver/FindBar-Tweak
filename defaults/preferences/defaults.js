@@ -1,0 +1,21 @@
+pref("extensions.findbartweak.highlightByDefault", true);
+pref("extensions.findbartweak.hideWhenFinderHidden", false);
+pref("extensions.findbartweak.useGrid", true);
+pref("extensions.findbartweak.gridInScrollbar", false);
+pref("extensions.findbartweak.useCounter", true);
+pref("extensions.findbartweak.movetoTop", false);
+pref("extensions.findbartweak.keepButtons", false);
+pref("extensions.findbartweak.hideLabels", false);
+pref("extensions.findbartweak.onStartup", false);
+pref("extensions.findbartweak.findbarHidden", true);
+pref("extensions.findbartweak.highlightColor", "#EF0FFF");
+pref("extensions.findbartweak.highlightColorOther", "#FFFFFF");
+pref("extensions.findbartweak.gridWidth", '15');
+pref("extensions.findbartweak.hideClose", false);
+pref("extensions.findbartweak.gridLimit", 250);
+pref("extensions.findbartweak.minNoDelay", 3);
+
+pref("extensions.findbartweak.lwtheme.bgImage", '');
+pref("extensions.findbartweak.lwtheme.bgWidth", 0);
+pref("extensions.findbartweak.lwtheme.color", '');
+pref("extensions.findbartweak.lwtheme.bgColor", '');

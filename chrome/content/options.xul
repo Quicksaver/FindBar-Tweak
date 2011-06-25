@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://findbartweak/locale/overlay.dtd">
+
+<prefwindow xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+			id="findbartweak-options-window"
+			title="&findbartweakOptions.title;"
+			ondialogaccept="return findbartweakOptions.accept();">
+
+	<script type="application/x-javascript" src="chrome://findbartweak/content/options.js"></script>
+			
+	<prefpane>
+		<preferences>
+			<preference id="pref-highlightByDefault" name="extensions.findbartweak.highlightByDefault" type="bool"/>
+			<preference id="pref-hideWhenFinderHidden" name="extensions.findbartweak.hideWhenFinderHidden" type="bool"/>
+			<preference id="pref-useGrid" name="extensions.findbartweak.useGrid" type="bool"/>
+			<preference id="pref-gridInScrollbar" name="extensions.findbartweak.gridInScrollbar" type="bool"/>
+			<preference id="pref-useCounter" name="extensions.findbartweak.useCounter" type="bool"/>
+			<preference id="pref-highlightColor" name="extensions.findbartweak.highlightColor" type="string"/>
+			<preference id="pref-hideClose" name="extensions.findbartweak.hideClose" type="bool"/>
+			<preference id="pref-movetoTop" name="extensions.findbartweak.movetoTop" type="bool"/>
+			<preference id="pref-keepButtons" name="extensions.findbartweak.keepButtons" type="bool"/>
+			<preference id="pref-timeout" name="accessibility.typeaheadfind.timeout" type="int"/>
+			<preference id="pref-hideLabels" name="extensions.findbartweak.hideLabels" type="bool"/>
+			<preference id="pref-onStartup" name="extensions.findbartweak.onStartup" type="bool"/>
+			<preference id="pref-typeaheadfind" name="accessibility.typeaheadfind" type="bool"/>
+			<preference id="pref-minNoDelay" name="extensions.findbartweak.minNoDelay" type="int"/>
+			<preference id="pref-gridLimit" name="extensions.findbartweak.gridLimit" type="int"/>
+		</preferences>
+		
+		<tabbox id="findbartweakTabBox" flex="1">
+			<tabs id="tabsElement">
+				<tab id="generalTab" label="&findbartweakOptGeneral.label;"/>
+				<tab id="highlightsTab" label="&findbartweakOptHighlights.label;"/>
+			</tabs>
+			
+			<tabpanels id="tabPanels" flex="1">
+				<tabpanel id="generalTab" orient="vertical">
+					<groupbox align="start">
+						<caption label="&findbartweakOptgen.label;"/>
+						<checkbox label="&findbartweakOptmovetoTop.label;" preference="pref-movetoTop"/>
+						<checkbox label="&findbartweakOptonStartup.label;" preference="pref-onStartup"/>
+					</groupbox>
+					<groupbox align="start">
+						<caption label="&findbartweakOptdisplay.label;"/>
+						<checkbox label="&findbartweakOpthideClose.label;" preference="pref-hideClose"/>
+						<checkbox label="&findbartweakOpthideLabels.label;" preference="pref-hideLabels"/>
+					</groupbox>
+					<groupbox align="start">
+						<caption label="&findbartweakOptquickfind.label;"/>
+						<checkbox id="checkboxTypeAheadFind" oncommand="findbartweakOptions.changeQuickfindOptions();" label="&findbartweakOpttypeaheadfind.label;" preference="pref-typeaheadfind"/>
+						<checkbox id="checkboxKeepButtons" label="&findbartweakOptkeepButtons.label;" preference="pref-keepButtons"/>
+						<hbox>
+							<label value="&findbartweakOpttypeaheadfindTimeout.beforeLabel;"/>
+							<textbox id="timeoutTextbox" size="3" maxlength="5" style="height: 18px; text-align: center;" 
+								preference="pref-timeout"
+								onsyncfrompreference="return findbartweakOptions.msecToSec();" 
+								onsynctopreference="return findbartweakOptions.secToMsec();"/>
+				            <label value="&findbartweakOpttypeaheadfindTimeout.afterLabel;"/>
+				        </hbox>
+			        </groupbox>
+				</tabpanel>
+				
+				<tabpanel id="highlightsTab" orient="vertical">
+					<groupbox align="start">
+						<caption label="&findbartweakOptHighlights.label;"/>
+						<checkbox label="&findbartweakOpthighlightByDefault.label;" preference="pref-highlightByDefault"/>
+						<checkbox label="&findbartweakOpthideWhenFinderHidden.label;" preference="pref-hideWhenFinderHidden"/>
+						<checkbox label="&findbartweakOptuseCounter.label;" preference="pref-useCounter"/>
+						<hbox>
+							<label value="&findbartweakOptminNoDelay.labela;"/>
+							<textbox id="minNoDelayTextbox" size="1" maxlength="2" style="height: 18px; text-align: center;"
+								preference="pref-minNoDelay" 
+								onsynctopreference="return findbartweakOptions.onlyNumbers(this.value);"/>
+				            <label value="&findbartweakOptminNoDelay.labelb;"/>
+				        </hbox>
+					</groupbox>
+					<groupbox align="start">
+						<caption label="&findbartweakOptgrid.label;"/>
+						<checkbox id="checkbox-useGrid" oncommand="findbartweakOptions.changeGridOptions();" label="&findbartweakOptuseGrid.label;" preference="pref-useGrid"/>
+						<checkbox id="checkbox-gridInScrollbar" label="&findbartweakOptgridInScrollbar.label;" preference="pref-gridInScrollbar"/>
+						<!--<label value="&findbartweakOptasterix.label;" />-->
+						<hbox>
+							<label id="gridLimitLabela" value="&findbartweakOptgridLimit.labela;"/>
+							<textbox id="gridLimitTextbox" size="3" maxlength="5" style="height: 18px; text-align: center;"
+								preference="pref-gridLimit" 
+								onsynctopreference="return findbartweakOptions.onlyNumbers(this.value);"/>
+				            <label id="gridLimitLabelb" value="&findbartweakOptgridLimit.labelb;"/>
+				        </hbox>
+					</groupbox>
+					<groupbox align="center">
+						<caption label="&findbartweakOptcolor.label;"/>
+						<colorpicker id="color" type="button" preference="pref-highlightColor" style="width: 50px;"/>
+					</groupbox>
+				</tabpanel>
+			</tabpanels>
+		</tabbox>
+	</prefpane>
+</prefwindow>

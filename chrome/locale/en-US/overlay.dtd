@@ -1,0 +1,30 @@
+<!ENTITY findbartweakMenuOptions.label "FindBar Options">
+<!ENTITY findbartweakOptions.title "FindBar Tweak">
+<!ENTITY findbartweakOptHighlights.label "Highlights">
+<!ENTITY findbartweakOptGeneral.label "General">
+
+<!ENTITY findbartweakOptgen.label "Findbar Options">
+<!ENTITY findbartweakOptdisplay.label "Display Options">
+<!ENTITY findbartweakOptquickfind.label "Quick Find">
+<!ENTITY findbartweakOptgrid.label "Highlights Grid">
+
+<!ENTITY findbartweakOpthighlightByDefault.label "Highlight all matches by default">
+<!ENTITY findbartweakOpthideWhenFinderHidden.label "Remove highlights when the Findbar is hidden">
+<!ENTITY findbartweakOptuseGrid.label "Use highlights grid">
+<!ENTITY findbartweakOptgridInScrollbar.label "Show highlights grid in the scrollbar">
+<!ENTITY findbartweakOptasterix.label "* You may need to refresh the webpage to apply">
+<!ENTITY findbartweakOptuseCounter.label "Show hits counter in the Findbar">
+<!ENTITY findbartweakOptcolor.label "Highlights Color">
+<!ENTITY findbartweakOptgridLimit.labela "Don't use the grid if it exceeds">
+<!ENTITY findbartweakOptgridLimit.labelb "highlights">
+<!ENTITY findbartweakOptminNoDelay.labela "Delay highlights if search term is shorter than">
+<!ENTITY findbartweakOptminNoDelay.labelb "characters">
+
+<!ENTITY findbartweakOpthideClose.label "Hide the Findbar close button">
+<!ENTITY findbartweakOptmovetoTop.label "Move the Findbar to the top of the browser">
+<!ENTITY findbartweakOptkeepButtons.label "Show buttons in QuickFindbar">
+<!ENTITY findbartweakOpttypeaheadfind.label "Search for text when I start typing">
+<!ENTITY findbartweakOpttypeaheadfindTimeout.beforeLabel "Autoclose after">
+<!ENTITY findbartweakOpttypeaheadfindTimeout.afterLabel "seconds">
+<!ENTITY findbartweakOpthideLabels.label "Hide button labels">
+<!ENTITY findbartweakOptonStartup.label "Remember Findbar opened/closed state on startup">

@@ -1,0 +1,1 @@
+For more information go to https://addons.mozilla.org/en-US/firefox/addon/findbar-tweak/

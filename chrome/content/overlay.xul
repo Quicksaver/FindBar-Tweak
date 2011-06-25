@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!DOCTYPE overlay SYSTEM "chrome://findbartweak/locale/overlay.dtd">
+<overlay id="findbartweak_overlay" 
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	<script type="application/x-javascript"	src="chrome://findbartweak/content/overlay.js" />
+	
+	<commandset id="mainCommandSet">
+		<command id="cmd_find" oncommand="findbartweak.ctrlF(event);" />
+	</commandset>
+	
+	<popupset id="mainPopupSet">
+		<menupopup id="findbarMenu">
+			<menuitem label="&findbartweakMenuOptions.label;"
+					oncommand="findbartweak.openOptions();" />
+		</menupopup>
+	</popupset>
+</overlay>

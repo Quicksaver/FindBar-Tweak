@@ -89,6 +89,7 @@ var findbartweak = {
 		findbartweak.onStartup = Application.prefs.get('extensions.findbartweak.onStartup');
 		findbartweak.findbarHidden = Application.prefs.get('extensions.findbartweak.findbarHidden');
 		findbartweak.ctrlFCloses = Application.prefs.get('extensions.findbartweak.ctrlFCloses');
+		findbartweak.FAYTmode = Application.prefs.get('extensions.findbartweak.FAYTmode');
 		
 		findbartweak.gridLimit = Application.prefs.get('extensions.findbartweak.gridLimit');
 		findbartweak.minNoDelay = Application.prefs.get('extensions.findbartweak.minNoDelay');
@@ -220,6 +221,11 @@ var findbartweak = {
 		gFindBar.open = function(aMode) {
 			// If the FindBar is already open do nothing, this prevents the hangup when triggering the QuickFind bar when Find bar is open
 			if(!gFindBar.hidden) { return; }
+			
+			// FAYT: option to force normal mode over quick find mode
+			if(aMode == 1 && findbartweak.FAYTmode.value != 'quick') {
+				aMode = 0;
+			}
 			
 			var ret = gFindBar._open(aMode);
 			if(aMode != undefined && aMode != 1) { findbartweak.findbarHidden.value = gFindBar.hidden; }

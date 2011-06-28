@@ -32,6 +32,7 @@
 			<preference id="pref-minNoDelay" name="extensions.findbartweak.minNoDelay" type="int"/>
 			<preference id="pref-gridLimit" name="extensions.findbartweak.gridLimit" type="int"/>
 			<preference id="pref-ctrlFCloses" name="extensions.findbartweak.ctrlFCloses" type="bool"/>
+			<preference id="pref-FAYTmode" name="extensions.findbartweak.FAYTmode" type="string"/>
 		</preferences>
 		
 		<tabbox id="findbartweakTabBox" flex="1">
@@ -44,27 +45,34 @@
 				<tabpanel id="generalTab" orient="vertical">
 					<groupbox align="start">
 						<caption label="&findbartweakOptgen.label;"/>
-						<checkbox label="&findbartweakOptmovetoTop.label;" preference="pref-movetoTop"/>
 						<checkbox label="&findbartweakOptonStartup.label;" preference="pref-onStartup"/>
 						<checkbox label="&findbartweakOptctrlFCloses.label;" preference="pref-ctrlFCloses"/>
 					</groupbox>
 					<groupbox align="start">
 						<caption label="&findbartweakOptdisplay.label;"/>
+						<checkbox label="&findbartweakOptmovetoTop.label;" preference="pref-movetoTop"/>
 						<checkbox label="&findbartweakOpthideClose.label;" preference="pref-hideClose"/>
 						<checkbox label="&findbartweakOpthideLabels.label;" preference="pref-hideLabels"/>
 					</groupbox>
 					<groupbox align="start">
-						<caption label="&findbartweakOptquickfind.label;"/>
-						<checkbox id="checkboxTypeAheadFind" oncommand="findbartweakOptions.changeQuickfindOptions();" label="&findbartweakOpttypeaheadfind.label;" preference="pref-typeaheadfind"/>
-						<checkbox id="checkboxKeepButtons" label="&findbartweakOptkeepButtons.label;" preference="pref-keepButtons"/>
-						<hbox>
-							<label value="&findbartweakOpttypeaheadfindTimeout.beforeLabel;"/>
-							<textbox id="timeoutTextbox" size="3" maxlength="5" style="height: 18px; text-align: center;" 
-								preference="pref-timeout"
-								onsyncfrompreference="return findbartweakOptions.msecToSec();" 
-								onsynctopreference="return findbartweakOptions.secToMsec();"/>
-				            <label value="&findbartweakOpttypeaheadfindTimeout.afterLabel;"/>
-				        </hbox>
+						<caption>
+							<checkbox id="checkboxTypeAheadFind" oncommand="findbartweakOptions.changeQuickfindOptions();" label="&findbartweakOptFAYT.label;" preference="pref-typeaheadfind"/>
+						</caption>
+						<radiogroup id="FAYTmodeRadio" oncommand="findbartweakOptions.changeQuickfindOptions();" preference="pref-FAYTmode">
+							<radio class="FAYTmode" label="&findbartweakOptFAYTmode.quickFind;" value="quick"/>
+							<vbox style="margin-left: 30px;">
+								<checkbox id="checkboxKeepButtons" class="FAYTmode quickMode" label="&findbartweakOptkeepButtons.label;" preference="pref-keepButtons"/>
+								<hbox>
+									<label class="FAYTmode quickMode" value="&findbartweakOptFAYTTimeout.beforeLabel;"/>
+									<textbox id="timeoutTextbox" class="FAYTmode quickMode" size="3" maxlength="5" style="height: 18px; text-align: center;" 
+										preference="pref-timeout"
+										onsyncfrompreference="return findbartweakOptions.msecToSec();" 
+										onsynctopreference="return findbartweakOptions.secToMsec();"/>
+						            <label class="FAYTmode quickMode" value="&findbartweakOptFAYTTimeout.afterLabel;"/>
+						        </hbox>
+					        </vbox>
+							<radio class="FAYTmode" label="&findbartweakOptFAYTmode.normalFind;" value="normal"/>
+						</radiogroup>
 			        </groupbox>
 				</tabpanel>
 				
@@ -86,7 +94,6 @@
 						<caption label="&findbartweakOptgrid.label;"/>
 						<checkbox id="checkbox-useGrid" oncommand="findbartweakOptions.changeGridOptions();" label="&findbartweakOptuseGrid.label;" preference="pref-useGrid"/>
 						<checkbox id="checkbox-gridInScrollbar" label="&findbartweakOptgridInScrollbar.label;" preference="pref-gridInScrollbar"/>
-						<!--<label value="&findbartweakOptasterix.label;" />-->
 						<hbox>
 							<label id="gridLimitLabela" value="&findbartweakOptgridLimit.labela;"/>
 							<textbox id="gridLimitTextbox" size="3" maxlength="5" style="height: 18px; text-align: center;"

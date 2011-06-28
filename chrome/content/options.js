@@ -24,13 +24,14 @@ var findbartweakOptions = {
 	},
 	
 	changeQuickfindOptions: function() {
-		if(!document.getElementById('checkboxTypeAheadFind').checked) {
-			document.getElementById('checkboxKeepButtons').setAttribute('disabled', 'true');
-			document.getElementById('timeoutTextbox').setAttribute('disabled', 'true');
-		}
-		else {
-			document.getElementById('checkboxKeepButtons').removeAttribute('disabled');
-			document.getElementById('timeoutTextbox').removeAttribute('disabled');
+		var nodes = document.getElementsByClassName('FAYTmode');
+		for(var i=0; i<nodes.length; i++) {
+			if(!document.getElementById('checkboxTypeAheadFind').checked 
+			|| (nodes[i].classList.contains('quickMode') && document.getElementById('FAYTmodeRadio').value != 'quick')) {
+				nodes[i].setAttribute('disabled', 'true');
+			} else {
+				nodes[i].removeAttribute('disabled');
+			}
 		}
 	},
 	

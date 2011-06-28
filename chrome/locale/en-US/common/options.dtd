@@ -4,7 +4,6 @@
 
 <!ENTITY findbartweakOptgen.label "Findbar Options">
 <!ENTITY findbartweakOptdisplay.label "Display Options">
-<!ENTITY findbartweakOptquickfind.label "Quick Find">
 <!ENTITY findbartweakOptgrid.label "Highlights Grid">
 
 <!ENTITY findbartweakOpthighlightByDefault.label "Highlight all matches by default">
@@ -19,11 +18,14 @@
 <!ENTITY findbartweakOptminNoDelay.labela "Delay highlights if search term is shorter than">
 <!ENTITY findbartweakOptminNoDelay.labelb "characters">
 
+<!ENTITY findbartweakOpthideLabels.label "Hide button labels">
 <!ENTITY findbartweakOpthideClose.label "Hide the Findbar close button">
 <!ENTITY findbartweakOptmovetoTop.label "Move the Findbar to the top of the browser">
-<!ENTITY findbartweakOptkeepButtons.label "Show buttons in QuickFindbar">
-<!ENTITY findbartweakOpttypeaheadfind.label "Search for text when I start typing">
-<!ENTITY findbartweakOpttypeaheadfindTimeout.beforeLabel "Autoclose after">
-<!ENTITY findbartweakOpttypeaheadfindTimeout.afterLabel "seconds">
-<!ENTITY findbartweakOpthideLabels.label "Hide button labels">
 <!ENTITY findbartweakOptonStartup.label "Remember Findbar opened/closed state on startup">
+
+<!ENTITY findbartweakOptkeepButtons.label "Show buttons in the Quick Findbar">
+<!ENTITY findbartweakOptFAYT.label "Search for text when I start typing">
+<!ENTITY findbartweakOptFAYTTimeout.beforeLabel "Autoclose after">
+<!ENTITY findbartweakOptFAYTTimeout.afterLabel "seconds">
+<!ENTITY findbartweakOptFAYTmode.quickFind "Use Quick Findbar if it isn't already opened">
+<!ENTITY findbartweakOptFAYTmode.normalFind "Always use regular Findbar">

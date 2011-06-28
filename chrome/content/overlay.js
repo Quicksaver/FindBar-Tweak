@@ -1035,7 +1035,9 @@ var findbartweak = {
 		// So we do all this stuff with a delay to allow the window to repaint
 		findbartweak.hideOnChromeTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
 		findbartweak.hideOnChromeTimer.init(function() {
-			if(document.getElementById('cmd_find').getAttribute('disabled') == 'true') {
+			if(document.getElementById('cmd_find').getAttribute('disabled') == 'true'
+			// Need to set this separately apparently, the find bar would only hide when switching to this tab after having been loaded, not upon loading the tab
+			|| gBrowser.mCurrentBrowser.currentURI.spec == 'about:config') {
 				gFindBar.setAttribute('collapsed', 'true');
 			} else {
 				gFindBar.removeAttribute('collapsed');

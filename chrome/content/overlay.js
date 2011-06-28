@@ -16,24 +16,25 @@ var findbartweak = {
 			document.getElementById('ClearFields-in-find').removeEventListener('click', function() { gFindBar._find(); }, false);
 		}
 		
-		findbartweak.useGrid.events.removeListener("change", function() { 
-			findbartweak.reHighlightAll(); 
-			findbartweak.prepare(true); 
+		findbartweak.useGrid.events.removeListener("change", function() {
+			findbartweak.reHighlightAll();
+			findbartweak.prepare(true);
 		});
-		findbartweak.gridInScrollbar.events.removeListener("change", function() { 
-			findbartweak.reHighlightAll(); 
-			findbartweak.prepare(true); 
+		findbartweak.gridInScrollbar.events.removeListener("change", function() {
+			findbartweak.reHighlightAll();
+			findbartweak.prepare(true);
 		});
-		findbartweak.useCounter.events.removeListener("change", function() { 
-			findbartweak.toggleCounter(); 
-			findbartweak.reHighlightAll(); 
-			findbartweak.prepare(true); 
+		findbartweak.useCounter.events.removeListener("change", function() {
+			findbartweak.toggleCounter();
+			findbartweak.reHighlightAll();
+			findbartweak.prepare(true);
 		});
-		findbartweak.highlightColor.events.removeListener("change", function() { 
-			findbartweak.reHighlightAll(); 
-			if(findbartweak.documentHighlighted && findbartweak.useGrid.value) { 
-				findbartweak.prepare(true); 
-			} 
+		findbartweak.highlightColor.events.removeListener("change", function() {
+			findbartweak.changeHighlightColor();
+			findbartweak.reHighlightAll();
+			if(findbartweak.documentHighlighted && findbartweak.useGrid.value) {
+				findbartweak.prepare(true);
+			}
 		});
 		findbartweak.hideClose.events.removeListener("change", findbartweak.toggleClose);
 		findbartweak.movetoTop.events.removeListener("change", findbartweak.toggleTop);
@@ -86,7 +87,6 @@ var findbartweak = {
 		findbartweak.keepButtons = Application.prefs.get('extensions.findbartweak.keepButtons');
 		findbartweak.hideLabels = Application.prefs.get('extensions.findbartweak.hideLabels');
 		findbartweak.highlightColor = Application.prefs.get('extensions.findbartweak.highlightColor');
-		findbartweak.highlightColorOther = Application.prefs.get('extensions.findbartweak.highlightColorOther');
 		findbartweak.gridWidth = Application.prefs.get('extensions.findbartweak.gridWidth');
 		findbartweak.onStartup = Application.prefs.get('extensions.findbartweak.onStartup');
 		findbartweak.findbarHidden = Application.prefs.get('extensions.findbartweak.findbarHidden');
@@ -104,14 +104,7 @@ var findbartweak = {
 		};
 		
 		// Do UI preferences
-		if(findbartweak.highlightColorOther.value == '#FFFFFF') {
-			Application.prefs.setValue('ui.textHighlightBackground', findbartweak.highlightColorOther.value);
-			Application.prefs.setValue('ui.textHighlightForeground', findbartweak.highlightColor.value);
-		}
-		else {
-			Application.prefs.setValue('ui.textHighlightBackground', findbartweak.highlightColor.value);
-			Application.prefs.setValue('ui.textHighlightForeground', findbartweak.highlightColorOther.value);
-		}
+		findbartweak.changeHighlightColor();
 		
 		// A few references
 		findbartweak.findbar = gFindBar.getElement('findbar-container');
@@ -157,30 +150,31 @@ var findbartweak = {
 		}
 		
 		// We need to observe these for changes
-		findbartweak.useGrid.events.addListener("change", function() { 
-			findbartweak.reHighlightAll(); 
-			findbartweak.prepare(true); 
+		findbartweak.useGrid.events.addListener("change", function() {
+			findbartweak.reHighlightAll();
+			findbartweak.prepare(true);
 		});
-		findbartweak.gridInScrollbar.events.addListener("change", function() { 
-			findbartweak.reHighlightAll(); 
-			findbartweak.prepare(true); 
+		findbartweak.gridInScrollbar.events.addListener("change", function() {
+			findbartweak.reHighlightAll();
+			findbartweak.prepare(true);
 		});
-		findbartweak.useCounter.events.addListener("change", function() { 
-			findbartweak.toggleCounter(); 
-			findbartweak.reHighlightAll(); 
-			findbartweak.prepare(true); 
+		findbartweak.useCounter.events.addListener("change", function() {
+			findbartweak.toggleCounter();
+			findbartweak.reHighlightAll();
+			findbartweak.prepare(true);
 		});
-		findbartweak.highlightColor.events.addListener("change", function() { 
-			findbartweak.reHighlightAll(); 
-			if(findbartweak.documentHighlighted && findbartweak.useGrid.value) { 
-				findbartweak.prepare(true); 
-			} 
+		findbartweak.highlightColor.events.addListener("change", function() {
+			findbartweak.changeHighlightColor();
+			findbartweak.reHighlightAll();
+			if(findbartweak.documentHighlighted && findbartweak.useGrid.value) {
+				findbartweak.prepare(true);
+			}
 		});
 		findbartweak.hideClose.events.addListener("change", findbartweak.toggleClose);
 		findbartweak.movetoTop.events.addListener("change", findbartweak.toggleTop);
 		findbartweak.hideLabels.events.addListener("change", findbartweak.toggleLabels);
 		
-		// We register for tab switches because the "Highlight all" button is unclicked on those, 
+		// We register for tab switches because the "Highlight all" button is unclicked on those,
 		// and we have a bunch of stuff to do when that happens
 		gBrowser.tabContainer.addEventListener("TabSelect", findbartweak.tabSelected, false);
 		
@@ -330,7 +324,7 @@ var findbartweak = {
 			
 			// Delay highlights if search term is too short
 			if(findbartweak.minNoDelay.value > 0
-			&& this._findField.value.length > 0 
+			&& this._findField.value.length > 0
 			&& this._findField.value.length < findbartweak.minNoDelay.value) {
 				delay = findbartweak.HIGHLIGHT_DELAY;
 				
@@ -350,7 +344,7 @@ var findbartweak = {
 				// We don't want to highlight pages that aren't supposed to be highlighted (happens when switching tabs when delaying highlights)
 				if(findbartweak.panel._delayHighlight == timer) {
 					gFindBar.toggleHighlight(false);
-					gFindBar.toggleHighlight(true); 
+					gFindBar.toggleHighlight(true);
 				}
 			}, delay, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
 		};
@@ -483,7 +477,7 @@ var findbartweak = {
 						} );
 					}
 				}
-			} 
+			}
 			if(!aHighlight) {
 				var sel = controller.getSelection(this._findSelection);
 				sel.removeAllRanges();
@@ -579,7 +573,7 @@ var findbartweak = {
 			}
 		};
 	},
-  
+
 	moveHighlightsArray: function(level) {
 		if(!findbartweak.useCounter.value) { return; }
 		
@@ -597,6 +591,33 @@ var findbartweak = {
 	
 	openOptions: function() {
 		window.openDialog('chrome://findbartweak/content/options.xul', '', 'chrome,resizable=false');
+	},
+	
+	changeHighlightColor: function() {
+		var m = findbartweak.highlightColor.value.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
+		if(!m) { return false; }
+		if(m[1].length === 6) { // 6-char notation
+			var rgb = {
+				r: parseInt(m[1].substr(0,2),16) / 255,
+				g: parseInt(m[1].substr(2,2),16) / 255,
+				b: parseInt(m[1].substr(4,2),16) / 255
+			};
+		} else { // 3-char notation
+			var rgb = {
+				r: parseInt(m[1].charAt(0)+m[1].charAt(0),16) / 255,
+				g: parseInt(m[1].charAt(1)+m[1].charAt(1),16) / 255,
+				b: parseInt(m[1].charAt(2)+m[1].charAt(2),16) / 255
+			};
+		}
+		
+		if(0.213 * rgb.r + 0.715 * rgb.g + 0.072 * rgb.b < 0.5) {
+			Application.prefs.setValue('ui.textHighlightBackground', '#FFFFFF');
+			Application.prefs.setValue('ui.textHighlightForeground', findbartweak.highlightColor.value);
+		}
+		else {
+			Application.prefs.setValue('ui.textHighlightBackground', findbartweak.highlightColor.value);
+			Application.prefs.setValue('ui.textHighlightForeground', '#000000');
+		}
 	},
 	
 	prepare: function(doHighlights) {
@@ -687,8 +708,8 @@ var findbartweak = {
 		if(!findbartweak.contentDocument
 		|| !findbartweak.contentDocument.getElementsByTagName('html')[0]
 		|| !findbartweak.contentDocument.getElementsByTagName('body')[0]
-		|| !gBrowser.mCurrentBrowser) { 
-			return false; 
+		|| !gBrowser.mCurrentBrowser) {
+			return false;
 		}
 		
 		findbartweak._fullHTMLHeight = findbartweak.contentDocument.getElementsByTagName('html')[0].scrollHeight || findbartweak.contentDocument.getElementsByTagName('body')[0].scrollHeight;
@@ -733,7 +754,7 @@ var findbartweak = {
 				}
 				
 				highlighted = true;
-			} 
+			}
 			else if(highlighted) {
 				break;
 			}
@@ -742,9 +763,9 @@ var findbartweak = {
 	
 	// Opens and closes the grid accordingly and positions it if !findbartweak.gridInScrollbar.value
 	gridOnOff: function() {
-		if(!findbartweak.useGrid.value 
+		if(!findbartweak.useGrid.value
 		|| !findbartweak.documentHighlighted
-		|| gBrowser.getNotificationBox().currentNotification != null) { 
+		|| gBrowser.getNotificationBox().currentNotification != null) {
 			if(!findbartweak.gridInScrollbar.value) {
 				findbartweak.grid.setAttribute('hidden', 'true');
 				findbartweak.marginGrid();
@@ -859,7 +880,7 @@ var findbartweak = {
 	checkCurrentHighlight: function(contentWindow, current, highlight) {
 		if(highlight.contentWindow == contentWindow
 		&& highlight.startContainer == current.startContainer
-		&& highlight.startOffset == current.startOffset 
+		&& highlight.startOffset == current.startOffset
 		&& highlight.endContainer == current.endContainer
 		&& highlight.endOffset == current.endOffset) {
 			return true;
@@ -882,10 +903,10 @@ var findbartweak = {
 		
 		if(gFindBar.hidden && (findbartweak.documentHighlighted || findbartweak.documentReHighlight) && findbartweak.hideWhenFinderHidden.value) {
 			gFindBar.toggleHighlight(false);
-		} 
+		}
 		else if(findbartweak.documentReHighlight) {
 			gFindBar.toggleHighlight(findbartweak.documentHighlighted);
-		} 
+		}
 		else {
 			// This needs to be here so it looks for possible notifications and handles the grid accordingly
 			findbartweak.gridOnOff();
@@ -942,7 +963,7 @@ var findbartweak = {
 					if(request && !request.isPending()) {
 						gFindBar.toggleHighlight(findbartweak.documentHighlighted && (!gFindBar.hidden || !findbartweak.hideWhenFinderHidden.value) );
 					}
-				} 
+				}
 				else if(browser.contentDocument && browser.contentDocument.documentElement) {
 					browser.contentDocument.documentElement.setAttribute('reHighlight', 'true');
 				}
@@ -1013,7 +1034,7 @@ var findbartweak = {
 		// Bugfix for Tree Style Tab (and possibly others): findbar is on the background after uncollapsing
 		// So we do all this stuff with a delay to allow the window to repaint
 		findbartweak.hideOnChromeTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
-		findbartweak.hideOnChromeTimer.init(function() { 
+		findbartweak.hideOnChromeTimer.init(function() {
 			if(document.getElementById('cmd_find').getAttribute('disabled') == 'true') {
 				gFindBar.setAttribute('collapsed', 'true');
 			} else {
@@ -1031,11 +1052,11 @@ var findbartweak = {
 			return;
 		}
 		
-		if(!remove && !browser.contentDocument.documentElement.classList.contains(aClass)) { 
+		if(!remove && !browser.contentDocument.documentElement.classList.contains(aClass)) {
 			browser.contentDocument.documentElement.classList.add(aClass);
 			return;
 		}
-		else if(remove && browser.contentDocument.documentElement.classList.contains(aClass)) { 
+		else if(remove && browser.contentDocument.documentElement.classList.contains(aClass)) {
 			browser.contentDocument.documentElement.classList.remove(aClass);
 			return;
 		}
@@ -1044,11 +1065,11 @@ var findbartweak = {
 	// Some methods for retrieving dynamic references that change whenever we switch tabs
 	get panel () { return document.getElementById(gBrowser.mCurrentTab.linkedPanel); },
 	get contentDocument () { return (gBrowser.mCurrentBrowser.contentDocument) ? gBrowser.mCurrentBrowser.contentDocument : null; },
-	get documentHighlighted () { 
-		return (findbartweak.contentDocument 
-			&& findbartweak.contentDocument.documentElement 
-			&& findbartweak.contentDocument.documentElement.getAttribute('highlighted') == 'true') 
-			? true : false; 
+	get documentHighlighted () {
+		return (findbartweak.contentDocument
+			&& findbartweak.contentDocument.documentElement
+			&& findbartweak.contentDocument.documentElement.getAttribute('highlighted') == 'true')
+			? true : false;
 	},
 	set documentHighlighted (h) {
 		if(findbartweak.contentDocument
@@ -1062,10 +1083,10 @@ var findbartweak = {
 	},
 	get documentReHighlight () {
 		return findbartweak.panel._reHighlight
-			|| (	findbartweak.contentDocument 
-				&& findbartweak.contentDocument.documentElement 
+			|| (	findbartweak.contentDocument
+				&& findbartweak.contentDocument.documentElement
 				&& findbartweak.contentDocument.documentElement.hasAttribute('reHighlight')
-			); 
+			);
 	},
 	set documentReHighlight (r) {
 		if(findbartweak.contentDocument
@@ -1079,28 +1100,28 @@ var findbartweak = {
 		}
 	},
 	
-	get grid () { 
+	get grid () {
 		findbartweak.getGrid();
-		return findbartweak._grid; 
+		return findbartweak._grid;
 	},
-	get rows () { 
+	get rows () {
 		findbartweak.getGrid();
-		return findbartweak._rows; 
+		return findbartweak._rows;
 	},
-	get splitter () { 
+	get splitter () {
 		findbartweak.getGrid();
-		return findbartweak._splitter; 
+		return findbartweak._splitter;
 	},
-	get blocker () { 
+	get blocker () {
 		findbartweak.getGrid();
-		return findbartweak._blocker; 
+		return findbartweak._blocker;
 	},
 				
-	get highlights () { 
+	get highlights () {
 		if(typeof(findbartweak.panel._highlights) == 'undefined') {
 			findbartweak.highlights = [];
 		}
-		return findbartweak.panel._highlights; 
+		return findbartweak.panel._highlights;
 	},
 	set highlights (h) { return findbartweak.panel._highlights = h; },
 	
@@ -1217,7 +1238,7 @@ var findbartweak = {
 	
 	// Event handler for escaping highlights when hitting esc
 	hitEsc: function(e) {
-		if(e.keyCode == e.DOM_VK_ESCAPE) { 
+		if(e.keyCode == e.DOM_VK_ESCAPE) {
 			gFindBar.getElement("highlight").checked = false;
 			gFindBar.toggleHighlight(false);
 		}
@@ -1356,8 +1377,8 @@ var findbartweak = {
 		for(var i=0; i<document.getElementById('browser').childNodes.length; i++) {
 			if(document.getElementById('browser').childNodes[i].id != 'appcontent') {
 				if(document.getElementById('browser').childNodes[i].nodeName == 'splitter') { continue; }
-				if((document.getElementById('browser').childNodes[i].id == 'sidebar-box' 
-				 || document.getElementById('browser').childNodes[i].id == 'sidebar-box-twin') 
+				if((document.getElementById('browser').childNodes[i].id == 'sidebar-box'
+				 || document.getElementById('browser').childNodes[i].id == 'sidebar-box-twin')
 				&& document.getElementById('browser').childNodes[i].hasAttribute('renderabove')) { continue; }
 				
 				findbartweak.style.left += document.getElementById('browser').childNodes[i].clientWidth;
@@ -1409,7 +1430,7 @@ var findbartweak = {
 				findbartweak.style.top += document.getElementById('titlebar').clientHeight;
 				findbartweak.style.top += parseFloat(document.defaultView.getComputedStyle(document.getElementById('titlebar')).getPropertyValue('margin-bottom'));
 			}	
-		} 
+		}
 		else if(!document.getElementById('fullscr-toggler').hasAttribute('collapsed') || document.getElementById('fullscr-toggler').getAttribute('collapsed') != 'true') {
 			findbartweak.style.top += document.getElementById('fullscr-toggler').clientHeight;
 		}
@@ -1430,13 +1451,13 @@ var findbartweak = {
 	},
 	
 	findPersonaPosition: function() {
-		if(findbartweak.mainWindow.getAttribute('lwtheme') != 'true') { 
+		if(findbartweak.mainWindow.getAttribute('lwtheme') != 'true') {
 			findbartweak.lwtheme.bgImage.value = '';
 			findbartweak.lwtheme.bgWidth.value = 0;
 			findbartweak.lwtheme.color.value = '';
 			findbartweak.lwtheme.bgColor.value = '';
 			findbartweak.stylePersonaFindBar();
-			return; 
+			return;
 		}
 		
 		var windowStyle = document.defaultView.getComputedStyle(findbartweak.mainWindow);

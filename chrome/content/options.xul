@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+<?xml-stylesheet href="chrome://findbartweak-os/skin/options.css" type="text/css"?>
 <!DOCTYPE window [
   <!ENTITY % optionsDTD SYSTEM "chrome://findbartweak/locale/options.dtd">
   %optionsDTD;
@@ -9,8 +10,7 @@
 
 <prefwindow xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 			id="findbartweak-options-window"
-			title="&findbartweakOptions.title;"
-			ondialogaccept="return findbartweakOptions.accept();">
+			title="&findbartweakOptions.title;">
 
 	<script type="application/x-javascript" src="chrome://findbartweak/content/options.js"></script>
 			
@@ -64,7 +64,7 @@
 								<checkbox id="checkboxKeepButtons" class="FAYTmode quickMode" label="&findbartweakOptkeepButtons.label;" preference="pref-keepButtons"/>
 								<hbox>
 									<label class="FAYTmode quickMode" value="&findbartweakOptFAYTTimeout.beforeLabel;"/>
-									<textbox id="timeoutTextbox" class="FAYTmode quickMode" size="3" maxlength="5" style="height: 18px; text-align: center;" 
+									<textbox id="timeoutTextbox" class="FAYTmode quickMode textbox" size="3" maxlength="5" style="height: 18px; text-align: center;" 
 										preference="pref-timeout"
 										onsyncfrompreference="return findbartweakOptions.msecToSec();" 
 										onsynctopreference="return findbartweakOptions.secToMsec();"/>
@@ -84,7 +84,7 @@
 						<checkbox label="&findbartweakOptuseCounter.label;" preference="pref-useCounter"/>
 						<hbox>
 							<label value="&findbartweakOptminNoDelay.labela;"/>
-							<textbox id="minNoDelayTextbox" size="1" maxlength="2" style="height: 18px; text-align: center;"
+							<textbox id="minNoDelayTextbox" class="textbox" size="1" maxlength="2" style="height: 18px; text-align: center;"
 								preference="pref-minNoDelay" 
 								onsynctopreference="return findbartweakOptions.onlyNumbers(this.value);"/>
 				            <label value="&findbartweakOptminNoDelay.labelb;"/>
@@ -96,7 +96,7 @@
 						<checkbox id="checkbox-gridInScrollbar" label="&findbartweakOptgridInScrollbar.label;" preference="pref-gridInScrollbar"/>
 						<hbox>
 							<label id="gridLimitLabela" value="&findbartweakOptgridLimit.labela;"/>
-							<textbox id="gridLimitTextbox" size="3" maxlength="5" style="height: 18px; text-align: center;"
+							<textbox id="gridLimitTextbox" class="textbox" size="3" maxlength="5" style="text-align: center;"
 								preference="pref-gridLimit" 
 								onsynctopreference="return findbartweakOptions.onlyNumbers(this.value);"/>
 				            <label id="gridLimitLabelb" value="&findbartweakOptgridLimit.labelb;"/>

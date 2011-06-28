@@ -10,7 +10,6 @@ pref("extensions.findbartweak.hideLabels", false);
 pref("extensions.findbartweak.onStartup", false);
 pref("extensions.findbartweak.findbarHidden", true);
 pref("extensions.findbartweak.highlightColor", "#EF0FFF");
-pref("extensions.findbartweak.highlightColorOther", "#FFFFFF");
 pref("extensions.findbartweak.gridWidth", '15');
 pref("extensions.findbartweak.hideClose", false);
 pref("extensions.findbartweak.gridLimit", 250);

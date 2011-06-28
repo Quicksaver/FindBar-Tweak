@@ -370,6 +370,7 @@ var findbartweak = {
 			findbartweak.gridOnOff();
 			findbartweak.toAddtoGrid = []; // Not really needed when no grid is used but I'm preventing any possible error associated with it not being set
 			findbartweak.FILLGRID = false;
+			findbartweak.cleanHighlightGrid();
 			// This part can't be in gridOnOff(), its called a lot outside of toggleHighlight()
 			if(findbartweak.useGrid.value) {
 				findbartweak.FILLGRID = findbartweak.resetHighlightGrid();
@@ -647,8 +648,8 @@ var findbartweak = {
 		}, 250, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
 	},
 	
-	// Prepares the grid to be filled with the highlights
-	resetHighlightGrid: function() {
+	// Separate function from resetHighlightGrid() so we can clean the grid easily even when useGrid is false
+	cleanHighlightGrid: function() {
 		// Reset (clean) all grid rows
 		for (var i=1; i<findbartweak.rows.childNodes.length-1; i++) {
 			findbartweak.rows.childNodes[i].style.backgroundColor = null;
@@ -657,7 +658,10 @@ var findbartweak = {
 			findbartweak.rows.childNodes[i].removeAttribute('scrollheight');
 			findbartweak.rows.childNodes[i].removeEventListener('click', function() { findbartweak.scrollTo(this); }, false);
 		}
-		
+	},
+	
+	// Prepares the grid to be filled with the highlights
+	resetHighlightGrid: function() {
 		// Adjust number of rows
 		findbartweak._gridHeight = Math.max(findbartweak.grid.clientHeight - (findbartweak.SPACER_HEIGHT * 2), 0);
 		var num_rows = Math.max(Math.ceil(findbartweak._gridHeight / findbartweak.ROWS_MULTIPLIER), findbartweak.ROWS_MINIMUM);

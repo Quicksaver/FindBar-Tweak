@@ -1,5 +1,9 @@
 content   findbartweak                    chrome/content/
-locale    findbartweak      en-US         chrome/locale/en-US/
+
+locale    findbartweak      en-US         chrome/locale/en-US/common/
+locale    findbartweak-os   en-US         chrome/locale/en-US/win/
+locale    findbartweak-os   en-US         chrome/locale/en-US/mac/     os=Darwin
+
 skin      findbartweak      classic/1.0   chrome/skin/common/
 skin      findbartweak-os   classic/1.0   chrome/skin/linux/
 skin      findbartweak-os   classic/1.0   chrome/skin/win/     os=WINNT

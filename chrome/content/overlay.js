@@ -88,6 +88,7 @@ var findbartweak = {
 		findbartweak.gridWidth = Application.prefs.get('extensions.findbartweak.gridWidth');
 		findbartweak.onStartup = Application.prefs.get('extensions.findbartweak.onStartup');
 		findbartweak.findbarHidden = Application.prefs.get('extensions.findbartweak.findbarHidden');
+		findbartweak.ctrlFCloses = Application.prefs.get('extensions.findbartweak.ctrlFCloses');
 		
 		findbartweak.gridLimit = Application.prefs.get('extensions.findbartweak.gridLimit');
 		findbartweak.minNoDelay = Application.prefs.get('extensions.findbartweak.minNoDelay');
@@ -1252,7 +1253,7 @@ var findbartweak = {
 			TabView.enableSearch(event);
 		}
 		else {
-			if(gFindBar.hidden) {
+			if(gFindBar.hidden || !findbartweak.ctrlFCloses.value) {
 				gFindBar.onFindCommand();
 				gFindBar.open();
 				if(gFindBar._findField.value) {

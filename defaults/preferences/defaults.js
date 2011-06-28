@@ -1,3 +1,4 @@
+pref("extensions.findbartweak.ctrlFCloses", true);
 pref("extensions.findbartweak.highlightByDefault", true);
 pref("extensions.findbartweak.hideWhenFinderHidden", false);
 pref("extensions.findbartweak.useGrid", true);

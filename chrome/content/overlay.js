@@ -57,8 +57,19 @@ var findbartweak = {
 		}
 		
 		// Reset UI preferences
-		Application.prefs.get('ui.textHighlightBackground').reset();
-		Application.prefs.get('ui.textHighlightForeground').reset();
+		findbartweak.textHighlightBackground.events.removeListener('change', findbartweak.handleUIBackground);
+		findbartweak.textHighlightForeground.events.removeListener('change', findbartweak.handleUIForeground);
+		
+		if(findbartweak.uiBackup.textHighlightBackground) {
+			findbartweak.textHighlightBackground.value = findbartweak.uiBackup.textHighlightBackground;
+		} else {
+			findbartweak.textHighlightBackground.reset();
+		}
+		if(findbartweak.uiBackup.textHighlightForeground) {
+			findbartweak.textHighlightForeground.value = findbartweak.uiBackup.textHighlightForeground;
+		} else {
+			findbartweak.textHighlightForeground.reset();
+		}
 	},
 	
 	init: function() {
@@ -104,7 +115,9 @@ var findbartweak = {
 		};
 		
 		// Do UI preferences
-		findbartweak.changeHighlightColor();
+		findbartweak.uiBackup = {};
+		findbartweak.handleUIBackground();
+		findbartweak.handleUIForeground();
 		
 		// A few references
 		findbartweak.findbar = gFindBar.getElement('findbar-container');
@@ -593,7 +606,31 @@ var findbartweak = {
 		window.openDialog('chrome://findbartweak/content/options.xul', '', 'chrome,resizable=false');
 	},
 	
-	changeHighlightColor: function() {
+	handleUIBackground: function() {
+		findbartweak.uiBackup.textHighlightBackground = Application.prefs.getValue('ui.textHighlightBackground', null);
+		if(!findbartweak.uiBackup.textHighlightBackground) {
+			Application.prefs.setValue('ui.textHighlightBackground', '');
+		}
+		if(!findbartweak.textHighlightBackground) {
+			findbartweak.textHighlightBackground = Application.prefs.get('ui.textHighlightBackground');
+			findbartweak.textHighlightBackground.events.addListener('change', findbartweak.handleUIBackground);
+		}
+		findbartweak.changeHighlightColor('textHighlightBackground');
+	},
+	
+	handleUIForeground: function() {
+		findbartweak.uiBackup.textHighlightForeground = Application.prefs.getValue('ui.textHighlightForeground', null);
+		if(!findbartweak.uiBackup.textHighlightForeground) {
+			Application.prefs.setValue('ui.textHighlightForeground', '');
+		}
+		if(!findbartweak.textHighlightForeground) {
+			findbartweak.textHighlightForeground = Application.prefs.get('ui.textHighlightForeground');
+			findbartweak.textHighlightForeground.events.addListener('change', findbartweak.handleUIForeground);
+		}
+		findbartweak.changeHighlightColor('textHighlightForeground');
+	},
+	
+	changeHighlightColor: function(which) {
 		var m = findbartweak.highlightColor.value.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
 		if(!m) { return false; }
 		if(m[1].length === 6) { // 6-char notation
@@ -610,14 +647,21 @@ var findbartweak = {
 			};
 		}
 		
+		// Have to remove the listeners and add them back after, so the backups aren't overwritten with our values
+		if(!which || which == 'textHighlightBackground') { findbartweak.textHighlightBackground.events.removeListener('change', findbartweak.handleUIBackground); }
+		if(!which || which == 'textHighlightForeground') { findbartweak.textHighlightForeground.events.removeListener('change', findbartweak.handleUIForeground); }
+		
 		if(0.213 * rgb.r + 0.715 * rgb.g + 0.072 * rgb.b < 0.5) {
-			Application.prefs.setValue('ui.textHighlightBackground', '#FFFFFF');
-			Application.prefs.setValue('ui.textHighlightForeground', findbartweak.highlightColor.value);
+			if(!which || which == 'textHighlightBackground') { findbartweak.textHighlightBackground.value = '#FFFFFF'; }
+			if(!which || which == 'textHighlightForeground') { findbartweak.textHighlightForeground.value = findbartweak.highlightColor.value; }
 		}
 		else {
-			Application.prefs.setValue('ui.textHighlightBackground', findbartweak.highlightColor.value);
-			Application.prefs.setValue('ui.textHighlightForeground', '#000000');
+			if(!which || which == 'textHighlightBackground') { findbartweak.textHighlightBackground.value = findbartweak.highlightColor.value; }
+			if(!which || which == 'textHighlightForeground') { findbartweak.textHighlightForeground.value = '#000000'; }
 		}
+		
+		if(!which || which == 'textHighlightBackground') { findbartweak.textHighlightBackground.events.addListener('change', findbartweak.handleUIBackground); }
+		if(!which || which == 'textHighlightForeground') { findbartweak.textHighlightForeground.events.addListener('change', findbartweak.handleUIForeground); }
 	},
 	
 	prepare: function(doHighlights) {

@@ -80,6 +80,8 @@ var findbartweak = {
 		// A few references
 		findbartweak.findbar = gFindBar.getElement('findbar-container');
 		findbartweak.mainWindow = document.getElementById('main-window');
+		findbartweak.bottombox = document.getElementById('browser-bottombox');
+		findbartweak.addonbar = document.getElementById('addon-bar');
 		findbartweak.strings = Components.classes['@mozilla.org/intl/stringbundle;1'].getService(Components.interfaces.nsIStringBundleService).createBundle("chrome://findbartweak/locale/overlay.properties");
 		
 		// We put this here so we only have to do it once
@@ -209,6 +211,8 @@ var findbartweak = {
 				document.getElementById('ClearFields-in-find').setAttribute('findbartweakEd', 'true');
 			}
 			
+			findbartweak.barlesqueFix();
+			
 			return ret;
 		};
 		gFindBar.close = function() {
@@ -225,6 +229,8 @@ var findbartweak = {
 			&& (findbartweak.hideWhenFinderHidden.value || !gFindBar._findField.value || findbartweak.panel._notFoundHighlights) ) {
 				gFindBar.toggleHighlight(false);
 			}
+			
+			findbartweak.barlesqueFix();
 		};
 		
 		gFindBar._updateFindUI = function _updateFindUI() {
@@ -1366,12 +1372,12 @@ var findbartweak = {
 		if(!findbartweak.movetoTop.value || gFindBar.hasAttribute('hidden')) { return; }
 		
 		// If the 'layer' attribute isn't removed the findbar will lockup constantly (I have no idea what this attribute does though...)
-		document.getElementById('browser-bottombox').removeAttribute('layer');
+		findbartweak.bottombox.removeAttribute('layer');
 		
 		findbartweak.style = {};
 		findbartweak.computedStyle = {
 			findbar: document.defaultView.getComputedStyle(gFindBar),
-			bottombox: document.defaultView.getComputedStyle(document.getElementById('browser-bottombox')),
+			//bottombox: document.defaultView.getComputedStyle(document.getElementById('browser-bottombox')),
 			appcontent: document.defaultView.getComputedStyle(document.getElementById('appcontent')),
 			borderend: document.defaultView.getComputedStyle(document.getElementById('browser-border-end')),
 			navigatortoolbox: document.defaultView.getComputedStyle(document.getElementById('navigator-toolbox')),
@@ -1510,7 +1516,14 @@ var findbartweak = {
 		}
 		
 		gFindBar.setAttribute('style', findbartweak.lwtheme.string);
-	}
+	},
+	
+	// Compatibility fixes for use with the Barlesque add-on
+	barlesqueFix: function() {
+		if(!findbartweak.bottombox.classList.contains('barlesque-bar')) { return; }
+		
+		findbartweak.bottombox.style.maxHeight = (findbartweak.movetoTop.value && findbartweak.bottombox.getAttribute('findmode')) ? '0px' : '';
+	}	
 };
 
 Components.utils.import("chrome://findbartweak/content/utils.jsm", findbartweak);

@@ -4,6 +4,12 @@ var findbartweak = {
 		findbartweak.initTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
 		findbartweak.initTimer.init(findbartweak.init, 500, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
 		findbartweak.listenerAid.remove(window, "load", findbartweak.preinit, false);
+		
+		// Register all opened tabs with a listener
+		// This needs to be in preinit() because otherwise if the browser loads too fast it would load the first tab before the listener is implemented,
+		// as such not rendering the window with the Horient attribute (grid screwing up layout)
+		gBrowser.addTabsProgressListener(findbartweak.progressListener);
+		findbartweak.listenerAid.add(gBrowser, "DOMContentLoaded", findbartweak.contentLoaded, false);
 	},
 	
 	deinit: function() {
@@ -145,10 +151,6 @@ var findbartweak = {
 		// We register for tab switches because the "Highlight all" button is unclicked on those,
 		// and we have a bunch of stuff to do when that happens
 		findbartweak.listenerAid.add(gBrowser.tabContainer, "TabSelect", findbartweak.tabSelected, false);
-		
-		// Register all opened tabs with a listener
-		gBrowser.addTabsProgressListener(findbartweak.progressListener);
-		findbartweak.listenerAid.add(gBrowser, "DOMContentLoaded", findbartweak.contentLoaded, false);
 		
 		// Autopager add-on compatibility: redo the highlights when new content is inserted in the page
 		findbartweak.listenerAid.add(window, "AutoPagerAfterInsert", findbartweak.autoPagerInserted, false);
@@ -921,6 +923,12 @@ var findbartweak = {
 	
 	// Commands a reHighlight if needed on any tab, triggered from frames as well
 	contentLoaded: function(event) {
+		// Prevent script from running untill it has initialized
+		if(!findbartweak.initialized) {
+			findbartweak.contentLoadedTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
+			findbartweak.contentLoadedTimer.init(function() { findbartweak.contentLoaded(event); }, 500, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+		}
+		
 		// this is the content document of the loaded page.
 		var doc = event.originalTarget;
 		if (doc instanceof HTMLDocument) {

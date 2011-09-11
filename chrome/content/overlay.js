@@ -1264,19 +1264,20 @@ var findbartweak = {
 	scrollTo: function(el) {
 		if(!el.hasAttribute('scrollto')) { return; }
 		
+		findbartweak._scrollTop = findbartweak.contentDocument.getElementsByTagName('html')[0].scrollTop || findbartweak.contentDocument.getElementsByTagName('body')[0].scrollTop;
+		
 		var scrollTo = parseInt(el.getAttribute('scrollto'));
 		var scrollHeight = parseInt(el.getAttribute('scrollheight'));
-		findbartweak._scrollTop = findbartweak.contentDocument.getElementsByTagName("html")[0].scrollTop;
 		var clientHeight = gBrowser.mCurrentBrowser.clientHeight;
 			
-		if(scrollTo >= scrollTop && scrollTo + scrollHeight <= scrollTop + clientHeight) { return; }
+		if(scrollTo >= findbartweak._scrollTop && scrollTo + scrollHeight <= findbartweak._scrollTop + clientHeight) { return; }
 		
-		if(scrollTo < scrollTop) {
+		if(scrollTo < findbartweak._scrollTop) {
 			findbartweak.contentDocument.getElementsByTagName("html")[0].scrollTop = scrollTo;
 			return;
 		}
 		
-		if(scrollTo + scrollHeight > scrollTop + clientHeight) {
+		if(scrollTo + scrollHeight > findbartweak._scrollTop + clientHeight) {
 			findbartweak.contentDocument.getElementsByTagName("html")[0].scrollTop = scrollTo - clientHeight + scrollHeight;
 			return;
 		}

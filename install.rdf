@@ -2,7 +2,7 @@
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 	<Description about="urn:mozilla:install-manifest">
 		<em:id>fbt@quicksaver</em:id>
-		<em:version>0.5.3</em:version>
+		<em:version>0.5.4</em:version>
 		<em:type>2</em:type>
 		<em:name>FindBar Tweak</em:name>
 		<em:description>Tweak your FindBar the way you like it!</em:description>

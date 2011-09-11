@@ -82,6 +82,7 @@ var findbartweak = {
 		findbartweak.mainWindow = document.getElementById('main-window');
 		findbartweak.bottombox = document.getElementById('browser-bottombox');
 		findbartweak.addonbar = document.getElementById('addon-bar');
+		findbartweak.browser = document.getElementById('browser');
 		findbartweak.strings = Components.classes['@mozilla.org/intl/stringbundle;1'].getService(Components.interfaces.nsIStringBundleService).createBundle("chrome://findbartweak/locale/overlay.properties");
 		
 		// We put this here so we only have to do it once
@@ -1376,27 +1377,34 @@ var findbartweak = {
 		
 		findbartweak.style = {};
 		findbartweak.computedStyle = {
-			findbar: document.defaultView.getComputedStyle(gFindBar),
-			//bottombox: document.defaultView.getComputedStyle(document.getElementById('browser-bottombox')),
-			appcontent: document.defaultView.getComputedStyle(document.getElementById('appcontent')),
-			borderend: document.defaultView.getComputedStyle(document.getElementById('browser-border-end')),
-			navigatortoolbox: document.defaultView.getComputedStyle(document.getElementById('navigator-toolbox')),
+			findbar: getComputedStyle(gFindBar),
+			//bottombox: getComputedStyle(document.getElementById('browser-bottombox')),
+			appcontent: getComputedStyle(document.getElementById('appcontent')),
+			borderend: getComputedStyle(document.getElementById('browser-border-end')),
+			navigatortoolbox: getComputedStyle(document.getElementById('navigator-toolbox')),
+			browser: getComputedStyle(findbartweak.browser)
 		};
 		
 		// Determining the position of the Findbar is a pain...
+		var doneAppContent = false;
 		findbartweak.style.maxWidth = 0;
 		findbartweak.style.left = 0;
-		for(var i=0; i<document.getElementById('browser').childNodes.length; i++) {
-			if(document.getElementById('browser').childNodes[i].id != 'appcontent') {
-				if(document.getElementById('browser').childNodes[i].nodeName == 'splitter') { continue; }
-				if((document.getElementById('browser').childNodes[i].id == 'sidebar-box'
-				 || document.getElementById('browser').childNodes[i].id == 'sidebar-box-twin')
-				&& document.getElementById('browser').childNodes[i].hasAttribute('renderabove')) { continue; }
+		for(var i=0; i<findbartweak.browser.childNodes.length; i++) {
+			if(findbartweak.browser.childNodes[i].id != 'appcontent') {
+				if(findbartweak.browser.childNodes[i].nodeName == 'splitter') { continue; }
 				
-				findbartweak.style.left += document.getElementById('browser').childNodes[i].clientWidth;
-				findbartweak.style.left += parseFloat(document.defaultView.getComputedStyle(document.getElementById('browser').childNodes[i]).getPropertyValue('border-left-width'));
-				findbartweak.style.left += parseFloat(document.defaultView.getComputedStyle(document.getElementById('browser').childNodes[i]).getPropertyValue('border-right-width'));
-			
+				// Compatibility with OmniSidebar
+				if((findbartweak.browser.childNodes[i].id == 'sidebar-box'
+				 || findbartweak.browser.childNodes[i].id == 'sidebar-box-twin')
+				&& findbartweak.browser.childNodes[i].hasAttribute('renderabove')) { continue; }
+				
+				// AiOS sets 'direction' property to 'rtl' when sidebar is on the right;
+				// this accounts for that and for anything else that might do the same
+				if(findbartweak.computedStyle.browser.getPropertyValue('direction') == 'ltr' || doneAppContent) {
+					findbartweak.style.left += findbartweak.browser.childNodes[i].clientWidth;
+					findbartweak.style.left += parseFloat(getComputedStyle(findbartweak.browser.childNodes[i]).getPropertyValue('border-left-width'));
+					findbartweak.style.left += parseFloat(getComputedStyle(findbartweak.browser.childNodes[i]).getPropertyValue('border-right-width'));
+				}
 			} else {
 				findbartweak.style.maxWidth += document.getElementById('appcontent').clientWidth;
 				findbartweak.style.maxWidth += parseFloat(findbartweak.computedStyle.appcontent.getPropertyValue('border-left-width'));
@@ -1432,7 +1440,11 @@ var findbartweak = {
 					}
 				}*/
 				
-				break;
+				if(findbartweak.computedStyle.browser.getPropertyValue('direction') == 'ltr') {
+					break;
+				}
+				
+				doneAppContent = true;
 			}
 		}
 				
@@ -1440,7 +1452,7 @@ var findbartweak = {
 		if(findbartweak.mainWindow.getAttribute('sizemode') != 'fullscreen') {
 			if(document.getElementById('titlebar')) {				
 				findbartweak.style.top += document.getElementById('titlebar').clientHeight;
-				findbartweak.style.top += parseFloat(document.defaultView.getComputedStyle(document.getElementById('titlebar')).getPropertyValue('margin-bottom'));
+				findbartweak.style.top += parseFloat(getComputedStyle(document.getElementById('titlebar')).getPropertyValue('margin-bottom'));
 			}	
 		}
 		else if(!document.getElementById('fullscr-toggler').hasAttribute('collapsed') || document.getElementById('fullscr-toggler').getAttribute('collapsed') != 'true') {

@@ -1,4 +1,4 @@
-var EXPORTED_SYMBOLS = ["setWatchers", "hasAncestor", "hideIt", "listenerAid"];
+var EXPORTED_SYMBOLS = ["setWatchers", "hasAncestor", "hideIt", "listenerAid", "timerAid"];
 
 // Checks if aNode decends from aParent
 hasAncestor = function(aNode, aParent, aWindow) {
@@ -345,5 +345,65 @@ listenerAid = {
 			return true;
 		}
 		return false;
+	}
+};
+
+// Object to aid in setting, initializing and cancelling timers
+timerAid = {
+	timers: {},
+	
+	init: function(name, func, delay, type) {
+		if(this.timers[name]) {
+			this.timers[name].cancel();
+		}
+		
+		var type = this.switchType(type);
+		this.timers[name] = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
+		this.timers[name].init(func, delay, type);
+	},
+	
+	cancel: function(name) {
+		if(this.timers[name]) {
+			this.timers[name].cancel();
+		}
+	},
+	
+	getTimer: function(name) {
+		if(this.timers[name]) {
+			return this.timers[name];
+		}
+		return null;
+	},
+	
+	newTimer: function() {
+		var newTimer = {};
+		newTimer.timer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
+		newTimer.switchType = this.switchType;
+		newTimer.init = function(func, delay, type) {
+			var type = this.switchType(type);
+			this.timer.init(func, delay, type);
+		}
+		newTimer.cancel = function() {
+			this.timer.cancel();
+		}
+		return newTimer;
+	},
+			
+	switchType: function(type) {
+		switch(type) {
+			case 'slack':
+				return Components.interfaces.nsITimer.TYPE_REPEATING_SLACK;
+				break;
+			case 'precise':
+				return Components.interfaces.nsITimer.TYPE_REPEATING_PRECISE;
+				break;
+			case 'precise_skip':
+				return Components.interfaces.nsITimer.TYPE_REPEATING_PRECISE_CAN_SKIP;
+				break;
+			case 'once':
+			default:
+				return Components.interfaces.nsITimer.TYPE_ONE_SHOT;
+				break;
+		}
 	}
 };

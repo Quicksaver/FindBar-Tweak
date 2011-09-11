@@ -1,14 +1,11 @@
 var findbartweak = {
 	preinit: function() {
 		findbartweak.initialized = false;
-		findbartweak.initTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
-		findbartweak.initTimer.init(findbartweak.init, 500, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+		findbartweak.timerAid.init('init', findbartweak.init, 500);
 		findbartweak.listenerAid.remove(window, "load", findbartweak.preinit, false);
 		
-		// Register all opened tabs with a listener
 		// This needs to be in preinit() because otherwise if the browser loads too fast it would load the first tab before the listener is implemented,
 		// as such not rendering the window with the Horient attribute (grid screwing up layout)
-		gBrowser.addTabsProgressListener(findbartweak.progressListener);
 		findbartweak.listenerAid.add(gBrowser, "DOMContentLoaded", findbartweak.contentLoaded, false);
 	},
 	
@@ -152,6 +149,9 @@ var findbartweak = {
 		// and we have a bunch of stuff to do when that happens
 		findbartweak.listenerAid.add(gBrowser.tabContainer, "TabSelect", findbartweak.tabSelected, false);
 		
+		// Register all opened tabs with a listener
+		gBrowser.addTabsProgressListener(findbartweak.progressListener);
+		
 		// Autopager add-on compatibility: redo the highlights when new content is inserted in the page
 		findbartweak.listenerAid.add(window, "AutoPagerAfterInsert", findbartweak.autoPagerInserted, false);
 		
@@ -216,7 +216,9 @@ var findbartweak = {
 			findbartweak.findbarHidden.value = gFindBar.hidden;
 			
 			// Cancel a delayed highlight when closing the find bar
-			findbartweak.panel._delayHighlight = null;
+			if(findbartweak.panel._delayHighlight) {
+				findbartweak.panel._delayHighlight.cancel();
+			}
 			
 			// To remove the grid and the esc key listener if there are no highlights or when commanded by the hideWhenFinderHidden preference
 			if(findbartweak.documentHighlighted
@@ -309,14 +311,14 @@ var findbartweak = {
 				findbartweak.documentReHighlight = true;
 			}
 			
-			findbartweak.panel._delayHighlight = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
+			findbartweak.panel._delayHighlight = findbartweak.timerAid.newTimer();
 			findbartweak.panel._delayHighlight.init(function(timer) {
 				// We don't want to highlight pages that aren't supposed to be highlighted (happens when switching tabs when delaying highlights)
-				if(findbartweak.panel._delayHighlight == timer) {
+				if(findbartweak.panel._delayHighlight.timer == timer) {
 					gFindBar.toggleHighlight(false);
 					gFindBar.toggleHighlight(true);
 				}
-			}, delay, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+			}, delay);
 		};
 		
 		// Handle the whole highlighting and counter process,
@@ -338,7 +340,9 @@ var findbartweak = {
 			findbartweak.panel._notFoundHighlights = false;
 			
 			// Make sure we cancel any highlight timer that might be running
-			findbartweak.panel._delayHighlight = null;
+			if(findbartweak.panel._delayHighlight) {
+				findbartweak.panel._delayHighlight.cancel();
+			}
 			
 			findbartweak.gridOnOff();
 			findbartweak.toAddtoGrid = []; // Not really needed when no grid is used but I'm preventing any possible error associated with it not being set
@@ -654,29 +658,26 @@ var findbartweak = {
 				
 		if(findbartweak.gridInScrollbar.value) {
 			findbartweak.blocker.setAttribute('hidden', 'true');
-			findbartweak.marginTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
-			findbartweak.marginTimer.init(function() {
+			findbartweak.timerAid.init('margin', function() {
 				findbartweak.grid.style.marginLeft = gBrowser.mCurrentBrowser.clientWidth - findbartweak.SCROLLBAR_WIDTH +'px';
-			}, 500, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+			}, 500);
 		}
 		else {
 			findbartweak.blocker.removeAttribute('hidden');
-			findbartweak.marginTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
-			findbartweak.marginTimer.init(function() {
+			findbartweak.timerAid.init('margin', function() {
 				findbartweak.blocker.style.marginLeft = gBrowser.mCurrentBrowser.clientWidth - findbartweak.SCROLLBAR_WIDTH - (!findbartweak.grid.hidden ? findbartweak.gridWidth.value + (!findbartweak.splitter.hidden ? 4 : 0) : 0) +'px';
-			}, 500, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+			}, 500);
 		}
 	},
 	
   	// Updates the grid width values when the window (and as such the grid) is resized
 	windowResize: function() {
-		findbartweak.resizeTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
-		findbartweak.resizeTimer.init(function() {
+		findbartweak.timerAid.init('resize', function() {
 			if(findbartweak.useGrid.value && findbartweak.grid.getAttribute('width')) {
 				findbartweak.gridWidth.value = findbartweak.grid.getAttribute('width');
 			}
 			findbartweak.prepare(findbartweak.documentHighlighted && findbartweak.useGrid.value);
-		}, 250, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+		}, 250);
 	},
 	
 	// Separate function from resetHighlightGrid() so we can clean the grid easily even when useGrid is false
@@ -925,8 +926,7 @@ var findbartweak = {
 	contentLoaded: function(event) {
 		// Prevent script from running untill it has initialized
 		if(!findbartweak.initialized) {
-			findbartweak.contentLoadedTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
-			findbartweak.contentLoadedTimer.init(function() { findbartweak.contentLoaded(event); }, 500, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+			findbartweak.timerAid.init('contentLoaded', function() { findbartweak.contentLoaded(event); }, 100);
 		}
 		
 		// this is the content document of the loaded page.
@@ -1016,8 +1016,7 @@ var findbartweak = {
 			// Don't show the grid before there is content
 			if(!findbartweak.contentDocument
 			|| !findbartweak.contentDocument.documentElement) {
-				findbartweak.contentTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
-				findbartweak.contentTimer.init(findbartweak.aboutBlankCollapse, 25, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+				findbartweak.timerAid.init('content', findbartweak.aboutBlankCollapse, 25);
 				return;
 			}
 			
@@ -1026,8 +1025,7 @@ var findbartweak = {
 				|| !findbartweak.contentDocument.documentElement.getElementsByTagName('body')[0].firstChild
 				|| findbartweak.contentDocument.documentElement.getElementsByTagName('body')[0].clientHeight == 0
 			)) {
-				findbartweak.contentTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
-				findbartweak.contentTimer.init(findbartweak.aboutBlankCollapse, 25, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+				findbartweak.timerAid.init('content', findbartweak.aboutBlankCollapse, 25);
 				return;
 			}
 		
@@ -1040,8 +1038,7 @@ var findbartweak = {
 	hideOnChrome: function() {
 		// Bugfix for Tree Style Tab (and possibly others): findbar is on the background after uncollapsing
 		// So we do all this stuff with a delay to allow the window to repaint
-		findbartweak.hideOnChromeTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
-		findbartweak.hideOnChromeTimer.init(function() {
+		findbartweak.timerAid.init('hideOnChrome', function() {
 			if(document.getElementById('cmd_find').getAttribute('disabled') == 'true'
 			// Need to set this separately apparently, the find bar would only hide when switching to this tab after having been loaded, not upon loading the tab
 			|| gBrowser.mCurrentBrowser.currentURI.spec == 'about:config') {
@@ -1049,7 +1046,7 @@ var findbartweak = {
 			} else {
 				gFindBar.removeAttribute('collapsed');
 			}
-		 }, 50, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+		}, 50);
 	},
 	
 	htmlClass: function(browser, aClass, remove) {
@@ -1360,8 +1357,7 @@ var findbartweak = {
 	},
 	
 	delayMoveTop: function() {
-		findbartweak.topTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
-		findbartweak.topTimer.init(findbartweak.moveTop, 250, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+		findbartweak.timerAid.init('top', findbartweak.moveTop, 250);
 	},
 	
 	// Handles the position of the findbar
@@ -1499,8 +1495,7 @@ var findbartweak = {
 		}
 		
 		// We need to let the image load, otherwise its width will always be 0
-		findbartweak.personaTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
-		findbartweak.personaTimer.init(findbartweak.findPersonaWidth, 10, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+		findbartweak.timerAid.init('persona', findbartweak.findPersonaWidth, 10);
 	},
 	
 	stylePersonaFindBar: function() {

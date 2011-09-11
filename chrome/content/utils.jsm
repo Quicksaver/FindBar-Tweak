@@ -1,4 +1,35 @@
-var EXPORTED_SYMBOLS = ["setWatchers"];
+var EXPORTED_SYMBOLS = ["setWatchers", "hasAncestor", "hideIt", "listenerAid"];
+
+// Checks if aNode decends from aParent
+hasAncestor = function(aNode, aParent, aWindow) {
+	if(!aNode || !aParent) { return false; };
+	
+	if(aNode == aParent) { return true; }
+	
+	var ownDocument = aNode.ownerDocument || aNode.document;
+	if(ownDocument && ownDocument == aParent) { return true; }
+	if(aNode.compareDocumentPosition && (aNode.compareDocumentPosition(aParent) & aNode.DOCUMENT_POSITION_CONTAINS)) { return true; }
+	
+	var browsers = aParent.getElementsByTagName('browser');
+	for(var i=0; i<browsers.length; i++) {
+		if(hasAncestor(aNode, browsers[i].contentDocument, browsers[i].contentWindow)) { return true; }
+	}
+	
+	if(!aWindow) { return false; }
+	for(var i=0; i<aWindow.frames.length; i++) {
+		if(hasAncestor(aNode, aWindow.frames[i].document, aWindow.frames[i])) { return true; }
+	}
+	return false;
+};
+
+// in theory this should collapse whatever I want
+hideIt = function(aNode, show) {
+	if(!show) {
+		aNode.setAttribute('collapsed', 'true');
+	} else {
+		aNode.removeAttribute('collapsed');
+	}
+};
 
 // This acts as a replacement for the event DOM Attribute Modified, works for both attributes and object properties
 setWatchers = function(obj) {
@@ -217,4 +248,102 @@ setWatchers = function(obj) {
 		this.callAttributeWatchers(this, attr, null);
 		return ret;
 	};
-}
+};
+
+// Object to aid in setting and removing all kind of listeners
+listenerAid = {
+	handlers: new Array(),
+	
+	add: function(obj, type, listener, capture) {
+		if(obj.addEventListener) {
+			for(var i=0; i<this.handlers.length; i++) {
+				if(this.handlers[i].obj == obj && this.handlers[i].type == type && this.handlers[i].capture == capture && this.compareListener(this.handlers[i].listener, listener)) {
+					return false;
+				}
+			}
+			
+			var newHandler = {
+				obj: obj,
+				type: type,
+				listener: listener,
+				capture: capture
+			};
+			this.handlers.push(newHandler);
+			var i = this.handlers.length -1;
+			this.handlers[i].obj.addEventListener(this.handlers[i].type, this.handlers[i].listener, this.handlers[i].capture);
+		}
+		else if(obj.events && obj.events.addListener) {
+			for(var i=0; i<this.handlers.length; i++) {
+				if(this.handlers[i].obj == obj && this.handlers[i].type == type && this.compareListener(this.handlers[i].listener, listener)) {
+					return false;
+				}
+			}
+			
+			var newHandler = {
+				obj: obj,
+				type: type,
+				listener: listener
+			};
+			this.handlers.push(newHandler);
+			var i = this.handlers.length -1;
+			this.handlers[i].obj.events.addListener(this.handlers[i].type, this.handlers[i].listener);
+		}
+		
+		return true;
+	},
+	
+	remove: function(obj, type, listener, capture) {
+		if(obj.removeEventListener) {
+			var newHandler = {
+				obj: obj,
+				type: type,
+				listener: listener,
+				capture: capture
+			};
+			for(var i=0; i<this.handlers.length; i++) {
+				if(this.handlers[i].obj == obj && this.handlers[i].type == type && this.handlers[i].capture == capture && this.compareListener(this.handlers[i].listener, listener)) {
+					this.handlers[i].obj.removeEventListener(this.handlers[i].type, this.handlers[i].listener, this.handlers[i].capture);
+					this.handlers.splice(i, 1);
+					return true;
+				}
+			}
+		}
+		else if(obj.events && obj.events.removeListener) {
+			var newHandler = {
+				obj: obj,
+				type: type,
+				listener: listener
+			};
+			for(var i=0; i<this.handlers.length; i++) {
+				if(this.handlers[i].obj == obj && this.handlers[i].type == type && this.compareListener(this.handlers[i].listener, listener)) {
+					this.handlers[i].obj.events.removeListener(this.handlers[i].type, this.handlers[i].listener);
+					this.handlers.splice(i, 1);
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	},
+	
+	clean: function() {
+		for(var i=0; i<this.handlers.length; i++) {
+			if(this.handlers[i].obj) {
+				if(this.handlers[i].obj.removeEventListener) {
+					this.handlers[i].obj.removeEventListener(this.handlers[i].type, this.handlers[i].listener, this.handlers[i].capture);
+				}
+				else if(this.handlers[i].obj.events && this.handlers[i].obj.events.removeListener) {
+					this.handlers[i].obj.events.removeListener(this.handlers[i].type, this.handlers[i].listener);
+				}
+			}
+		}
+		return true;
+	},
+	
+	compareListener: function(a, b) {
+		if(a == b || a.toSource() == b.toSource()) {
+			return true;
+		}
+		return false;
+	}
+};

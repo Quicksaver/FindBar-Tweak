@@ -3,62 +3,19 @@ var findbartweak = {
 		findbartweak.initialized = false;
 		findbartweak.initTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
 		findbartweak.initTimer.init(findbartweak.init, 500, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
-		window.removeEventListener("load", findbartweak.preinit, false);
+		findbartweak.listenerAid.remove(window, "load", findbartweak.preinit, false);
 	},
 	
 	deinit: function() {
+		findbartweak.listenerAid.clean();
+		
 		// unregister all listeners
-		gBrowser.tabContainer.removeEventListener("TabSelect", findbartweak.tabSelected, false);
 		gBrowser.removeTabsProgressListener(findbartweak.progressListener);
-		gBrowser.removeEventListener("DOMContentLoaded", findbartweak.contentLoaded, false);
-		
-		if(document.getElementById('ClearFields-in-find')) {
-			document.getElementById('ClearFields-in-find').removeEventListener('click', function() { gFindBar._find(); }, false);
-		}
-		
-		findbartweak.useGrid.events.removeListener("change", function() {
-			findbartweak.reHighlightAll();
-			findbartweak.prepare(true);
-		});
-		findbartweak.gridInScrollbar.events.removeListener("change", function() {
-			findbartweak.reHighlightAll();
-			findbartweak.prepare(true);
-		});
-		findbartweak.useCounter.events.removeListener("change", function() {
-			findbartweak.toggleCounter();
-			findbartweak.reHighlightAll();
-			findbartweak.prepare(true);
-		});
-		findbartweak.highlightColor.events.removeListener("change", function() {
-			findbartweak.changeHighlightColor();
-			findbartweak.reHighlightAll();
-			if(findbartweak.documentHighlighted && findbartweak.useGrid.value) {
-				findbartweak.prepare(true);
-			}
-		});
-		findbartweak.hideClose.events.removeListener("change", findbartweak.toggleClose);
-		findbartweak.movetoTop.events.removeListener("change", findbartweak.toggleTop);
-		findbartweak.hideLabels.events.removeListener("change", findbartweak.toggleLabels);
-		
-		window.removeEventListener("resize", findbartweak.windowResize, false);
-		if(findbartweak.movetoTop.value) {
-			window.removeEventListener("resize", findbartweak.delayMoveTop, false);
-			window.removeEventListener("LessChromeShown", findbartweak.moveTop, false);
-			window.removeEventListener("LessChromeHidden", findbartweak.moveTop, false);
-		}
-		
-		window.removeEventListener("AutoPagerAfterInsert", findbartweak.autoPagerInserted, false);
-		
-		window.removeEventListener("LessChromeShowing", function(e) { if(e.target.id == 'findbarMenu' || e.target.id == 'FindToolbar') { e.preventDefault(); } }, false);
 		
 		if(findbartweak.OBSERVINGPERSONAS) {
 			var observerService = Components.classes["@mozilla.org/observer-service;1"].getService(Components.interfaces.nsIObserverService);
 			observerService.removeObserver(findbartweak.findPersonaPosition, "lightweight-theme-changed");
 		}
-		
-		// Reset UI preferences
-		findbartweak.textHighlightBackground.events.removeListener('change', findbartweak.handleUIBackground);
-		findbartweak.textHighlightForeground.events.removeListener('change', findbartweak.handleUIForeground);
 		
 		if(findbartweak.uiBackup.textHighlightBackground) {
 			findbartweak.textHighlightBackground.value = findbartweak.uiBackup.textHighlightBackground;
@@ -77,8 +34,6 @@ var findbartweak = {
 		findbartweak.REDOINGHIGHLIGHTS = false;
 		findbartweak.FILLGRID = false;
 		findbartweak._currentPanel = null;
-		
-		Components.utils.import("chrome://findbartweak/content/setWatchers.jsm", findbartweak);
 		
 		findbartweak.ROWS_MINIMUM = 150; // number of rows in the highlight grid - kind of the "highlight granularity"
 		findbartweak.ROWS_MULTIPLIER = 2; // Add extra rows if their height exceeds this value
@@ -163,48 +118,48 @@ var findbartweak = {
 		}
 		
 		// We need to observe these for changes
-		findbartweak.useGrid.events.addListener("change", function() {
+		findbartweak.listenerAid.add(findbartweak.useGrid, "change", function() {
 			findbartweak.reHighlightAll();
 			findbartweak.prepare(true);
 		});
-		findbartweak.gridInScrollbar.events.addListener("change", function() {
+		findbartweak.listenerAid.add(findbartweak.gridInScrollbar, "change", function() {
 			findbartweak.reHighlightAll();
 			findbartweak.prepare(true);
 		});
-		findbartweak.useCounter.events.addListener("change", function() {
+		findbartweak.listenerAid.add(findbartweak.useCounter, "change", function() {
 			findbartweak.toggleCounter();
 			findbartweak.reHighlightAll();
 			findbartweak.prepare(true);
 		});
-		findbartweak.highlightColor.events.addListener("change", function() {
+		findbartweak.listenerAid.add(findbartweak.highlightColor, "change", function() {
 			findbartweak.changeHighlightColor();
 			findbartweak.reHighlightAll();
 			if(findbartweak.documentHighlighted && findbartweak.useGrid.value) {
 				findbartweak.prepare(true);
 			}
 		});
-		findbartweak.hideClose.events.addListener("change", findbartweak.toggleClose);
-		findbartweak.movetoTop.events.addListener("change", findbartweak.toggleTop);
-		findbartweak.hideLabels.events.addListener("change", findbartweak.toggleLabels);
+		findbartweak.listenerAid.add(findbartweak.hideClose, "change", findbartweak.toggleClose);
+		findbartweak.listenerAid.add(findbartweak.movetoTop, "change", findbartweak.toggleTop);
+		findbartweak.listenerAid.add(findbartweak.hideLabels, "change", findbartweak.toggleLabels);
 		
 		// We register for tab switches because the "Highlight all" button is unclicked on those,
 		// and we have a bunch of stuff to do when that happens
-		gBrowser.tabContainer.addEventListener("TabSelect", findbartweak.tabSelected, false);
+		findbartweak.listenerAid.add(gBrowser.tabContainer, "TabSelect", findbartweak.tabSelected, false);
 		
 		// Register all opened tabs with a listener
 		gBrowser.addTabsProgressListener(findbartweak.progressListener);
-		gBrowser.addEventListener("DOMContentLoaded", findbartweak.contentLoaded, false);
+		findbartweak.listenerAid.add(gBrowser, "DOMContentLoaded", findbartweak.contentLoaded, false);
 		
 		// Autopager add-on compatibility: redo the highlights when new content is inserted in the page
-		window.addEventListener("AutoPagerAfterInsert", findbartweak.autoPagerInserted, false);
+		findbartweak.listenerAid.add(window, "AutoPagerAfterInsert", findbartweak.autoPagerInserted, false);
 		
 		// Reposition the grid when it's being shown in the scrollbar itself
-		window.addEventListener("resize", findbartweak.windowResize, false);
+		findbartweak.listenerAid.add(window, "resize", findbartweak.windowResize, false);
 			
 		// Right-clicking the findbar doesn't trigger LessChrome
-		window.addEventListener("LessChromeShowing", function(e) { if(e.target.id == 'findbarMenu' || e.target.id == 'FindToolbar') { e.preventDefault(); } }, false);
+		findbartweak.listenerAid.add(window, "LessChromeShowing", function(e) { if(e.target.id == 'findbarMenu' || e.target.id == 'FindToolbar') { e.preventDefault(); } }, false);
 		
-		window.addEventListener("unload", findbartweak.deinit, false);
+		findbartweak.listenerAid.add(window, "unload", findbartweak.deinit, false);
 		findbartweak.initialized = true;
 	},
 	
@@ -247,7 +202,7 @@ var findbartweak = {
 				// We don't want it to keep pilling event calls
 				if(!document.getElementById('ClearFields-in-find').hasAttribute('findbartweakEd')) {
 					// ClearFields doesn't distinguish types of clicks (left, middle, right) so I can't either
-					document.getElementById('ClearFields-in-find').addEventListener('click', function() { gFindBar._find(); }, false);
+					findbartweak.listenerAid.add(document.getElementById('ClearFields-in-find'), 'click', function() { gFindBar._find(); }, false);
 				}
 				document.getElementById('ClearFields-in-find').setAttribute('findbartweakEd', 'true');
 			}
@@ -344,7 +299,7 @@ var findbartweak = {
 				// Remove highlights when hitting Esc
 				// Needs to be both in here and in toggleHighlight() because the delay would prevent it from being set
 				if(!findbartweak.documentHighlighted) {
-					findbartweak.contentDocument.addEventListener('keyup', findbartweak.hitEsc, false);
+					findbartweak.listenerAid.add(findbartweak.contentDocument, 'keyup', findbartweak.hitEsc, false);
 				}
 				
 				// Make sure it triggers the highlight if we switch tabs meanwhile
@@ -368,10 +323,10 @@ var findbartweak = {
 			// Remove highlights when hitting Esc
 			if(aHighlight) {
 				if(!findbartweak.documentHighlighted) {
-					findbartweak.contentDocument.addEventListener('keyup', findbartweak.hitEsc, false);
+					findbartweak.listenerAid.add(findbartweak.contentDocument, 'keyup', findbartweak.hitEsc, false);
 				}
 			} else {
-				findbartweak.contentDocument.removeEventListener('keyup', findbartweak.hitEsc, false);
+				findbartweak.listenerAid.remove(findbartweak.contentDocument, 'keyup', findbartweak.hitEsc, false);
 			}
 			
 			findbartweak.documentHighlighted = aHighlight;
@@ -613,7 +568,7 @@ var findbartweak = {
 		}
 		if(!findbartweak.textHighlightBackground) {
 			findbartweak.textHighlightBackground = Application.prefs.get('ui.textHighlightBackground');
-			findbartweak.textHighlightBackground.events.addListener('change', findbartweak.handleUIBackground);
+			findbartweak.listenerAid.add(findbartweak.textHighlightBackground, 'change', findbartweak.handleUIBackground);
 		}
 		findbartweak.changeHighlightColor('textHighlightBackground');
 	},
@@ -625,7 +580,7 @@ var findbartweak = {
 		}
 		if(!findbartweak.textHighlightForeground) {
 			findbartweak.textHighlightForeground = Application.prefs.get('ui.textHighlightForeground');
-			findbartweak.textHighlightForeground.events.addListener('change', findbartweak.handleUIForeground);
+			findbartweak.listenerAid.add(findbartweak.textHighlightForeground, 'change', findbartweak.handleUIForeground);
 		}
 		findbartweak.changeHighlightColor('textHighlightForeground');
 	},
@@ -648,8 +603,8 @@ var findbartweak = {
 		}
 		
 		// Have to remove the listeners and add them back after, so the backups aren't overwritten with our values
-		if(!which || which == 'textHighlightBackground') { findbartweak.textHighlightBackground.events.removeListener('change', findbartweak.handleUIBackground); }
-		if(!which || which == 'textHighlightForeground') { findbartweak.textHighlightForeground.events.removeListener('change', findbartweak.handleUIForeground); }
+		if(!which || which == 'textHighlightBackground') { findbartweak.listenerAid.remove(findbartweak.textHighlightBackground, 'change', findbartweak.handleUIBackground); }
+		if(!which || which == 'textHighlightForeground') { findbartweak.listenerAid.remove(findbartweak.textHighlightForeground, 'change', findbartweak.handleUIForeground); }
 		
 		if(0.213 * rgb.r + 0.715 * rgb.g + 0.072 * rgb.b < 0.5) {
 			if(!which || which == 'textHighlightBackground') { findbartweak.textHighlightBackground.value = '#FFFFFF'; }
@@ -660,8 +615,8 @@ var findbartweak = {
 			if(!which || which == 'textHighlightForeground') { findbartweak.textHighlightForeground.value = '#000000'; }
 		}
 		
-		if(!which || which == 'textHighlightBackground') { findbartweak.textHighlightBackground.events.addListener('change', findbartweak.handleUIBackground); }
-		if(!which || which == 'textHighlightForeground') { findbartweak.textHighlightForeground.events.addListener('change', findbartweak.handleUIForeground); }
+		if(!which || which == 'textHighlightBackground') { findbartweak.listenerAid.add(findbartweak.textHighlightBackground, 'change', findbartweak.handleUIBackground); }
+		if(!which || which == 'textHighlightForeground') { findbartweak.listenerAid.add(findbartweak.textHighlightForeground, 'change', findbartweak.handleUIForeground); }
 	},
 	
 	prepare: function(doHighlights) {
@@ -730,7 +685,7 @@ var findbartweak = {
 			findbartweak.rows.childNodes[i].style.backgroundImage = null;
 			findbartweak.rows.childNodes[i].removeAttribute('scrollto');
 			findbartweak.rows.childNodes[i].removeAttribute('scrollheight');
-			findbartweak.rows.childNodes[i].removeEventListener('click', function() { findbartweak.scrollTo(this); }, false);
+			findbartweak.listenerAid.remove(findbartweak.rows.childNodes[i], 'click', function() { findbartweak.scrollTo(this); }, false);
 		}
 	},
 	
@@ -792,7 +747,7 @@ var findbartweak = {
 				row.style.backgroundColor = findbartweak.highlightColor.value;
 				row.setAttribute('scrollto', Math.floor(rect.top + findbartweak._scrollTop));
 				row.setAttribute('scrollheight', Math.floor(rect.bottom - rect.top));
-				row.addEventListener('click', function() { findbartweak.scrollTo(this); }, false);
+				findbartweak.listenerAid.add(row, 'click', function() { findbartweak.scrollTo(this); }, false);
 				if(pattern) {
 					row.style.backgroundImage = 'url("chrome://findbartweak/skin/pattern.gif")';
 				}
@@ -1182,7 +1137,7 @@ var findbartweak = {
 			if(gBrowser.mCurrentBrowser.currentURI.spec == 'about:blank') {
 				grid.setAttribute('collapsed', 'true');
 			}
-			grid.addEventListener('dblclick', findbartweak.togglesplitter, false);
+			findbartweak.listenerAid.add(grid, 'dblclick', findbartweak.togglesplitter, false);
 			
 			// Then columns
 			var columns = document.createElement('columns');
@@ -1251,8 +1206,8 @@ var findbartweak = {
 			blocker = gBrowser.mCurrentBrowser.parentNode.insertBefore(blocker, gBrowser.mCurrentBrowser);
 			
 			// handle appearance of notifications
-			gBrowser.getNotificationBox().addEventListener('AlertActive', findbartweak.listenNotifications, false);
-			gBrowser.getNotificationBox().addEventListener('AlertClose', findbartweak.listenNotifications, false);
+			findbartweak.listenerAid.add(gBrowser.getNotificationBox(), 'AlertActive', findbartweak.listenNotifications, false);
+			findbartweak.listenerAid.add(gBrowser.getNotificationBox(), 'AlertClose', findbartweak.listenNotifications, false);
 			
 			findbartweak.panel._hasHighlightGrid = true;
 		}
@@ -1365,10 +1320,10 @@ var findbartweak = {
 			gFindBar.setAttribute('movetotop', 'true');
 			
 			// Reposition the findbar when the window resizes
-			window.addEventListener("resize", findbartweak.delayMoveTop, false);
+			findbartweak.listenerAid.add(window, "resize", findbartweak.delayMoveTop, false);
 			// Compatibility with LessChrome HD
-			window.addEventListener("LessChromeShown", findbartweak.moveTop, false);
-			window.addEventListener("LessChromeHidden", findbartweak.moveTop, false);
+			findbartweak.listenerAid.add(window, "LessChromeShown", findbartweak.moveTop, false);
+			findbartweak.listenerAid.add(window, "LessChromeHidden", findbartweak.moveTop, false);
 			
 			if(!findbartweak.OBSERVINGPERSONAS) {
 				var observerService = Components.classes["@mozilla.org/observer-service;1"].getService(Components.interfaces.nsIObserverService);
@@ -1380,10 +1335,10 @@ var findbartweak = {
 			findbartweak.moveTop();
 		}
 		else {
-			window.removeEventListener("resize", findbartweak.delayMoveTop, false);
+			findbartweak.listenerAid.remove(window, "resize", findbartweak.delayMoveTop, false);
 			// Compatibility with LessChrome HD
-			window.removeEventListener("LessChromeShown", findbartweak.moveTop, false);
-			window.removeEventListener("LessChromeHidden", findbartweak.moveTop, false);
+			findbartweak.listenerAid.remove(window, "LessChromeShown", findbartweak.moveTop, false);
+			findbartweak.listenerAid.remove(window, "LessChromeHidden", findbartweak.moveTop, false);
 			
 			if(findbartweak.OBSERVINGPERSONAS) {
 				var observerService = Components.classes["@mozilla.org/observer-service;1"].getService(Components.interfaces.nsIObserverService);
@@ -1554,4 +1509,5 @@ var findbartweak = {
 	}
 };
 
-window.addEventListener("load", findbartweak.preinit, false);
+Components.utils.import("chrome://findbartweak/content/utils.jsm", findbartweak);
+findbartweak.listenerAid.add(window, "load", findbartweak.preinit, false);

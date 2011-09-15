@@ -166,6 +166,13 @@ var findbartweak = {
 		
 		findbartweak.listenerAid.add(window, "unload", findbartweak.deinit, false);
 		findbartweak.initialized = true;
+		
+		// Bugfix for compatibility with the Speed Dial add-on: starting up with the Speed Dial page opened wouldn't trigger any 
+		// of the other functions (contentLoaded(), progressListener.*() ) to correctly configure and display the grid
+		if(gBrowser.mCurrentBrowser.currentURI.spec == 'chrome://speeddial/content/speeddial.xul') {
+			findbartweak.hideOnChrome();
+			gFindBar.toggleHighlight(findbartweak.documentHighlighted && (!gFindBar.hidden || !findbartweak.hideWhenFinderHidden.value) );
+		}
 	},
 	
 	initFindBar: function() {
@@ -1048,7 +1055,9 @@ var findbartweak = {
 		findbartweak.timerAid.init('hideOnChrome', function() {
 			if(document.getElementById('cmd_find').getAttribute('disabled') == 'true'
 			// Need to set this separately apparently, the find bar would only hide when switching to this tab after having been loaded, not upon loading the tab
-			|| gBrowser.mCurrentBrowser.currentURI.spec == 'about:config') {
+			|| gBrowser.mCurrentBrowser.currentURI.spec == 'about:config'
+			// No need to show the findbar in Speed Dial's window, it already had a display bug at startup which I already fixed, I'm preventing more bugs this way
+			|| gBrowser.mCurrentBrowser.currentURI.spec == 'chrome://speeddial/content/speeddial.xul') {
 				gFindBar.setAttribute('collapsed', 'true');
 			} else {
 				gFindBar.removeAttribute('collapsed');
@@ -1149,6 +1158,14 @@ var findbartweak = {
 			if(gBrowser.mCurrentBrowser.currentURI.spec == 'about:blank') {
 				grid.setAttribute('collapsed', 'true');
 			}
+			
+			// preceeds gridOnOff(), works better on starting up with special tabs such as the Speed Dial add-on
+			// (without this the grid would initialize as visible for some reason and screw up the layout, probably a question of timing in gridOnOff() )
+			// I already fixed Speed Dial specifically but I'm leaving this here to prevent something similar with another possible add-on
+			if(!findbartweak.gridInScrollbar.value && !findbartweak.documentHighlighted) {
+				grid.setAttribute('hidden', 'true');
+			}
+			
 			findbartweak.listenerAid.add(grid, 'dblclick', findbartweak.togglesplitter, false);
 			
 			// Then columns

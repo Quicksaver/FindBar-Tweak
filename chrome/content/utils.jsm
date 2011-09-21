@@ -1,4 +1,4 @@
-var EXPORTED_SYMBOLS = ["setWatchers", "hasAncestor", "hideIt", "listenerAid", "timerAid"];
+var EXPORTED_SYMBOLS = ["setWatchers", "hasAncestor", "hideIt", "listenerAid", "timerAid", "prefAid"];
 
 // Checks if aNode decends from aParent
 hasAncestor = function(aNode, aParent, aWindow) {
@@ -49,23 +49,21 @@ setWatchers = function(obj) {
 			this.propertiesWatched[prop].handlers = new Array();
 			this.propertiesWatched[prop].handlers.push(handler);
 		
-			this.propertiesWatched[prop].value = this[prop],
-			getter = function () {
-				return this.propertiesWatched[prop].value;
-			},
-			setter = function (newval) {
-				for(var i=0; i<this.propertiesWatched[prop].handlers.length; i++) {
-					try { this.propertiesWatched[prop].handlers[i].call(this, prop, this.propertiesWatched[prop].value, newval); }
-					catch(ex) {
-						var consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
-						consoleService.logStringMessage(ex);
-					}
-				}
-				return this.propertiesWatched[prop].value = newval;
-			};
+			this.propertiesWatched[prop].value = this[prop];
+			
 			if (delete this[prop]) { // can't watch constants
-				Object.defineProperty(this, prop, { get: getter, set: setter, enumerable: true, configurable: true });
-			}
+				this.__defineGetter__(prop, function () { return this.propertiesWatched[prop].value; });
+				this.__defineSetter__(prop, function (newval) {	
+					for(var i=0; i<this.propertiesWatched[prop].handlers.length; i++) {
+						try { this.propertiesWatched[prop].handlers[i].call(this, prop, this.propertiesWatched[prop].value, newval); }
+						catch(ex) {
+							var consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
+							consoleService.logStringMessage(ex);
+						}
+					}
+					return this.propertiesWatched[prop].value = newval;
+				});
+			};
 		}
 		else {
 			var add = true;
@@ -405,5 +403,35 @@ timerAid = {
 				return Components.interfaces.nsITimer.TYPE_ONE_SHOT;
 				break;
 		}
+	}
+};
+
+prefAid = {
+	_prefObjects: {},
+	init: function(obj, branch, prefList) {
+		var Application = Components.classes["@mozilla.org/fuel/application;1"].getService(Components.interfaces.fuelIApplication);
+		this._self = obj;
+		
+		for(var i=0; i<prefList.length; i++) {
+			this._prefObjects[prefList[i]] = Application.prefs.get('extensions.'+branch+'.' + prefList[i]);
+			this._setPref(prefList[i]);
+		}
+	},
+	
+	_setPref: function(pref) {
+		this.__defineGetter__(pref, function() { return this._prefObjects[pref].value; });
+		this.__defineSetter__(pref, function(v) { return this._prefObjects[pref].value = v; });
+	},
+	
+	listen: function(pref, handler) {
+		this._self.listenerAid.add(this._prefObjects[pref], "change", handler);
+	},
+	
+	unlisten: function(pref, handler) {
+		this._self.listenerAid.remove(this._prefObjects[pref], "change", handler);
+	},
+	
+	reset: function(pref) {
+		this._prefObjects[pref].reset();
 	}
 };

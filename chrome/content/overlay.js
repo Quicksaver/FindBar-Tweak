@@ -46,31 +46,7 @@ var findbartweak = {
 		findbartweak.listeners = [];
 		
 		// Get preferences
-		findbartweak.highlightByDefault = Application.prefs.get('extensions.findbartweak.highlightByDefault');
-		findbartweak.hideWhenFinderHidden = Application.prefs.get('extensions.findbartweak.hideWhenFinderHidden');
-		findbartweak.useGrid = Application.prefs.get('extensions.findbartweak.useGrid');
-		findbartweak.gridInScrollbar = Application.prefs.get('extensions.findbartweak.gridInScrollbar');
-		findbartweak.useCounter = Application.prefs.get('extensions.findbartweak.useCounter');
-		findbartweak.hideClose = Application.prefs.get('extensions.findbartweak.hideClose');
-		findbartweak.movetoTop = Application.prefs.get('extensions.findbartweak.movetoTop');
-		findbartweak.keepButtons = Application.prefs.get('extensions.findbartweak.keepButtons');
-		findbartweak.hideLabels = Application.prefs.get('extensions.findbartweak.hideLabels');
-		findbartweak.highlightColor = Application.prefs.get('extensions.findbartweak.highlightColor');
-		findbartweak.gridWidth = Application.prefs.get('extensions.findbartweak.gridWidth');
-		findbartweak.onStartup = Application.prefs.get('extensions.findbartweak.onStartup');
-		findbartweak.findbarHidden = Application.prefs.get('extensions.findbartweak.findbarHidden');
-		findbartweak.ctrlFCloses = Application.prefs.get('extensions.findbartweak.ctrlFCloses');
-		findbartweak.FAYTmode = Application.prefs.get('extensions.findbartweak.FAYTmode');
-		
-		findbartweak.gridLimit = Application.prefs.get('extensions.findbartweak.gridLimit');
-		findbartweak.minNoDelay = Application.prefs.get('extensions.findbartweak.minNoDelay');
-		
-		findbartweak.lwtheme = {
-			bgImage: Application.prefs.get('extensions.findbartweak.lwtheme.bgImage'),
-			bgWidth: Application.prefs.get('extensions.findbartweak.lwtheme.bgWidth'),
-			color: Application.prefs.get('extensions.findbartweak.lwtheme.color'),
-			bgColor: Application.prefs.get('extensions.findbartweak.lwtheme.bgColor')
-		};
+		findbartweak.prefAid.init(findbartweak, 'findbartweak', ['highlightByDefault', 'hideWhenFinderHidden', 'useGrid', 'gridInScrollbar', 'useCounter', 'hideClose', 'movetoTop', 'keepButtons', 'hideLabels', 'highlightColor', 'gridWidth', 'onStartup', 'findbarHidden', 'ctrlFCloses', 'FAYTmode', 'gridLimit', 'minNoDelay', 'lwthemebgImage', 'lwthemebgWidth', 'lwthemecolor', 'lwthemebgColor']);
 		
 		// Do UI preferences
 		findbartweak.uiBackup = {};
@@ -119,34 +95,34 @@ var findbartweak = {
 		findbartweak.toggleClose();
 		findbartweak.toggleTop();
 		findbartweak.toggleLabels();
-		if(findbartweak.onStartup.value && !findbartweak.findbarHidden.value) {
+		if(findbartweak.prefAid.onStartup && !findbartweak.prefAid.findbarHidden) {
 			gFindBar.open();
 		}
 		
 		// We need to observe these for changes
-		findbartweak.listenerAid.add(findbartweak.useGrid, "change", function() {
+		findbartweak.prefAid.listen('useGrid', function() {
 			findbartweak.reHighlightAll();
 			findbartweak.prepare(true);
 		});
-		findbartweak.listenerAid.add(findbartweak.gridInScrollbar, "change", function() {
+		findbartweak.prefAid.listen('gridInScrollbar', function() {
 			findbartweak.reHighlightAll();
 			findbartweak.prepare(true);
 		});
-		findbartweak.listenerAid.add(findbartweak.useCounter, "change", function() {
+		findbartweak.prefAid.listen('useCounter', function() {
 			findbartweak.toggleCounter();
 			findbartweak.reHighlightAll();
 			findbartweak.prepare(true);
 		});
-		findbartweak.listenerAid.add(findbartweak.highlightColor, "change", function() {
+		findbartweak.prefAid.listen('highlightColor', function() {
 			findbartweak.changeHighlightColor();
 			findbartweak.reHighlightAll();
-			if(findbartweak.documentHighlighted && findbartweak.useGrid.value) {
+			if(findbartweak.documentHighlighted && findbartweak.prefAid.useGrid) {
 				findbartweak.prepare(true);
 			}
 		});
-		findbartweak.listenerAid.add(findbartweak.hideClose, "change", findbartweak.toggleClose);
-		findbartweak.listenerAid.add(findbartweak.movetoTop, "change", findbartweak.toggleTop);
-		findbartweak.listenerAid.add(findbartweak.hideLabels, "change", findbartweak.toggleLabels);
+		findbartweak.prefAid.listen('hideClose', findbartweak.toggleClose);
+		findbartweak.prefAid.listen('movetoTop', findbartweak.toggleTop);
+		findbartweak.prefAid.listen('hideLabels', findbartweak.toggleLabels);
 		
 		// We register for tab switches because the "Highlight all" button is unclicked on those,
 		// and we have a bunch of stuff to do when that happens
@@ -171,7 +147,7 @@ var findbartweak = {
 		// of the other functions (contentLoaded(), progressListener.*() ) to correctly configure and display the grid
 		if(gBrowser.mCurrentBrowser.currentURI.spec == 'chrome://speeddial/content/speeddial.xul') {
 			findbartweak.hideOnChrome();
-			gFindBar.toggleHighlight(findbartweak.documentHighlighted && (!gFindBar.hidden || !findbartweak.hideWhenFinderHidden.value) );
+			gFindBar.toggleHighlight(findbartweak.documentHighlighted && (!gFindBar.hidden || !findbartweak.prefAid.hideWhenFinderHidden) );
 		}
 	},
 	
@@ -199,12 +175,12 @@ var findbartweak = {
 			if(!gFindBar.hidden) { return; }
 			
 			// FAYT: option to force normal mode over quick find mode
-			if(aMode == 1 && findbartweak.FAYTmode.value != 'quick') {
+			if(aMode == 1 && findbartweak.prefAid.FAYTmode != 'quick') {
 				aMode = 0;
 			}
 			
 			var ret = gFindBar._open(aMode);
-			if(aMode != undefined && aMode != 1) { findbartweak.findbarHidden.value = gFindBar.hidden; }
+			if(aMode != undefined && aMode != 1) { findbartweak.prefAid.findbarHidden = gFindBar.hidden; }
 			
 			findbartweak.moveTop();
 			
@@ -225,7 +201,7 @@ var findbartweak = {
 		};
 		gFindBar.close = function() {
 			gFindBar._close();
-			findbartweak.findbarHidden.value = gFindBar.hidden;
+			findbartweak.prefAid.findbarHidden = gFindBar.hidden;
 			
 			// Cancel a delayed highlight when closing the find bar
 			if(findbartweak.panel._delayHighlight) {
@@ -234,7 +210,7 @@ var findbartweak = {
 			
 			// To remove the grid and the esc key listener if there are no highlights or when commanded by the hideWhenFinderHidden preference
 			if(findbartweak.documentHighlighted
-			&& (findbartweak.hideWhenFinderHidden.value || !gFindBar._findField.value || findbartweak.panel._notFoundHighlights) ) {
+			&& (findbartweak.prefAid.hideWhenFinderHidden || !gFindBar._findField.value || findbartweak.panel._notFoundHighlights) ) {
 				gFindBar.toggleHighlight(false);
 			}
 			
@@ -242,7 +218,7 @@ var findbartweak = {
 		};
 		
 		gFindBar._updateFindUI = function _updateFindUI() {
-			var showMinimalUI = this._findMode != this.FIND_NORMAL && !findbartweak.keepButtons.value;
+			var showMinimalUI = this._findMode != this.FIND_NORMAL && !findbartweak.prefAid.keepButtons;
 			var nodes = this.getElement("findbar-container").childNodes;
 			for (var i = 0; i < nodes.length; i++) {
 				if (nodes[i].className.indexOf("findbar-find-fast") != -1) {
@@ -272,7 +248,7 @@ var findbartweak = {
 				this._enableFindButtons(val);
 				this._updateCaseSensitivity(val);
 				// Instead of replacing another whole function just for this detail, I'm removing the hidden state of the CS button here
-				this.getElement("find-case-sensitive").hidden = (this._findMode != this.FIND_NORMAL && !findbartweak.keepButtons.value) || (this._typeAheadCaseSensitive != 0 && this._typeAheadCaseSensitive != 1);
+				this.getElement("find-case-sensitive").hidden = (this._findMode != this.FIND_NORMAL && !findbartweak.prefAid.keepButtons) || (this._typeAheadCaseSensitive != 0 && this._typeAheadCaseSensitive != 1);
 				var fastFind = this.browser.fastFind;
 				res = fastFind.find(val, this._findMode == this.FIND_LINKS);
 				this._updateFoundLink(res);
@@ -296,7 +272,7 @@ var findbartweak = {
 		
 		gFindBar._setHighlightTimeout = function _setHighlightTimeout() {
 			// Check the highlight button accordingly if highlightByDefault is true
-			if(findbartweak.highlightByDefault.value) {
+			if(findbartweak.prefAid.highlightByDefault) {
 				gFindBar.getElement("highlight").checked = true;
 			}
 			
@@ -309,9 +285,9 @@ var findbartweak = {
 			var delay = 25;
 			
 			// Delay highlights if search term is too short
-			if(findbartweak.minNoDelay.value > 0
+			if(findbartweak.prefAid.minNoDelay > 0
 			&& this._findField.value.length > 0
-			&& this._findField.value.length < findbartweak.minNoDelay.value) {
+			&& this._findField.value.length < findbartweak.prefAid.minNoDelay) {
 				delay = findbartweak.HIGHLIGHT_DELAY;
 				
 				// Remove highlights when hitting Esc
@@ -363,12 +339,12 @@ var findbartweak = {
 			findbartweak.FILLGRID = false;
 			findbartweak.cleanHighlightGrid();
 			// This part can't be in gridOnOff(), its called a lot outside of toggleHighlight()
-			if(findbartweak.useGrid.value) {
+			if(findbartweak.prefAid.useGrid) {
 				findbartweak.FILLGRID = findbartweak.resetHighlightGrid();
 			}
 			
 			var levels = null;
-			if(findbartweak.useCounter.value) {
+			if(findbartweak.prefAid.useCounter) {
 				var levels = [];
 				findbartweak.highlights = [];
 			}
@@ -412,7 +388,7 @@ var findbartweak = {
 				if(this._highlightDoc(aHighlight, aWord, win.frames[i], nextLevel)) {
 					textFound = true;
 					if(aHighlight && findbartweak.FILLGRID && win == this.browser.contentWindow) {
-						findbartweak.FILLGRID = (findbartweak.toAddtoGrid.push( { node: win.frames[i].frameElement, pattern: true } ) > findbartweak.gridLimit.value) ? false : true;
+						findbartweak.FILLGRID = (findbartweak.toAddtoGrid.push( { node: win.frames[i].frameElement, pattern: true } ) > findbartweak.prefAid.gridLimit) ? false : true;
 					}
 				}
 				if(aLevel) {
@@ -448,9 +424,9 @@ var findbartweak = {
 						if(findbartweak.FILLGRID && win == this.browser.contentWindow) {
 							var editableNode = this._getEditableNode(retRange.startContainer);
 							if(editableNode) {
-								findbartweak.FILLGRID = (findbartweak.toAddtoGrid.push( { node: editableNode, pattern: true } ) > findbartweak.gridLimit.value) ? false : true;
+								findbartweak.FILLGRID = (findbartweak.toAddtoGrid.push( { node: editableNode, pattern: true } ) > findbartweak.prefAid.gridLimit) ? false : true;
 							} else {
-								findbartweak.FILLGRID = (findbartweak.toAddtoGrid.push( { node: retRange, pattern: false } ) > findbartweak.gridLimit.value) ? false : true;
+								findbartweak.FILLGRID = (findbartweak.toAddtoGrid.push( { node: retRange, pattern: false } ) > findbartweak.prefAid.gridLimit) ? false : true;
 							}
 						}
 					}
@@ -495,7 +471,7 @@ var findbartweak = {
 					range.setStart(range.startContainer, range.startOffset + aString.length);
 				} else if (aTextNode != range.endContainer || aOffset != range.endOffset) {
 					fSelection.removeRange(range);
-					if(findbartweak.useGrid.value || findbartweak.useCounter.value) {
+					if(findbartweak.prefAid.useGrid || findbartweak.prefAid.useCounter) {
 						findbartweak.documentReHighlight = true;
 					}
 					if (fSelection.rangeCount == 0) {
@@ -534,7 +510,7 @@ var findbartweak = {
 				if (shouldDelete[i]) {
 					var r = fSelection.getRangeAt(i);
 					fSelection.removeRange(r);
-					if(findbartweak.useGrid.value || findbartweak.useCounter.value) {
+					if(findbartweak.prefAid.useGrid || findbartweak.prefAid.useCounter) {
 						findbartweak.documentReHighlight = true;
 					}
 				}
@@ -551,7 +527,7 @@ var findbartweak = {
 			if (range) {
 				if (aTextNode != range.endContainer || aOffset != range.endOffset) {
 					fSelection.removeRange(range);
-					if(findbartweak.useGrid.value || findbartweak.useCounter.value) {
+					if(findbartweak.prefAid.useGrid || findbartweak.prefAid.useCounter) {
 						findbartweak.documentReHighlight = true;
 					}
 					if (fSelection.rangeCount == 0) {
@@ -563,7 +539,7 @@ var findbartweak = {
 	},
 
 	moveHighlightsArray: function(level) {
-		if(!findbartweak.useCounter.value) { return; }
+		if(!findbartweak.prefAid.useCounter) { return; }
 		
 		for(var l=0; l<level.length; l++) {
 			if(typeof(level[l].highlights) != 'undefined') {
@@ -606,7 +582,7 @@ var findbartweak = {
 	},
 	
 	changeHighlightColor: function(which) {
-		var m = findbartweak.highlightColor.value.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
+		var m = findbartweak.prefAid.highlightColor.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
 		if(!m) { return false; }
 		if(m[1].length === 6) { // 6-char notation
 			var rgb = {
@@ -628,10 +604,10 @@ var findbartweak = {
 		
 		if(0.213 * rgb.r + 0.715 * rgb.g + 0.072 * rgb.b < 0.5) {
 			if(!which || which == 'textHighlightBackground') { findbartweak.textHighlightBackground.value = '#FFFFFF'; }
-			if(!which || which == 'textHighlightForeground') { findbartweak.textHighlightForeground.value = findbartweak.highlightColor.value; }
+			if(!which || which == 'textHighlightForeground') { findbartweak.textHighlightForeground.value = findbartweak.prefAid.highlightColor; }
 		}
 		else {
-			if(!which || which == 'textHighlightBackground') { findbartweak.textHighlightBackground.value = findbartweak.highlightColor.value; }
+			if(!which || which == 'textHighlightBackground') { findbartweak.textHighlightBackground.value = findbartweak.prefAid.highlightColor; }
 			if(!which || which == 'textHighlightForeground') { findbartweak.textHighlightForeground.value = '#000000'; }
 		}
 		
@@ -650,14 +626,14 @@ var findbartweak = {
 	
 	// Toggles the grid between in the scrollbar and by the scrollbar
 	moveGrid: function() {
-		if(findbartweak.gridInScrollbar.value && !findbartweak.grid.hasAttribute('inScrollbar')) {
+		if(findbartweak.prefAid.gridInScrollbar && !findbartweak.grid.hasAttribute('inScrollbar')) {
 			gBrowser.mCurrentBrowser.parentNode.insertBefore(findbartweak.grid, gBrowser.mCurrentBrowser);
 			findbartweak.grid.setAttribute('inScrollbar', 'true');
 			findbartweak.grid.removeAttribute('hidden');
 			findbartweak.splitter.setAttribute('hidden', 'true');
 			findbartweak.blocker.setAttribute('hidden', 'true');
 		}
-		else if(!findbartweak.gridInScrollbar.value && findbartweak.grid.hasAttribute('inScrollbar')) {
+		else if(!findbartweak.prefAid.gridInScrollbar && findbartweak.grid.hasAttribute('inScrollbar')) {
 			findbartweak.panel.appendChild(findbartweak.grid);
 			findbartweak.grid.removeAttribute('inScrollbar');
 			findbartweak.blocker.removeAttribute('hidden');
@@ -670,7 +646,7 @@ var findbartweak = {
 		findbartweak.blocker.style.marginLeft = '';
 		findbartweak.grid.style.marginLeft = '';
 				
-		if(findbartweak.gridInScrollbar.value) {
+		if(findbartweak.prefAid.gridInScrollbar) {
 			findbartweak.blocker.setAttribute('hidden', 'true');
 			findbartweak.timerAid.init('margin', function() {
 				findbartweak.grid.style.marginLeft = gBrowser.mCurrentBrowser.clientWidth - findbartweak.SCROLLBAR_WIDTH +'px';
@@ -679,7 +655,7 @@ var findbartweak = {
 		else {
 			findbartweak.blocker.removeAttribute('hidden');
 			findbartweak.timerAid.init('margin', function() {
-				findbartweak.blocker.style.marginLeft = gBrowser.mCurrentBrowser.clientWidth - findbartweak.SCROLLBAR_WIDTH - (!findbartweak.grid.hidden ? findbartweak.gridWidth.value + (!findbartweak.splitter.hidden ? 4 : 0) : 0) +'px';
+				findbartweak.blocker.style.marginLeft = gBrowser.mCurrentBrowser.clientWidth - findbartweak.SCROLLBAR_WIDTH - (!findbartweak.grid.hidden ? findbartweak.prefAid.gridWidth + (!findbartweak.splitter.hidden ? 4 : 0) : 0) +'px';
 			}, 500);
 		}
 	},
@@ -687,10 +663,10 @@ var findbartweak = {
   	// Updates the grid width values when the window (and as such the grid) is resized
 	windowResize: function() {
 		findbartweak.timerAid.init('resize', function() {
-			if(findbartweak.useGrid.value && findbartweak.grid.getAttribute('width')) {
-				findbartweak.gridWidth.value = findbartweak.grid.getAttribute('width');
+			if(findbartweak.prefAid.useGrid && findbartweak.grid.getAttribute('width')) {
+				findbartweak.prefAid.gridWidth = findbartweak.grid.getAttribute('width');
 			}
-			findbartweak.prepare(findbartweak.documentHighlighted && findbartweak.useGrid.value);
+			findbartweak.prepare(findbartweak.documentHighlighted && findbartweak.prefAid.useGrid);
 		}, 250);
 	},
 	
@@ -761,7 +737,7 @@ var findbartweak = {
 			
 			// If any part of the row's range is within the match's range, highlight it
 			if (( absTop >= row_top || absBot >= row_top ) && ( absTop <= row_bottom || absBot <= row_bottom )) {
-				row.style.backgroundColor = findbartweak.highlightColor.value;
+				row.style.backgroundColor = findbartweak.prefAid.highlightColor;
 				row.setAttribute('scrollto', Math.floor(rect.top + findbartweak._scrollTop));
 				row.setAttribute('scrollheight', Math.floor(rect.bottom - rect.top));
 				findbartweak.listenerAid.add(row, 'click', function() { findbartweak.scrollTo(this); }, false);
@@ -777,12 +753,12 @@ var findbartweak = {
 		}
 	},
 	
-	// Opens and closes the grid accordingly and positions it if !findbartweak.gridInScrollbar.value
+	// Opens and closes the grid accordingly and positions it if !findbartweak.prefAid.gridInScrollbar
 	gridOnOff: function() {
-		if(!findbartweak.useGrid.value
+		if(!findbartweak.prefAid.useGrid
 		|| !findbartweak.documentHighlighted
 		|| gBrowser.getNotificationBox().currentNotification != null) {
-			if(!findbartweak.gridInScrollbar.value) {
+			if(!findbartweak.prefAid.gridInScrollbar) {
 				findbartweak.grid.setAttribute('hidden', 'true');
 				findbartweak.marginGrid();
 			}
@@ -791,7 +767,7 @@ var findbartweak = {
 		}
 		else {	
 			findbartweak.grid.removeAttribute('hidden');
-			if(!findbartweak.gridInScrollbar.value) {
+			if(!findbartweak.prefAid.gridInScrollbar) {
 				findbartweak.panel.setAttribute('Horient', 'true');
 				findbartweak.marginGrid();
 			}
@@ -807,7 +783,7 @@ var findbartweak = {
 	
 	toggleCounter: function() {
 		if(!findbartweak.counter) {
-			if(!findbartweak.useCounter.value) { return; }
+			if(!findbartweak.prefAid.useCounter) { return; }
 			
 			findbartweak.counter = {
 				node: document.createElement('label'),
@@ -820,7 +796,7 @@ var findbartweak = {
 			findbartweak.counter.node = findbartweak.findbar.insertBefore(findbartweak.counter.node, findbartweak.findbar.getElementsByClassName('findbar-textbox')[0].nextSibling);
 		}
 		
-		if(!findbartweak.useCounter.value) {
+		if(!findbartweak.prefAid.useCounter) {
 			findbartweak.counter.node.setAttribute('collapsed', 'true');
 			gFindBar.onFindAgainCommand = gFindBar._onFindAgainCommand;
 		}
@@ -837,7 +813,7 @@ var findbartweak = {
 	},
 	
 	fillHighlightCounter: function(notFound) {
-		if(!findbartweak.useCounter.value) { return; }
+		if(!findbartweak.prefAid.useCounter) { return; }
 		
 		if(notFound) {
 			findbartweak.counter.value = '('+gFindBar._notFoundStr+')';
@@ -917,7 +893,7 @@ var findbartweak = {
 		findbartweak.aboutBlankCollapse();
 		findbartweak.hideOnChrome();
 		
-		if(gFindBar.hidden && (findbartweak.documentHighlighted || findbartweak.documentReHighlight) && findbartweak.hideWhenFinderHidden.value) {
+		if(gFindBar.hidden && (findbartweak.documentHighlighted || findbartweak.documentReHighlight) && findbartweak.prefAid.hideWhenFinderHidden) {
 			gFindBar.toggleHighlight(false);
 		}
 		else if(findbartweak.documentReHighlight) {
@@ -954,7 +930,7 @@ var findbartweak = {
 			
 			if(doc == findbartweak.contentDocument) {
 				findbartweak.hideOnChrome();
-				gFindBar.toggleHighlight(findbartweak.documentHighlighted && (!gFindBar.hidden || !findbartweak.hideWhenFinderHidden.value) );
+				gFindBar.toggleHighlight(findbartweak.documentHighlighted && (!gFindBar.hidden || !findbartweak.prefAid.hideWhenFinderHidden) );
 			} else if(doc.documentElement) {
 				doc.documentElement.setAttribute('reHighlight', 'true');
 			}
@@ -965,7 +941,7 @@ var findbartweak = {
 	autoPagerInserted: function(e) {
 		if(findbartweak.contentDocument == e.originalTarget.ownerDocument) {
 			findbartweak.hideOnChrome();
-			gFindBar.toggleHighlight(findbartweak.documentHighlighted && (!gFindBar.hidden || !findbartweak.hideWhenFinderHidden.value) );
+			gFindBar.toggleHighlight(findbartweak.documentHighlighted && (!gFindBar.hidden || !findbartweak.prefAid.hideWhenFinderHidden) );
 		} else {
 			e.originalTarget.ownerDocument.documentElement.setAttribute('reHighlight', 'true');
 		}
@@ -982,7 +958,7 @@ var findbartweak = {
 				// No need to call if there is nothing to find
 				if(browser == gBrowser.mCurrentBrowser) {
 					if(request && !request.isPending()) {
-						gFindBar.toggleHighlight(findbartweak.documentHighlighted && (!gFindBar.hidden || !findbartweak.hideWhenFinderHidden.value) );
+						gFindBar.toggleHighlight(findbartweak.documentHighlighted && (!gFindBar.hidden || !findbartweak.prefAid.hideWhenFinderHidden) );
 					}
 				}
 				else if(browser.contentDocument && browser.contentDocument.documentElement) {
@@ -1013,7 +989,7 @@ var findbartweak = {
 			}
 			
 			// Fix for a very stupid bug where the page would be rendered above the grid
-			if(findbartweak.useGrid.value && !findbartweak.gridInScrollbar.value) {
+			if(findbartweak.prefAid.useGrid && !findbartweak.prefAid.gridInScrollbar) {
 				findbartweak.grid.setAttribute('hidden', 'true');
 				findbartweak.splitter.setAttribute('hidden', 'true');
 			}
@@ -1153,7 +1129,7 @@ var findbartweak = {
 			// First the grid itself
 			var grid = document.createElement('grid');
 			grid.setAttribute('class', 'fbt-highlight-grid');
-			grid.setAttribute('width', findbartweak.gridWidth.value);
+			grid.setAttribute('width', findbartweak.prefAid.gridWidth);
 			grid.setAttribute('context', 'findbarMenu');
 			if(gBrowser.mCurrentBrowser.currentURI.spec == 'about:blank') {
 				grid.setAttribute('collapsed', 'true');
@@ -1162,7 +1138,7 @@ var findbartweak = {
 			// preceeds gridOnOff(), works better on starting up with special tabs such as the Speed Dial add-on
 			// (without this the grid would initialize as visible for some reason and screw up the layout, probably a question of timing in gridOnOff() )
 			// I already fixed Speed Dial specifically but I'm leaving this here to prevent something similar with another possible add-on
-			if(!findbartweak.gridInScrollbar.value && !findbartweak.documentHighlighted) {
+			if(!findbartweak.prefAid.gridInScrollbar && !findbartweak.documentHighlighted) {
 				grid.setAttribute('hidden', 'true');
 			}
 			
@@ -1313,7 +1289,7 @@ var findbartweak = {
 			TabView.enableSearch(event);
 		}
 		else {
-			if(gFindBar.hidden || !findbartweak.ctrlFCloses.value) {
+			if(gFindBar.hidden || !findbartweak.prefAid.ctrlFCloses) {
 				gFindBar.onFindCommand();
 				gFindBar.open();
 				if(gFindBar._findField.value) {
@@ -1328,7 +1304,7 @@ var findbartweak = {
 	
 	// A few toggle functions for simple features
 	toggleClose: function() {
-		if(findbartweak.hideClose.value) {
+		if(findbartweak.prefAid.hideClose) {
 			gFindBar.setAttribute('noClose', 'true');
 		} else {
 			gFindBar.removeAttribute('noClose');
@@ -1336,7 +1312,7 @@ var findbartweak = {
 	},
 	
 	toggleLabels: function() {
-		if(findbartweak.hideLabels.value) {
+		if(findbartweak.prefAid.hideLabels) {
 			gFindBar.setAttribute('hideLabels', 'true');
 		} else {
 			gFindBar.removeAttribute('hideLabels');
@@ -1345,7 +1321,7 @@ var findbartweak = {
 	
 	// Controls position of Findbar when it's sent to top
 	toggleTop: function() {
-		if(findbartweak.movetoTop.value) {
+		if(findbartweak.prefAid.movetoTop) {
 			// We need this to be first to "remove" the findbar from the bottombox so we can use correct values below
 			gFindBar.setAttribute('movetotop', 'true');
 			
@@ -1387,7 +1363,7 @@ var findbartweak = {
 	
 	// Handles the position of the findbar
 	moveTop: function() {
-		if(!findbartweak.movetoTop.value || gFindBar.hasAttribute('hidden')) { return; }
+		if(!findbartweak.prefAid.movetoTop || gFindBar.hasAttribute('hidden')) { return; }
 		
 		// If the 'layer' attribute isn't removed the findbar will lockup constantly (I have no idea what this attribute does though...)
 		findbartweak.bottombox.removeAttribute('layer');
@@ -1437,7 +1413,7 @@ var findbartweak = {
 				
 				if(findbartweak.panel._hasHighlightGrid
 				&& !findbartweak.grid.hasAttribute('hidden')
-				&& !findbartweak.gridInScrollbar.value) {
+				&& !findbartweak.prefAid.gridInScrollbar) {
 					findbartweak.style.maxWidth -= findbartweak.grid.getAttribute('width');
 					if(!findbartweak.splitter.hasAttribute('hidden')) {
 						findbartweak.style.maxWidth -= 4;
@@ -1493,26 +1469,26 @@ var findbartweak = {
 	
 	findPersonaPosition: function() {
 		if(findbartweak.mainWindow.getAttribute('lwtheme') != 'true') {
-			findbartweak.lwtheme.bgImage.value = '';
-			findbartweak.lwtheme.bgWidth.value = 0;
-			findbartweak.lwtheme.color.value = '';
-			findbartweak.lwtheme.bgColor.value = '';
+			findbartweak.prefAid.lwthemebgImage = '';
+			findbartweak.prefAid.lwthemebgWidth = 0;
+			findbartweak.prefAid.lwthemecolor = '';
+			findbartweak.prefAid.lwthemebgColor = '';
 			findbartweak.stylePersonaFindBar();
 			return;
 		}
 		
 		var windowStyle = document.defaultView.getComputedStyle(findbartweak.mainWindow);
-		if(findbartweak.lwtheme.bgImage.value != windowStyle.getPropertyValue('background-image') && windowStyle.getPropertyValue('background-image') != 'none') {
-			findbartweak.lwtheme.bgImage.value = windowStyle.getPropertyValue('background-image');
-			findbartweak.lwtheme.color.value = windowStyle.getPropertyValue('color');
-			findbartweak.lwtheme.bgColor.value = windowStyle.getPropertyValue('background-color');
-			findbartweak.lwtheme.bgWidth.value = 0;
+		if(findbartweak.prefAid.lwthemebgImage != windowStyle.getPropertyValue('background-image') && windowStyle.getPropertyValue('background-image') != 'none') {
+			findbartweak.prefAid.lwthemebgImage = windowStyle.getPropertyValue('background-image');
+			findbartweak.prefAid.lwthemecolor = windowStyle.getPropertyValue('color');
+			findbartweak.prefAid.lwthemebgColor = windowStyle.getPropertyValue('background-color');
+			findbartweak.prefAid.lwthemebgWidth = 0;
 			
 			// We need to load the image so it populates so we can find out its width
 			findbartweak.stylePersonaFindBar();
 		
 			findbartweak.lwtheme.image = new Image();
-			findbartweak.lwtheme.image.src = findbartweak.lwtheme.bgImage.value.substr(5, findbartweak.lwtheme.bgImage.value.length - 8);
+			findbartweak.lwtheme.image.src = findbartweak.prefAid.lwthemebgImage.substr(5, findbartweak.prefAid.lwthemebgImage.length - 8);
 			findbartweak.findPersonaWidth();
 			return;
 		}
@@ -1521,11 +1497,11 @@ var findbartweak = {
 	},
 	
 	findPersonaWidth: function() {
-		if(findbartweak.lwtheme.bgWidth.value == 0 && findbartweak.lwtheme.image.naturalWidth != 0) {
-			findbartweak.lwtheme.bgWidth.value = findbartweak.lwtheme.image.naturalWidth;
+		if(findbartweak.prefAid.lwthemebgWidth == 0 && findbartweak.lwtheme.image.naturalWidth != 0) {
+			findbartweak.prefAid.lwthemebgWidth = findbartweak.lwtheme.image.naturalWidth;
 		}
 		
-		if(findbartweak.lwtheme.bgWidth.value != 0) {
+		if(findbartweak.prefAid.lwthemebgWidth != 0) {
 			findbartweak.stylePersonaFindBar();
 			return;
 		}
@@ -1537,11 +1513,11 @@ var findbartweak = {
 	stylePersonaFindBar: function() {
 		findbartweak.lwtheme.string = findbartweak.style.string;
 		
-		if(findbartweak.lwtheme.bgImage.value != '') {
-			findbartweak.lwtheme.string += ' background-image: ' + findbartweak.lwtheme.bgImage.value + ';';
-			findbartweak.lwtheme.string += ' background-color: ' + findbartweak.lwtheme.color.value + ';';
-			findbartweak.lwtheme.string += ' color: ' + findbartweak.lwtheme.color.value + ';';
-			findbartweak.lwtheme.string += ' background-position: ' + (-findbartweak.style.left - (findbartweak.lwtheme.bgWidth.value - findbartweak.mainWindow.clientWidth)) + 'px ' + (-findbartweak.style.top) + 'px;';
+		if(findbartweak.prefAid.lwthemebgImage != '') {
+			findbartweak.lwtheme.string += ' background-image: ' + findbartweak.prefAid.lwthemebgImage + ';';
+			findbartweak.lwtheme.string += ' background-color: ' + findbartweak.prefAid.lwthemecolor + ';';
+			findbartweak.lwtheme.string += ' color: ' + findbartweak.prefAid.lwthemecolor + ';';
+			findbartweak.lwtheme.string += ' background-position: ' + (-findbartweak.style.left - (findbartweak.prefAid.lwthemebgWidth - findbartweak.mainWindow.clientWidth)) + 'px ' + (-findbartweak.style.top) + 'px;';
 		}
 		
 		gFindBar.setAttribute('style', findbartweak.lwtheme.string);
@@ -1551,7 +1527,7 @@ var findbartweak = {
 	barlesqueFix: function() {
 		if(!findbartweak.bottombox.classList.contains('barlesque-bar')) { return; }
 		
-		findbartweak.bottombox.style.maxHeight = (findbartweak.movetoTop.value && findbartweak.bottombox.getAttribute('findmode')) ? '0px' : '';
+		findbartweak.bottombox.style.maxHeight = (findbartweak.prefAid.movetoTop && findbartweak.bottombox.getAttribute('findmode')) ? '0px' : '';
 	}	
 };
 

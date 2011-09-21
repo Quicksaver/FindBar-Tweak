@@ -16,7 +16,7 @@ pref("extensions.findbartweak.gridLimit", 250);
 pref("extensions.findbartweak.minNoDelay", 3);
 pref("extensions.findbartweak.FAYTmode", 'quick');
 
-pref("extensions.findbartweak.lwtheme.bgImage", '');
-pref("extensions.findbartweak.lwtheme.bgWidth", 0);
-pref("extensions.findbartweak.lwtheme.color", '');
-pref("extensions.findbartweak.lwtheme.bgColor", '');
+pref("extensions.findbartweak.lwthemebgImage", '');
+pref("extensions.findbartweak.lwthemebgWidth", 0);
+pref("extensions.findbartweak.lwthemecolor", '');
+pref("extensions.findbartweak.lwthemebgColor", '');

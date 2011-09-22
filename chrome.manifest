@@ -2,6 +2,7 @@ content   findbartweak                    chrome/content/
 
 locale    findbartweak      en-US         chrome/locale/en-US/
 locale    findbartweak      de            chrome/locale/de/
+locale    findbartweak      de-DE         chrome/locale/de/
 locale    findbartweak      pt-PT         chrome/locale/pt-PT/
 locale    findbartweak      sv-SE         chrome/locale/sv-SE/
 

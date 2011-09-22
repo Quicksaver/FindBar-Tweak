@@ -1,0 +1,34 @@
+<!ENTITY findbartweakOptions.title "Barra de Procura Refinada">
+<!ENTITY findbartweakOptHighlights.label "Realces">
+<!ENTITY findbartweakOptGeneral.label "Geral">
+
+<!ENTITY findbartweakOptgen.label "Opções da Barra de Procura">
+<!ENTITY findbartweakOptdisplay.label "Opções de Visualização">
+<!ENTITY findbartweakOptgrid.label "Grelha de Realces">
+
+<!ENTITY findbartweakOpthighlightByDefault.label "Realçar todas as ocorrências por defeito">
+<!ENTITY findbartweakOpthideWhenFinderHidden.label "Remover os realces ao fechar a barra de procura">
+<!ENTITY findbartweakOptuseGrid.label "Usar grelha de realces">
+<!ENTITY findbartweakOptgridInScrollbar.label "Mostrar a grelha na barra de rolagem">
+<!ENTITY findbartweakOptasterix.label "* Pode ser necessário actualizar a páginar para aplicar">
+<!ENTITY findbartweakOptuseCounter.label "Mostrar número de ocorrências na barra de procura">
+<!ENTITY findbartweakOptcolor.label "Cor dos realces">
+<!ENTITY findbartweakOptgridLimit.labela "Não usar a grelha se exceder os">
+<!ENTITY findbartweakOptgridLimit.labelb "realces">
+<!ENTITY findbartweakOptminNoDelay.labela "Atrasar o realce se o termo de procura for menor que">
+<!ENTITY findbartweakOptminNoDelay.labelb "caracteres">
+
+<!ENTITY findbartweakOpthideLabels.label "Esconder o texto dos botões">
+<!ENTITY findbartweakOpthideClose.label "Esconder o botão de fecho da barra de procura">
+<!ENTITY findbartweakOptmovetoTop.label "Mover a barra de procura para o topo da janela">
+<!ENTITY findbartweakOptonStartup.label "Lembrar o estado aberto/fechado da barra de procura ao iniciar">
+
+<!ENTITY findbartweakOptkeepButtons.label "Mostrar botões na barra de procura rápida">
+<!ENTITY findbartweakOptFAYT.label "Procurar logo ao introduzir texto">
+<!ENTITY findbartweakOptFAYTTimeout.beforeLabel "Fechar automaticamente após">
+<!ENTITY findbartweakOptFAYTTimeout.afterLabel "segundos">
+<!ENTITY findbartweakOptFAYTmode.quickFind "Usar a barra de procura rápida se não estiver já aberta">
+<!ENTITY findbartweakOptFAYTmode.normalFind "Usar sempre a barra de procura normal">
+
+<!ENTITY findbartweakOptctrlFCloses.win "Ctrl+F para também fechar a barra de procura">
+<!ENTITY findbartweakOptctrlFCloses.mac "Comando+F para também fechar a barra de procura">

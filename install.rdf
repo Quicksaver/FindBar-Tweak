@@ -4,8 +4,6 @@
 		<em:id>fbt@quicksaver</em:id>
 		<em:version>0.5.5</em:version>
 		<em:type>2</em:type>
-		<em:name>FindBar Tweak</em:name>
-		<em:description>Tweak your FindBar the way you like it!</em:description>
 		<em:creator>Quicksaver</em:creator>
 		<em:homepageURL>https://addons.mozilla.org/en-US/firefox/addon/findbar-tweak/</em:homepageURL>
 		<em:iconURL>chrome://findbartweak/skin/icon.png</em:iconURL>
@@ -18,5 +16,20 @@
 				<em:maxVersion>9.0a1</em:maxVersion>
 			</Description>
 		</em:targetApplication>
+	
+		<em:localized>
+			<Description>
+				<em:locale>en-US</em:locale>
+				<em:name>FindBar Tweak</em:name>
+				<em:description>Tweak your FindBar the way you like it!</em:description>
+			</Description>
+		</em:localized>
+		<em:localized>
+			<Description>
+				<em:locale>pt-PT</em:locale>
+				<em:name>Barra de Procura Refinada</em:name>
+				<em:description>Refine a sua barra de procura como realmente gosta!</em:description>
+			</Description>
+		</em:localized>
 	</Description>      
 </RDF>

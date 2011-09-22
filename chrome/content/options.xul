@@ -4,8 +4,6 @@
 <!DOCTYPE window [
   <!ENTITY % optionsDTD SYSTEM "chrome://findbartweak/locale/options.dtd">
   %optionsDTD;
-  <!ENTITY % platformDTD SYSTEM "chrome://findbartweak-os/locale/options.dtd">
-  %platformDTD;
 ]>
 
 <prefwindow xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -46,7 +44,7 @@
 					<groupbox align="start">
 						<caption label="&findbartweakOptgen.label;"/>
 						<checkbox label="&findbartweakOptonStartup.label;" preference="pref-onStartup"/>
-						<checkbox label="&findbartweakOptctrlFCloses.label;" preference="pref-ctrlFCloses"/>
+						<checkbox id="ctrlFClosesCheckbox" label="&findbartweakOptctrlFCloses.win;" preference="pref-ctrlFCloses"/>
 					</groupbox>
 					<groupbox align="start">
 						<caption label="&findbartweakOptdisplay.label;"/>

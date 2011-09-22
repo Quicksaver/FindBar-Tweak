@@ -29,3 +29,6 @@
 <!ENTITY findbartweakOptFAYTTimeout.afterLabel "seconds">
 <!ENTITY findbartweakOptFAYTmode.quickFind "Use Quick Findbar if it isn't already opened">
 <!ENTITY findbartweakOptFAYTmode.normalFind "Always use regular Findbar">
+
+<!ENTITY findbartweakOptctrlFCloses.win "Ctrl+F also closes the Findbar">
+<!ENTITY findbartweakOptctrlFCloses.mac "Command+F also closes the Findbar">

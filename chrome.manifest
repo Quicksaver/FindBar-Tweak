@@ -1,8 +1,6 @@
 content   findbartweak                    chrome/content/
 
-locale    findbartweak      en-US         chrome/locale/en-US/common/
-locale    findbartweak-os   en-US         chrome/locale/en-US/win/
-locale    findbartweak-os   en-US         chrome/locale/en-US/mac/     os=Darwin
+locale    findbartweak      en-US         chrome/locale/en-US/
 
 skin      findbartweak      classic/1.0   chrome/skin/common/
 skin      findbartweak-os   classic/1.0   chrome/skin/linux/
@@ -11,3 +9,5 @@ skin      findbartweak-os   classic/1.0   chrome/skin/mac/     os=Darwin
 
 overlay  chrome://browser/content/browser.xul  chrome://findbartweak/content/overlay.xul
 style    chrome://browser/content/browser.xul  chrome://findbartweak/skin/overlay.css
+
+overlay  chrome://findbartweak/content/options.xul  chrome://findbartweak/content/optionsMac.xul  os=Darwin

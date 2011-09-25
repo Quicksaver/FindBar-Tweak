@@ -351,24 +351,37 @@ timerAid = {
 	timers: {},
 	
 	init: function(name, func, delay, type) {
-		if(this.timers[name]) {
-			this.timers[name].cancel();
-		}
+		this.cancel(name);
 		
 		var type = this.switchType(type);
-		this.timers[name] = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
-		this.timers[name].init(func, delay, type);
+		var self = this;
+		this.timers[name] = {
+			object: Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer),
+			handler: func
+		};
+		if(type == Components.interfaces.nsITimer.TYPE_ONE_SHOT) {
+			this.timers[name].object.init(function(aSubject, aTopic, aData) {
+				self.timers[name].handler(aSubject, aTopic, aData);
+				self.cancel(name);
+			}, delay, type);
+		}
+		else {
+			this.timers[name].object.init(this.timers[name].handler, delay, type);
+		}
 	},
 	
 	cancel: function(name) {
 		if(this.timers[name]) {
-			this.timers[name].cancel();
+			this.timers[name].object.cancel();
+			this.timers[name] = null;
+			return true;
 		}
+		return false;
 	},
 	
 	getTimer: function(name) {
 		if(this.timers[name]) {
-			return this.timers[name];
+			return this.timers[name].object;
 		}
 		return null;
 	},
@@ -410,7 +423,7 @@ prefAid = {
 	_prefObjects: {},
 	init: function(obj, branch, prefList) {
 		var Application = Components.classes["@mozilla.org/fuel/application;1"].getService(Components.interfaces.fuelIApplication);
-		this._self = obj;
+		this._listenerAid = obj.listenerAid;
 		
 		for(var i=0; i<prefList.length; i++) {
 			this._prefObjects[prefList[i]] = Application.prefs.get('extensions.'+branch+'.' + prefList[i]);
@@ -424,11 +437,11 @@ prefAid = {
 	},
 	
 	listen: function(pref, handler) {
-		this._self.listenerAid.add(this._prefObjects[pref], "change", handler);
+		this._listenerAid.add(this._prefObjects[pref], "change", handler);
 	},
 	
 	unlisten: function(pref, handler) {
-		this._self.listenerAid.remove(this._prefObjects[pref], "change", handler);
+		this._listenerAid.remove(this._prefObjects[pref], "change", handler);
 	},
 	
 	reset: function(pref) {

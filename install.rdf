@@ -2,18 +2,19 @@
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 	<Description about="urn:mozilla:install-manifest">
 		<em:id>fbt@quicksaver</em:id>
-		<em:version>0.5.5</em:version>
+		<em:version>0.x</em:version>
 		<em:type>2</em:type>
 		<em:creator>Quicksaver</em:creator>
 		<em:homepageURL>https://addons.mozilla.org/en-US/firefox/addon/findbar-tweak/</em:homepageURL>
 		<em:iconURL>chrome://findbartweak/skin/icon.png</em:iconURL>
 		<em:optionsURL>chrome://findbartweak/content/options.xul</em:optionsURL>
+		<em:bootstrap>true</em:bootstrap>
 		
 		<em:targetApplication>
 			<Description>
 				<em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
-				<em:minVersion>4.0</em:minVersion>
-				<em:maxVersion>9.0a1</em:maxVersion>
+				<em:minVersion>8.0</em:minVersion>
+				<em:maxVersion>22.0a2</em:maxVersion>
 			</Description>
 		</em:targetApplication>
 		
@@ -22,30 +23,6 @@
 				<em:locale>en-US</em:locale>
 				<em:name>FindBar Tweak</em:name>
 				<em:description>Tweak your FindBar the way you like it!</em:description>
-			</Description>
-		</em:localized>
-		<em:localized>
-			<Description>
-				<em:locale>de</em:locale>
-				<em:name>FindBar Tweak</em:name>
-				<em:description>Optimieren Sie Ihre Suchleiste, so wie Sie es brauchen!</em:description>
-				<em:translator>Wawuschel @ babelzilla</em:translator>
-			</Description>
-		</em:localized>
-		<em:localized>
-			<Description>
-				<em:locale>pt-PT</em:locale>
-				<em:name>Barra de Procura Refinada</em:name>
-				<em:description>Refine a sua barra de procura como realmente gosta!</em:description>
-				<em:translator>Quicksaver</em:translator>
-			</Description>
-		</em:localized>
-		<em:localized>
-			<Description>
-				<em:locale>sv-SE</em:locale>
-				<em:name>FindBar Tweak</em:name>
-				<em:description>Ställ in din söklist som du vill ha den!</em:description>
-				<em:translator>Lakrits @ babelzilla</em:translator>
 			</Description>
 		</em:localized>
 	</Description>      

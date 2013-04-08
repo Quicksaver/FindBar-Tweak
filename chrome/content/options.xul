@@ -1,11 +1,7 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
 <?xml-stylesheet href="chrome://findbartweak-os/skin/options.css" type="text/css"?>
-<!DOCTYPE window [
-  <!ENTITY % optionsDTD SYSTEM "chrome://findbartweak/locale/options.dtd">
-  %optionsDTD;
-]>
-
+<!DOCTYPE overlay SYSTEM "chrome://findbartweak/locale/options.dtd">
 <prefwindow xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 			id="findbartweak-options-window"
 			title="&findbartweakOptions.title;">
@@ -14,7 +10,7 @@
 			
 	<prefpane>
 		<preferences>
-			<preference id="pref-highlightByDefault" name="extensions.findbartweak.highlightByDefault" type="bool"/>
+			<!--<preference id="pref-highlightByDefault" name="extensions.findbartweak.highlightByDefault" type="bool"/>
 			<preference id="pref-hideWhenFinderHidden" name="extensions.findbartweak.hideWhenFinderHidden" type="bool"/>
 			<preference id="pref-useGrid" name="extensions.findbartweak.useGrid" type="bool"/>
 			<preference id="pref-gridInScrollbar" name="extensions.findbartweak.gridInScrollbar" type="bool"/>
@@ -30,7 +26,7 @@
 			<preference id="pref-minNoDelay" name="extensions.findbartweak.minNoDelay" type="int"/>
 			<preference id="pref-gridLimit" name="extensions.findbartweak.gridLimit" type="int"/>
 			<preference id="pref-ctrlFCloses" name="extensions.findbartweak.ctrlFCloses" type="bool"/>
-			<preference id="pref-FAYTmode" name="extensions.findbartweak.FAYTmode" type="string"/>
+			<preference id="pref-FAYTmode" name="extensions.findbartweak.FAYTmode" type="string"/>-->
 		</preferences>
 		
 		<tabbox id="findbartweakTabBox" flex="1">
@@ -41,7 +37,7 @@
 			
 			<tabpanels id="tabPanels" flex="1">
 				<tabpanel id="generalTab" orient="vertical">
-					<groupbox align="start">
+					<!--<groupbox align="start">
 						<caption label="&findbartweakOptgen.label;"/>
 						<checkbox label="&findbartweakOptonStartup.label;" preference="pref-onStartup"/>
 						<checkbox id="ctrlFClosesCheckbox" label="&findbartweakOptctrlFCloses.win;" preference="pref-ctrlFCloses"/>
@@ -71,11 +67,11 @@
 					        </vbox>
 							<radio class="FAYTmode" label="&findbartweakOptFAYTmode.normalFind;" value="normal"/>
 						</radiogroup>
-			        </groupbox>
+			        </groupbox>-->
 				</tabpanel>
 				
 				<tabpanel id="highlightsTab" orient="vertical">
-					<groupbox align="start">
+					<!--<groupbox align="start">
 						<caption label="&findbartweakOptHighlights.label;"/>
 						<checkbox label="&findbartweakOpthighlightByDefault.label;" preference="pref-highlightByDefault"/>
 						<checkbox label="&findbartweakOpthideWhenFinderHidden.label;" preference="pref-hideWhenFinderHidden"/>
@@ -103,7 +99,7 @@
 					<groupbox align="center">
 						<caption label="&findbartweakOptcolor.label;"/>
 						<colorpicker id="color" type="button" preference="pref-highlightColor" style="width: 50px;"/>
-					</groupbox>
+					</groupbox>-->
 				</tabpanel>
 			</tabpanels>
 		</tabbox>

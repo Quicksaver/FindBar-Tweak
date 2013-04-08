@@ -27,10 +27,11 @@
 // disable() - disables the add-on, in general the add-on disabling itself is a bad idea so I shouldn't use it
 // Note: Firefox 8 is the minimum version supported as the bootstrap requires the chrome.manifest file to be loaded, which was implemented in Firefox 8.
 
-let bootstrapVersion = '1.2.7';
+let bootstrapVersion = '1.2.8';
 let UNLOADED = false;
 let STARTED = false;
-let addonData = null;
+let Addon = {};
+let AddonData = null;
 let observerLOADED = false;
 let onceListeners = [];
 
@@ -160,11 +161,11 @@ function setResourceHandler() {
 	// chrome.manifest files are loaded automatically in Firefox 10+.
 	// Got it from https://developer.mozilla.org/en-US/docs/XPCOM_Interface_Reference/nsIComponentManager#addBootstrappedManifestLocation()
 	if(Services.vc.compare(Services.appinfo.platformVersion, "10.0") < 0) {
-		Cm.addBootstrappedManifestLocation(addonData.installPath);
+		Cm.addBootstrappedManifestLocation(AddonData.installPath);
 	}
 	
-	let alias = Services.io.newFileURI(addonData.installPath);
-	let resourceURI = (addonData.installPath.isDirectory()) ? alias.spec : 'jar:' + alias.spec + '!/';
+	let alias = Services.io.newFileURI(AddonData.installPath);
+	let resourceURI = (AddonData.installPath.isDirectory()) ? alias.spec : 'jar:' + alias.spec + '!/';
 	resourceURI += 'resource/';
 	
 	// Set the default strings for the add-on
@@ -188,12 +189,12 @@ function removeResourceHandler() {
 	// chrome.manifest files are loaded automatically in Firefox 10+.
 	// Got it from https://developer.mozilla.org/en-US/docs/XPCOM_Interface_Reference/nsIComponentManager#addBootstrappedManifestLocation()
 	if(Services.vc.compare(Services.appinfo.platformVersion, "10.0") < 0) {
-		Cm.removeBootstrappedManifestLocation(addonData.installPath);
+		Cm.removeBootstrappedManifestLocation(AddonData.installPath);
 	}
 }
 
 function disable() {
-	AddonManager.getAddonByID(addonData.id, function(addon) {
+	AddonManager.getAddonByID(AddonData.id, function(addon) {
 		addon.userDisabled = true;
 	});
 }
@@ -209,7 +210,13 @@ function continueStartup(aReason) {
 
 function startup(aData, aReason) {
 	UNLOADED = false;
-	addonData = aData;
+	AddonData = aData;
+	
+	// This includes the optionsURL property
+	AddonManager.getAddonByID(AddonData.id, function(addon) {
+		if(typeof(UNLOADED) == 'undefined' || UNLOADED) { return; }
+		Addon = addon;
+	});
 	
 	// add resource:// protocol handler so I can access my modules
 	setResourceHandler();
@@ -230,6 +237,7 @@ function shutdown(aData, aReason) {
 	}
 	
 	if(STARTED) {
+		closeOptions();
 		onShutdown(aReason);
 	}
 	

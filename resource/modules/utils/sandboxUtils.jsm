@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.0.8';
+moduleAid.VERSION = '2.0.9';
 moduleAid.LAZY = true;
 
 // window - Similarly to windowMediator.callOnMostRecent, the window property returns the most recent navigator:browser window object
@@ -65,6 +65,20 @@ this.closeCustomize = function() { loadSandboxTools(); return closeCustomize(); 
 
 // replaceObjStrings() - replace all objName and objPathString references in the node attributes and its children with the proper names
 this.replaceObjStrings = function(node) { loadSandboxTools(); return replaceObjStrings(node); };
+
+// openOptions() and closeOptions() - to open/close the extension's options dialog or focus it if already opened in case optionsURL is set
+// I'm not adding these to sandboxTools because closeOptions is always called when shutting down the add-on,
+// so this way it won't load the module when disabling the add-on if it hand't been loaded yet.
+this.openOptions = function() {
+	if(UNLOADED || !Addon.optionsURL) { return; }
+	if(!windowMediator.callOnMostRecent(function(aWindow) { aWindow.focus(); return true; }, null, Addon.optionsURL)) {
+		window.openDialog(Addon.optionsURL, '', 'chrome,resizable=false');
+	}
+};
+this.closeOptions = function() {
+	if(!Addon.optionsURL) { return; }
+	windowMediator.callOnAll(function(aWindow) { try { aWindow.close(); } catch(ex) {} }, null, Addon.optionsURL);
+};
 
 // setAttribute() - helper me that saves me the trouble of checking if the obj exists first everywhere in my scripts; yes I'm that lazy
 this.setAttribute = function(obj, attr, val) { loadAttributesTools(); return setAttribute(obj, attr, val); };

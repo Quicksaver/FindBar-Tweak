@@ -1,5 +1,9 @@
 moduleAid.VERSION = '1.0.0';
 
+this.doOpenOptions = function() {
+	openOptions();
+};
+
 this.updateButtonsUI = function() {
 	if(prefAid.keepButtons && gFindBar._findMode != gFindBar.FIND_NORMAL) {
 		var nodes = gFindBar.getElement("findbar-container").childNodes;
@@ -29,6 +33,8 @@ this.alwaysFindNormal = function(e) {
 };
 	
 moduleAid.LOADMODULE = function() {
+	overlayAid.overlayURI('chrome://browser/content/browser.xul', 'findbar');
+	
 	listenerAid.add(gFindBar, 'UpdatedUIFindBar', updateButtonsUI, false);
 	listenerAid.add(gFindBar, 'UpdatedUIFindBar', updateCSUI, false);
 	listenerAid.add(gFindBar, 'FoundFindBar', updateCSUI, false);
@@ -40,4 +46,6 @@ moduleAid.UNLOADMODULE = function() {
 	listenerAid.remove(gFindBar, 'UpdatedUIFindBar', updateCSUI, false);
 	listenerAid.remove(gFindBar, 'FoundFindBar', updateCSUI, false);
 	listenerAid.remove(gFindBar, 'WillOpenFindBar', alwaysFindNormal, true);
+	
+	overlayAid.removeOverlayURI('chrome://browser/content/browser.xul', 'findbar');
 };

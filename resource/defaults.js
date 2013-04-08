@@ -20,10 +20,6 @@ function startPreferences(window) {
 	preparePreferences(window);
 }
 
-function closePreferences() {
-	windowMediator.callOnAll(function(aWindow) { try { aWindow.close(); } catch(ex) {} }, null, "chrome://"+objPathString+"/content/options.xul");
-};
-
 function startConditions(aReason) {
 	return true;
 }
@@ -41,8 +37,6 @@ function onStartup(aReason) {
 }
 
 function onShutdown(aReason) {
-	closePreferences();
-	
 	// remove the add-on from all windows
 	windowMediator.callOnAll(stopAddon, null, null, true);
 	browserMediator.callOnAll(stopAddon, null, true);

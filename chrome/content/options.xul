@@ -6,8 +6,6 @@
 			id="findbartweak-options-window"
 			title="&findbartweakOptions.title;">
 
-	<script type="application/x-javascript" src="chrome://findbartweak/content/options.js"></script>
-			
 	<prefpane>
 		<preferences>
 			<!--<preference id="pref-highlightByDefault" name="extensions.findbartweak.highlightByDefault" type="bool"/>

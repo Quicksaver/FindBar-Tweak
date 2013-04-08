@@ -27,7 +27,7 @@
 // disable() - disables the add-on, in general the add-on disabling itself is a bad idea so I shouldn't use it
 // Note: Firefox 8 is the minimum version supported as the bootstrap requires the chrome.manifest file to be loaded, which was implemented in Firefox 8.
 
-let bootstrapVersion = '1.2.6';
+let bootstrapVersion = '1.2.7';
 let UNLOADED = false;
 let STARTED = false;
 let addonData = null;
@@ -42,11 +42,12 @@ Cu.import("resource://gre/modules/AddonManager.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
-// For some reason, PlacesUIUtils.jsm disappeared in FF21 (maybe before, it was present in FF17, I did not try any version in between yet, I might...)
-// (Maybe it's just a bug in the latest auroras?... Not important)
+// For some reason, PlacesUIUtils.jsm disappeared in FF21 (probably has to do with the whole PB restructuring that is going on)
 // So I'm adding the tools needed in it manually, makes no practical difference as far as I can tell
-XPCOMUtils.defineLazyServiceGetter(Services, "RDF", "@mozilla.org/rdf/rdf-service;1", "nsIRDFService");
-XPCOMUtils.defineLazyGetter(Services, "localStore", function() { return Services.RDF.GetDataSource("rdf:local-store"); });
+// Note: defining the localStore lazy getter on the Services object causes a ZC if it's never called.
+let PlacesUIUtils = {};
+XPCOMUtils.defineLazyServiceGetter(PlacesUIUtils, "RDF", "@mozilla.org/rdf/rdf-service;1", "nsIRDFService");
+XPCOMUtils.defineLazyGetter(PlacesUIUtils, "localStore", function() { return PlacesUIUtils.RDF.GetDataSource("rdf:local-store"); });
 
 XPCOMUtils.defineLazyServiceGetter(Services, "fuel", "@mozilla.org/fuel/application;1", "fuelIApplication");
 XPCOMUtils.defineLazyServiceGetter(Services, "navigator", "@mozilla.org/network/protocol;1?name=http", "nsIHttpProtocolHandler");

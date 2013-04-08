@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.2.3';
+moduleAid.VERSION = '2.2.4';
 moduleAid.LAZY = true;
 
 // overlayAid - to use overlays in my bootstraped add-ons. The behavior is as similar to what is described in https://developer.mozilla.org/en/XUL_Tutorial/Overlays as I could manage.
@@ -279,7 +279,7 @@ this.overlayAid = {
 		function showArcs(res, arcs) {
 			while(arcs.hasMoreElements()) {
 				var curArc = arcs.getNext().QueryInterface(Ci.nsIRDFResource);
-				var arcTargets = Services.localStore.GetTargets(res, curArc, true);
+				var arcTargets = PlacesUIUtils.localStore.GetTargets(res, curArc, true);
 				while(arcTargets.hasMoreElements()) {
 					var curTarget = arcTargets.getNext();
 					try {
@@ -296,17 +296,17 @@ this.overlayAid = {
 					}
 					catch(e) {
 						if(curTarget.Value) {
-							showArcs(curTarget, Services.localStore.ArcLabelsOut(curTarget));
+							showArcs(curTarget, PlacesUIUtils.localStore.ArcLabelsOut(curTarget));
 						}
 					}
 				}
 			}
 		}
 		
-		var allResources = Services.localStore.GetAllResources();
+		var allResources = PlacesUIUtils.localStore.GetAllResources();
 		while(allResources.hasMoreElements()) {
 			var curResource = allResources.getNext().QueryInterface(Ci.nsIRDFResource);
-			showArcs(curResource, Services.localStore.ArcLabelsOut(curResource));
+			showArcs(curResource, PlacesUIUtils.localStore.ArcLabelsOut(curResource));
 		}
 		
 		var uri = aWindow.document.baseURI;

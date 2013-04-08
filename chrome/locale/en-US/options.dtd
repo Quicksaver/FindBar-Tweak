@@ -1,3 +1,10 @@
 <!ENTITY findbartweakOptions.title "FindBar Tweak">
 <!ENTITY findbartweakOptHighlights.label "Highlights">
 <!ENTITY findbartweakOptGeneral.label "General">
+
+<!ENTITY findbartweakOptkeepButtons.label "Show buttons in the Quick Findbar">
+<!ENTITY findbartweakOptFAYT.label "Search for text when I start typing">
+<!ENTITY findbartweakOptFAYTTimeout.beforeLabel "Autoclose after">
+<!ENTITY findbartweakOptFAYTTimeout.afterLabel "seconds">
+<!ENTITY findbartweakOptFAYTmode.quickFind "Use Quick Findbar if it isn't already opened">
+<!ENTITY findbartweakOptFAYTmode.normalFind "Always use regular Findbar">

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.6';
+moduleAid.VERSION = '1.0.7';
 moduleAid.LAZY = true;
 
 // dependsOn - object that adds a dependson attribute functionality to xul preference elements.
@@ -86,6 +86,11 @@ this.dependsOn = {
 			}
 			
 			var pref = $(dependency[0]);
+			if(!pref) {
+				Cu.reportError("Element of ID '"+dependency[0]+"' could not be found!");
+				return;
+			}
+			
 			if(pref.localName != 'preference') {
 				pref = $(pref.getAttribute('preference'));
 			}

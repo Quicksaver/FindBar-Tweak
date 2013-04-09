@@ -5,6 +5,7 @@
 <!ENTITY findbartweakOptgen.label "Findbar Options">
 <!ENTITY findbartweakOptdisplay.label "Display Options">
 
+<!ENTITY findbartweakOpthideLabels.label "Hide button labels">
 <!ENTITY findbartweakOpthideClose.label "Hide the Findbar close button">
 <!ENTITY findbartweakOptonStartup.label "Remember Findbar opened/closed state on startup">
 

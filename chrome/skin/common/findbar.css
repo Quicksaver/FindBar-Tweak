@@ -1,8 +1,15 @@
 @namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
 @-moz-document url("chrome://browser/content/browser.xul") {
 
+	#FindToolbar[hideLabels] toolbarbutton label,
+	#FindToolbar[hideLabels] checkbox label,
 	#FindToolbar[noClose] .findbar-closebutton {
 		display: none;
+	}
+	
+	#FindToolbar[hideLabels] toolbarbutton image,
+	#FindToolbar[hideLabels] checkbox image {
+		margin-right: 0;
 	}
 	
 }

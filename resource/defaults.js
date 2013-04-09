@@ -6,6 +6,7 @@ var prefList = {
 	findbarHidden: true,
 	
 	hideClose: false,
+	hideLabels: false,
 	
 	ctrlFCloses: true,
 	keepButtons: false,

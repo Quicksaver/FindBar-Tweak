@@ -31,6 +31,10 @@ this.alwaysFindNormal = function(e) {
 		gFindBar.open(gFindBar.FIND_NORMAL);
 	}
 };
+
+this.toggleClose = function() {
+	toggleAttribute(gFindBar, 'noClose', prefAid.hideClose);
+};
 	
 moduleAid.LOADMODULE = function() {
 	overlayAid.overlayURI('chrome://browser/content/browser.xul', 'findbar');
@@ -39,9 +43,17 @@ moduleAid.LOADMODULE = function() {
 	listenerAid.add(gFindBar, 'UpdatedUIFindBar', updateCSUI, false);
 	listenerAid.add(gFindBar, 'FoundFindBar', updateCSUI, false);
 	listenerAid.add(gFindBar, 'WillOpenFindBar', alwaysFindNormal, true);
+	
+	prefAid.listen('hideClose', toggleClose);
+	
+	toggleClose();
 };
 
 moduleAid.UNLOADMODULE = function() {
+	prefAid.unlisten('hideClose', toggleClose);
+	
+	removeAttribute(gFindBar, 'noClose');
+	
 	listenerAid.remove(gFindBar, 'UpdatedUIFindBar', updateButtonsUI, false);
 	listenerAid.remove(gFindBar, 'UpdatedUIFindBar', updateCSUI, false);
 	listenerAid.remove(gFindBar, 'FoundFindBar', updateCSUI, false);

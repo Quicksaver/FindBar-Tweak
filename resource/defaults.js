@@ -5,6 +5,8 @@ var prefList = {
 	onStartup: false,
 	findbarHidden: true,
 	
+	hideClose: false,
+	
 	ctrlFCloses: true,
 	keepButtons: false,
 	FAYTmode: 'quick'

@@ -3,7 +3,9 @@
 <!ENTITY findbartweakOptGeneral.label "General">
 
 <!ENTITY findbartweakOptgen.label "Findbar Options">
+<!ENTITY findbartweakOptdisplay.label "Display Options">
 
+<!ENTITY findbartweakOpthideClose.label "Hide the Findbar close button">
 <!ENTITY findbartweakOptonStartup.label "Remember Findbar opened/closed state on startup">
 
 <!ENTITY findbartweakOptkeepButtons.label "Show buttons in the Quick Findbar">

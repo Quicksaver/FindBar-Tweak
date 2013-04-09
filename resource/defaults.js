@@ -2,6 +2,7 @@ var defaultsVersion = '1.0.0';
 var objName = 'findbartweak';
 var objPathString = 'findbartweak';
 var prefList = {
+	ctrlFCloses: true,
 	keepButtons: false,
 	FAYTmode: 'quick'
 };
@@ -25,6 +26,8 @@ function startConditions(aReason) {
 }
 
 function onStartup(aReason) {
+	moduleAid.load('compatibilityFix/sandboxFixes');
+	
 	// Apply the add-on to every window opened and to be opened
 	windowMediator.callOnAll(startAddon, 'navigator:browser');
 	windowMediator.register(startAddon, 'domwindowopened', 'navigator:browser');
@@ -40,4 +43,6 @@ function onShutdown(aReason) {
 	// remove the add-on from all windows
 	windowMediator.callOnAll(stopAddon, null, null, true);
 	browserMediator.callOnAll(stopAddon, null, true);
+	
+	moduleAid.unload('compatibilityFix/sandboxFixes');
 }

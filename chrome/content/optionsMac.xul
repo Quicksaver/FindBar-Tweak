@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://findbartweak/locale/options.dtd">
+<overlay id="mac_options_overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	<checkbox id="ctrlFClosesCheckbox" label="&findbartweakOptctrlFCloses.mac;"/>
+</overlay>

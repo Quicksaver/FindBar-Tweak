@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<overlay id="ctrlF_overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	
+	<command id="cmd_find" oncommand="objName.ctrlF(event);" />
+	
+</overlay>

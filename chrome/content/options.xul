@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
 <?xml-stylesheet href="chrome://findbartweak-os/skin/options.css" type="text/css"?>
-<!DOCTYPE overlay SYSTEM "chrome://findbartweak/locale/options.dtd">
+<!DOCTYPE options SYSTEM "chrome://findbartweak/locale/options.dtd">
 <prefwindow xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 			id="findbartweak-options-window"
 			title="&findbartweakOptions.title;">
@@ -19,8 +19,8 @@
 			<preference id="pref-hideLabels" name="extensions.findbartweak.hideLabels" type="bool"/>
 			<preference id="pref-onStartup" name="extensions.findbartweak.onStartup" type="bool"/>
 			<preference id="pref-minNoDelay" name="extensions.findbartweak.minNoDelay" type="int"/>
-			<preference id="pref-gridLimit" name="extensions.findbartweak.gridLimit" type="int"/>
-			<preference id="pref-ctrlFCloses" name="extensions.findbartweak.ctrlFCloses" type="bool"/>-->
+			<preference id="pref-gridLimit" name="extensions.findbartweak.gridLimit" type="int"/>-->
+			<preference id="pref-ctrlFCloses" name="extensions.findbartweak.ctrlFCloses" type="bool"/>
 			<preference id="pref-FAYTmode" name="extensions.findbartweak.FAYTmode" type="string"/>
 			<preference id="pref-keepButtons" name="extensions.findbartweak.keepButtons" type="bool"/>
 			<preference id="pref-timeout" name="accessibility.typeaheadfind.timeout" type="int"/>
@@ -35,12 +35,12 @@
 			
 			<tabpanels id="tabPanels" flex="1">
 				<tabpanel id="generalTab" orient="vertical">
-					<!--<groupbox align="start">
+					<groupbox align="start">
 						<caption label="&findbartweakOptgen.label;"/>
-						<checkbox label="&findbartweakOptonStartup.label;" preference="pref-onStartup"/>
+						<!--<checkbox label="&findbartweakOptonStartup.label;" preference="pref-onStartup"/>-->
 						<checkbox id="ctrlFClosesCheckbox" label="&findbartweakOptctrlFCloses.win;" preference="pref-ctrlFCloses"/>
 					</groupbox>
-					<groupbox align="start">
+					<!--<groupbox align="start">
 						<caption label="&findbartweakOptdisplay.label;"/>
 						<checkbox label="&findbartweakOptmovetoTop.label;" preference="pref-movetoTop"/>
 						<checkbox label="&findbartweakOpthideClose.label;" preference="pref-hideClose"/>

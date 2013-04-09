@@ -2,6 +2,9 @@ var defaultsVersion = '1.0.0';
 var objName = 'findbartweak';
 var objPathString = 'findbartweak';
 var prefList = {
+	onStartup: false,
+	findbarHidden: true,
+	
 	ctrlFCloses: true,
 	keepButtons: false,
 	FAYTmode: 'quick'

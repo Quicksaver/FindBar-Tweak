@@ -17,9 +17,9 @@
 			<preference id="pref-hideClose" name="extensions.findbartweak.hideClose" type="bool"/>
 			<preference id="pref-movetoTop" name="extensions.findbartweak.movetoTop" type="bool"/>
 			<preference id="pref-hideLabels" name="extensions.findbartweak.hideLabels" type="bool"/>
-			<preference id="pref-onStartup" name="extensions.findbartweak.onStartup" type="bool"/>
 			<preference id="pref-minNoDelay" name="extensions.findbartweak.minNoDelay" type="int"/>
 			<preference id="pref-gridLimit" name="extensions.findbartweak.gridLimit" type="int"/>-->
+			<preference id="pref-onStartup" name="extensions.findbartweak.onStartup" type="bool"/>
 			<preference id="pref-ctrlFCloses" name="extensions.findbartweak.ctrlFCloses" type="bool"/>
 			<preference id="pref-FAYTmode" name="extensions.findbartweak.FAYTmode" type="string"/>
 			<preference id="pref-keepButtons" name="extensions.findbartweak.keepButtons" type="bool"/>
@@ -37,7 +37,7 @@
 				<tabpanel id="generalTab" orient="vertical">
 					<groupbox align="start">
 						<caption label="&findbartweakOptgen.label;"/>
-						<!--<checkbox label="&findbartweakOptonStartup.label;" preference="pref-onStartup"/>-->
+						<checkbox label="&findbartweakOptonStartup.label;" preference="pref-onStartup"/>
 						<checkbox id="ctrlFClosesCheckbox" label="&findbartweakOptctrlFCloses.win;" preference="pref-ctrlFCloses"/>
 					</groupbox>
 					<!--<groupbox align="start">

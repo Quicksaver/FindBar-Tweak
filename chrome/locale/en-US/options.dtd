@@ -4,6 +4,8 @@
 
 <!ENTITY findbartweakOptgen.label "Findbar Options">
 
+<!ENTITY findbartweakOptonStartup.label "Remember Findbar opened/closed state on startup">
+
 <!ENTITY findbartweakOptkeepButtons.label "Show buttons in the Quick Findbar">
 <!ENTITY findbartweakOptFAYT.label "Search for text when I start typing">
 <!ENTITY findbartweakOptFAYTTimeout.beforeLabel "Autoclose after">

@@ -12,4 +12,74 @@
 		margin-right: 0;
 	}
 	
+	#FindToolbar[movetotop] {
+		position: fixed;
+		overflow: hidden;
+		border-top: none;
+		border-radius: 0 0 8px 8px;
+	}
+	
+	/* Rounded inner borders */
+	#FindToolbar[movetotop]:before{
+		content: "";
+		width: 16px;
+		height: 16px;
+		border-radius: 8px;
+		background: transparent;
+		box-shadow: 2px -2px 0 -2px rgb(160,160,160), 4px -4px 0 0px rgb(219,234,249);
+		position: fixed;
+		margin-top: -1px;
+		margin-left: -16px;
+	}
+	#FindToolbar[movetotop]:after{
+		content: "";
+		width: 16px;
+		height: 16px;
+		border-radius: 8px;
+		background: transparent;
+		-moz-outline-radius-topleft: 10px;
+		box-shadow: -2px -2px 0 -2px rgb(160,160,160), -4px -4px 0 0px rgb(219,234,249);
+		position: fixed;
+		margin-top: -1px;
+	}
+	
+	#main-window:not([theme="nasanightlaunch"]) #FindToolbar[movetotop] {
+		border-bottom: 1px solid rgb(0,0,0);
+		border-right: 1px solid rgb(0,0,0);
+		border-left: 1px solid rgb(0,0,0);
+		-moz-border-bottom-colors: rgb(160, 160, 160);
+		-moz-border-right-colors: rgb(160, 160, 160);
+		-moz-border-left-colors: rgb(160, 160, 160);
+		background-color: rgb(219,234,249);
+		background-image: none;
+		/*background-repeat: repeat;
+		background-size: auto auto;
+		background-image: -moz-linear-gradient(rgba(255,255,255,0.2), rgba(255,255,255,0.25), rgba(255,255,255,0.5));
+		background-image: linear-gradient(rgba(255,255,255,0.2), rgba(255,255,255,0.25), rgba(255,255,255,0.5));*/ /* Firefox 16 */
+	}
+	#main-window[theme="nasanightlaunch"] #FindToolbar[movetotop] {
+		min-height: 25px;
+		height: 25px;
+		border-bottom: 1px solid rgb(0,0,0);
+		border-right: 1px solid rgb(0,0,0);
+		border-left: 1px solid rgb(0,0,0);
+	}
+	
+	/* The barlesque add-on forces no borders with !important tags, so I have to override them */
+	.barlesque-bar[findmode] #FindToolbar[movetotop] {
+		border-top: none !important;
+	}
+	#main-window:not([theme="nasanightlaunch"]) .barlesque-bar[findmode] #FindToolbar[movetotop] {
+		border-bottom: 1px solid rgb(0,0,0) !important;
+		border-right: 1px solid rgb(0,0,0) !important;
+		border-left: 1px solid rgb(0,0,0) !important;
+		-moz-border-bottom-colors: rgb(160, 160, 160) !important;
+		-moz-border-right-colors: rgb(160, 160, 160) !important;
+		-moz-border-left-colors: rgb(160, 160, 160) !important;
+	}
+	#main-window[theme="nasanightlaunch"] .barlesque-bar[findmode] #FindToolbar[movetotop] {
+		border-bottom: 1px solid rgb(0,0,0) !important;
+		border-right: 1px solid rgb(0,0,0) !important;
+		border-left: 1px solid rgb(0,0,0) !important;
+	}
 }

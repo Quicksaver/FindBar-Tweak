@@ -14,9 +14,9 @@
 			<preference id="pref-gridInScrollbar" name="extensions.findbartweak.gridInScrollbar" type="bool"/>
 			<preference id="pref-useCounter" name="extensions.findbartweak.useCounter" type="bool"/>
 			<preference id="pref-highlightColor" name="extensions.findbartweak.highlightColor" type="string"/>
-			<preference id="pref-movetoTop" name="extensions.findbartweak.movetoTop" type="bool"/>
 			<preference id="pref-minNoDelay" name="extensions.findbartweak.minNoDelay" type="int"/>
 			<preference id="pref-gridLimit" name="extensions.findbartweak.gridLimit" type="int"/>-->
+			<preference id="pref-movetoTop" name="extensions.findbartweak.movetoTop" type="bool"/>
 			<preference id="pref-hideClose" name="extensions.findbartweak.hideClose" type="bool"/>
 			<preference id="pref-hideLabels" name="extensions.findbartweak.hideLabels" type="bool"/>
 			<preference id="pref-onStartup" name="extensions.findbartweak.onStartup" type="bool"/>
@@ -42,7 +42,7 @@
 					</groupbox>
 					<groupbox align="start">
 						<caption label="&findbartweakOptdisplay.label;"/>
-						<!--<checkbox label="&findbartweakOptmovetoTop.label;" preference="pref-movetoTop"/>-->
+						<checkbox label="&findbartweakOptmovetoTop.label;" preference="pref-movetoTop"/>
 						<checkbox label="&findbartweakOpthideClose.label;" preference="pref-hideClose"/>
 						<checkbox label="&findbartweakOpthideLabels.label;" preference="pref-hideLabels"/>
 					</groupbox>

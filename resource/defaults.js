@@ -5,12 +5,18 @@ var prefList = {
 	onStartup: false,
 	findbarHidden: true,
 	
+	movetoTop: false,
 	hideClose: false,
 	hideLabels: false,
 	
 	ctrlFCloses: true,
 	keepButtons: false,
-	FAYTmode: 'quick'
+	FAYTmode: 'quick',
+	
+	lwthemebgImage: '',
+	lwthemebgWidth: 0,
+	lwthemecolor: '',
+	lwthemebgColor: ''
 };
 
 function startAddon(window) {

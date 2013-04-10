@@ -39,6 +39,10 @@ this.toggleClose = function() {
 this.toggleLabels = function() {
 	toggleAttribute(gFindBar, 'hideLabels', prefAid.hideLabels);
 };
+
+this.toggleMoveToTop = function() {
+	moduleAid.loadIf('moveToTop', prefAid.movetoTop);
+};
 	
 moduleAid.LOADMODULE = function() {
 	overlayAid.overlayURI('chrome://browser/content/browser.xul', 'findbar');
@@ -50,14 +54,19 @@ moduleAid.LOADMODULE = function() {
 	
 	prefAid.listen('hideClose', toggleClose);
 	prefAid.listen('hideLabels', toggleLabels);
+	prefAid.listen('movetoTop', toggleMoveToTop);
 	
 	toggleClose();
 	toggleLabels();
+	toggleMoveToTop();
 };
 
 moduleAid.UNLOADMODULE = function() {
 	prefAid.unlisten('hideClose', toggleClose);
 	prefAid.unlisten('hideLabels', toggleLabels);
+	prefAid.unlisten('movetoTop', toggleMoveToTop);
+	
+	moduleAid.unload('moveToTop');
 	
 	removeAttribute(gFindBar, 'noClose');
 	removeAttribute(gFindBar, 'hideLabels');

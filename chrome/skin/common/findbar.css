@@ -20,25 +20,29 @@
 	}
 	
 	/* Rounded inner borders */
-	#FindToolbar[movetotop]:before{
+	#FindToolbar[movetotop]:before {
 		content: "";
 		width: 16px;
 		height: 16px;
 		border-radius: 8px;
 		background: transparent;
-		box-shadow: 2px -2px 0 -2px rgb(160,160,160), 4px -4px 0 0px rgb(219,234,249);
+		box-shadow: 	2px -2px 0 -2px rgb(160,160,160),
+		                7px -4px 0px -4px rgb(219,234,249),
+		                6px -4px 0px -4px rgb(219,234,249);
 		position: fixed;
 		margin-top: -1px;
 		margin-left: -16px;
 	}
-	#FindToolbar[movetotop]:after{
+	#FindToolbar[movetotop]:after {
 		content: "";
 		width: 16px;
 		height: 16px;
 		border-radius: 8px;
 		background: transparent;
 		-moz-outline-radius-topleft: 10px;
-		box-shadow: -2px -2px 0 -2px rgb(160,160,160), -4px -4px 0 0px rgb(219,234,249);
+		box-shadow: 	-2px -2px 0 -2px rgb(160,160,160),
+		                -7px -4px 0px -4px rgb(219,234,249),
+		                -6px -4px 0px -4px rgb(219,234,249);
 		position: fixed;
 		margin-top: -1px;
 	}

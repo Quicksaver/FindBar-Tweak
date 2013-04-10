@@ -219,7 +219,13 @@ this.stylePersonaFindBar = function() {
 		sscode += '	  color: ' + prefAid.lwthemecolor + ' !important;\n';
 		// I have no idea where does the -1 come from, it's not the findbars own border
 		sscode += '	  background-position: ' + (-moveTopStyle.left - (prefAid.lwthemebgWidth - mainWindow.clientWidth) -1) + 'px ' + (-moveTopStyle.top) + 'px !important;\n';
-		sscode += '	}';
+		sscode += '	  background-repeat: repeat !important;\n';
+		sscode += '	  background-size: auto auto !important;\n';
+		sscode += '	}\n';
+		
+		// There's just no way I can have rounded corners with personas
+		sscode += '	#FindToolbar[movetotop]:before, #FindToolbar[movetotop]:after { display: none !important; }\n';
+		
 		sscode += '}';
 		
 		styleAid.load('personaFindBar', sscode, true);

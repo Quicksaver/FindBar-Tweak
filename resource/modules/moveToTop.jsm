@@ -159,7 +159,7 @@ this.moveTop = function() {
 	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 	sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 	sscode += '@-moz-document url("chrome://browser/content/browser.xul") {\n';
-	sscode += '	#FindToolbar[movetotop]:before, #FindToolbar[movetotop]:after  { display: none; }\n';
+	sscode += '	#FindToolbar[movetotop]:before, #FindToolbar[movetotop]:after { display: none; }\n';
 	sscode += '}';
 	styleAid.load('tempRedrawBorders', sscode, true);
 	aSync(function() {
@@ -303,6 +303,7 @@ moduleAid.LOADMODULE = function() {
 	
 	listenerAid.add(browserPanel, 'resize', browserPanelResized);
 	listenerAid.add(gFindBar, 'OpenedFindBar', moveTop);
+	listenerAid.add(gFindBar, "UpdatedStatusFindBar", moveTop);
 	
 	// Register all opened tabs with a listener
 	gBrowser.addTabsProgressListener(hideOnChromeProgressListener);
@@ -338,6 +339,7 @@ moduleAid.UNLOADMODULE = function() {
 	gBrowser.removeTabsProgressListener(hideOnChromeProgressListener);
 	
 	listenerAid.remove(gFindBar, 'OpenedFindBar', moveTop);
+	listenerAid.remove(gFindBar, "UpdatedStatusFindBar", moveTop);
 	listenerAid.remove(browserPanel, 'resize', browserPanelResized);
 	
 	gFindBar.removeAttribute('movetotop');

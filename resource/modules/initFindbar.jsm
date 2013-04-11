@@ -24,6 +24,13 @@ moduleAid.LOADMODULE = function() {
 			dispatch(gFindBar, { type: 'UpdatedUIFindBar', cancelable: false });
 		}
 	};
+	gFindBar.__updateStatusUI = gFindBar._updateStatusUI;
+	gFindBar._updateStatusUI = function(res, aFindPrevious) {
+		if(dispatch(gFindBar, { type: 'WillUpdateStatusFindBar' })) {
+			gFindBar.__updateStatusUI(res, aFindPrevious);
+			dispatch(gFindBar, { type: 'UpdatedStatusFindBar', cancelable: false });
+		}
+	};
 	gFindBar.__find = gFindBar._find;
 	gFindBar._find = function(aValue) {
 		if(dispatch(gFindBar, { type: 'WillFindFindBar', detail: aValue })) {
@@ -37,9 +44,11 @@ moduleAid.UNLOADMODULE = function() {
 	gFindBar.open = gFindBar._open;
 	gFindBar.close = gFindBar._close;
 	gFindBar._updateFindUI = gFindBar.__updateFindUI;
+	gFindBar._updateStatusUI = gFindBar.__updateStatusUI;
 	gFindBar._find = gFindBar.__find;
 	delete gFindBar._open;
 	delete gFindBar._close;
 	delete gFindBar.__updateFindUI;
+	delete gFindBar.__updateStatusUI;
 	delete gFindBar.__find;
 };

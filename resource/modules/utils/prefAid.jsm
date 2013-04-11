@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.0.1';
+moduleAid.VERSION = '2.0.2';
 moduleAid.LAZY = true;
 
 // prefAid - Object to contain and manage all preferences related to the add-on (and others if necessary)
@@ -24,13 +24,14 @@ this.prefAid = {
 		if(!branch) {
 			branch = objPathString;
 		}
-		if(!trunk) {
+		if(!trunk && trunk !== '') {
 			trunk = 'extensions';
 		}
 		
 		var readyList = [];
 		
-		var defaultBranch = Services.prefs.getDefaultBranch(trunk+'.'+branch+'.');
+		var branchString = ((trunk) ? trunk+'.' : '') +branch+'.';
+		var defaultBranch = Services.prefs.getDefaultBranch(branchString);
 		for(var pref in prefList) {
 			if(typeof(prefList[pref]) == 'string') {
 				defaultBranch.setCharPref(pref, prefList[pref]);
@@ -50,6 +51,9 @@ this.prefAid = {
 		if(!branch) {
 			branch = objPathString;
 		}
+		if(!trunk && trunk !== '') {
+			trunk = 'extensions';
+		}
 		
 		if(typeof(prefList) == 'string') {
 			prefList = [prefList];
@@ -63,7 +67,9 @@ this.prefAid = {
 	},
 	
 	_setPref: function(pref, branch, trunk) {
-		this._prefObjects[pref] = Services.fuel.prefs.get(trunk+'.'+branch+'.'+pref);
+		var branchString = ((trunk) ? trunk+'.' : '') +branch+'.';
+		
+		this._prefObjects[pref] = Services.fuel.prefs.get(branchString+pref);
 		this._onChange[pref] = [];
 		this.__defineGetter__(pref, function() { return this._prefObjects[pref].value; });
 		this.__defineSetter__(pref, function(v) { return this._prefObjects[pref].value = v; });
@@ -103,7 +109,14 @@ this.prefAid = {
 	},
 	
 	prefChanged: function(e) {
-		var pref = e.data.substr(e.data.indexOf('.', e.data.indexOf('.')+1) +1);
+		var pref = e.data;
+		if(pref.indexOf('.') > -1) {
+			pref = pref.substr(pref.indexOf('.')+1);
+			if(pref.indexOf('.') > -1) {
+				pref = pref.substr(pref.indexOf('.')+1);
+			}
+		}
+		
 		for(var i = 0; i < prefAid._onChange[pref].length; i++) {
 			prefAid._onChange[pref][i]();
 		}

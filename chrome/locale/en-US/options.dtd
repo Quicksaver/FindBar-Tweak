@@ -6,6 +6,7 @@
 <!ENTITY findbartweakOptdisplay.label "Display Options">
 
 <!ENTITY findbartweakOpthighlightByDefault.label "Highlight all matches by default">
+<!ENTITY findbartweakOptcolor.label "Highlights Color">
 <!ENTITY findbartweakOptminNoDelay.labela "Delay highlights if search term is shorter than">
 <!ENTITY findbartweakOptminNoDelay.labelb "characters">
 

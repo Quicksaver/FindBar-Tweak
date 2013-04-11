@@ -5,6 +5,7 @@ var prefList = {
 	highlightByDefault: true,
 	hideWhenFinderHidden: false,
 	minNoDelay: 3,
+	highlightColor: "#EF0FFF",
 	
 	onStartup: false,
 	findbarHidden: true,
@@ -42,6 +43,7 @@ function startConditions(aReason) {
 }
 
 function onStartup(aReason) {
+	moduleAid.load('highlightColor');
 	moduleAid.load('compatibilityFix/sandboxFixes');
 	
 	// Apply the add-on to every window opened and to be opened
@@ -61,4 +63,5 @@ function onShutdown(aReason) {
 	browserMediator.callOnAll(stopAddon, null, true);
 	
 	moduleAid.unload('compatibilityFix/sandboxFixes');
+	moduleAid.unload('highlightColor');
 }

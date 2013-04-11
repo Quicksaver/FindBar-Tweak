@@ -26,7 +26,7 @@ moduleAid.LOADMODULE = function() {
 	};
 	gFindBar.__updateStatusUI = gFindBar._updateStatusUI;
 	gFindBar._updateStatusUI = function(res, aFindPrevious) {
-		if(dispatch(gFindBar, { type: 'WillUpdateStatusFindBar' })) {
+		if(dispatch(gFindBar, { type: 'WillUpdateStatusFindBar', detail: { res: res, aFindPrevious: aFindPrevious } })) {
 			gFindBar.__updateStatusUI(res, aFindPrevious);
 			dispatch(gFindBar, { type: 'UpdatedStatusFindBar', cancelable: false });
 		}

@@ -22,6 +22,14 @@ this.__defineSetter__('documentReHighlight', function(v) {
 	}
 });
 
+this.emptyNoFindUpdating = function(e) {
+	if(e.detail.res == gFindBar.nsITypeAheadFind.FIND_NOTFOUND && !gFindBar._findField.value) {
+		e.preventDefault();
+		e.stopPropagation();
+		gFindBar._updateStatusUI(gFindBar.nsITypeAheadFind.FIND_FOUND);
+	}
+};
+
 this.escHighlights = function(e) {
 	if(e.keyCode == e.DOM_VK_ESCAPE) {
 		gFindBar.toggleHighlight(false);
@@ -73,10 +81,7 @@ this.highlightsTabSelected = function() {
 	
 	if(documentReHighlight) {
 		gFindBar.getElement("highlight").checked = documentHighlighted;
-		gFindBar.toggleHighlight(false);
-		if(gFindBar.getElement("highlight").checked) {
-			gFindBar.toggleHighlight(true);
-		}
+		reHighlight(documentHighlighted);
 	}
 };
 
@@ -93,10 +98,19 @@ this.highlightsContentLoaded = function(e) {
 		}
 		
 		if(doc == contentDocument) {
-			gFindBar.toggleHighlight(documentHighlighted && (!gFindBar.hidden || !prefAid.hideWhenFinderHidden));
+			reHighlight(documentHighlighted && (!gFindBar.hidden || !prefAid.hideWhenFinderHidden));
 		} else {
 			setAttribute(doc.documentElement, 'reHighlight', 'true');
 		}
+	}
+};
+
+// This always calls toggleHighlight() at least once with a false argument, then with a true argument if reDo is true.
+// This way we ensure the old highlights are removed before adding new ones.
+this.reHighlight = function(reDo) {
+	gFindBar.toggleHighlight(false);
+	if(reDo) {
+		gFindBar.toggleHighlight(true);
 	}
 };
 
@@ -105,6 +119,8 @@ this.reHighlightAll = function() {
 	for(var i=0; i<gBrowser.tabContainer.childNodes.length; i++) {
 		gBrowser.tabContainer.childNodes[i]._reHighlight = true;
 	}
+	
+	reHighlight(documentHighlighted);
 };
 
 this.toggleHighlightByDefault = function() {
@@ -144,8 +160,7 @@ moduleAid.LOADMODULE = function() {
 		linkedPanel._delayHighlight = timerAid.create(function(timer) {
 			// We don't want to highlight pages that aren't supposed to be highlighted (happens when switching tabs when delaying highlights)
 			if(linkedPanel._delayHighlight && linkedPanel._delayHighlight.timer == timer) {
-				gFindBar.toggleHighlight(false);
-				gFindBar.toggleHighlight(true);
+				reHighlight(true);
 			}
 		}, delay);
 	};
@@ -158,6 +173,7 @@ moduleAid.LOADMODULE = function() {
 		}
 	};
 	
+	listenerAid.add(gFindBar, 'WillUpdateStatusFindBar', emptyNoFindUpdating);
 	listenerAid.add(gFindBar, 'ClosedFindBar', highlightOnClose);
 	listenerAid.add(gFindBar, 'WillToggleHighlight', highlightsOnToggling);
 	listenerAid.add(gBrowser.tabContainer, "TabSelect", highlightsTabSelected);
@@ -191,6 +207,7 @@ moduleAid.UNLOADMODULE = function() {
 	
 	observerAid.remove(reHighlightAll, 'ReHighlightAll');
 	
+	listenerAid.remove(gFindBar, 'WillUpdateStatusFindBar', emptyNoFindUpdating);
 	listenerAid.remove(gFindBar, 'ClosedFindBar', highlightOnClose);
 	listenerAid.remove(gFindBar, 'WillToggleHighlight', highlightsOnToggling);
 	listenerAid.remove(gBrowser.tabContainer, "TabSelect", highlightsTabSelected);

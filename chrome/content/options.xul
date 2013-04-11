@@ -11,8 +11,8 @@
 			<preference id="pref-highlightByDefault" name="extensions.findbartweak.highlightByDefault" type="bool"/>
 			<preference id="pref-minNoDelay" name="extensions.findbartweak.minNoDelay" type="int"/>
 			<preference id="pref-highlightColor" name="extensions.findbartweak.highlightColor" type="string"/>
-			<!--<preference id="pref-hideWhenFinderHidden" name="extensions.findbartweak.hideWhenFinderHidden" type="bool"/>
-			<preference id="pref-useGrid" name="extensions.findbartweak.useGrid" type="bool"/>
+			<preference id="pref-hideWhenFinderHidden" name="extensions.findbartweak.hideWhenFinderHidden" type="bool"/>
+			<!--<preference id="pref-useGrid" name="extensions.findbartweak.useGrid" type="bool"/>
 			<preference id="pref-gridInScrollbar" name="extensions.findbartweak.gridInScrollbar" type="bool"/>
 			<preference id="pref-useCounter" name="extensions.findbartweak.useCounter" type="bool"/>
 			<preference id="pref-gridLimit" name="extensions.findbartweak.gridLimit" type="int"/>-->
@@ -72,8 +72,8 @@
 					<groupbox align="start">
 						<caption label="&findbartweakOptHighlights.label;"/>
 						<checkbox label="&findbartweakOpthighlightByDefault.label;" preference="pref-highlightByDefault"/>
-						<!--<checkbox label="&findbartweakOpthideWhenFinderHidden.label;" preference="pref-hideWhenFinderHidden"/>
-						<checkbox label="&findbartweakOptuseCounter.label;" preference="pref-useCounter"/>-->
+						<checkbox label="&findbartweakOpthideWhenFinderHidden.label;" preference="pref-hideWhenFinderHidden"/>
+						<!--<checkbox label="&findbartweakOptuseCounter.label;" preference="pref-useCounter"/>-->
 						<hbox>
 							<label value="&findbartweakOptminNoDelay.labela;"/>
 							<textbox type="number"

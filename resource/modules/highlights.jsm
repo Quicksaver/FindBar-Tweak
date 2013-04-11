@@ -13,12 +13,11 @@ this.__defineSetter__('documentHighlighted', function(v) {
 	if(contentDocument) { toggleAttribute(contentDocument.documentElement, 'highlighted', v); }
 });
 this.__defineGetter__('documentReHighlight', function() {
-	return linkedPanel._reHighlight || (contentDocument && contentDocument.documentElement && contentDocument.documentElement.getAttribute('reHighlight') == 'true');
+	return (contentDocument && contentDocument.documentElement && contentDocument.documentElement.getAttribute('reHighlight') == 'true');
 });
 this.__defineSetter__('documentReHighlight', function(v) {
 	if(contentDocument) {
 		toggleAttribute(contentDocument.documentElement, 'reHighlight', v);
-		if(!v) { linkedPanel._reHighlight = false; }
 	}
 });
 
@@ -28,6 +27,10 @@ this.emptyNoFindUpdating = function(e) {
 		e.stopPropagation();
 		gFindBar._updateStatusUI(gFindBar.nsITypeAheadFind.FIND_FOUND);
 	}
+};
+
+this.keepStatusUI = function(e) { doLog('caught it');
+	linkedPanel._statusUI = e.detail.res;
 };
 
 this.escHighlights = function(e) {
@@ -42,7 +45,7 @@ this.highlightOnClose = function() {
 		linkedPanel._delayHighlight.cancel();
 	}
 	
-	// To remove the grid and the esc key listener if there are no highlights or when commanded by the hideWhenFinderHidden preference
+	// To remove the grid and the esc key listener if there are no highlights
 	if(documentHighlighted && (!gFindBar._findField.value || linkedPanel._notFoundHighlights)) {
 		gFindBar.toggleHighlight(false);
 	}
@@ -74,8 +77,11 @@ this.highlightsTabSelected = function() {
 	if(linkedPanel._findWord && (documentHighlighted || documentReHighlight)) {
 		gFindBar._findField.value = linkedPanel._findWord;
 		gFindBar._enableFindButtons(gFindBar._findField.value);
+		if(linkedPanel._statusUI != undefined) {
+			gFindBar._updateStatusUI(linkedPanel._statusUI);
+		}
 		if(gFindBar.hidden) {
-			gFindBar.toggleHighlight(false);
+			documentRehighlight = false;
 		}
 	}
 	
@@ -98,7 +104,7 @@ this.highlightsContentLoaded = function(e) {
 		}
 		
 		if(doc == contentDocument) {
-			reHighlight(documentHighlighted && (!gFindBar.hidden || !prefAid.hideWhenFinderHidden));
+			reHighlight(documentHighlighted);
 		} else {
 			setAttribute(doc.documentElement, 'reHighlight', 'true');
 		}
@@ -109,7 +115,7 @@ this.highlightsContentLoaded = function(e) {
 // This way we ensure the old highlights are removed before adding new ones.
 this.reHighlight = function(reDo) {
 	gFindBar.toggleHighlight(false);
-	if(reDo) {
+	if(reDo && dispatch(gFindBar, { type: 'WillReHighlight' })) {
 		gFindBar.toggleHighlight(true);
 	}
 };
@@ -117,7 +123,7 @@ this.reHighlight = function(reDo) {
 // Add the reHighlight attribute to all tabs
 this.reHighlightAll = function() {
 	for(var i=0; i<gBrowser.tabContainer.childNodes.length; i++) {
-		gBrowser.tabContainer.childNodes[i]._reHighlight = true;
+		setAttribute(gBrowser.tabContainer.childNodes[i], 'reHighlight', 'true');
 	}
 	
 	reHighlight(documentHighlighted);
@@ -125,6 +131,10 @@ this.reHighlightAll = function() {
 
 this.toggleHighlightByDefault = function() {
 	moduleAid.loadIf('highlightByDefault', prefAid.highlightByDefault);
+};
+
+this.toggleHideOnClose = function() {
+	moduleAid.loadIf('hideOnClose', prefAid.hideWhenFinderHidden);
 };
 
 moduleAid.LOADMODULE = function() {
@@ -174,6 +184,7 @@ moduleAid.LOADMODULE = function() {
 	};
 	
 	listenerAid.add(gFindBar, 'WillUpdateStatusFindBar', emptyNoFindUpdating);
+	listenerAid.add(gFindBar, 'UpdatedStatusFindBar', keepStatusUI);
 	listenerAid.add(gFindBar, 'ClosedFindBar', highlightOnClose);
 	listenerAid.add(gFindBar, 'WillToggleHighlight', highlightsOnToggling);
 	listenerAid.add(gBrowser.tabContainer, "TabSelect", highlightsTabSelected);
@@ -182,14 +193,18 @@ moduleAid.LOADMODULE = function() {
 	observerAid.add(reHighlightAll, 'ReHighlightAll');
 	
 	prefAid.listen('highlightByDefault', toggleHighlightByDefault);
+	prefAid.listen('hideWhenFinderHidden', toggleHideOnClose);
 	
 	toggleHighlightByDefault();
+	toggleHideOnClose();
 };
 
 moduleAid.UNLOADMODULE = function() {
+	moduleAid.unload('toggleHideOnClose');
 	moduleAid.unload('highlightByDefault');
 	
 	prefAid.unlisten('highlightByDefault', toggleHighlightByDefault);
+	prefAid.unlisten('hideWhenFinderHidden', toggleHideOnClose);
 	
 	// Clean up everything this module may have added to tabs and panels and documents
 	for(var t=0; t<gBrowser.mTabs.length; t++) {
@@ -197,6 +212,7 @@ moduleAid.UNLOADMODULE = function() {
 		if(panel._delayHighlight) { panel._delayHighlight.cancel(); }
 		delete panel._delayHighlight;
 		delete panel._findWord;
+		delete panel._statusUI;
 		
 		if(panel.linkedBrowser && panel.linkedBrowser.contentDocument) {
 			listenerAid.remove(panel.linkedBrowser.contentDocument, 'keyup', escHighlights);
@@ -208,6 +224,7 @@ moduleAid.UNLOADMODULE = function() {
 	observerAid.remove(reHighlightAll, 'ReHighlightAll');
 	
 	listenerAid.remove(gFindBar, 'WillUpdateStatusFindBar', emptyNoFindUpdating);
+	listenerAid.remove(gFindBar, 'UpdatedStatusFindBar', keepStatusUI);
 	listenerAid.remove(gFindBar, 'ClosedFindBar', highlightOnClose);
 	listenerAid.remove(gFindBar, 'WillToggleHighlight', highlightsOnToggling);
 	listenerAid.remove(gBrowser.tabContainer, "TabSelect", highlightsTabSelected);

@@ -21,6 +21,14 @@ this.updateCSUI = function() {
 };
 
 this.alwaysFindNormal = function(e) {
+	// If typing when Find bar is already opened in normal mode, use that instead of "reopening" as quick find mode
+	if(!gFindBar.hidden && e.detail == gFindBar.FIND_TYPEAHEAD && gFindBar._findMode == gFindBar.FIND_NORMAL) {
+		e.preventDefault();
+		e.stopPropagation();
+		gFindBar.open(gFindBar.FIND_NORMAL);
+		return;
+	}
+	
 	// If the FindBar is already open do nothing, this prevents the hangup when triggering the QuickFind bar when Find bar is open
 	if(!gFindBar.hidden) { return; }
 	

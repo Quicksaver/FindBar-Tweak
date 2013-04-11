@@ -40,21 +40,6 @@ this.highlightOnClose = function() {
 	}
 };
 
-this.cleanUpHighlights = function() {
-	for(var t=0; t<gBrowser.mTabs.length; t++) {
-		var panel = $(gBrowser.mTabs[t].linkedPanel);
-		if(panel._delayHighlight) { panel._delayHighlight.cancel(); }
-		delete panel._delayHighlight;
-		delete panel._findWord;
-		
-		if(panel.linkedBrowser && panel.linkedBrowser.contentDocument) {
-			listenerAid.remove(panel.linkedBrowser.contentDocument, 'keyup', escHighlights);
-			removeAttribute(panel.linkedBrowser.contentDocument.documentElement, 'highlighted');
-			removeAttribute(panel.linkedBrowser.contentDocument.documentElement, 'reHighlight');
-		}
-	}
-};
-
 this.highlightsOnToggling = function(e) {
 	var aHighlight = e.detail;
 	// Remove highlights when hitting Esc
@@ -115,6 +100,13 @@ this.highlightsContentLoaded = function(e) {
 	}
 };
 
+// Add the reHighlight attribute to all tabs
+this.reHighlightAll = function() {
+	for(var i=0; i<gBrowser.tabContainer.childNodes.length; i++) {
+		gBrowser.tabContainer.childNodes[i]._reHighlight = true;
+	}
+};
+
 this.toggleHighlightByDefault = function() {
 	moduleAid.loadIf('highlightByDefault', prefAid.highlightByDefault);
 };
@@ -171,6 +163,8 @@ moduleAid.LOADMODULE = function() {
 	listenerAid.add(gBrowser.tabContainer, "TabSelect", highlightsTabSelected);
 	listenerAid.add(gBrowser, "DOMContentLoaded", highlightsContentLoaded);
 	
+	observerAid.add(reHighlightAll, 'ReHighlightAll');
+	
 	prefAid.listen('highlightByDefault', toggleHighlightByDefault);
 	
 	toggleHighlightByDefault();
@@ -181,7 +175,21 @@ moduleAid.UNLOADMODULE = function() {
 	
 	prefAid.unlisten('highlightByDefault', toggleHighlightByDefault);
 	
-	cleanUpHighlights();
+	// Clean up everything this module may have added to tabs and panels and documents
+	for(var t=0; t<gBrowser.mTabs.length; t++) {
+		var panel = $(gBrowser.mTabs[t].linkedPanel);
+		if(panel._delayHighlight) { panel._delayHighlight.cancel(); }
+		delete panel._delayHighlight;
+		delete panel._findWord;
+		
+		if(panel.linkedBrowser && panel.linkedBrowser.contentDocument) {
+			listenerAid.remove(panel.linkedBrowser.contentDocument, 'keyup', escHighlights);
+			removeAttribute(panel.linkedBrowser.contentDocument.documentElement, 'highlighted');
+			removeAttribute(panel.linkedBrowser.contentDocument.documentElement, 'reHighlight');
+		}
+	}
+	
+	observerAid.remove(reHighlightAll, 'ReHighlightAll');
 	
 	listenerAid.remove(gFindBar, 'ClosedFindBar', highlightOnClose);
 	listenerAid.remove(gFindBar, 'WillToggleHighlight', highlightsOnToggling);

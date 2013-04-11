@@ -8,14 +8,14 @@
 
 	<prefpane>
 		<preferences>
-			<!--<preference id="pref-highlightByDefault" name="extensions.findbartweak.highlightByDefault" type="bool"/>
-			<preference id="pref-hideWhenFinderHidden" name="extensions.findbartweak.hideWhenFinderHidden" type="bool"/>
+			<preference id="pref-highlightByDefault" name="extensions.findbartweak.highlightByDefault" type="bool"/>
+			<!--<preference id="pref-hideWhenFinderHidden" name="extensions.findbartweak.hideWhenFinderHidden" type="bool"/>
 			<preference id="pref-useGrid" name="extensions.findbartweak.useGrid" type="bool"/>
 			<preference id="pref-gridInScrollbar" name="extensions.findbartweak.gridInScrollbar" type="bool"/>
 			<preference id="pref-useCounter" name="extensions.findbartweak.useCounter" type="bool"/>
-			<preference id="pref-highlightColor" name="extensions.findbartweak.highlightColor" type="string"/>
+			<preference id="pref-highlightColor" name="extensions.findbartweak.highlightColor" type="string"/>-->
 			<preference id="pref-minNoDelay" name="extensions.findbartweak.minNoDelay" type="int"/>
-			<preference id="pref-gridLimit" name="extensions.findbartweak.gridLimit" type="int"/>-->
+			<!--<preference id="pref-gridLimit" name="extensions.findbartweak.gridLimit" type="int"/>-->
 			<preference id="pref-movetoTop" name="extensions.findbartweak.movetoTop" type="bool"/>
 			<preference id="pref-hideClose" name="extensions.findbartweak.hideClose" type="bool"/>
 			<preference id="pref-hideLabels" name="extensions.findbartweak.hideLabels" type="bool"/>
@@ -56,7 +56,7 @@
 								<checkbox dependson="pref-typeaheadfind,pref-FAYTmode:quick" label="&findbartweakOptkeepButtons.label;" preference="pref-keepButtons"/>
 								<hbox>
 									<label dependson="pref-typeaheadfind,pref-FAYTmode:quick" value="&findbartweakOptFAYTTimeout.beforeLabel;"/>
-									<textbox id="timeoutTextbox" class="textbox" dependson="pref-typeaheadfind,pref-FAYTmode:quick" size="3" maxlength="5"
+									<textbox id="timeoutTextbox" dependson="pref-typeaheadfind,pref-FAYTmode:quick" size="3" maxlength="5"
 										preference="pref-timeout"
 										onsyncfrompreference="return document.getElementById('pref-timeout').value / 1000;" 
 										onsynctopreference="return parseInt(document.getElementById('timeoutTextbox').value || 0) * 1000;"/>
@@ -69,20 +69,23 @@
 				</tabpanel>
 				
 				<tabpanel id="highlightsTab" orient="vertical">
-					<!--<groupbox align="start">
+					<groupbox align="start">
 						<caption label="&findbartweakOptHighlights.label;"/>
 						<checkbox label="&findbartweakOpthighlightByDefault.label;" preference="pref-highlightByDefault"/>
-						<checkbox label="&findbartweakOpthideWhenFinderHidden.label;" preference="pref-hideWhenFinderHidden"/>
-						<checkbox label="&findbartweakOptuseCounter.label;" preference="pref-useCounter"/>
+						<!--<checkbox label="&findbartweakOpthideWhenFinderHidden.label;" preference="pref-hideWhenFinderHidden"/>
+						<checkbox label="&findbartweakOptuseCounter.label;" preference="pref-useCounter"/>-->
 						<hbox>
 							<label value="&findbartweakOptminNoDelay.labela;"/>
-							<textbox id="minNoDelayTextbox" class="textbox" size="1" maxlength="2" style="height: 18px; text-align: center;"
-								preference="pref-minNoDelay" 
-								onsynctopreference="return findbartweakOptions.onlyNumbers(this.value);"/>
+							<textbox type="number"
+								size="1"
+								min="1"
+								max="50"
+								style="text-align: center;"
+								preference="pref-minNoDelay"/>
 				            <label value="&findbartweakOptminNoDelay.labelb;"/>
 				        </hbox>
 					</groupbox>
-					<groupbox align="start">
+					<!--<groupbox align="start">
 						<caption label="&findbartweakOptgrid.label;"/>
 						<checkbox id="checkbox-useGrid" oncommand="findbartweakOptions.changeGridOptions();" label="&findbartweakOptuseGrid.label;" preference="pref-useGrid"/>
 						<checkbox id="checkbox-gridInScrollbar" label="&findbartweakOptgridInScrollbar.label;" preference="pref-gridInScrollbar"/>

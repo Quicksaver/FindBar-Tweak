@@ -12,6 +12,8 @@ moduleAid.LAZY = true;
 //		(string) 'precise_skip' not really sure what this one does,
 //		(string) 'once' fires only once,
 //		defaults to once
+// create(aFunc, aDelay, aType) - creates a timer object and returns it
+//	see init()
 this.timerAid = {
 	timers: {},
 	

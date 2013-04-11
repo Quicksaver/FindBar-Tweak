@@ -2,6 +2,10 @@ var defaultsVersion = '1.0.0';
 var objName = 'findbartweak';
 var objPathString = 'findbartweak';
 var prefList = {
+	highlightByDefault: true,
+	hideWhenFinderHidden: false,
+	minNoDelay: 3,
+	
 	onStartup: false,
 	findbarHidden: true,
 	

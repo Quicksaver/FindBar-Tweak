@@ -11,21 +11,23 @@ this.toggleRememberStartup = function() {
 moduleAid.LOADMODULE = function() {
 	moduleAid.load('initFindbar');
 	moduleAid.load('FindBarUI');
+	moduleAid.load('highlights');
 	
 	prefAid.listen('ctrlFCloses', toggleCtrlF);
 	prefAid.listen('onStartup', toggleRememberStartup);
 	
 	toggleCtrlF();
-	toggleRememberStartup();
+	toggleRememberStartup(); // This should be the last thing to be initialized, as it can open the find bar
 };
 
 moduleAid.UNLOADMODULE = function() {
-	moduleAid.unload('ctrlF');
 	moduleAid.unload('rememberStartup');
+	moduleAid.unload('ctrlF');
 	
 	prefAid.unlisten('ctrlFCloses', toggleCtrlF);
 	prefAid.unlisten('onStartup', toggleRememberStartup);
 	
+	moduleAid.unload('highlights');
 	moduleAid.unload('FindBarUI');
 	moduleAid.unload('initFindbar');
 };

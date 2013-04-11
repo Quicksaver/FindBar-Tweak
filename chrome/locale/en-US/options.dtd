@@ -5,6 +5,10 @@
 <!ENTITY findbartweakOptgen.label "Findbar Options">
 <!ENTITY findbartweakOptdisplay.label "Display Options">
 
+<!ENTITY findbartweakOpthighlightByDefault.label "Highlight all matches by default">
+<!ENTITY findbartweakOptminNoDelay.labela "Delay highlights if search term is shorter than">
+<!ENTITY findbartweakOptminNoDelay.labelb "characters">
+
 <!ENTITY findbartweakOpthideLabels.label "Hide button labels">
 <!ENTITY findbartweakOpthideClose.label "Hide the Findbar close button">
 <!ENTITY findbartweakOptmovetoTop.label "Move the Findbar to the top of the browser">

@@ -30,23 +30,29 @@ this.delayMoveTop = function() {
 this.moveTop = function() {
 	if(gFindBar.hidden) { return; }
 	
+	// Bugfix: ensure these declarations only take effect when the stylesheet is loaded (from the overlay) as well.
+	// Otherwise, at startup, the browser would jump for half a second with empty space on the right.
+	if(gFindBar.getAttribute('context') != 'findbarMenu') { return; }
+	
 	// If the 'layer' attribute isn't removed the findbar will lockup constantly (I have no idea what this attribute does though...)
 	//findbartweak.bottombox.removeAttribute('layer');
 	
-	moveTopStyle = {};
+	moveTopStyle = {
+		maxWidth: -MIN_RIGHT -MIN_LEFT,
+		left: MIN_LEFT,
+		top: -1 // Move the find bar one pixel up so it covers the toolbox borders, giving it a more seamless look
+	};
 	var computedStyle = {
-		findbar: 	getComputedStyle(gFindBar),
+		//findbar: getComputedStyle(gFindBar),
 		//bottombox: getComputedStyle($('browser-bottombox')),
 		appcontent: getComputedStyle($('appcontent')),
-		borderend: getComputedStyle($('browser-border-end')),
+		//borderend: getComputedStyle($('browser-border-end')),
 		navigatortoolbox: getComputedStyle($('navigator-toolbox')),
 		browser: getComputedStyle(browser)
 	};
 	
 	// Determining the position of the Findbar is a pain...
 	var doneAppContent = false;
-	moveTopStyle.maxWidth = -MIN_RIGHT -MIN_LEFT;
-	moveTopStyle.left = MIN_LEFT;
 	
 	// Compatibility with TreeStyleTab
 	if($('TabsToolbar').getAttribute('treestyletab-tabbar-position') == 'left') {
@@ -112,8 +118,7 @@ this.moveTop = function() {
 			doneAppContent = true;
 		}
 	}
-			
-	moveTopStyle.top = -1; // Move the find bar one pixel up so it covers the toolbox borders, giving it a more seamless look
+	
 	if(mainWindow.getAttribute('sizemode') != 'fullscreen') {
 		if($('titlebar')) {				
 			moveTopStyle.top += $('titlebar').clientHeight;
@@ -298,9 +303,6 @@ this.hideOnChromeAttrWatcher = function(obj, prop, oldVal, newVal) {
 };
 
 moduleAid.LOADMODULE = function() {
-	// We need this to be first to "remove" the findbar from the bottombox so we can use correct values below
-	gFindBar.setAttribute('movetotop', 'true');
-	
 	listenerAid.add(browserPanel, 'resize', browserPanelResized);
 	listenerAid.add(gFindBar, 'OpenedFindBar', moveTop);
 	listenerAid.add(gFindBar, "UpdatedStatusFindBar", moveTop);
@@ -319,6 +321,10 @@ moduleAid.LOADMODULE = function() {
 	listenerAid.add(window, "LessChromeHidden", moveTop, false);
 	
 	observerAid.add(findPersonaPosition, "lightweight-theme-changed");
+	
+	// We need this to be first to "remove" the findbar from the bottombox so we can use correct values below
+	// Not true anymore, but now it's irrelevant, so I'm leaving it this way in case I need it again.
+	gFindBar.setAttribute('movetotop', 'true');
 	
 	moveTop();
 	hideOnChrome();
@@ -347,5 +353,6 @@ moduleAid.UNLOADMODULE = function() {
 	if(UNLOADED || !prefAid.movetoTop) {
 		styleAid.unload('personaFindBar');
 		styleAid.unload('topFindBar');
+		styleAid.unload('topFindBarCorners');
 	}
 };

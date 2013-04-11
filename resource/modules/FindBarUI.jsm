@@ -84,5 +84,7 @@ moduleAid.UNLOADMODULE = function() {
 	listenerAid.remove(gFindBar, 'FoundFindBar', updateCSUI, false);
 	listenerAid.remove(gFindBar, 'WillOpenFindBar', alwaysFindNormal, true);
 	
-	overlayAid.removeOverlayURI('chrome://browser/content/browser.xul', 'findbar');
+	if(UNLOADED) {
+		overlayAid.removeOverlayURI('chrome://browser/content/browser.xul', 'findbar');
+	}
 };

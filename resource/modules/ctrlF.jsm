@@ -24,5 +24,7 @@ moduleAid.LOADMODULE = function() {
 };
 
 moduleAid.UNLOADMODULE = function() {
-	overlayAid.removeOverlayURI('chrome://browser/content/browser.xul', 'ctrlF');
+	if(UNLOADED || !prefAid.ctrlFCloses) {
+		overlayAid.removeOverlayURI('chrome://browser/content/browser.xul', 'ctrlF');
+	}
 };

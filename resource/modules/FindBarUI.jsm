@@ -40,12 +40,18 @@ this.alwaysFindNormal = function(e) {
 	}
 };
 
+this.triggerUIChange = function() {
+	dispatch(gFindBar, { type: 'FindBarUIChanged', cancelable: false });
+};
+
 this.toggleClose = function() {
 	toggleAttribute(gFindBar, 'noClose', prefAid.hideClose);
+	triggerUIChange();
 };
 
 this.toggleLabels = function() {
 	toggleAttribute(gFindBar, 'hideLabels', prefAid.hideLabels);
+	triggerUIChange();
 };
 
 this.toggleMoveToTop = function() {

@@ -19,6 +19,10 @@
 		border-radius: 0 0 8px 8px;
 	}
 	
+	#FindToolbar[movetotop] description[anonid="find-status"] {
+		margin-right: 4px !important;
+	}
+	
 	/* Rounded inner borders */
 	#FindToolbar[movetotop]:before {
 		content: "";

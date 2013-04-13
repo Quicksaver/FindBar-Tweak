@@ -15,6 +15,11 @@ this.moveTopStyle = {
 this.lwthemeImage = null;
 this.MIN_LEFT = 20;
 this.MIN_RIGHT = 30;
+this.lastFindBarWidth = 0;
+
+this.shouldReMoveTop = function() {
+	return (gFindBar.clientWidth != lastFindBarWidth);
+};
 
 this.browserPanelResized = function() {
 	timerAid.init('browserPanelResized', function() {
@@ -24,6 +29,10 @@ this.browserPanelResized = function() {
 
 this.delayMoveTop = function() {
 	timerAid.init('delayMoveTop', moveTop, 0);
+};
+
+this.moveTopAsNeeded = function() {
+	if(shouldReMoveTop()) { moveTop(); }
 };
 
 // Handles the position of the findbar
@@ -43,10 +52,7 @@ this.moveTop = function() {
 		top: -1 // Move the find bar one pixel up so it covers the toolbox borders, giving it a more seamless look
 	};
 	var computedStyle = {
-		//findbar: getComputedStyle(gFindBar),
-		//bottombox: getComputedStyle($('browser-bottombox')),
 		appcontent: getComputedStyle($('appcontent')),
-		//borderend: getComputedStyle($('browser-border-end')),
 		navigatortoolbox: getComputedStyle($('navigator-toolbox')),
 		browser: getComputedStyle(browser)
 	};
@@ -81,13 +87,6 @@ this.moveTop = function() {
 			moveTopStyle.maxWidth += parseFloat(computedStyle.appcontent.getPropertyValue('border-left-width'));
 			moveTopStyle.maxWidth += parseFloat(computedStyle.appcontent.getPropertyValue('border-right-width'));
 			
-			// Always account for the scrollbar wether it's visible or not
-			/*moveTopStyle.reachedBorder = true;
-			if(gBrowser.mCurrentBrowser.contentDocument.documentElement.scrollHeight > gBrowser.mCurrentBrowser.contentDocument.documentElement.clientHeight) {
-				moveTopStyle.maxWidth -= SCROLLBAR_WIDTH;
-				moveTopStyle.reachedBorder = false;
-			}*/
-			
 			/* Don't forget this part afterwards
 			if(panel._hasHighlightGrid
 			&& !grid.hasAttribute('hidden')
@@ -97,18 +96,6 @@ this.moveTop = function() {
 					moveTopStyle.maxWidth -= 4;
 				}
 				//moveTopStyle.reachedBorder = false;
-			}*/
-			
-			// It never reaches the border because it always compensates for the scrollbar,
-			// so I'm commenting this part, if I change my mind later I'll always have this here
-			/*if(moveTopStyle.reachedBorder && browser.childNodes[i+1].id == 'browser-border-end') {
-				moveTopStyle.maxWidth += $('browser-border-end').clientWidth;
-				moveTopStyle.maxWidth += parseFloat(computedStyle.borderend.getPropertyValue('border-left-width'));
-				moveTopStyle.maxWidth += parseFloat(computedStyle.borderend.getPropertyValue('border-right-width'));
-				
-				if(mainWindow.getAttribute('sizemode') != 'normal') {
-					moveTopStyle.maxWidth += parseFloat(computedStyle.findbar.getPropertyValue('border-right-width'));
-				}
 			}*/
 			
 			if(computedStyle.browser.getPropertyValue('direction') == 'ltr') {
@@ -153,9 +140,7 @@ this.moveTop = function() {
 		var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 		sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 		sscode += '@-moz-document url("chrome://browser/content/browser.xul") {\n';
-		sscode += '	#FindToolbar[movetotop]:after {\n';
-		sscode += '		margin-left: -' + gFindBar.scrollLeftMax + 'px;\n';
-		sscode += '	}';
+		sscode += '	#FindToolbar[movetotop]:after { margin-left: -' + gFindBar.scrollLeftMax + 'px; }\n';
 		sscode += '}';
 		styleAid.load('topFindBarCorners', sscode, true);
 	}
@@ -164,14 +149,16 @@ this.moveTop = function() {
 	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 	sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 	sscode += '@-moz-document url("chrome://browser/content/browser.xul") {\n';
-	sscode += '	#FindToolbar[movetotop]:before, #FindToolbar[movetotop]:after { display: none; }\n';
+	sscode += '	#FindToolbar[movetotop]:before, #FindToolbar[movetotop]:after { padding-bottom: 1px !important; }\n';
 	sscode += '}';
 	styleAid.load('tempRedrawBorders', sscode, true);
 	aSync(function() {
 		styleAid.unload('tempRedrawBorders');
 	}, 10);
-	
+		
 	findPersonaPosition();
+	
+	lastFindBarWidth = gFindBar.clientWidth;
 };
 
 this.findPersonaPosition = function() {
@@ -305,7 +292,9 @@ this.hideOnChromeAttrWatcher = function(obj, prop, oldVal, newVal) {
 moduleAid.LOADMODULE = function() {
 	listenerAid.add(browserPanel, 'resize', browserPanelResized);
 	listenerAid.add(gFindBar, 'OpenedFindBar', moveTop);
-	listenerAid.add(gFindBar, "UpdatedStatusFindBar", moveTop);
+	listenerAid.add(gFindBar, "UpdatedStatusFindBar", moveTopAsNeeded);
+	listenerAid.add(gFindBar, "HighlightCounterUpdated", moveTopAsNeeded);
+	listenerAid.add(gFindBar, 'FindBarUIChanged', moveTopAsNeeded);
 	
 	// Register all opened tabs with a listener
 	gBrowser.addTabsProgressListener(hideOnChromeProgressListener);
@@ -344,11 +333,14 @@ moduleAid.UNLOADMODULE = function() {
 	listenerAid.remove(gBrowser, "DOMContentLoaded", hideOnChromeContentLoaded, false);
 	gBrowser.removeTabsProgressListener(hideOnChromeProgressListener);
 	
+	listenerAid.remove(gFindBar, 'FindBarUIChanged', moveTopAsNeeded);
 	listenerAid.remove(gFindBar, 'OpenedFindBar', moveTop);
-	listenerAid.remove(gFindBar, "UpdatedStatusFindBar", moveTop);
+	listenerAid.remove(gFindBar, "UpdatedStatusFindBar", moveTopAsNeeded);
+	listenerAid.remove(gFindBar, "HighlightCounterUpdated", moveTopAsNeeded);
 	listenerAid.remove(browserPanel, 'resize', browserPanelResized);
 	
 	gFindBar.removeAttribute('movetotop');
+	hideIt(gFindBar, true);
 	
 	if(UNLOADED || !prefAid.movetoTop) {
 		styleAid.unload('personaFindBar');

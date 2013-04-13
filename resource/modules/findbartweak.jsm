@@ -12,6 +12,7 @@ moduleAid.LOADMODULE = function() {
 	moduleAid.load('initFindbar');
 	moduleAid.load('FindBarUI');
 	moduleAid.load('highlights');
+	moduleAid.load('compatibilityFix/windowFixes');
 	
 	prefAid.listen('ctrlFCloses', toggleCtrlF);
 	prefAid.listen('onStartup', toggleRememberStartup);
@@ -27,6 +28,7 @@ moduleAid.UNLOADMODULE = function() {
 	prefAid.unlisten('ctrlFCloses', toggleCtrlF);
 	prefAid.unlisten('onStartup', toggleRememberStartup);
 	
+	moduleAid.unload('compatibilityFix/windowFixes');
 	moduleAid.unload('highlights');
 	moduleAid.unload('FindBarUI');
 	moduleAid.unload('initFindbar');

@@ -13,9 +13,8 @@
 			<preference id="pref-highlightColor" name="extensions.findbartweak.highlightColor" type="string"/>
 			<preference id="pref-hideWhenFinderHidden" name="extensions.findbartweak.hideWhenFinderHidden" type="bool"/>
 			<preference id="pref-useCounter" name="extensions.findbartweak.useCounter" type="bool"/>
-			<!--<preference id="pref-useGrid" name="extensions.findbartweak.useGrid" type="bool"/>
-			<preference id="pref-gridInScrollbar" name="extensions.findbartweak.gridInScrollbar" type="bool"/>
-			<preference id="pref-gridLimit" name="extensions.findbartweak.gridLimit" type="int"/>-->
+			<preference id="pref-useGrid" name="extensions.findbartweak.useGrid" type="bool"/>
+			<preference id="pref-gridLimit" name="extensions.findbartweak.gridLimit" type="int"/>
 			<preference id="pref-movetoTop" name="extensions.findbartweak.movetoTop" type="bool"/>
 			<preference id="pref-hideClose" name="extensions.findbartweak.hideClose" type="bool"/>
 			<preference id="pref-hideLabels" name="extensions.findbartweak.hideLabels" type="bool"/>
@@ -85,18 +84,20 @@
 				            <label value="&findbartweakOptminNoDelay.labelb;"/>
 				        </hbox>
 					</groupbox>
-					<!--<groupbox align="start">
+					<groupbox align="start">
 						<caption label="&findbartweakOptgrid.label;"/>
-						<checkbox id="checkbox-useGrid" oncommand="findbartweakOptions.changeGridOptions();" label="&findbartweakOptuseGrid.label;" preference="pref-useGrid"/>
-						<checkbox id="checkbox-gridInScrollbar" label="&findbartweakOptgridInScrollbar.label;" preference="pref-gridInScrollbar"/>
+						<checkbox label="&findbartweakOptgridInScrollbar.label;" preference="pref-useGrid"/>
 						<hbox>
-							<label id="gridLimitLabela" value="&findbartweakOptgridLimit.labela;"/>
-							<textbox id="gridLimitTextbox" class="textbox" size="3" maxlength="5" style="text-align: center;"
-								preference="pref-gridLimit" 
-								onsynctopreference="return findbartweakOptions.onlyNumbers(this.value);"/>
-				            <label id="gridLimitLabelb" value="&findbartweakOptgridLimit.labelb;"/>
+							<label dependson="pref-useGrid" value="&findbartweakOptgridLimit.labela;"/>
+							<textbox dependson="pref-useGrid"
+								type="number"
+								size="3"
+								min="1"
+								max="10000"
+								preference="pref-gridLimit"/>
+				            <label dependson="pref-useGrid" value="&findbartweakOptgridLimit.labelb;"/>
 				        </hbox>
-					</groupbox>-->
+					</groupbox>
 					<groupbox align="center">
 						<caption label="&findbartweakOptcolor.label;"/>
 						<colorpicker id="color" type="button" preference="pref-highlightColor" style="width: 50px;"/>

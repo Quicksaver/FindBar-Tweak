@@ -86,4 +86,26 @@
 		border-right: 1px solid rgb(0,0,0) !important;
 		border-left: 1px solid rgb(0,0,0) !important;
 	}
+	
+	/* Grid stuff */
+	hbox[anonid="gridBox"] {
+		pointer-events: none;
+		width: 100%;
+		height: 100%;
+		padding-right: 3px;
+		direction: rtl !important;
+	}
+	
+	grid[anonid="findGrid"] {
+		opacity: 0.7;
+		width: 11px;
+	}
+	
+	grid[anonid="findGrid"] row[flex="0"] {
+		height: 18px;
+	}
+	
+	grid[anonid="findGrid"][noGridSpacers="true"] row[flex="0"] {
+		height: 0px !important;
+	}
 }

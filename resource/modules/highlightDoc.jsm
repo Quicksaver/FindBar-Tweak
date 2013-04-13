@@ -2,7 +2,7 @@ moduleAid.VERSION = '1.0.0';
 
 // The counter and grid are so intricately connected I can't separate them and put them in their own modules.
 
-// Counter stuff
+// ---- Counter stuff -----
 
 this.__defineGetter__('findbarContainer', function() { return gFindBar.getElement('findbar-container'); });
 
@@ -127,6 +127,165 @@ this.toggleCounter = function() {
 	}
 }
 
+// ----- Grid Stuff -----
+
+this.ROWS_MINIMUM = 150; // number of rows in the highlight grid - kind of the "highlight granularity"
+this.ROWS_MULTIPLIER = 2; // Add extra rows if their height exceeds this value
+
+this.__defineGetter__('grid', function() {
+	var grids = linkedPanel.querySelectorAll('[anonid="findGrid"]');
+	if(grids.length > 0) {
+		return grids[0];
+	}
+	
+	// First the grid itself
+	var boxNode = document.createElement('hbox');
+	boxNode.setAttribute('anonid', 'gridBox');
+	
+	var gridNode = document.createElement('grid');
+	gridNode.setAttribute('anonid', 'findGrid');
+	
+	// Then columns
+	var columns = document.createElement('columns');
+	columns = gridNode.appendChild(columns);
+	var column = document.createElement('column');
+	column = columns.appendChild(column);
+	
+	// Then start adding the rows
+	var rows = document.createElement('rows');
+	rows = gridNode.appendChild(rows);
+	
+	// Starting with the top spacer
+	var topspacer = document.createElement('row');
+	topspacer.setAttribute('flex', '0');
+	topspacer = rows.appendChild(topspacer);
+	
+	// Actual highlight rows
+	var row = document.createElement('row');
+	row.setAttribute('flex', '1');
+	row = rows.appendChild(row);
+	
+	// we need to append all the rows
+	var row_i = null;
+	for(var i=1; i<ROWS_MINIMUM; i++) {
+		row_i = row.cloneNode(true);
+		rows.appendChild(row_i);
+	}
+	
+	// append another spacer at the bottom
+	var bottomspacer = topspacer.cloneNode(true);
+	rows.appendChild(bottomspacer);
+	
+	// Insert the grid into the tab
+	boxNode = gBrowser.mCurrentBrowser.parentNode.appendChild(boxNode);
+	gridNode = boxNode.appendChild(gridNode);
+	
+	return gridNode;
+});
+
+// Prepares the grid to be filled with the highlights
+this.resetHighlightGrid = function() {
+	var rows = grid.childNodes[1];
+	
+	// Reset (clean) all grid rows
+	for(var i=1; i<rows.childNodes.length-1; i++) {
+		rows.childNodes[i].style.backgroundColor = null;
+		rows.childNodes[i].style.backgroundImage = null;
+	}
+	
+	// Adjust number of rows
+	var gridHeight = Math.max(grid.clientHeight - (rows.childNodes[0].clientHeight *2), 0);
+	grid._gridHeight = gridHeight;
+	
+	var num_rows = Math.max(Math.ceil(gridHeight / ROWS_MULTIPLIER), ROWS_MINIMUM);
+	while(rows.childNodes.length -2 > num_rows) {
+		rows.removeChild(rows.childNodes[1]);
+	}
+	while(rows.childNodes.length -2 < num_rows) {
+		var newNode = rows.childNodes[1].cloneNode(true);
+		rows.insertBefore(newNode, rows.lastChild);
+	}
+	
+	removeAttribute(grid, 'noGridSpacers');
+	
+	// Fix for non-html files (e.g. xml files)
+	// I don't remember why I put !gBrowser.mCurrentBrowser in here... it may have happened sometime
+	if(!contentDocument
+	|| !contentDocument.getElementsByTagName('html')[0]
+	|| !contentDocument.getElementsByTagName('body')[0]
+	|| !gBrowser.mCurrentBrowser) {
+		return false;
+	}
+	
+	var fullHTMLHeight = contentDocument.getElementsByTagName('html')[0].scrollHeight || contentDocument.getElementsByTagName('body')[0].scrollHeight;
+	
+	// Don't think this can happen but I better make sure
+	if(fullHTMLHeight == 0) { return false; }
+	
+	return true;
+};
+
+this.fillHighlightGrid = function(toAdd) {
+	// I had checks for this before, if it reaches this point this shouldn't error but I'm preventing it anyway
+	try {
+		var scrollTop = contentDocument.getElementsByTagName('html')[0].scrollTop || contentDocument.getElementsByTagName('body')[0].scrollTop;
+		var scrollTopMax = contentDocument.getElementsByTagName('html')[0].scrollTopMax || contentDocument.getElementsByTagName('body')[0].scrollTopMax;
+		var fullHTMLHeight = contentDocument.getElementsByTagName('html')[0].scrollHeight || contentDocument.getElementsByTagName('body')[0].scrollHeight;
+		var gridHeight = grid._gridHeight;
+	}
+	catch(ex) { return; }
+	
+	for(var i=0; i<toAdd.length; i++) {
+		var aRange = toAdd[i].node;
+		var rect = aRange.getBoundingClientRect();
+		var absTop = (rect.top + scrollTop) / fullHTMLHeight;
+		var absBot = (rect.bottom + scrollTop) / fullHTMLHeight;
+		
+		var highlighted = false;
+		var row_bottom = 0;
+		var rows = grid.childNodes[1];
+		for(var j=1; j<rows.childNodes.length-1; j++) {
+			var row = rows.childNodes[j];
+			var row_top = row_bottom;
+			var row_bottom = row_top + (row.clientHeight / gridHeight);
+			
+			// If any part of the row's range is within the match's range, highlight it
+			if( (absTop >= row_top || absBot >= row_top) && (absTop <= row_bottom || absBot <= row_bottom) ) {
+				row.style.backgroundColor = prefAid.highlightColor;
+				if(toAdd[i].pattern) {
+					row.style.backgroundImage = 'url("chrome://findbartweak/skin/pattern.gif")';
+				}
+				highlighted = true;
+			}
+			
+			// Don't cycle through the whole grid unnecessarily
+			else if(highlighted) {
+				break;
+			}
+		}
+	}
+	
+	if(scrollTopMax == 0) {
+		setAttribute(grid, 'noGridSpacers', true);
+	}
+};
+
+this.toggleGrid = function() {
+	if(!prefAid.useGrid || UNLOADED) {
+		for(var t=0; t<gBrowser.mTabs.length; t++) {
+			var panel = $(gBrowser.mTabs[t].linkedPanel);
+			var innerGrid = panel.querySelectorAll('[anonid="gridBox"]');
+			if(innerGrid.length > 0) {
+				innerGrid[0].parentNode.removeChild(innerGrid[0]);
+			}
+		}
+	}
+		
+	if(!UNLOADED) {
+		observerAid.notify('ReHighlightAll');
+	}
+};
+
 moduleAid.LOADMODULE = function() {
 	this.backups = {
 		_highlightDoc: gFindBar._highlightDoc
@@ -140,6 +299,12 @@ moduleAid.LOADMODULE = function() {
 			if(prefAid.useCounter) {
 				var counterLevels = [];
 				aLevel = counterLevels;
+			}
+			
+			var fillGrid = false;
+			if(prefAid.useGrid) {
+				var toAddtoGrid = [];
+				fillGrid = resetHighlightGrid();
 			}
 		}
 			
@@ -156,9 +321,9 @@ moduleAid.LOADMODULE = function() {
 			
 			if(this._highlightDoc(aHighlight, aWord, win.frames[i], nextLevel)) {
 				textFound = true;
-				/*if(aHighlight && findbartweak.FILLGRID && win == this.browser.contentWindow) {
-					findbartweak.FILLGRID = (findbartweak.toAddtoGrid.push( { node: win.frames[i].frameElement, pattern: true } ) > findbartweak.prefAid.gridLimit) ? false : true;
-				}*/
+				if(aHighlight && fillGrid && !aWindow) {
+					fillGrid = (toAddtoGrid.push({ node: win.frames[i].frameElement, pattern: true }) <= prefAid.gridLimit);
+				}
 			}
 			
 			if(aLevel) { aLevel[thisLevel].levels = nextLevel; }
@@ -198,14 +363,14 @@ moduleAid.LOADMODULE = function() {
 				if(aHighlight) {
 					this._highlight(retRange, controller);
 				
-					/*if(findbartweak.FILLGRID && win == this.browser.contentWindow) {
+					if(fillGrid && !aWindow) {
 						var editableNode = this._getEditableNode(retRange.startContainer);
 						if(editableNode) {
-							findbartweak.FILLGRID = (findbartweak.toAddtoGrid.push( { node: editableNode, pattern: true } ) > findbartweak.prefAid.gridLimit) ? false : true;
+							fillGrid = (toAddtoGrid.push({ node: editableNode, pattern: true }) <= prefAid.gridLimit);
 						} else {
-							findbartweak.FILLGRID = (findbartweak.toAddtoGrid.push( { node: retRange, pattern: false } ) > findbartweak.prefAid.gridLimit) ? false : true;
+							fillGrid = (toAddtoGrid.push({ node: retRange }) <= prefAid.gridLimit);
 						}
-					}*/
+					}
 				}
 				
 				if(aLevel) {
@@ -224,6 +389,10 @@ moduleAid.LOADMODULE = function() {
 			var counterHighlights = [];
 			moveHighlightsArray(counterLevels, counterHighlights);
 			linkedPanel._counterHighlights = counterHighlights;
+		}
+		
+		if(!aWindow && fillGrid) {
+			fillHighlightGrid(toAddtoGrid);
 		}
 		
 		if(!aHighlight) {
@@ -248,13 +417,17 @@ moduleAid.LOADMODULE = function() {
 	}
 	
 	prefAid.listen('useCounter', toggleCounter);
+	prefAid.listen('useGrid', toggleGrid);
 	
 	toggleCounter();
+	toggleGrid();
 };
 
 moduleAid.UNLOADMODULE = function() {
 	prefAid.unlisten('useCounter', toggleCounter);
+	prefAid.unlisten('useGrid', toggleGrid);
 	
+	toggleGrid();
 	toggleCounter();
 	
 	// Clean up everything this module may have added to tabs and panels and documents

@@ -7,6 +7,8 @@ var prefList = {
 	minNoDelay: 3,
 	highlightColor: "#EF0FFF",
 	useCounter: true,
+	useGrid: true,
+	gridLimit: 250,
 	
 	onStartup: false,
 	findbarHidden: true,

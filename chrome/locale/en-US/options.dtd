@@ -4,11 +4,15 @@
 
 <!ENTITY findbartweakOptgen.label "Findbar Options">
 <!ENTITY findbartweakOptdisplay.label "Display Options">
+<!ENTITY findbartweakOptgrid.label "Highlights Grid">
 
 <!ENTITY findbartweakOpthighlightByDefault.label "Highlight all matches by default">
 <!ENTITY findbartweakOpthideWhenFinderHidden.label "Remove highlights when the Findbar is hidden">
+<!ENTITY findbartweakOptgridInScrollbar.label "Show highlights grid in the scrollbar">
 <!ENTITY findbartweakOptuseCounter.label "Show hits counter in the Findbar">
 <!ENTITY findbartweakOptcolor.label "Highlights Color">
+<!ENTITY findbartweakOptgridLimit.labela "Don't use the grid if it exceeds">
+<!ENTITY findbartweakOptgridLimit.labelb "highlights">
 <!ENTITY findbartweakOptminNoDelay.labela "Delay highlights if search term is shorter than">
 <!ENTITY findbartweakOptminNoDelay.labelb "characters">
 

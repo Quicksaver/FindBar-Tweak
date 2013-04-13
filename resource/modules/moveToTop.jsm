@@ -87,17 +87,6 @@ this.moveTop = function() {
 			moveTopStyle.maxWidth += parseFloat(computedStyle.appcontent.getPropertyValue('border-left-width'));
 			moveTopStyle.maxWidth += parseFloat(computedStyle.appcontent.getPropertyValue('border-right-width'));
 			
-			/* Don't forget this part afterwards
-			if(panel._hasHighlightGrid
-			&& !grid.hasAttribute('hidden')
-			&& !prefAid.gridInScrollbar) {
-				moveTopStyle.maxWidth -= grid.getAttribute('width');
-				if(!splitter.hasAttribute('hidden')) {
-					moveTopStyle.maxWidth -= 4;
-				}
-				//moveTopStyle.reachedBorder = false;
-			}*/
-			
 			if(computedStyle.browser.getPropertyValue('direction') == 'ltr') {
 				break;
 			}

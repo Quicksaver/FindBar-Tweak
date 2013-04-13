@@ -4,7 +4,7 @@
 <!DOCTYPE options SYSTEM "chrome://findbartweak/locale/options.dtd">
 <prefwindow xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 			id="findbartweak-options-window"
-			title="&findbartweakOptions.title;">
+			title="&Options.title;">
 
 	<prefpane>
 		<preferences>
@@ -28,78 +28,78 @@
 		
 		<tabbox id="findbartweakTabBox" flex="1">
 			<tabs id="tabsElement">
-				<tab id="generalTab" label="&findbartweakOptGeneral.label;"/>
-				<tab id="highlightsTab" label="&findbartweakOptHighlights.label;"/>
+				<tab id="generalTab" label="&OptGeneral.label;"/>
+				<tab id="highlightsTab" label="&OptHighlights.label;"/>
 			</tabs>
 			
 			<tabpanels id="tabPanels" flex="1">
 				<tabpanel id="generalTab" orient="vertical">
 					<groupbox align="start">
-						<caption label="&findbartweakOptgen.label;"/>
-						<checkbox label="&findbartweakOptonStartup.label;" preference="pref-onStartup"/>
-						<checkbox id="ctrlFClosesCheckbox" label="&findbartweakOptctrlFCloses.win;" preference="pref-ctrlFCloses"/>
+						<caption label="&Optgen.label;"/>
+						<checkbox label="&OptonStartup.label;" preference="pref-onStartup"/>
+						<checkbox id="ctrlFClosesCheckbox" label="&OptctrlFCloses.win;" preference="pref-ctrlFCloses"/>
 					</groupbox>
 					<groupbox align="start">
-						<caption label="&findbartweakOptdisplay.label;"/>
-						<checkbox label="&findbartweakOptmovetoTop.label;" preference="pref-movetoTop"/>
-						<checkbox label="&findbartweakOpthideClose.label;" preference="pref-hideClose"/>
-						<checkbox label="&findbartweakOpthideLabels.label;" preference="pref-hideLabels"/>
+						<caption label="&Optdisplay.label;"/>
+						<checkbox label="&OptmovetoTop.label;" preference="pref-movetoTop"/>
+						<checkbox label="&OpthideClose.label;" preference="pref-hideClose"/>
+						<checkbox label="&OpthideLabels.label;" preference="pref-hideLabels"/>
 					</groupbox>
 					<groupbox align="start">
 						<caption>
-							<checkbox label="&findbartweakOptFAYT.label;" preference="pref-typeaheadfind"/>
+							<checkbox label="&OptFAYT.label;" preference="pref-typeaheadfind"/>
 						</caption>
 						<radiogroup preference="pref-FAYTmode">
-							<radio dependson="pref-typeaheadfind" label="&findbartweakOptFAYTmode.quickFind;" value="quick"/>
+							<radio dependson="pref-typeaheadfind" label="&OptFAYTmode.quickFind;" value="quick"/>
 							<vbox style="margin-left: 30px;">
-								<checkbox dependson="pref-typeaheadfind,pref-FAYTmode:quick" label="&findbartweakOptkeepButtons.label;" preference="pref-keepButtons"/>
+								<checkbox dependson="pref-typeaheadfind,pref-FAYTmode:quick" label="&OptkeepButtons.label;" preference="pref-keepButtons"/>
 								<hbox>
-									<label dependson="pref-typeaheadfind,pref-FAYTmode:quick" value="&findbartweakOptFAYTTimeout.beforeLabel;"/>
+									<label dependson="pref-typeaheadfind,pref-FAYTmode:quick" value="&OptFAYTTimeout.beforeLabel;"/>
 									<textbox id="timeoutTextbox" dependson="pref-typeaheadfind,pref-FAYTmode:quick" size="3" maxlength="5"
 										preference="pref-timeout"
 										onsyncfrompreference="return document.getElementById('pref-timeout').value / 1000;" 
 										onsynctopreference="return parseInt(document.getElementById('timeoutTextbox').value || 0) * 1000;"/>
-						            <label dependson="pref-typeaheadfind,pref-FAYTmode:quick" value="&findbartweakOptFAYTTimeout.afterLabel;"/>
+						            <label dependson="pref-typeaheadfind,pref-FAYTmode:quick" value="&OptFAYTTimeout.afterLabel;"/>
 						        </hbox>
 					        </vbox>
-							<radio dependson="pref-typeaheadfind" label="&findbartweakOptFAYTmode.normalFind;" value="normal"/>
+							<radio dependson="pref-typeaheadfind" label="&OptFAYTmode.normalFind;" value="normal"/>
 						</radiogroup>
 			        </groupbox>
 				</tabpanel>
 				
 				<tabpanel id="highlightsTab" orient="vertical">
 					<groupbox align="start">
-						<caption label="&findbartweakOptHighlights.label;"/>
-						<checkbox label="&findbartweakOpthighlightByDefault.label;" preference="pref-highlightByDefault"/>
-						<checkbox label="&findbartweakOpthideWhenFinderHidden.label;" preference="pref-hideWhenFinderHidden"/>
-						<checkbox label="&findbartweakOptuseCounter.label;" preference="pref-useCounter"/>
+						<caption label="&OptHighlights.label;"/>
+						<checkbox label="&OpthighlightByDefault.label;" preference="pref-highlightByDefault"/>
+						<checkbox label="&OpthideWhenFinderHidden.label;" preference="pref-hideWhenFinderHidden"/>
+						<checkbox label="&OptuseCounter.label;" preference="pref-useCounter"/>
 						<hbox>
-							<label value="&findbartweakOptminNoDelay.labela;"/>
+							<label value="&OptminNoDelay.labela;"/>
 							<textbox type="number"
 								size="1"
 								min="1"
 								max="50"
 								style="text-align: center;"
 								preference="pref-minNoDelay"/>
-				            <label value="&findbartweakOptminNoDelay.labelb;"/>
+				            <label value="&OptminNoDelay.labelb;"/>
 				        </hbox>
 					</groupbox>
 					<groupbox align="start">
-						<caption label="&findbartweakOptgrid.label;"/>
-						<checkbox label="&findbartweakOptgridInScrollbar.label;" preference="pref-useGrid"/>
+						<caption label="&Optgrid.label;"/>
+						<checkbox label="&OptgridInScrollbar.label;" preference="pref-useGrid"/>
 						<hbox>
-							<label dependson="pref-useGrid" value="&findbartweakOptgridLimit.labela;"/>
+							<label dependson="pref-useGrid" value="&OptgridLimit.labela;"/>
 							<textbox dependson="pref-useGrid"
 								type="number"
 								size="3"
 								min="1"
 								max="10000"
 								preference="pref-gridLimit"/>
-				            <label dependson="pref-useGrid" value="&findbartweakOptgridLimit.labelb;"/>
+				            <label dependson="pref-useGrid" value="&OptgridLimit.labelb;"/>
 				        </hbox>
 					</groupbox>
 					<groupbox align="center">
-						<caption label="&findbartweakOptcolor.label;"/>
+						<caption label="&Optcolor.label;"/>
 						<colorpicker id="color" type="button" preference="pref-highlightColor" style="width: 50px;"/>
 					</groupbox>
 				</tabpanel>

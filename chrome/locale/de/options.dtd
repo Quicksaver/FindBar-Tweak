@@ -1,0 +1,27 @@
+<!ENTITY Options.title "FindBar Tweak - Einstellungen">
+<!ENTITY OptHighlights.label "Hervorhebungen">
+<!ENTITY OptGeneral.label "Allgemein">
+<!ENTITY Optgen.label "Suchleisten-Einstellungen">
+<!ENTITY Optdisplay.label "Anzeigeeinstellungen">
+<!ENTITY Optgrid.label "Hervorhebungsbalken">
+<!ENTITY OpthighlightByDefault.label "Automatisch alle Vorkommen des gesuchten Begriffs hervorheben">
+<!ENTITY OpthideWhenFinderHidden.label "Alle Hervorhebungen nach dem Ausblenden der Suchleiste entfernen">
+<!ENTITY OptgridInScrollbar.label "Hervorhebungsbalken innerhalb der Bildlaufleiste anzeigen">
+<!ENTITY OptuseCounter.label "Trefferanzahl in der Suchleiste anzeigen">
+<!ENTITY Optcolor.label "Markierungsfarbe">
+<!ENTITY OptgridLimit.labela "Den Hervorhebungsbalken bei mehr als">
+<!ENTITY OptgridLimit.labelb "Hervorhebungen nicht anzeigen">
+<!ENTITY OptminNoDelay.labela "Hervorhebungen verzögert einblenden bei weniger als">
+<!ENTITY OptminNoDelay.labelb "Zeichen">
+<!ENTITY OpthideLabels.label "Schaltflächentext ausblenden">
+<!ENTITY OpthideClose.label "Die Schließen-Schaltfläche ausblenden">
+<!ENTITY OptmovetoTop.label "Die Such-Symbolleiste an den oberen Rand des Browsers verschieben">
+<!ENTITY OptonStartup.label "Den Zustand der Such-Symbolleiste (eingeblendet/ausgeblendet) beim Start wiederherstellen">
+<!ENTITY OptkeepButtons.label "Schaltflächen in der Suchleiste anzeigen">
+<!ENTITY OptFAYT.label "Suche bereits beim Eintippen starten">
+<!ENTITY OptFAYTTimeout.beforeLabel "Such-Symbolleiste automatisch schließen nach">
+<!ENTITY OptFAYTTimeout.afterLabel "Sekunden">
+<!ENTITY OptFAYTmode.quickFind "Die Schnell-Suchleiste verwenden, wenn sie nicht bereits geöffnet ist">
+<!ENTITY OptFAYTmode.normalFind "Immer die normale Such-Symbolleiste verwenden">
+<!ENTITY OptctrlFCloses.win "Strg+F um die Suchleiste zu schließen">
+<!ENTITY OptctrlFCloses.mac "Befehlstaste+F um die Suchleiste zu schließen">

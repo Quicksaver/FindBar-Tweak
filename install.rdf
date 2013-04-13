@@ -25,5 +25,29 @@
 				<em:description>Tweak your FindBar the way you like it!</em:description>
 			</Description>
 		</em:localized>
-	</Description>      
+		<em:localized>
+			<Description>
+				<em:locale>de</em:locale>
+				<em:name>FindBar Tweak</em:name>
+				<em:description>Optimieren Sie Ihre Suchleiste, so wie Sie es brauchen!</em:description>
+				<em:translator>Wawuschel @ babelzilla</em:translator>
+			</Description>
+		</em:localized>
+		<em:localized>
+			<Description>
+				<em:locale>pt-PT</em:locale>
+				<em:name>Barra de Procura Refinada</em:name>
+				<em:description>Refine a sua barra de procura como realmente gosta!</em:description>
+				<em:translator>Quicksaver</em:translator>
+			</Description>
+		</em:localized>
+		<em:localized>
+			<Description>
+				<em:locale>sv-SE</em:locale>
+				<em:name>FindBar Tweak</em:name>
+				<em:description>Ställ in din söklist som du vill ha den!</em:description>
+				<em:translator>Mikael Hiort af Ornäs</em:translator>
+			</Description>
+		</em:localized>
+	</Description>
 </RDF>

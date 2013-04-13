@@ -5,7 +5,7 @@
 	
 	<popupset id="mainPopupSet">
 		<menupopup id="findbarMenu">
-			<menuitem label="&findbartweakMenuOptions.label;" oncommand="objName.doOpenOptions();" />
+			<menuitem label="&MenuOptions.label;" oncommand="objName.doOpenOptions();" />
 		</menupopup>
 	</popupset>
 	

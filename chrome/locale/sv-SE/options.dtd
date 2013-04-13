@@ -1,0 +1,27 @@
+<!ENTITY Options.title "FindBar Tweak - Söklistalternativ">
+<!ENTITY OptHighlights.label "Färgmarkering">
+<!ENTITY OptGeneral.label "Allmänt">
+<!ENTITY Optgen.label "Söklistalternativ">
+<!ENTITY Optdisplay.label "Visningsalternativ">
+<!ENTITY Optgrid.label "Visning av markeringspositioner">
+<!ENTITY OpthighlightByDefault.label "Färgmarkera alla träffar som standard">
+<!ENTITY OpthideWhenFinderHidden.label "Ta bort färgmarkeringar när söklisten döljs">
+<!ENTITY OptgridInScrollbar.label "Visa markeringspositionslinjalen i rullningslisten">
+<!ENTITY OptuseCounter.label "Visa antalet träffar i söklisten">
+<!ENTITY Optcolor.label "Markeringsfärg">
+<!ENTITY OptgridLimit.labela "Använd inte linjalen vid fler än">
+<!ENTITY OptgridLimit.labelb "markeringar">
+<!ENTITY OptminNoDelay.labela "Fördröj färgmarkering om söktermen är kortare än">
+<!ENTITY OptminNoDelay.labelb "tecken">
+<!ENTITY OpthideLabels.label "Dölj knappetiketter">
+<!ENTITY OpthideClose.label "Dölj söklistens stängknapp">
+<!ENTITY OptmovetoTop.label "Placera söklisten överst i webbläsarfönstret">
+<!ENTITY OptonStartup.label "Kom ihåg söklistens öppen/stängd-tillstånd vid programstart">
+<!ENTITY OptkeepButtons.label "Visa knappar in snabbsöklisten">
+<!ENTITY OptFAYT.label "Sök efter text medan jag skriver">
+<!ENTITY OptFAYTTimeout.beforeLabel "Stäng automatiskt efter">
+<!ENTITY OptFAYTTimeout.afterLabel "sekunder">
+<!ENTITY OptFAYTmode.quickFind "Använd snabbsöklisten om den inte redan är öppen">
+<!ENTITY OptFAYTmode.normalFind "Använd alltid den vanliga söklisten">
+<!ENTITY OptctrlFCloses.win "Ctrl+F stänger också söklisten">
+<!ENTITY OptctrlFCloses.mac "Command+F stänger också söklisten">

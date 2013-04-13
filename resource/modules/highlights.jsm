@@ -29,7 +29,7 @@ this.emptyNoFindUpdating = function(e) {
 	}
 };
 
-this.keepStatusUI = function(e) { doLog('caught it');
+this.keepStatusUI = function(e) {
 	linkedPanel._statusUI = e.detail.res;
 };
 
@@ -111,6 +111,13 @@ this.highlightsContentLoaded = function(e) {
 	}
 };
 
+// ReDo highlights when hitting FindAgain if necessary (should rarely be triggered actually)
+this.highlightsFindAgain = function() {
+	if(documentReHighlight) {
+		reHighlight(documentHighlighted);
+	}
+};
+
 // This always calls toggleHighlight() at least once with a false argument, then with a true argument if reDo is true.
 // This way we ensure the old highlights are removed before adding new ones.
 this.reHighlight = function(reDo) {
@@ -142,9 +149,12 @@ moduleAid.LOADMODULE = function() {
 		_setHighlightTimeout: gFindBar._setHighlightTimeout
 	};
 	
-	gFindBar._setHighlightTimeout = function(aValue) {
+	gFindBar._setHighlightTimeout = function() {
+		// We want this to be updated regardless of what happens
+		linkedPanel._findWord = gFindBar._findField.value;
+		
 		// Just reset any highlights and the counter if it's not supposed to highlight
-		if(!this.getElement("highlight").checked && this._findField.value.length == 0) {
+		if(!this.getElement("highlight").checked || !this._findField.value) {
 			gFindBar.toggleHighlight(false);
 			return;
 		}
@@ -152,7 +162,7 @@ moduleAid.LOADMODULE = function() {
 		var delay = SHORT_DELAY;
 		
 		// Delay highlights if search term is too short
-		if(prefAid.minNoDelay > 0 && this._findField.value.length < prefAid.minNoDelay) {
+		if(gFindBar.getElement("highlight").checked && this._findField.value && prefAid.minNoDelay > 0 && this._findField.value.length < prefAid.minNoDelay) {
 			delay = LONG_DELAY;
 		}
 			
@@ -163,14 +173,13 @@ moduleAid.LOADMODULE = function() {
 		}
 		
 		// Make sure it triggers the highlight if we switch tabs meanwhile
-		documentHighlighted = true;
-		documentReHighlight = true;
-		linkedPanel._findWord = gFindBar._findField.value;
+		documentHighlighted = gFindBar.getElement("highlight").checked;
+		documentReHighlight = gFindBar.getElement("highlight").checked;
 		
 		linkedPanel._delayHighlight = timerAid.create(function(timer) {
 			// We don't want to highlight pages that aren't supposed to be highlighted (happens when switching tabs when delaying highlights)
 			if(linkedPanel._delayHighlight && linkedPanel._delayHighlight.timer == timer) {
-				reHighlight(true);
+				reHighlight(gFindBar.getElement("highlight").checked);
 			}
 		}, delay);
 	};
@@ -183,14 +192,25 @@ moduleAid.LOADMODULE = function() {
 		}
 	};
 	
+	gFindBar._onFindAgainCommand = gFindBar.onFindAgainCommand;
+	gFindBar.onFindAgainCommand = function(aFindPrevious) {
+		if(dispatch(gFindBar, { type: 'WillFindAgain', detail: aFindPrevious })) {
+			gFindBar._onFindAgainCommand(aFindPrevious);
+			dispatch(gFindBar, { type: 'FoundAgain', cancelable: false, detail: aFindPrevious });
+		}
+	};
+	
 	listenerAid.add(gFindBar, 'WillUpdateStatusFindBar', emptyNoFindUpdating);
 	listenerAid.add(gFindBar, 'UpdatedStatusFindBar', keepStatusUI);
 	listenerAid.add(gFindBar, 'ClosedFindBar', highlightOnClose);
 	listenerAid.add(gFindBar, 'WillToggleHighlight', highlightsOnToggling);
+	listenerAid.add(gFindBar, 'WillFindAgain', highlightsFindAgain);
 	listenerAid.add(gBrowser.tabContainer, "TabSelect", highlightsTabSelected);
 	listenerAid.add(gBrowser, "DOMContentLoaded", highlightsContentLoaded);
 	
 	observerAid.add(reHighlightAll, 'ReHighlightAll');
+	
+	moduleAid.load('highlightDoc');
 	
 	prefAid.listen('highlightByDefault', toggleHighlightByDefault);
 	prefAid.listen('hideWhenFinderHidden', toggleHideOnClose);
@@ -205,6 +225,8 @@ moduleAid.UNLOADMODULE = function() {
 	
 	prefAid.unlisten('highlightByDefault', toggleHighlightByDefault);
 	prefAid.unlisten('hideWhenFinderHidden', toggleHideOnClose);
+	
+	moduleAid.unload('highlightDoc');
 	
 	// Clean up everything this module may have added to tabs and panels and documents
 	for(var t=0; t<gBrowser.mTabs.length; t++) {
@@ -227,6 +249,7 @@ moduleAid.UNLOADMODULE = function() {
 	listenerAid.remove(gFindBar, 'UpdatedStatusFindBar', keepStatusUI);
 	listenerAid.remove(gFindBar, 'ClosedFindBar', highlightOnClose);
 	listenerAid.remove(gFindBar, 'WillToggleHighlight', highlightsOnToggling);
+	listenerAid.remove(gFindBar, 'WillFindAgain', highlightsFindAgain);
 	listenerAid.remove(gBrowser.tabContainer, "TabSelect", highlightsTabSelected);
 	listenerAid.remove(gBrowser, "DOMContentLoaded", highlightsContentLoaded);
 	
@@ -236,5 +259,7 @@ moduleAid.UNLOADMODULE = function() {
 	}
 	
 	gFindBar.toggleHighlight = gFindBar._toggleHighlight;
+	gFindBar.onFindAgainCommand = gFindBar._onFindAgainCommand;
+	delete gFindBar._onFindAgainCommand;
 	delete gFindBar._toggleHighlight;
 };

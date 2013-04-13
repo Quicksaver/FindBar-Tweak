@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.0.0';
+moduleAid.VERSION = '2.0.1';
 moduleAid.LAZY = true;
 
 // stringsAid - use for getting strings out of bundles from .properties locale files
@@ -47,8 +47,8 @@ this.stringsAid = {
 		
 		if(replace) {
 			for(var i = 0; i < replace.length; i++) {
-				while(string.indexOf(replace[i][0] > -1)) {
-					string.replace(replace[i][0], replace[i][1]);
+				while(string.indexOf(replace[i][0]) > -1) {
+					string = string.replace(replace[i][0], replace[i][1]);
 				}
 			}
 		}

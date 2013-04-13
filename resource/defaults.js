@@ -6,6 +6,7 @@ var prefList = {
 	hideWhenFinderHidden: false,
 	minNoDelay: 3,
 	highlightColor: "#EF0FFF",
+	useCounter: true,
 	
 	onStartup: false,
 	findbarHidden: true,

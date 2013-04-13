@@ -88,6 +88,8 @@ this.highlightsTabSelected = function() {
 	if(documentReHighlight) {
 		gFindBar.getElement("highlight").checked = documentHighlighted;
 		reHighlight(documentHighlighted);
+	} else if(linkedPanel._statusUI != undefined && (!linkedPanel._findWord || (!documentHighlighted && !documentReHighlight)) ) {
+		gFindBar._updateStatusUI(linkedPanel._statusUI);
 	}
 };
 
@@ -107,6 +109,25 @@ this.highlightsContentLoaded = function(e) {
 			reHighlight(documentHighlighted);
 		} else {
 			setAttribute(doc.documentElement, 'reHighlight', 'true');
+		}
+	}
+};
+
+// Tab progress listeners, handles opening and closing of pages and location changes
+this.highlightsProgressListener = {
+	// Commands a reHighlight if needed, triggered from history navigation as well
+	onLocationChange: function(browser, webProgress, request, location) {
+		// Frames don't need to trigger this
+		if(webProgress.DOMWindow == browser.contentWindow) {
+			// No need to call if there is nothing to find
+			if(browser == gBrowser.mCurrentBrowser) {
+				if(request && !request.isPending()) {
+					reHighlight(documentHighlighted);
+				}
+			}
+			else if(browser.contentDocument) {
+				setAttribute(browser.contentDocument.documentElement, 'reHighlight', 'true');
+			}
 		}
 	}
 };
@@ -207,7 +228,7 @@ moduleAid.LOADMODULE = function() {
 	listenerAid.add(gFindBar, 'WillFindAgain', highlightsFindAgain);
 	listenerAid.add(gBrowser.tabContainer, "TabSelect", highlightsTabSelected);
 	listenerAid.add(gBrowser, "DOMContentLoaded", highlightsContentLoaded);
-	
+	gBrowser.addTabsProgressListener(highlightsProgressListener);
 	observerAid.add(reHighlightAll, 'ReHighlightAll');
 	
 	moduleAid.load('highlightDoc');
@@ -244,7 +265,7 @@ moduleAid.UNLOADMODULE = function() {
 	}
 	
 	observerAid.remove(reHighlightAll, 'ReHighlightAll');
-	
+	gBrowser.removeTabsProgressListener(highlightsProgressListener);
 	listenerAid.remove(gFindBar, 'WillUpdateStatusFindBar', emptyNoFindUpdating);
 	listenerAid.remove(gFindBar, 'UpdatedStatusFindBar', keepStatusUI);
 	listenerAid.remove(gFindBar, 'ClosedFindBar', highlightOnClose);

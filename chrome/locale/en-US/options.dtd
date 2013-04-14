@@ -8,7 +8,7 @@
 <!ENTITY Optgrid.label "Highlights Grid">
 
 <!ENTITY OpthighlightByDefault.label "Highlight all matches by default">
-<!ENTITY OpthideWhenFinderHidden.label "Remove highlights when the Findbar is hidden">
+<!ENTITY OpthideWhenFinderHidden.label "Remove highlights when the Findbar is closed">
 <!ENTITY OptgridInScrollbar.label "Show highlights grid in the scrollbar">
 <!ENTITY OptuseCounter.label "Show hits counter in the Findbar">
 <!ENTITY Optcolor.label "Highlights Color">
@@ -22,6 +22,7 @@
 <!ENTITY OpthideClose.label "Hide the Findbar close button">
 <!ENTITY OptmovetoTop.label "Move the Findbar to the top of the browser">
 <!ENTITY OptmovetoRight.label "Place on the right">
+<!ENTITY OptblurCloses.label "Close the Findbar when it loses focus">
 <!ENTITY OptperTab.label "Findbar starts closed in new tabs">
 <!ENTITY OptonStartup.label "Remember Findbar opened/closed state on startup">
 

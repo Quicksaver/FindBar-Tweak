@@ -5,7 +5,6 @@
 <!ENTITY Optdisplay.label "Anzeigeeinstellungen">
 <!ENTITY Optgrid.label "Hervorhebungsbalken">
 <!ENTITY OpthighlightByDefault.label "Automatisch alle Vorkommen des gesuchten Begriffs hervorheben">
-<!ENTITY OpthideWhenFinderHidden.label "Alle Hervorhebungen nach dem Ausblenden der Suchleiste entfernen">
 <!ENTITY OptgridInScrollbar.label "Hervorhebungsbalken innerhalb der Bildlaufleiste anzeigen">
 <!ENTITY OptuseCounter.label "Trefferanzahl in der Suchleiste anzeigen">
 <!ENTITY Optcolor.label "Markierungsfarbe">

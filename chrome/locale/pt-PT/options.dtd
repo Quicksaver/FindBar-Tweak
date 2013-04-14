@@ -7,7 +7,6 @@
 <!ENTITY Optgrid.label "Grelha de Realces">
 
 <!ENTITY OpthighlightByDefault.label "Realçar todas as ocorrências por defeito">
-<!ENTITY OpthideWhenFinderHidden.label "Remover os realces ao fechar a barra de procura">
 <!ENTITY OptgridInScrollbar.label "Mostrar a grelha na barra de rolagem">
 <!ENTITY OptuseCounter.label "Mostrar número de ocorrências na barra de procura">
 <!ENTITY Optcolor.label "Cor dos realces">

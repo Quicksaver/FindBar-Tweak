@@ -5,7 +5,6 @@
 <!ENTITY Optdisplay.label "Visningsalternativ">
 <!ENTITY Optgrid.label "Visning av markeringspositioner">
 <!ENTITY OpthighlightByDefault.label "Färgmarkera alla träffar som standard">
-<!ENTITY OpthideWhenFinderHidden.label "Ta bort färgmarkeringar när söklisten döljs">
 <!ENTITY OptgridInScrollbar.label "Visa markeringspositionslinjalen i rullningslisten">
 <!ENTITY OptuseCounter.label "Visa antalet träffar i söklisten">
 <!ENTITY Optcolor.label "Markeringsfärg">

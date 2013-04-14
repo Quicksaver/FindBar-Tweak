@@ -20,6 +20,7 @@
 			<preference id="pref-movetoRight" name="extensions.findbartweak.movetoRight" type="bool"/>
 			<preference id="pref-hideClose" name="extensions.findbartweak.hideClose" type="bool"/>
 			<preference id="pref-hideLabels" name="extensions.findbartweak.hideLabels" type="bool"/>
+			<preference id="pref-blurCloses" name="extensions.findbartweak.blurCloses" type="bool"/>
 			<preference id="pref-perTab" name="extensions.findbartweak.perTab" type="bool"/>
 			<preference id="pref-onStartup" name="extensions.findbartweak.onStartup" type="bool"/>
 			<preference id="pref-ctrlFCloses" name="extensions.findbartweak.ctrlFCloses" type="bool"/>
@@ -40,8 +41,9 @@
 				<tabpanel id="generalTab" orient="vertical">
 					<groupbox align="start">
 						<caption label="&Optgen.label;"/>
-						<checkbox label="&OptperTab.label;" preference="pref-perTab"/>
-						<checkbox dependson="!pref-perTab" label="&OptonStartup.label;" preference="pref-onStartup"/>
+						<checkbox label="&OptblurCloses.label;" preference="pref-blurCloses"/>
+						<checkbox dependson="!pref-blurCloses" label="&OptperTab.label;" preference="pref-perTab"/>
+						<checkbox dependson="!pref-perTab,!pref-blurCloses" label="&OptonStartup.label;" preference="pref-onStartup"/>
 						<checkbox id="ctrlFClosesCheckbox" label="&OptctrlFCloses.win;" preference="pref-ctrlFCloses"/>
 					</groupbox>
 					<groupbox align="start">

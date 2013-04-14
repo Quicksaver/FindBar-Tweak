@@ -55,7 +55,12 @@
 								<checkbox dependson="pref-typeaheadfind,pref-FAYTmode:quick" label="&OptkeepButtons.label;" preference="pref-keepButtons"/>
 								<hbox>
 									<label dependson="pref-typeaheadfind,pref-FAYTmode:quick" value="&OptFAYTTimeout.beforeLabel;"/>
-									<textbox id="timeoutTextbox" dependson="pref-typeaheadfind,pref-FAYTmode:quick" size="3" maxlength="5"
+									<textbox id="timeoutTextbox"
+										type="number"
+										dependson="pref-typeaheadfind,pref-FAYTmode:quick"
+										size="3"
+										min="1"
+										max="999"
 										preference="pref-timeout"
 										onsyncfrompreference="return document.getElementById('pref-timeout').value / 1000;" 
 										onsynctopreference="return parseInt(document.getElementById('timeoutTextbox').value || 0) * 1000;"/>
@@ -99,7 +104,13 @@
 				        </hbox>
 					</groupbox>
 					<groupbox align="center">
-						<caption label="&Optcolor.label;"/>
+						<caption>
+							<label value="&Optcolor.label;"/>
+							<label class="text-link"
+								href="#"
+								onclick="document.getElementById('pref-highlightColor').reset(); return false;"
+								value="&OptcolorReset.label;"/>
+						</caption>
 						<colorpicker id="color" type="button" preference="pref-highlightColor" style="width: 50px;"/>
 					</groupbox>
 				</tabpanel>

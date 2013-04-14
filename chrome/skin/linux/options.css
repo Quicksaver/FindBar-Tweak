@@ -1,4 +1,6 @@
 textbox {
 	height: 22px;
+}
+textbox[type="number"] input {
 	text-align: center;
 }

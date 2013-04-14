@@ -11,6 +11,7 @@
 <!ENTITY OptgridInScrollbar.label "Show highlights grid in the scrollbar">
 <!ENTITY OptuseCounter.label "Show hits counter in the Findbar">
 <!ENTITY Optcolor.label "Highlights Color">
+<!ENTITY OptcolorReset.label "(reset)">
 <!ENTITY OptgridLimit.labela "Don't use the grid if it exceeds">
 <!ENTITY OptgridLimit.labelb "highlights">
 <!ENTITY OptminNoDelay.labela "Delay highlights if search term is shorter than">

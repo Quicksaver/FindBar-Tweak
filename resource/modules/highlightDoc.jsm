@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.0';
+moduleAid.VERSION = '1.0.1';
 
 // The counter and grid are so intricately connected I can't separate them and put them in their own modules.
 
@@ -84,9 +84,9 @@ this.fillHighlightCounter = function(e) {
 			}
 		}
 		
-		if(!REDOINGHIGHLIGHTS && h == 0 && linkedPanel._counterHighlights.length > 0) {
+		if(!timerAid.delayHighlight && !REDOINGHIGHLIGHTS && h == 0 && linkedPanel._counterHighlights.length > 0) {
 			REDOINGHIGHLIGHTS = true;
-			gFindBar.toggleHighlight(documentHighlighted);
+			reHighlight(documentHighlighted);
 			REDOINGHIGHLIGHTS = false;
 			return;
 		}
@@ -110,13 +110,11 @@ this.checkCurrentHighlight = function(contentWindow, current, highlight) {
 
 this.toggleCounter = function() {
 	if(!prefAid.useCounter || UNLOADED) {
-		listenerAid.remove(gFindBar, 'FoundAgain', fillHighlightCounter);
 		listenerAid.remove(gFindBar, 'UpdatedStatusFindBar', fillHighlightCounter);
 		listenerAid.remove(gFindBar, 'ToggledHighlight', alwaysUpdateStatusUI);
 		listenerAid.remove(gFindBar, 'FoundFindBar', alwaysToggleHighlight);
 	}
 	else {
-		listenerAid.add(gFindBar, 'FoundAgain', fillHighlightCounter);
 		listenerAid.add(gFindBar, 'UpdatedStatusFindBar', fillHighlightCounter);
 		listenerAid.add(gFindBar, 'ToggledHighlight', alwaysUpdateStatusUI);
 		listenerAid.add(gFindBar, 'FoundFindBar', alwaysToggleHighlight);

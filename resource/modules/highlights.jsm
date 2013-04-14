@@ -1,10 +1,8 @@
-moduleAid.VERSION = '1.0.0';
+moduleAid.VERSION = '1.0.1';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
 
-this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
-this.__defineGetter__('linkedPanel', function() { return $(gBrowser.mCurrentTab.linkedPanel); });
 this.__defineGetter__('contentDocument', function() { return gBrowser.mCurrentBrowser.contentDocument || null; });
 this.__defineGetter__('documentHighlighted', function() {
 	return (contentDocument && contentDocument.documentElement && contentDocument.documentElement.getAttribute('highlighted') == 'true');
@@ -41,9 +39,7 @@ this.escHighlights = function(e) {
 
 this.highlightOnClose = function() {
 	// Cancel a delayed highlight when closing the find bar
-	if(linkedPanel._delayHighlight) {
-		linkedPanel._delayHighlight.cancel();
-	}
+	timerAid.cancel('delayHighlight');
 	
 	// To remove the grid and the esc key listener if there are no highlights
 	if(documentHighlighted && (!gFindBar._findField.value || linkedPanel._notFoundHighlights)) {
@@ -67,9 +63,7 @@ this.highlightsOnToggling = function(e) {
 	linkedPanel._notFoundHighlights = false;
 	
 	// Make sure we cancel any highlight timer that might be running
-	if(linkedPanel._delayHighlight) {
-		linkedPanel._delayHighlight.cancel();
-	}
+	timerAid.cancel('delayHighlight');
 };
 
 // Handler for when switching tabs
@@ -80,8 +74,8 @@ this.highlightsTabSelected = function() {
 		if(linkedPanel._statusUI != undefined) {
 			gFindBar._updateStatusUI(linkedPanel._statusUI);
 		}
-		if(gFindBar.hidden) {
-			documentRehighlight = false;
+		if(findBarHidden) {
+			documentReHighlight = false;
 		}
 	}
 	
@@ -183,7 +177,7 @@ moduleAid.LOADMODULE = function() {
 		var delay = SHORT_DELAY;
 		
 		// Delay highlights if search term is too short
-		if(gFindBar.getElement("highlight").checked && this._findField.value && prefAid.minNoDelay > 0 && this._findField.value.length < prefAid.minNoDelay) {
+		if(this._findField.value && prefAid.minNoDelay > 0 && this._findField.value.length < prefAid.minNoDelay) {
 			delay = LONG_DELAY;
 		}
 			
@@ -194,12 +188,13 @@ moduleAid.LOADMODULE = function() {
 		}
 		
 		// Make sure it triggers the highlight if we switch tabs meanwhile
-		documentHighlighted = gFindBar.getElement("highlight").checked;
-		documentReHighlight = gFindBar.getElement("highlight").checked;
+		documentHighlighted = true;
+		documentReHighlight = true;
 		
-		linkedPanel._delayHighlight = timerAid.create(function(timer) {
+		var panelCalled = linkedPanel;
+		timerAid.init('delayHighlight', function() {
 			// We don't want to highlight pages that aren't supposed to be highlighted (happens when switching tabs when delaying highlights)
-			if(linkedPanel._delayHighlight && linkedPanel._delayHighlight.timer == timer) {
+			if(linkedPanel == panelCalled) {
 				reHighlight(gFindBar.getElement("highlight").checked);
 			}
 		}, delay);
@@ -213,10 +208,10 @@ moduleAid.LOADMODULE = function() {
 		}
 	};
 	
-	gFindBar._onFindAgainCommand = gFindBar.onFindAgainCommand;
-	gFindBar.onFindAgainCommand = function(aFindPrevious) {
+	gFindBar.__findAgain = gFindBar._findAgain;
+	gFindBar._findAgain = function(aFindPrevious) {
 		if(dispatch(gFindBar, { type: 'WillFindAgain', detail: aFindPrevious })) {
-			gFindBar._onFindAgainCommand(aFindPrevious);
+			gFindBar.__findAgain(aFindPrevious);
 			dispatch(gFindBar, { type: 'FoundAgain', cancelable: false, detail: aFindPrevious });
 		}
 	};
@@ -252,8 +247,6 @@ moduleAid.UNLOADMODULE = function() {
 	// Clean up everything this module may have added to tabs and panels and documents
 	for(var t=0; t<gBrowser.mTabs.length; t++) {
 		var panel = $(gBrowser.mTabs[t].linkedPanel);
-		if(panel._delayHighlight) { panel._delayHighlight.cancel(); }
-		delete panel._delayHighlight;
 		delete panel._findWord;
 		delete panel._statusUI;
 		
@@ -280,7 +273,7 @@ moduleAid.UNLOADMODULE = function() {
 	}
 	
 	gFindBar.toggleHighlight = gFindBar._toggleHighlight;
-	gFindBar.onFindAgainCommand = gFindBar._onFindAgainCommand;
-	delete gFindBar._onFindAgainCommand;
+	gFindBar._findAgain = gFindBar.__findAgain;
+	delete gFindBar.__findAgain;
 	delete gFindBar._toggleHighlight;
 };

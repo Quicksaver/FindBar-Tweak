@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.0';
+moduleAid.VERSION = '1.1.1';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -31,13 +31,19 @@ this.delayMoveTop = function() {
 	timerAid.init('delayMoveTop', moveTop, 0);
 };
 
-this.moveTopAsNeeded = function() {
-	if(shouldReMoveTop()) { moveTop(); }
+this.moveTopAsNeeded = function(e) {
+	if(shouldReMoveTop()) {
+		if(e.type == 'FindBarUIChanged') {
+			moveTop();
+		} else {
+			delayMoveTop();
+		}
+	}
 };
 
 // Handles the position of the findbar
 this.moveTop = function() {
-	if(gFindBar.hidden) { return; }
+	if(findBarHidden) { return; }
 	
 	// Bugfix: ensure these declarations only take effect when the stylesheet is loaded (from the overlay) as well.
 	// Otherwise, at startup, the browser would jump for half a second with empty space on the right.

@@ -1,13 +1,13 @@
-moduleAid.VERSION = '1.0.0';
+moduleAid.VERSION = '1.0.1';
 
 this.hideTabSelected = function() {
-	if(gFindBar.hidden && (documentHighlighted || documentReHighlight)) {
+	if(findBarHidden && (documentHighlighted || documentReHighlight)) {
 		gFindBar.toggleHighlight(false);
 	}
 };
 
 this.hideReHighlighting = function(e) {
-	if(gFindBar.hidden) {
+	if(findBarHidden) {
 		e.preventDefault();
 		e.stopPropagation();
 	}

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.1';
+moduleAid.VERSION = '1.0.2';
 
 this.hideTabSelected = function() {
 	if(findBarHidden && (documentHighlighted || documentReHighlight)) {
@@ -7,7 +7,7 @@ this.hideTabSelected = function() {
 };
 
 this.hideReHighlighting = function(e) {
-	if(findBarHidden) {
+	if(gFindBar.hidden) {
 		e.preventDefault();
 		e.stopPropagation();
 	}

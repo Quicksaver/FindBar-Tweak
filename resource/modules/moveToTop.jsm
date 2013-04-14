@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.1';
+moduleAid.VERSION = '1.1.2';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -43,7 +43,7 @@ this.moveTopAsNeeded = function(e) {
 
 // Handles the position of the findbar
 this.moveTop = function() {
-	if(findBarHidden) { return; }
+	if(gFindBar.hidden) { return; }
 	
 	// Bugfix: ensure these declarations only take effect when the stylesheet is loaded (from the overlay) as well.
 	// Otherwise, at startup, the browser would jump for half a second with empty space on the right.

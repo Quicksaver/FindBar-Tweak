@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.0';
+moduleAid.VERSION = '1.1.0';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -43,12 +43,10 @@ this.moveTop = function() {
 	// Otherwise, at startup, the browser would jump for half a second with empty space on the right.
 	if(gFindBar.getAttribute('context') != 'findbarMenu') { return; }
 	
-	// If the 'layer' attribute isn't removed the findbar will lockup constantly (I have no idea what this attribute does though...)
-	//findbartweak.bottombox.removeAttribute('layer');
-	
 	moveTopStyle = {
 		maxWidth: -MIN_RIGHT -MIN_LEFT,
 		left: MIN_LEFT,
+		right: MIN_RIGHT,
 		top: -1 // Move the find bar one pixel up so it covers the toolbox borders, giving it a more seamless look
 	};
 	var computedStyle = {
@@ -77,17 +75,27 @@ this.moveTop = function() {
 			
 			// AiOS sets 'direction' property to 'rtl' when sidebar is on the right;
 			// this accounts for that and for anything else that might do the same
-			if(computedStyle.browser.getPropertyValue('direction') == 'ltr' || doneAppContent) {
-				moveTopStyle.left += browser.childNodes[i].clientWidth;
-				moveTopStyle.left += parseFloat(getComputedStyle(browser.childNodes[i]).getPropertyValue('border-left-width'));
-				moveTopStyle.left += parseFloat(getComputedStyle(browser.childNodes[i]).getPropertyValue('border-right-width'));
+			if(!prefAid.movetoRight) {
+				if((computedStyle.browser.getPropertyValue('direction') == 'ltr' && !doneAppContent)
+				|| (computedStyle.browser.getPropertyValue('direction') != 'ltr' && doneAppContent)) {
+					moveTopStyle.left += browser.childNodes[i].clientWidth;
+					moveTopStyle.left += parseFloat(getComputedStyle(browser.childNodes[i]).getPropertyValue('border-left-width'));
+					moveTopStyle.left += parseFloat(getComputedStyle(browser.childNodes[i]).getPropertyValue('border-right-width'));
+				}
+			} else {
+				if((computedStyle.browser.getPropertyValue('direction') != 'ltr' && !doneAppContent)
+				|| (computedStyle.browser.getPropertyValue('direction') == 'ltr' && doneAppContent)) {
+					moveTopStyle.right += browser.childNodes[i].clientWidth;
+					moveTopStyle.right += parseFloat(getComputedStyle(browser.childNodes[i]).getPropertyValue('border-left-width'));
+					moveTopStyle.right += parseFloat(getComputedStyle(browser.childNodes[i]).getPropertyValue('border-right-width'));
+				}
 			}
 		} else {
 			moveTopStyle.maxWidth += $('appcontent').clientWidth;
 			moveTopStyle.maxWidth += parseFloat(computedStyle.appcontent.getPropertyValue('border-left-width'));
 			moveTopStyle.maxWidth += parseFloat(computedStyle.appcontent.getPropertyValue('border-right-width'));
 			
-			if(computedStyle.browser.getPropertyValue('direction') == 'ltr') {
+			if(!prefAid.movetoRight && computedStyle.browser.getPropertyValue('direction') == 'ltr') {
 				break;
 			}
 			
@@ -118,7 +126,7 @@ this.moveTop = function() {
 	sscode += '@-moz-document url("chrome://browser/content/browser.xul") {\n';
 	sscode += '	#FindToolbar[movetotop] {\n';
 	sscode += '		max-width: ' + moveTopStyle.maxWidth + 'px;\n';
-	sscode += '		left: ' + moveTopStyle.left + 'px;\n';
+	sscode += (!prefAid.movetoRight) ? '		left: ' + moveTopStyle.left + 'px;\n' : '		right: ' + moveTopStyle.right + 'px;\n';
 	sscode += '		top: ' + moveTopStyle.top + 'px;\n';
 	sscode += '	}';
 	sscode += '}';
@@ -279,6 +287,8 @@ this.hideOnChromeAttrWatcher = function(obj, prop, oldVal, newVal) {
 };
 
 moduleAid.LOADMODULE = function() {
+	prefAid.listen('movetoRight', moveTop);
+	
 	listenerAid.add(browserPanel, 'resize', browserPanelResized);
 	listenerAid.add(gFindBar, 'OpenedFindBar', moveTop);
 	listenerAid.add(gFindBar, "UpdatedStatusFindBar", moveTopAsNeeded);
@@ -330,6 +340,8 @@ moduleAid.UNLOADMODULE = function() {
 	
 	gFindBar.removeAttribute('movetotop');
 	hideIt(gFindBar, true);
+	
+	prefAid.unlisten('movetoRight', moveTop);
 	
 	if(UNLOADED || !prefAid.movetoTop) {
 		styleAid.unload('personaFindBar');

@@ -17,6 +17,7 @@
 			<preference id="pref-useGrid" name="extensions.findbartweak.useGrid" type="bool"/>
 			<preference id="pref-gridLimit" name="extensions.findbartweak.gridLimit" type="int"/>
 			<preference id="pref-movetoTop" name="extensions.findbartweak.movetoTop" type="bool"/>
+			<preference id="pref-movetoRight" name="extensions.findbartweak.movetoRight" type="bool"/>
 			<preference id="pref-hideClose" name="extensions.findbartweak.hideClose" type="bool"/>
 			<preference id="pref-hideLabels" name="extensions.findbartweak.hideLabels" type="bool"/>
 			<preference id="pref-onStartup" name="extensions.findbartweak.onStartup" type="bool"/>
@@ -44,6 +45,7 @@
 					<groupbox align="start">
 						<caption label="&Optdisplay.label;"/>
 						<checkbox label="&OptmovetoTop.label;" preference="pref-movetoTop"/>
+						<checkbox label="&OptmovetoRight.label;" dependson="pref-movetoTop" preference="pref-movetoRight"/>
 						<checkbox label="&OpthideClose.label;" preference="pref-hideClose"/>
 						<checkbox label="&OpthideLabels.label;" preference="pref-hideLabels"/>
 					</groupbox>

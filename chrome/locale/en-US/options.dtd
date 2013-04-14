@@ -21,6 +21,7 @@
 <!ENTITY OpthideLabels.label "Hide button labels">
 <!ENTITY OpthideClose.label "Hide the Findbar close button">
 <!ENTITY OptmovetoTop.label "Move the Findbar to the top of the browser">
+<!ENTITY OptmovetoRight.label "Place on the right">
 <!ENTITY OptonStartup.label "Remember Findbar opened/closed state on startup">
 
 <!ENTITY OptkeepButtons.label "Show buttons in the Quick Findbar">

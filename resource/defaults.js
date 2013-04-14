@@ -14,6 +14,7 @@ var prefList = {
 	findbarHidden: true,
 	
 	movetoTop: false,
+	movetoRight: false,
 	hideClose: false,
 	hideLabels: false,
 	

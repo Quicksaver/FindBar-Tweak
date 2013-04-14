@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.0';
+moduleAid.VERSION = '1.0.1';
 
 // Handler for Ctrl+F, it closes the findbar if it is already opened
 this.ctrlF = function(event) {
@@ -6,7 +6,7 @@ this.ctrlF = function(event) {
 		window.TabView.enableSearch(event);
 	}
 	else {
-		if(gFindBar.hidden || !prefAid.ctrlFCloses) {
+		if(gFindBar.hidden) {
 			gFindBar.onFindCommand();
 			gFindBar.open();
 			if(gFindBar._findField.value) {

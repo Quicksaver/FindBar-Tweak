@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.1';
+moduleAid.VERSION = '1.1.0';
 
 // The counter and grid are so intricately connected I can't separate them and put them in their own modules.
 
@@ -131,7 +131,7 @@ this.ROWS_MINIMUM = 150; // number of rows in the highlight grid - kind of the "
 this.ROWS_MULTIPLIER = 2; // Add extra rows if their height exceeds this value
 
 this.__defineGetter__('grid', function() {
-	var grids = linkedPanel.querySelectorAll('[anonid="findGrid"]');
+	var grids = (!viewSource) ? linkedPanel.querySelectorAll('[anonid="findGrid"]') : $$('[anonid="findGrid"]');
 	if(grids.length > 0) {
 		return grids[0];
 	}
@@ -156,6 +156,7 @@ this.__defineGetter__('grid', function() {
 	// Starting with the top spacer
 	var topspacer = document.createElement('row');
 	topspacer.setAttribute('flex', '0');
+	topspacer.setAttribute('class', 'topSpacer');
 	topspacer = rows.appendChild(topspacer);
 	
 	// Actual highlight rows
@@ -172,10 +173,11 @@ this.__defineGetter__('grid', function() {
 	
 	// append another spacer at the bottom
 	var bottomspacer = topspacer.cloneNode(true);
+	bottomspacer.setAttribute('class', 'bottomSpacer');
 	rows.appendChild(bottomspacer);
 	
 	// Insert the grid into the tab
-	boxNode = gBrowser.mCurrentBrowser.parentNode.appendChild(boxNode);
+	boxNode = (!viewSource) ? gBrowser.mCurrentBrowser.parentNode.appendChild(boxNode) : linkedPanel.appendChild(boxNode);
 	gridNode = boxNode.appendChild(gridNode);
 	
 	return gridNode;
@@ -204,14 +206,19 @@ this.resetHighlightGrid = function() {
 		rows.insertBefore(newNode, rows.lastChild);
 	}
 	
-	removeAttribute(grid, 'noGridSpacers');
+	removeAttribute(grid, 'gridSpacers');
+	
+	if(!viewSource) {
+		removeAttribute($$('[anonid="gridBox"]')[0], 'style');
+		listenerAid.remove(viewSource, 'resize', delayResizeViewSource);
+	}
 	
 	// Fix for non-html files (e.g. xml files)
 	// I don't remember why I put !gBrowser.mCurrentBrowser in here... it may have happened sometime
 	if(!contentDocument
 	|| !contentDocument.getElementsByTagName('html')[0]
 	|| !contentDocument.getElementsByTagName('body')[0]
-	|| !gBrowser.mCurrentBrowser) {
+	|| (!viewSource && !gBrowser.mCurrentBrowser)) {
 		return false;
 	}
 	
@@ -220,6 +227,7 @@ this.resetHighlightGrid = function() {
 	// Don't think this can happen but I better make sure
 	if(fullHTMLHeight == 0) { return false; }
 	
+	gridResizeViewSource();
 	return true;
 };
 
@@ -228,6 +236,7 @@ this.fillHighlightGrid = function(toAdd) {
 	try {
 		var scrollTop = contentDocument.getElementsByTagName('html')[0].scrollTop || contentDocument.getElementsByTagName('body')[0].scrollTop;
 		var scrollTopMax = contentDocument.getElementsByTagName('html')[0].scrollTopMax || contentDocument.getElementsByTagName('body')[0].scrollTopMax;
+		var scrollLeftMax = contentDocument.getElementsByTagName('html')[0].scrollLeftMax || contentDocument.getElementsByTagName('body')[0].scrollLeftMax;
 		var fullHTMLHeight = contentDocument.getElementsByTagName('html')[0].scrollHeight || contentDocument.getElementsByTagName('body')[0].scrollHeight;
 		var gridHeight = grid._gridHeight;
 	}
@@ -263,19 +272,45 @@ this.fillHighlightGrid = function(toAdd) {
 		}
 	}
 	
-	if(scrollTopMax == 0) {
-		setAttribute(grid, 'noGridSpacers', true);
+	if(scrollTopMax == 0 && scrollLeftMax == 0) {
+		setAttribute(grid, 'gridSpacers', 'none');
+	} else if(scrollTopMax > 0 && scrollLeftMax > 0) {
+		setAttribute(grid, 'gridSpacers', 'double');
+	} else {
+		setAttribute(grid, 'gridSpacers', 'single');
 	}
+};
+
+this.delayResizeViewSource = function() {
+	timerAid.init('resizeViewSource', gridResizeViewSource, 0);
+};
+
+this.gridResizeViewSource = function() {
+	if(!viewSource) { return; }
+	
+	var styleString = 'top: '+$('viewSource-toolbox').clientHeight+'px;';
+	styleString += ' height: '+$('content').clientHeight+'px;';
+	setAttribute($$('[anonid="gridBox"]')[0], 'style', styleString);
+	listenerAid.add(viewSource, 'resize', delayResizeViewSource);
 };
 
 this.toggleGrid = function() {
 	if(!prefAid.useGrid || UNLOADED) {
-		for(var t=0; t<gBrowser.mTabs.length; t++) {
-			var panel = $(gBrowser.mTabs[t].linkedPanel);
-			var innerGrid = panel.querySelectorAll('[anonid="gridBox"]');
+		if(!viewSource) {
+			for(var t=0; t<gBrowser.mTabs.length; t++) {
+				var panel = $(gBrowser.mTabs[t].linkedPanel);
+				var innerGrid = panel.querySelectorAll('[anonid="gridBox"]');
+				if(innerGrid.length > 0) {
+					innerGrid[0].parentNode.removeChild(innerGrid[0]);
+				}
+			}
+		}
+		else {
+			var innerGrid = $$('[anonid="gridBox"]');
 			if(innerGrid.length > 0) {
 				innerGrid[0].parentNode.removeChild(innerGrid[0]);
 			}
+			listenerAid.remove(viewSource, 'resize', delayResizeViewSource);
 		}
 	}
 		
@@ -428,11 +463,16 @@ moduleAid.UNLOADMODULE = function() {
 	toggleGrid();
 	toggleCounter();
 	
-	// Clean up everything this module may have added to tabs and panels and documents
-	for(var t=0; t<gBrowser.mTabs.length; t++) {
-		var panel = $(gBrowser.mTabs[t].linkedPanel);
-		delete panel._counterHighlights;
-		delete panel._currentHighlight;
+	if(!viewSource) {
+		// Clean up everything this module may have added to tabs and panels and documents
+		for(var t=0; t<gBrowser.mTabs.length; t++) {
+			var panel = $(gBrowser.mTabs[t].linkedPanel);
+			delete panel._counterHighlights;
+			delete panel._currentHighlight;
+		}
+	} else {
+		delete linkedPanel._counterHighlights;
+		delete linkedPanel._currentHighlight;
 	}
 	
 	if(this.backups) {

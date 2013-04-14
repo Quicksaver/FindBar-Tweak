@@ -1,4 +1,4 @@
-var defaultsVersion = '1.0.2';
+var defaultsVersion = '1.0.3';
 var objName = 'findbartweak';
 var objPathString = 'findbartweak';
 var prefList = {
@@ -55,6 +55,10 @@ function onStartup(aReason) {
 	// Apply the add-on to every window opened and to be opened
 	windowMediator.callOnAll(startAddon, 'navigator:browser');
 	windowMediator.register(startAddon, 'domwindowopened', 'navigator:browser');
+	
+	// Apply the add-on to every window opened and to be opened
+	windowMediator.callOnAll(startAddon, 'navigator:view-source');
+	windowMediator.register(startAddon, 'domwindowopened', 'navigator:view-source');
 	
 	// Apply the add-on to every preferences window opened and to be opened
 	windowMediator.callOnAll(startPreferences, null, "chrome://"+objPathString+"/content/options.xul");

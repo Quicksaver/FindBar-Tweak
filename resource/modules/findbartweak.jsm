@@ -1,4 +1,6 @@
-moduleAid.VERSION = '1.0.2';
+moduleAid.VERSION = '1.1.0';
+
+this.viewSource = false;
 
 this.toggleCtrlF = function() {
 	moduleAid.loadIf('ctrlF', prefAid.ctrlFCloses);
@@ -9,14 +11,16 @@ this.toggleBlurCloses = function() {
 };
 
 this.togglePerTab = function() {
-	moduleAid.loadIf('perTab', prefAid.perTab && !prefAid.blurCloses);
+	moduleAid.loadIf('perTab', !viewSource && prefAid.perTab && !prefAid.blurCloses);
 };
 
 this.toggleRememberStartup = function() {
-	moduleAid.loadIf('rememberStartup', prefAid.onStartup && !prefAid.perTab && !prefAid.blurCloses);
+	moduleAid.loadIf('rememberStartup', !viewSource && prefAid.onStartup && !prefAid.perTab && !prefAid.blurCloses);
 };
 	
 moduleAid.LOADMODULE = function() {
+	if(document.documentElement.getAttribute('windowtype') == 'navigator:view-source') { viewSource = $('viewSource'); }
+	
 	moduleAid.load('initFindbar');
 	moduleAid.load('FindBarUI');
 	moduleAid.load('highlights');

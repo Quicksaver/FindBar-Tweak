@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.0';
+moduleAid.VERSION = '1.1.0';
 
 this.highlightByDefault = function() {
 	gFindBar.getElement("highlight").checked = true;
@@ -37,9 +37,12 @@ this.highlightByDefaultProgressListener = {
 
 moduleAid.LOADMODULE = function() {
 	listenerAid.add(gFindBar, 'OpenedFindBar', highlightByDefault);
-	listenerAid.add(gBrowser.tabContainer, "TabSelect", highlightByDefault);
-	listenerAid.add(gBrowser, "DOMContentLoaded", highlightByDefaultOnContentLoaded);
-	gBrowser.addTabsProgressListener(highlightByDefaultProgressListener);
+	
+	if(!viewSource) {
+		listenerAid.add(gBrowser.tabContainer, "TabSelect", highlightByDefault);
+		listenerAid.add(gBrowser, "DOMContentLoaded", highlightByDefaultOnContentLoaded);
+		gBrowser.addTabsProgressListener(highlightByDefaultProgressListener);
+	}
 	
 	// Sometimes, when restarting firefox, it wouldn't check the box (go figure this one out...)
 	aSync(highlightByDefault);
@@ -47,7 +50,10 @@ moduleAid.LOADMODULE = function() {
 
 moduleAid.UNLOADMODULE = function() {
 	listenerAid.remove(gFindBar, 'OpenedFindBar', highlightByDefault);
-	listenerAid.remove(gBrowser.tabContainer, "TabSelect", highlightByDefault);
-	listenerAid.remove(gBrowser, "DOMContentLoaded", highlightByDefaultOnContentLoaded);
-	gBrowser.removeTabsProgressListener(highlightByDefaultProgressListener);
+	
+	if(!viewSource) {
+		listenerAid.remove(gBrowser.tabContainer, "TabSelect", highlightByDefault);
+		listenerAid.remove(gBrowser, "DOMContentLoaded", highlightByDefaultOnContentLoaded);
+		gBrowser.removeTabsProgressListener(highlightByDefaultProgressListener);
+	}
 };

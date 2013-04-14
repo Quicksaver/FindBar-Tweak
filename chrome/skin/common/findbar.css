@@ -1,5 +1,5 @@
 @namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
-@-moz-document url("chrome://browser/content/browser.xul") {
+@-moz-document url("chrome://browser/content/browser.xul"), url("chrome://global/content/viewSource.xul") {
 
 	#FindToolbar[hideLabels] toolbarbutton label,
 	#FindToolbar[hideLabels] checkbox label,
@@ -69,6 +69,28 @@
 		border-left: 1px solid rgb(0,0,0);
 	}
 	
+	/* For the View Source window */
+	#viewSource #FindToolbar[movetotop] {
+		border-bottom: 1px solid rgb(0,0,0);
+		border-right: 1px solid rgb(0,0,0);
+		border-left: 1px solid rgb(0,0,0);
+		-moz-border-bottom-colors: rgb(160, 160, 160);
+		-moz-border-right-colors: rgb(160, 160, 160);
+		-moz-border-left-colors: rgb(160, 160, 160);
+		background-color: rgb(240,240,240);
+		background-image: none;
+	}
+	#viewSource #FindToolbar[movetotop]:before {
+		box-shadow: 	2px -2px 0 -2px rgb(160,160,160),
+		                7px -4px 0px -4px rgb(240,240,240),
+		                6px -4px 0px -4px rgb(240,240,240);
+	}
+	#viewSource #FindToolbar[movetotop]:after {
+		box-shadow: 	-2px -2px 0 -2px rgb(160,160,160),
+		                -7px -4px 0px -4px rgb(240,240,240),
+		                -6px -4px 0px -4px rgb(240,240,240);
+	}
+	
 	/* The barlesque add-on forces no borders with !important tags, so I have to override them */
 	.barlesque-bar[findmode] #FindToolbar[movetotop] {
 		border-top: none !important;
@@ -101,11 +123,25 @@
 		width: 11px;
 	}
 	
-	grid[anonid="findGrid"] row[flex="0"] {
+	grid[anonid="findGrid"][gridSpacers="none"] row[flex="0"] {
+		height: 0px;
+	}
+	grid[anonid="findGrid"]:not([gridSpacers="none"]) row.topSpacer[flex="0"],
+	grid[anonid="findGrid"][gridSpacers="single"] row.bottomSpacer[flex="0"] {
 		height: 18px;
 	}
+	grid[anonid="findGrid"][gridSpacers="double"] row.bottomSpacer[flex="0"] {
+		height: 36px;
+	}
 	
-	grid[anonid="findGrid"][noGridSpacers="true"] row[flex="0"] {
-		height: 0px !important;
+	/* Grid for the View Source window */
+	#viewSource hbox[anonid="gridBox"] {
+		position: fixed;
+	}
+	
+	#viewSource grid[anonid="findGrid"] {
+		height: 100%;
+		position: relative;
+		top: -13px;
 	}
 }

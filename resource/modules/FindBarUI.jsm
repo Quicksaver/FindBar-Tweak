@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.0';
+moduleAid.VERSION = '1.1.0';
 
 this.doOpenOptions = function() {
 	openOptions();
@@ -60,6 +60,7 @@ this.toggleMoveToTop = function() {
 	
 moduleAid.LOADMODULE = function() {
 	overlayAid.overlayURI('chrome://browser/content/browser.xul', 'findbar');
+	overlayAid.overlayURI('chrome://global/content/viewSource.xul', 'findbar');
 	
 	listenerAid.add(gFindBar, 'UpdatedUIFindBar', updateButtonsUI, false);
 	listenerAid.add(gFindBar, 'UpdatedUIFindBar', updateCSUI, false);
@@ -92,5 +93,6 @@ moduleAid.UNLOADMODULE = function() {
 	
 	if(UNLOADED) {
 		overlayAid.removeOverlayURI('chrome://browser/content/browser.xul', 'findbar');
+		overlayAid.removeOverlayURI('chrome://global/content/viewSource.xul', 'findbar');
 	}
 };

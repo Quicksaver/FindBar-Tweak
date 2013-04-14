@@ -1,9 +1,9 @@
-moduleAid.VERSION = '1.0.1';
+moduleAid.VERSION = '1.1.0';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
 
-this.__defineGetter__('contentDocument', function() { return gBrowser.mCurrentBrowser.contentDocument || null; });
+this.__defineGetter__('contentDocument', function() { return (!viewSource) ? gBrowser.mCurrentBrowser.contentDocument : $('content').contentDocument; });
 this.__defineGetter__('documentHighlighted', function() {
 	return (contentDocument && contentDocument.documentElement && contentDocument.documentElement.getAttribute('highlighted') == 'true');
 });
@@ -14,9 +14,7 @@ this.__defineGetter__('documentReHighlight', function() {
 	return (contentDocument && contentDocument.documentElement && contentDocument.documentElement.getAttribute('reHighlight') == 'true');
 });
 this.__defineSetter__('documentReHighlight', function(v) {
-	if(contentDocument) {
-		toggleAttribute(contentDocument.documentElement, 'reHighlight', v);
-	}
+	if(contentDocument) { toggleAttribute(contentDocument.documentElement, 'reHighlight', v); }
 });
 
 this.emptyNoFindUpdating = function(e) {
@@ -144,8 +142,10 @@ this.reHighlight = function(reDo) {
 
 // Add the reHighlight attribute to all tabs
 this.reHighlightAll = function() {
-	for(var i=0; i<gBrowser.tabContainer.childNodes.length; i++) {
-		setAttribute(gBrowser.tabContainer.childNodes[i], 'reHighlight', 'true');
+	if(!viewSource) {
+		for(var i=0; i<gBrowser.tabContainer.childNodes.length; i++) {
+			setAttribute(gBrowser.tabContainer.childNodes[i], 'reHighlight', 'true');
+		}
 	}
 	
 	reHighlight(documentHighlighted);
@@ -217,14 +217,17 @@ moduleAid.LOADMODULE = function() {
 	};
 	
 	listenerAid.add(gFindBar, 'WillUpdateStatusFindBar', emptyNoFindUpdating);
-	listenerAid.add(gFindBar, 'UpdatedStatusFindBar', keepStatusUI);
 	listenerAid.add(gFindBar, 'ClosedFindBar', highlightOnClose);
 	listenerAid.add(gFindBar, 'WillToggleHighlight', highlightsOnToggling);
 	listenerAid.add(gFindBar, 'WillFindAgain', highlightsFindAgain);
-	listenerAid.add(gBrowser.tabContainer, "TabSelect", highlightsTabSelected);
-	listenerAid.add(gBrowser, "DOMContentLoaded", highlightsContentLoaded);
-	gBrowser.addTabsProgressListener(highlightsProgressListener);
 	observerAid.add(reHighlightAll, 'ReHighlightAll');
+	
+	if(!viewSource) {
+		listenerAid.add(gFindBar, 'UpdatedStatusFindBar', keepStatusUI);
+		listenerAid.add(gBrowser.tabContainer, "TabSelect", highlightsTabSelected);
+		listenerAid.add(gBrowser, "DOMContentLoaded", highlightsContentLoaded);
+		gBrowser.addTabsProgressListener(highlightsProgressListener);
+	}
 	
 	moduleAid.load('highlightDoc');
 	
@@ -244,28 +247,38 @@ moduleAid.UNLOADMODULE = function() {
 	
 	moduleAid.unload('highlightDoc');
 	
-	// Clean up everything this module may have added to tabs and panels and documents
-	for(var t=0; t<gBrowser.mTabs.length; t++) {
-		var panel = $(gBrowser.mTabs[t].linkedPanel);
-		delete panel._findWord;
-		delete panel._statusUI;
-		
-		if(panel.linkedBrowser && panel.linkedBrowser.contentDocument) {
-			listenerAid.remove(panel.linkedBrowser.contentDocument, 'keyup', escHighlights);
-			removeAttribute(panel.linkedBrowser.contentDocument.documentElement, 'highlighted');
-			removeAttribute(panel.linkedBrowser.contentDocument.documentElement, 'reHighlight');
+	if(!viewSource) {
+		// Clean up everything this module may have added to tabs and panels and documents
+		for(var t=0; t<gBrowser.mTabs.length; t++) {
+			var panel = $(gBrowser.mTabs[t].linkedPanel);
+			delete panel._findWord;
+			delete panel._statusUI;
+			
+			if(panel.linkedBrowser && panel.linkedBrowser.contentDocument) {
+				listenerAid.remove(panel.linkedBrowser.contentDocument, 'keyup', escHighlights);
+				removeAttribute(panel.linkedBrowser.contentDocument.documentElement, 'highlighted');
+				removeAttribute(panel.linkedBrowser.contentDocument.documentElement, 'reHighlight');
+			}
 		}
+		
+		listenerAid.remove(gFindBar, 'UpdatedStatusFindBar', keepStatusUI);
+		listenerAid.remove(gBrowser.tabContainer, "TabSelect", highlightsTabSelected);
+		listenerAid.remove(gBrowser, "DOMContentLoaded", highlightsContentLoaded);
+		gBrowser.removeTabsProgressListener(highlightsProgressListener);
+	}
+	else {
+		delete linkedPanel._findWord;
+		delete linkedPanel._statusUI;
+		listenerAid.remove(contentDocument, 'keyup', escHighlights);
+		removeAttribute(contentDocument.documentElement, 'highlighted');
+		removeAttribute(contentDocument.documentElement, 'reHighlight');
 	}
 	
 	observerAid.remove(reHighlightAll, 'ReHighlightAll');
-	gBrowser.removeTabsProgressListener(highlightsProgressListener);
 	listenerAid.remove(gFindBar, 'WillUpdateStatusFindBar', emptyNoFindUpdating);
-	listenerAid.remove(gFindBar, 'UpdatedStatusFindBar', keepStatusUI);
 	listenerAid.remove(gFindBar, 'ClosedFindBar', highlightOnClose);
 	listenerAid.remove(gFindBar, 'WillToggleHighlight', highlightsOnToggling);
 	listenerAid.remove(gFindBar, 'WillFindAgain', highlightsFindAgain);
-	listenerAid.remove(gBrowser.tabContainer, "TabSelect", highlightsTabSelected);
-	listenerAid.remove(gBrowser, "DOMContentLoaded", highlightsContentLoaded);
 	
 	if(this.backups) {
 		gFindBar._setHighlightTimeout = this.backups._setHighlightTimeout;

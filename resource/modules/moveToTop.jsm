@@ -1,10 +1,13 @@
-moduleAid.VERSION = '1.1.2';
+moduleAid.VERSION = '1.2.0';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
 this.__defineGetter__('browser', function() { return $('browser'); });
-this.__defineGetter__('browserPanel', function() { return $('browser-panel'); });
-this.__defineGetter__('contentDocument', function() { return (gBrowser.mCurrentBrowser.contentDocument) ? gBrowser.mCurrentBrowser.contentDocument : null; });
+this.__defineGetter__('browserPanel', function() { return $('browser-panel') || viewSource; });
+this.__defineGetter__('contentDocument', function() {
+	if(!viewSource) { return (gBrowser.mCurrentBrowser.contentDocument) ? gBrowser.mCurrentBrowser.contentDocument : null; }
+	else { return $('content').contentDocument; }
+});
 this.getComputedStyle = function(el) { return window.getComputedStyle(el); };
 
 this.moveTopStyle = {
@@ -55,6 +58,42 @@ this.moveTop = function() {
 		right: MIN_RIGHT,
 		top: -1 // Move the find bar one pixel up so it covers the toolbox borders, giving it a more seamless look
 	};
+	
+	// For the view source window
+	if(viewSource) {
+		var menuBarStyle = getComputedStyle($('viewSource-toolbox'));
+		moveTopStyle.top += $('viewSource-toolbox').clientHeight;
+		moveTopStyle.top += parseFloat(menuBarStyle.getPropertyValue('border-top-width'));
+		moveTopStyle.top += parseFloat(menuBarStyle.getPropertyValue('border-bottom-width'));
+		
+		styleAid.unload('topFindBarViewSource');
+		styleAid.unload('topFindBarCornersViewSource');
+		
+		var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
+		sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
+		sscode += '@-moz-document url("chrome://global/content/viewSource.xul") {\n';
+		sscode += '	#viewSource #FindToolbar[movetotop] {\n';
+		sscode += '		max-width: ' + moveTopStyle.maxWidth + 'px;\n';
+		sscode += (!prefAid.movetoRight) ? '		left: ' + moveTopStyle.left + 'px;\n' : '		right: ' + moveTopStyle.right + 'px;\n';
+		sscode += '		top: ' + moveTopStyle.top + 'px;\n';
+		sscode += '	}';
+		sscode += '}';
+		
+		styleAid.load('topFindBarViewSource', sscode, true);
+		
+		if(gFindBar.scrollLeftMax > 0) {
+			var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
+			sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
+			sscode += '@-moz-document url("chrome://global/content/viewSource.xul") {\n';
+			sscode += '	#viewSource #FindToolbar[movetotop]:after { margin-left: -' + gFindBar.scrollLeftMax + 'px; }\n';
+			sscode += '}';
+			styleAid.load('topFindBarCornersViewSource', sscode, true);
+		}
+		
+		forceCornerRedraw();
+		return;
+	}
+	
 	var computedStyle = {
 		appcontent: getComputedStyle($('appcontent')),
 		navigatortoolbox: getComputedStyle($('navigator-toolbox')),
@@ -148,20 +187,23 @@ this.moveTop = function() {
 		styleAid.load('topFindBarCorners', sscode, true);
 	}
 	
-	// Bugfix (a bit ugly, I know) to force the corners to redraw on changing tabs or resizing windows
-	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
-	sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
-	sscode += '@-moz-document url("chrome://browser/content/browser.xul") {\n';
-	sscode += '	#FindToolbar[movetotop]:before, #FindToolbar[movetotop]:after { padding-bottom: 1px !important; }\n';
-	sscode += '}';
-	styleAid.load('tempRedrawBorders', sscode, true);
-	aSync(function() {
-		styleAid.unload('tempRedrawBorders');
-	}, 10);
-		
+	forceCornerRedraw();
 	findPersonaPosition();
 	
 	lastFindBarWidth = gFindBar.clientWidth;
+};
+
+this.forceCornerRedraw = function() {
+	// Bugfix (a bit ugly, I know) to force the corners to redraw on changing tabs or resizing windows
+	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
+	sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
+	sscode += '@-moz-document url("chrome://browser/content/browser.xul"), url("chrome://global/content/viewSource.xul") {\n';
+	sscode += '	#FindToolbar[movetotop]:before, #FindToolbar[movetotop]:after { padding-bottom: 1px !important; }\n';
+	sscode += '}';
+	styleAid.load('tempRedrawCorners', sscode, true);
+	aSync(function() {
+		styleAid.unload('tempRedrawCorners');
+	}, 10);
 };
 
 this.findPersonaPosition = function() {
@@ -301,42 +343,49 @@ moduleAid.LOADMODULE = function() {
 	listenerAid.add(gFindBar, "HighlightCounterUpdated", moveTopAsNeeded);
 	listenerAid.add(gFindBar, 'FindBarUIChanged', moveTopAsNeeded);
 	
-	// Register all opened tabs with a listener
-	gBrowser.addTabsProgressListener(hideOnChromeProgressListener);
-	listenerAid.add(gBrowser.tabContainer, "TabSelect", hideOnChrome, false);
-	listenerAid.add(gBrowser, "DOMContentLoaded", hideOnChromeContentLoaded, false);
-	objectWatcher.addAttributeWatcher($('cmd_find'), 'disabled', hideOnChromeAttrWatcher);
+	if(!viewSource) {
+		// Register all opened tabs with a listener
+		gBrowser.addTabsProgressListener(hideOnChromeProgressListener);
+		listenerAid.add(gBrowser.tabContainer, "TabSelect", hideOnChrome, false);
+		listenerAid.add(gBrowser, "DOMContentLoaded", hideOnChromeContentLoaded, false);
+		objectWatcher.addAttributeWatcher($('cmd_find'), 'disabled', hideOnChromeAttrWatcher);
+		
+		// Compatibility with LessChrome HD
+		listenerAid.add(window, "LessChromeShown", moveTop, false);
+		listenerAid.add(window, "LessChromeHidden", moveTop, false);
+		
+		observerAid.add(findPersonaPosition, "lightweight-theme-changed");
+	}
 	
 	// Reposition the findbar when the window resizes
 	listenerAid.add(browserPanel, "browserPanelResized", delayMoveTop, false);
-	
-	// Compatibility with LessChrome HD
-	listenerAid.add(window, "LessChromeShown", moveTop, false);
-	listenerAid.add(window, "LessChromeHidden", moveTop, false);
-	
-	observerAid.add(findPersonaPosition, "lightweight-theme-changed");
 	
 	// We need this to be first to "remove" the findbar from the bottombox so we can use correct values below
 	// Not true anymore, but now it's irrelevant, so I'm leaving it this way in case I need it again.
 	gFindBar.setAttribute('movetotop', 'true');
 	
 	moveTop();
-	hideOnChrome();
+	
+	if(!viewSource) {
+		hideOnChrome();
+	}
 };
 
 moduleAid.UNLOADMODULE = function() {
-	observerAid.remove(findPersonaPosition, "lightweight-theme-changed");
+	if(!viewSource) {
+		observerAid.remove(findPersonaPosition, "lightweight-theme-changed");
+		
+		// Compatibility with LessChrome HD
+		listenerAid.remove(window, "LessChromeShown", moveTop, false);
+		listenerAid.remove(window, "LessChromeHidden", moveTop, false);
+		
+		objectWatcher.removeAttributeWatcher($('cmd_find'), 'disabled', hideOnChromeAttrWatcher);
+		listenerAid.remove(gBrowser.tabContainer, "TabSelect", hideOnChrome, false);
+		listenerAid.remove(gBrowser, "DOMContentLoaded", hideOnChromeContentLoaded, false);
+		gBrowser.removeTabsProgressListener(hideOnChromeProgressListener);
+	}
 	
 	listenerAid.remove(browserPanel, "browserPanelResized", delayMoveTop, false);
-	
-	// Compatibility with LessChrome HD
-	listenerAid.remove(window, "LessChromeShown", moveTop, false);
-	listenerAid.remove(window, "LessChromeHidden", moveTop, false);
-	
-	objectWatcher.removeAttributeWatcher($('cmd_find'), 'disabled', hideOnChromeAttrWatcher);
-	listenerAid.remove(gBrowser.tabContainer, "TabSelect", hideOnChrome, false);
-	listenerAid.remove(gBrowser, "DOMContentLoaded", hideOnChromeContentLoaded, false);
-	gBrowser.removeTabsProgressListener(hideOnChromeProgressListener);
 	
 	listenerAid.remove(gFindBar, 'FindBarUIChanged', moveTopAsNeeded);
 	listenerAid.remove(gFindBar, 'OpenedFindBar', moveTop);
@@ -353,5 +402,8 @@ moduleAid.UNLOADMODULE = function() {
 		styleAid.unload('personaFindBar');
 		styleAid.unload('topFindBar');
 		styleAid.unload('topFindBarCorners');
+		styleAid.unload('topFindBarViewSource');
+		styleAid.unload('topFindBarCornersViewSource');
+		styleAid.unload('tempRedrawCorners');
 	}
 };

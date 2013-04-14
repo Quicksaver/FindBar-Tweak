@@ -11,4 +11,11 @@
 	
 	<findbar id="FindToolbar" context="findbarMenu"/>
 	
+	<!-- for the View Source window -->
+	<window id="viewSource">
+		<menupopup id="findbarMenu">
+			<menuitem label="&MenuOptions.label;" oncommand="objName.doOpenOptions();" />
+		</menupopup>
+	</window>
+	
 </overlay>

@@ -1,0 +1,14 @@
+textbox[type="number"] input {
+	text-align: center;
+}
+
+.closer {
+	margin-bottom: 0;
+}
+
+#logo {
+	list-style-image: url("chrome://findbartweak/skin/icon.png");
+	max-width: 200px;
+	max-height: 200px;
+	margin: 20px 0;
+}

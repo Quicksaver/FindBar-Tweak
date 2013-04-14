@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+<?xml-stylesheet href="chrome://findbartweak/skin/options.css" type="text/css"?>
 <?xml-stylesheet href="chrome://findbartweak-os/skin/options.css" type="text/css"?>
 <!DOCTYPE options SYSTEM "chrome://findbartweak/locale/options.dtd">
 <prefwindow xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -26,13 +27,14 @@
 			<preference id="pref-typeaheadfind" name="accessibility.typeaheadfind" type="bool"/>
 		</preferences>
 		
-		<tabbox id="findbartweakTabBox" flex="1">
+		<tabbox id="findbartweakTabBox">
 			<tabs id="tabsElement">
 				<tab id="generalTab" label="&OptGeneral.label;"/>
 				<tab id="highlightsTab" label="&OptHighlights.label;"/>
+				<tab id="aboutTab" label="&Optabout.label;"/>
 			</tabs>
 			
-			<tabpanels id="tabPanels" flex="1">
+			<tabpanels id="tabPanels">
 				<tabpanel id="generalTab" orient="vertical">
 					<groupbox align="start">
 						<caption label="&Optgen.label;"/>
@@ -113,6 +115,17 @@
 						</caption>
 						<colorpicker id="color" type="button" preference="pref-highlightColor" style="width: 50px;"/>
 					</groupbox>
+				</tabpanel>
+				
+				<tabpanel id="aboutTab" orient="vertical" align="center">
+					<image id="logo"/>
+					<vbox align="end">
+						<description class="closer">&findbartweakabout.name;</description>
+						<description>&findbartweakabout.by;</description>
+						<description class="justify">&findbartweakabout.desc;</description>
+						<label class="text-link closer" href="https://addons.mozilla.org/en-US/firefox/addon/findbar-tweak/" value="&findbartweakabout.home;"/>
+						<label class="text-link closer" href="https://github.com/Quicksaver/FindBar-Tweak/issues" value="&findbartweakabout.tech;"/>
+					</vbox>
 				</tabpanel>
 			</tabpanels>
 		</tabbox>

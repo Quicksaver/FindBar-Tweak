@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.0';
+moduleAid.VERSION = '1.1.1';
 
 // The counter and grid are so intricately connected I can't separate them and put them in their own modules.
 
@@ -207,6 +207,7 @@ this.resetHighlightGrid = function() {
 	}
 	
 	removeAttribute(grid, 'gridSpacers');
+	listenerAid.remove(browserPanel, 'resize', delayResizeGridSpacers);
 	
 	if(!viewSource) {
 		removeAttribute($$('[anonid="gridBox"]')[0], 'style');
@@ -235,8 +236,6 @@ this.fillHighlightGrid = function(toAdd) {
 	// I had checks for this before, if it reaches this point this shouldn't error but I'm preventing it anyway
 	try {
 		var scrollTop = contentDocument.getElementsByTagName('html')[0].scrollTop || contentDocument.getElementsByTagName('body')[0].scrollTop;
-		var scrollTopMax = contentDocument.getElementsByTagName('html')[0].scrollTopMax || contentDocument.getElementsByTagName('body')[0].scrollTopMax;
-		var scrollLeftMax = contentDocument.getElementsByTagName('html')[0].scrollLeftMax || contentDocument.getElementsByTagName('body')[0].scrollLeftMax;
 		var fullHTMLHeight = contentDocument.getElementsByTagName('html')[0].scrollHeight || contentDocument.getElementsByTagName('body')[0].scrollHeight;
 		var gridHeight = grid._gridHeight;
 	}
@@ -272,6 +271,22 @@ this.fillHighlightGrid = function(toAdd) {
 		}
 	}
 	
+	gridResizeSpacers();
+	listenerAid.add(browserPanel, 'resize', delayResizeGridSpacers);
+};
+
+this.delayResizeGridSpacers = function() {
+	timerAid.init('resizeGridSpacers', gridResizeSpacers);
+};
+
+this.gridResizeSpacers = function() {
+	// Lets make sure contentDocument and it's elements exist before trying to access them
+	try {
+		var scrollTopMax = contentDocument.getElementsByTagName('html')[0].scrollTopMax || contentDocument.getElementsByTagName('body')[0].scrollTopMax;
+		var scrollLeftMax = contentDocument.getElementsByTagName('html')[0].scrollLeftMax || contentDocument.getElementsByTagName('body')[0].scrollLeftMax;
+	}
+	catch(ex) { return; }
+	
 	if(scrollTopMax == 0 && scrollLeftMax == 0) {
 		setAttribute(grid, 'gridSpacers', 'none');
 	} else if(scrollTopMax > 0 && scrollLeftMax > 0) {
@@ -296,6 +311,8 @@ this.gridResizeViewSource = function() {
 
 this.toggleGrid = function() {
 	if(!prefAid.useGrid || UNLOADED) {
+		listenerAid.remove(browserPanel, 'resize', delayResizeGridSpacers);
+		
 		if(!viewSource) {
 			for(var t=0; t<gBrowser.mTabs.length; t++) {
 				var panel = $(gBrowser.mTabs[t].linkedPanel);

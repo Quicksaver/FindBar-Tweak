@@ -8,6 +8,7 @@
 		<em:homepageURL>https://addons.mozilla.org/en-US/firefox/addon/findbar-tweak/</em:homepageURL>
 		<em:iconURL>chrome://findbartweak/skin/icon.png</em:iconURL>
 		<em:optionsURL>chrome://findbartweak/content/options.xul</em:optionsURL>
+		<em:name>FindBar Tweak</em:name>
 		<em:bootstrap>true</em:bootstrap>
 		
 		<em:targetApplication>

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.0';
+moduleAid.VERSION = '1.1.1';
 
 this.doOpenOptions = function() {
 	openOptions();
@@ -59,7 +59,8 @@ this.toggleMoveToTop = function() {
 };
 	
 moduleAid.LOADMODULE = function() {
-	overlayAid.overlayURI('chrome://browser/content/browser.xul', 'findbar');
+	// The dummy function in this call prevents a weird bug where the overlay wouldn't be properly applied when opening a second window... for some reason...
+	overlayAid.overlayURI('chrome://browser/content/browser.xul', 'findbar', function(window) { window.gFindBar; });
 	overlayAid.overlayURI('chrome://global/content/viewSource.xul', 'findbar');
 	
 	listenerAid.add(gFindBar, 'UpdatedUIFindBar', updateButtonsUI, false);

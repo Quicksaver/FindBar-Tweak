@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.0';
+moduleAid.VERSION = '1.1.1';
 
 this.highlightByDefault = function() {
 	gFindBar.getElement("highlight").checked = true;
@@ -28,7 +28,7 @@ this.highlightByDefaultProgressListener = {
 		if(webProgress.DOMWindow == browser.contentWindow) {
 			if(browser == gBrowser.mCurrentBrowser) {
 				if(request && !request.isPending()) {
-					gFindBar.getElement("highlight").checked = true;
+					highlightByDefault();
 				}
 			}
 		}

@@ -23,19 +23,14 @@
 		margin-right: 4px !important;
 	}
 	
-	/* Rounded inner borders */
+	/* Rounded inner corners */
 	#FindToolbar[movetotop]:before {
 		content: "";
 		width: 16px;
 		height: 16px;
 		border-radius: 8px;
 		background: transparent;
-		box-shadow: 	2px -2px 0 -2px rgb(160,160,160),
-		                7px -4px 0px -4px rgb(219,234,249),
-		                6px -4px 0px -4px rgb(219,234,249);
 		position: fixed;
-		margin-top: -1px;
-		margin-left: -16px;
 	}
 	#FindToolbar[movetotop]:after {
 		content: "";
@@ -43,23 +38,20 @@
 		height: 16px;
 		border-radius: 8px;
 		background: transparent;
-		-moz-outline-radius-topleft: 10px;
-		box-shadow: 	-2px -2px 0 -2px rgb(160,160,160),
-		                -7px -4px 0px -4px rgb(219,234,249),
-		                -6px -4px 0px -4px rgb(219,234,249);
 		position: fixed;
-		margin-top: -1px;
 	}
 	
-	#main-window:not([theme="nasanightlaunch"]) #FindToolbar[movetotop] {
-		border-bottom: 1px solid rgb(0,0,0);
-		border-right: 1px solid rgb(0,0,0);
-		border-left: 1px solid rgb(0,0,0);
-		-moz-border-bottom-colors: rgb(160, 160, 160);
-		-moz-border-right-colors: rgb(160, 160, 160);
-		-moz-border-left-colors: rgb(160, 160, 160);
-		background-color: rgb(219,234,249);
-		background-image: none;
+	/* I'm only suppoprting NASA Night Launch because I was already doing so previously.
+	If at some point the theme itself styles the find bar on top I will remove these. */
+	#main-window[theme="nasanightlaunch"] #FindToolbar[movetotop]:before {
+		box-shadow: 	2px -2px 0 -2px rgb(0,0,0),
+		                7px -4px 0px -4px rgb(7,7,7),
+		                6px -4px 0px -4px rgb(7,7,7);
+	}
+	#main-window[theme="nasanightlaunch"] #FindToolbar[movetotop]:after {
+		box-shadow: 	-2px -2px 0 -2px rgb(0,0,0),
+		                -7px -4px 0px -4px rgb(7,7,7),
+		                -6px -4px 0px -4px rgb(7,7,7);
 	}
 	#main-window[theme="nasanightlaunch"] #FindToolbar[movetotop] {
 		min-height: 25px;
@@ -69,26 +61,9 @@
 		border-left: 1px solid rgb(0,0,0);
 	}
 	
-	/* For the View Source window */
-	#viewSource #FindToolbar[movetotop] {
-		border-bottom: 1px solid rgb(0,0,0);
-		border-right: 1px solid rgb(0,0,0);
-		border-left: 1px solid rgb(0,0,0);
-		-moz-border-bottom-colors: rgb(160, 160, 160);
-		-moz-border-right-colors: rgb(160, 160, 160);
-		-moz-border-left-colors: rgb(160, 160, 160);
-		background-color: rgb(240,240,240);
+	/* Find bar */
+	window:not([theme="nasanightlaunch"]) #FindToolbar[movetotop] {
 		background-image: none;
-	}
-	#viewSource #FindToolbar[movetotop]:before {
-		box-shadow: 	2px -2px 0 -2px rgb(160,160,160),
-		                7px -4px 0px -4px rgb(240,240,240),
-		                6px -4px 0px -4px rgb(240,240,240);
-	}
-	#viewSource #FindToolbar[movetotop]:after {
-		box-shadow: 	-2px -2px 0 -2px rgb(160,160,160),
-		                -7px -4px 0px -4px rgb(240,240,240),
-		                -6px -4px 0px -4px rgb(240,240,240);
 	}
 	
 	/* The barlesque add-on forces no borders with !important tags, so I have to override them */
@@ -114,24 +89,15 @@
 		pointer-events: none;
 		width: 100%;
 		height: 100%;
-		padding-right: 3px;
 		direction: rtl !important;
 	}
 	
 	grid[anonid="findGrid"] {
 		opacity: 0.7;
-		width: 11px;
 	}
 	
 	grid[anonid="findGrid"][gridSpacers="none"] row[flex="0"] {
 		height: 0px;
-	}
-	grid[anonid="findGrid"]:not([gridSpacers="none"]) row.topSpacer[flex="0"],
-	grid[anonid="findGrid"][gridSpacers="single"] row.bottomSpacer[flex="0"] {
-		height: 18px;
-	}
-	grid[anonid="findGrid"][gridSpacers="double"] row.bottomSpacer[flex="0"] {
-		height: 36px;
 	}
 	
 	/* Grid for the View Source window */

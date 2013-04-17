@@ -1,0 +1,64 @@
+@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
+@-moz-document url("chrome://browser/content/browser.xul"), url("chrome://global/content/viewSource.xul") {
+
+	/* Rounded inner corners */
+	#FindToolbar[movetotop]:before {
+		margin-left: -18px;
+		margin-top: -4px;
+		box-shadow:	2px -2px 0 -2px rgba(0,0,0,0.57),
+				7px -4px 0px -4px -moz-mac-chrome-active,
+				6px -4px 0px -4px -moz-mac-chrome-active;
+	}
+	#FindToolbar[movetotop]:after {
+		margin-top: -4px;
+		margin-left: 2px;
+		box-shadow: 	-2px -2px 0 -2px rgba(0,0,0,0.57),
+				-7px -4px 0px -4px -moz-mac-chrome-active,
+				-6px -4px 0px -4px -moz-mac-chrome-active;
+	}
+	#FindToolbar[movetotop]:-moz-window-inactive:before {
+		box-shadow: 	2px -2px 0 -2px rgba(0,0,0,0.32),
+				7px -4px 0px -4px -moz-mac-chrome-inactive,
+				6px -4px 0px -4px -moz-mac-chrome-inactive;
+	}
+	#FindToolbar[movetotop]:-moz-window-inactive:after {
+		box-shadow: 	-2px -2px 0 -2px rgba(0,0,0,0.32),
+				-7px -4px 0px -4px -moz-mac-chrome-inactive,
+				-6px -4px 0px -4px -moz-mac-chrome-inactive;
+	}
+	
+	/* Find Bar */
+	#FindToolbar[movetotop] {
+		background-color: -moz-mac-chrome-active;
+		border-bottom: 1px solid rgba(0,0,0,0.57);
+		border-right: 1px solid rgba(0,0,0,0.57);
+		border-left: 1px solid rgba(0,0,0,0.57);
+		-moz-border-bottom-colors: rgba(0,0,0,0.57);
+		-moz-border-right-colors: rgba(0,0,0,0.57);
+		-moz-border-left-colors: rgba(0,0,0,0.57);
+	}
+	#FindToolbar[movetotop]:-moz-window-inactive {
+		background-color: -moz-mac-chrome-inactive;
+		border-bottom: 1px solid rgba(0,0,0,0.32);
+		border-right: 1px solid rgba(0,0,0,0.32);
+		border-left: 1px solid rgba(0,0,0,0.32);
+		-moz-border-bottom-colors: rgba(0,0,0,0.32);
+		-moz-border-right-colors: rgba(0,0,0,0.32);
+		-moz-border-left-colors: rgba(0,0,0,0.32);
+	}
+	
+	/* Grid stuff */
+	hbox[anonid="gridBox"] {
+		padding-right: 0px;
+	}
+	grid[anonid="findGrid"] {
+		width: 14px;
+	}
+	grid[anonid="findGrid"]:not([gridSpacers="none"]) row.topSpacer[flex="0"],
+	grid[anonid="findGrid"][gridSpacers="single"] row.bottomSpacer[flex="0"] {
+		height: 0px;
+	}
+	grid[anonid="findGrid"][gridSpacers="double"] row.bottomSpacer[flex="0"] {
+		height: 14px;
+	}
+}

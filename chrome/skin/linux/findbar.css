@@ -1,0 +1,43 @@
+@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
+@-moz-document url("chrome://browser/content/browser.xul"), url("chrome://global/content/viewSource.xul") {
+
+	/* Rounded inner corners */
+	#FindToolbar[movetotop]:before {
+		margin-left: -16px;
+		box-shadow: 	2px -2px 0 -2px rgb(178,174,170),
+		                7px -4px 0px -4px -moz-dialog,
+		                6px -4px 0px -4px -moz-dialog;
+	}
+	#FindToolbar[movetotop]:after {
+		box-shadow: 	-2px -2px 0 -2px rgb(178,174,170),
+		                -7px -4px 0px -4px -moz-dialog,
+		                -6px -4px 0px -4px -moz-dialog;
+	}
+	
+	/* Find Bar */
+	#FindToolbar[movetotop] {
+		background-color: -moz-dialog;
+		border-bottom: 1px solid rgb(0,0,0);
+		border-right: 1px solid rgb(0,0,0);
+		border-left: 1px solid rgb(0,0,0);
+		-moz-border-bottom-colors: rgb(178,174,170);
+		-moz-border-right-colors: rgb(178,174,170);
+		-moz-border-left-colors: rgb(178,174,170);
+	}
+	
+	/* Grid stuff */
+	hbox[anonid="gridBox"] {
+		padding-right: 0px;
+	}
+	grid[anonid="findGrid"] {
+		width: 12px;
+	}
+	grid[anonid="findGrid"]:not([gridSpacers="none"]) row.topSpacer[flex="0"],
+	grid[anonid="findGrid"][gridSpacers="single"] row.bottomSpacer[flex="0"] {
+		height: 16px;
+	}
+	grid[anonid="findGrid"][gridSpacers="double"] row.bottomSpacer[flex="0"] {
+		height: 32px;
+	}
+	
+}

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.1';
+moduleAid.VERSION = '1.2.2';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -87,7 +87,8 @@ this.moveTop = function() {
 			var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 			sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 			sscode += '@-moz-document url("chrome://global/content/viewSource.xul") {\n';
-			sscode += '	#viewSource #FindToolbar[movetotop]:after { margin-left: -' + gFindBar.scrollLeftMax + 'px; }\n';
+			// !important tag necessary for OSX, CSS stylesheet sets this one
+			sscode += '	#viewSource #FindToolbar[movetotop]:after { margin-left: -' + gFindBar.scrollLeftMax + 'px !important; }\n';
 			sscode += '}';
 			styleAid.load('topFindBarCornersViewSource', sscode, true);
 		}
@@ -184,7 +185,8 @@ this.moveTop = function() {
 		var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 		sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 		sscode += '@-moz-document url("chrome://browser/content/browser.xul") {\n';
-		sscode += '	#FindToolbar[movetotop]:after { margin-left: -' + gFindBar.scrollLeftMax + 'px; }\n';
+		// !important tag necessary for OSX, CSS stylesheet sets this one
+		sscode += '	#FindToolbar[movetotop]:after { margin-left: -' + gFindBar.scrollLeftMax + 'px !important; }\n'; 
 		sscode += '}';
 		styleAid.load('topFindBarCorners', sscode, true);
 	}

@@ -1,0 +1,91 @@
+@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
+@-moz-document url("chrome://browser/content/browser.xul"), url("chrome://global/content/viewSource.xul") {
+
+	/* Rounded inner corners */
+	#FindToolbar[movetotop]:before {
+		margin-top: -1px;
+		margin-left: -16px;
+	}
+	#FindToolbar[movetotop]:after {
+		margin-top: -1px;
+	}
+	#main-window:not([oscpu="Windows NT 5.1"]) #FindToolbar[movetotop]:before {
+		box-shadow: 	2px -2px 0 -2px rgb(160,160,160),
+		                7px -4px 0px -4px rgb(219,234,249),
+		                6px -4px 0px -4px rgb(219,234,249);
+	}
+	#main-window:not([oscpu="Windows NT 5.1"]) #FindToolbar[movetotop]:after {
+		box-shadow: 	-2px -2px 0 -2px rgb(160,160,160),
+		                -7px -4px 0px -4px rgb(219,234,249),
+		                -6px -4px 0px -4px rgb(219,234,249);
+	}
+	
+	/* Rounded inner corners Windows XP */
+	window[oscpu="Windows NT 5.1"] #FindToolbar[movetotop]:before {
+		box-shadow: 	2px -2px 0 -2px rgb(160,160,160),
+		                7px -4px 0px -4px -moz-dialog,
+		                6px -4px 0px -4px -moz-dialog;
+	}
+	window[oscpu="Windows NT 5.1"] #FindToolbar[movetotop]:after {
+		box-shadow: 	-2px -2px 0 -2px rgb(160,160,160),
+		                -7px -4px 0px -4px -moz-dialog,
+		                -6px -4px 0px -4px -moz-dialog;
+	}
+	
+	/* Find Bar */
+	window[oscpu="Windows NT 5.1"]:not([theme="nasanightlaunch"]) #FindToolbar[movetotop] {
+		background-color: -moz-dialog;
+	}
+	
+	window:not([theme="nasanightlaunch"]) #FindToolbar[movetotop] {
+		border-bottom: 1px solid rgb(0,0,0);
+		border-right: 1px solid rgb(0,0,0);
+		border-left: 1px solid rgb(0,0,0);
+		-moz-border-bottom-colors: rgb(160, 160, 160);
+		-moz-border-right-colors: rgb(160, 160, 160);
+		-moz-border-left-colors: rgb(160, 160, 160);
+	}
+	
+	#main-window:not([oscpu="Windows NT 5.1"]):not([theme="nasanightlaunch"]) #FindToolbar[movetotop] {
+		background-color: rgb(219,234,249);
+	}
+	
+	/* For the View Source window */
+	#viewSource #FindToolbar[movetotop] {
+		background-color: -moz-dialog;
+	}
+	#viewSource #FindToolbar[movetotop]:before {
+		box-shadow: 	2px -2px 0 -2px rgb(160,160,160),
+		                7px -4px 0px -4px -moz-dialog,
+		                6px -4px 0px -4px -moz-dialog;
+	}
+	#viewSource #FindToolbar[movetotop]:after {
+		box-shadow: 	-2px -2px 0 -2px rgb(160,160,160),
+		                -7px -4px 0px -4px -moz-dialog,
+		                -6px -4px 0px -4px -moz-dialog;
+	}
+	
+	/* Grid stuff */
+	hbox[anonid="gridBox"] {
+		padding-right: 2px;
+	}
+	grid[anonid="findGrid"] {
+		width: 13px;
+	}
+	window:not([oscpu="Windows NT 5.1"]) grid[anonid="findGrid"]:not([gridSpacers="none"]) row.topSpacer[flex="0"],
+	window:not([oscpu="Windows NT 5.1"]) grid[anonid="findGrid"][gridSpacers="single"] row.bottomSpacer[flex="0"] {
+		height: 18px;
+	}
+	window:not([oscpu="Windows NT 5.1"]) grid[anonid="findGrid"][gridSpacers="double"] row.bottomSpacer[flex="0"] {
+		height: 36px;
+	}
+	
+	/* Grid stuff Windows XP */
+	window[oscpu="Windows NT 5.1"] grid[anonid="findGrid"]:not([gridSpacers="none"]) row.topSpacer[flex="0"],
+	window[oscpu="Windows NT 5.1"] grid[anonid="findGrid"][gridSpacers="single"] row.bottomSpacer[flex="0"] {
+		height: 17px;
+	}
+	window[oscpu="Windows NT 5.1"] grid[anonid="findGrid"][gridSpacers="double"] row.bottomSpacer[flex="0"] {
+		height: 34px;
+	}
+}

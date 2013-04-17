@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.2';
+moduleAid.VERSION = '1.2.3';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -107,10 +107,12 @@ this.moveTop = function() {
 	var doneAppContent = false;
 	
 	// Compatibility with TreeStyleTab
-	if($('TabsToolbar').getAttribute('treestyletab-tabbar-position') == 'left') {
-		moveTopStyle.left += $('TabsToolbar').clientWidth;
-	} else if($('TabsToolbar').getAttribute('treestyletab-tabbar-position') == 'right') {
+	if(!$('TabsToolbar').collapsed) {
+		// This is also needed when the tabs are on the left, the width of the findbar doesn't follow with the rest of the window for some reason
 		moveTopStyle.maxWidth -= $('TabsToolbar').clientWidth;
+		if($('TabsToolbar').getAttribute('treestyletab-tabbar-position') == 'left') {
+			moveTopStyle.left += $('TabsToolbar').clientWidth;
+		}
 	}
 	
 	for(var i=0; i<browser.childNodes.length; i++) {

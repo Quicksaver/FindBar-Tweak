@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.0';
+moduleAid.VERSION = '1.2.1';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -65,6 +65,8 @@ this.moveTop = function() {
 		moveTopStyle.top += $('viewSource-toolbox').clientHeight;
 		moveTopStyle.top += parseFloat(menuBarStyle.getPropertyValue('border-top-width'));
 		moveTopStyle.top += parseFloat(menuBarStyle.getPropertyValue('border-bottom-width'));
+		
+		moveTopStyle.maxWidth += $('content').clientWidth;
 		
 		styleAid.unload('topFindBarViewSource');
 		styleAid.unload('topFindBarCornersViewSource');

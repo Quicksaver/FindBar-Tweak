@@ -1,8 +1,9 @@
-moduleAid.VERSION = '1.1.0';
+moduleAid.VERSION = '1.1.1';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
 this.__defineGetter__('linkedPanel', function() { return (viewSource) ? $('appcontent') : $(gBrowser.mCurrentTab.linkedPanel); });
+this.__defineGetter__('browserPanel', function() { return $('browser-panel') || viewSource; });
 
 this._getFindBarHidden = function() { return gFindBar.hidden; };
 this.__defineGetter__('findBarHidden', function() { return _getFindBarHidden(); });

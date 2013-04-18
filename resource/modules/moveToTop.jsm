@@ -1,9 +1,8 @@
-moduleAid.VERSION = '1.2.3';
+moduleAid.VERSION = '1.3.0';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
 this.__defineGetter__('browser', function() { return $('browser'); });
-this.__defineGetter__('browserPanel', function() { return $('browser-panel') || viewSource; });
 this.__defineGetter__('contentDocument', function() {
 	if(!viewSource) { return (gBrowser.mCurrentBrowser.contentDocument) ? gBrowser.mCurrentBrowser.contentDocument : null; }
 	else { return $('content').contentDocument; }
@@ -68,29 +67,29 @@ this.moveTop = function() {
 		
 		moveTopStyle.maxWidth += $('content').clientWidth;
 		
-		styleAid.unload('topFindBarViewSource');
-		styleAid.unload('topFindBarCornersViewSource');
+		styleAid.unload('topFindBar_'+_UUID);
+		styleAid.unload('topFindBarCorners_'+_UUID);
 		
 		var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 		sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 		sscode += '@-moz-document url("chrome://global/content/viewSource.xul") {\n';
-		sscode += '	#viewSource #FindToolbar[movetotop] {\n';
+		sscode += '	#viewSource['+objName+'_UUID="'+_UUID+'"] #FindToolbar[movetotop] {\n';
 		sscode += '		max-width: ' + moveTopStyle.maxWidth + 'px;\n';
 		sscode += (!prefAid.movetoRight) ? '		left: ' + moveTopStyle.left + 'px;\n' : '		right: ' + moveTopStyle.right + 'px;\n';
 		sscode += '		top: ' + moveTopStyle.top + 'px;\n';
 		sscode += '	}';
 		sscode += '}';
 		
-		styleAid.load('topFindBarViewSource', sscode, true);
+		styleAid.load('topFindBar_'+_UUID, sscode, true);
 		
 		if(gFindBar.scrollLeftMax > 0) {
 			var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 			sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 			sscode += '@-moz-document url("chrome://global/content/viewSource.xul") {\n';
 			// !important tag necessary for OSX, CSS stylesheet sets this one
-			sscode += '	#viewSource #FindToolbar[movetotop]:after { margin-left: -' + gFindBar.scrollLeftMax + 'px !important; }\n';
+			sscode += '	#viewSource['+objName+'_UUID="'+_UUID+'"] #FindToolbar[movetotop]:after { margin-left: -' + gFindBar.scrollLeftMax + 'px !important; }\n';
 			sscode += '}';
-			styleAid.load('topFindBarCornersViewSource', sscode, true);
+			styleAid.load('topFindBarCorners_'+_UUID, sscode, true);
 		}
 		
 		forceCornerRedraw();
@@ -109,9 +108,11 @@ this.moveTop = function() {
 	// Compatibility with TreeStyleTab
 	if(!$('TabsToolbar').collapsed) {
 		// This is also needed when the tabs are on the left, the width of the findbar doesn't follow with the rest of the window for some reason
-		moveTopStyle.maxWidth -= $('TabsToolbar').clientWidth;
-		if($('TabsToolbar').getAttribute('treestyletab-tabbar-position') == 'left') {
-			moveTopStyle.left += $('TabsToolbar').clientWidth;
+		if($('TabsToolbar').getAttribute('treestyletab-tabbar-position') == 'left' || $('TabsToolbar').getAttribute('treestyletab-tabbar-position') == 'right') {
+			moveTopStyle.maxWidth -= $('TabsToolbar').clientWidth;
+			if($('TabsToolbar').getAttribute('treestyletab-tabbar-position') == 'left') {
+				moveTopStyle.left += $('TabsToolbar').clientWidth;
+			}
 		}
 	}
 	
@@ -168,29 +169,29 @@ this.moveTop = function() {
 	moveTopStyle.top += parseFloat(computedStyle.navigatortoolbox.getPropertyValue('margin-top'));
 	
 	// Unload current stylesheet if it's been loaded
-	styleAid.unload('topFindBar');
-	styleAid.unload('topFindBarCorners');
+	styleAid.unload('topFindBar_'+_UUID);
+	styleAid.unload('topFindBarCorners_'+_UUID);
 	
 	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 	sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 	sscode += '@-moz-document url("chrome://browser/content/browser.xul") {\n';
-	sscode += '	#FindToolbar[movetotop] {\n';
+	sscode += '	window['+objName+'_UUID="'+_UUID+'"] #FindToolbar[movetotop] {\n';
 	sscode += '		max-width: ' + moveTopStyle.maxWidth + 'px;\n';
 	sscode += (!prefAid.movetoRight) ? '		left: ' + moveTopStyle.left + 'px;\n' : '		right: ' + moveTopStyle.right + 'px;\n';
 	sscode += '		top: ' + moveTopStyle.top + 'px;\n';
 	sscode += '	}';
 	sscode += '}';
 	
-	styleAid.load('topFindBar', sscode, true);
+	styleAid.load('topFindBar_'+_UUID, sscode, true);
 	
 	if(gFindBar.scrollLeftMax > 0) {
 		var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 		sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 		sscode += '@-moz-document url("chrome://browser/content/browser.xul") {\n';
 		// !important tag necessary for OSX, CSS stylesheet sets this one
-		sscode += '	#FindToolbar[movetotop]:after { margin-left: -' + gFindBar.scrollLeftMax + 'px !important; }\n'; 
+		sscode += '	window['+objName+'_UUID="'+_UUID+'"] #FindToolbar[movetotop]:after { margin-left: -' + gFindBar.scrollLeftMax + 'px !important; }\n'; 
 		sscode += '}';
-		styleAid.load('topFindBarCorners', sscode, true);
+		styleAid.load('topFindBarCorners_'+_UUID, sscode, true);
 	}
 	
 	forceCornerRedraw();
@@ -204,11 +205,11 @@ this.forceCornerRedraw = function() {
 	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 	sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 	sscode += '@-moz-document url("chrome://browser/content/browser.xul"), url("chrome://global/content/viewSource.xul") {\n';
-	sscode += '	#FindToolbar[movetotop]:before, #FindToolbar[movetotop]:after { padding-bottom: 1px !important; }\n';
+	sscode += '	window['+objName+'_UUID="'+_UUID+'"] #FindToolbar[movetotop]:before, #FindToolbar[movetotop]:after { padding-bottom: 1px !important; }\n';
 	sscode += '}';
-	styleAid.load('tempRedrawCorners', sscode, true);
+	styleAid.load('tempRedrawCorners_'+_UUID, sscode, true);
 	aSync(function() {
-		styleAid.unload('tempRedrawCorners');
+		styleAid.unload('tempRedrawCorners_'+_UUID);
 	}, 10);
 };
 
@@ -250,13 +251,13 @@ this.findPersonaWidth = function() {
 
 this.stylePersonaFindBar = function() {
 	// Unload current stylesheet if it's been loaded
-	styleAid.unload('personaFindBar');
+	styleAid.unload('personaFindBar_'+_UUID);
 	
 	if(prefAid.lwthemebgImage != '') {
 		var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 		sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 		sscode += '@-moz-document url("chrome://browser/content/browser.xul") {\n';
-		sscode += '	#FindToolbar[movetotop]  {\n';
+		sscode += '	window['+objName+'_UUID="'+_UUID+'"] #FindToolbar[movetotop]  {\n';
 		sscode += '	  background-image: ' + prefAid.lwthemebgImage + ' !important;\n';
 		sscode += '	  background-color: ' + prefAid.lwthemecolor + ' !important;\n';
 		sscode += '	  color: ' + prefAid.lwthemecolor + ' !important;\n';
@@ -267,11 +268,11 @@ this.stylePersonaFindBar = function() {
 		sscode += '	}\n';
 		
 		// There's just no way I can have rounded corners with personas
-		sscode += '	#FindToolbar[movetotop]:before, #FindToolbar[movetotop]:after { display: none !important; }\n';
+		sscode += '	window['+objName+'_UUID="'+_UUID+'"] #FindToolbar[movetotop]:before, #FindToolbar[movetotop]:after { display: none !important; }\n';
 		
 		sscode += '}';
 		
-		styleAid.load('personaFindBar', sscode, true);
+		styleAid.load('personaFindBar_'+_UUID, sscode, true);
 	}
 };
 
@@ -404,12 +405,8 @@ moduleAid.UNLOADMODULE = function() {
 	
 	prefAid.unlisten('movetoRight', moveTop);
 	
-	if(UNLOADED || !prefAid.movetoTop) {
-		styleAid.unload('personaFindBar');
-		styleAid.unload('topFindBar');
-		styleAid.unload('topFindBarCorners');
-		styleAid.unload('topFindBarViewSource');
-		styleAid.unload('topFindBarCornersViewSource');
-		styleAid.unload('tempRedrawCorners');
-	}
+	styleAid.unload('personaFindBar_'+_UUID);
+	styleAid.unload('topFindBar_'+_UUID);
+	styleAid.unload('topFindBarCorners_'+_UUID);
+	styleAid.unload('tempRedrawCorners_'+_UUID);
 };

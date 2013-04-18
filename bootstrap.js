@@ -27,7 +27,7 @@
 // disable() - disables the add-on, in general the add-on disabling itself is a bad idea so I shouldn't use it
 // Note: Firefox 8 is the minimum version supported as the bootstrap requires the chrome.manifest file to be loaded, which was implemented in Firefox 8.
 
-let bootstrapVersion = '1.2.8';
+let bootstrapVersion = '1.2.9';
 let UNLOADED = false;
 let STARTED = false;
 let Addon = {};
@@ -82,6 +82,7 @@ function prepareObject(window, aName) {
 	window[objectName] = {
 		objName: objectName,
 		objPathString: objPathString,
+		_UUID: new Date().getTime(),
 		
 		// every supposedly global variable is inaccessible because bootstraped means sandboxed, so I have to reference all these;
 		// it's easier to reference more specific objects from within the modules for better control, only setting these two here because they're more generalized
@@ -93,12 +94,15 @@ function prepareObject(window, aName) {
 	
 	Services.scriptloader.loadSubScript("resource://"+objPathString+"/modules/utils/moduleAid.jsm", window[objectName]);
 	window[objectName].moduleAid.load("utils/windowUtils");
+	
+	setAttribute(window.document.documentElement, objectName+'_UUID', window[objectName]._UUID);
 }
 
 function removeObject(window, aName) {
 	let objectName = aName || objName;
 	
 	if(window[objectName]) {
+		removeAttribute(window.document.documentElement, objectName+'_UUID', window[objectName]._UUID);
 		window[objectName].moduleAid.unload("utils/windowUtils");
 		delete window[objectName];
 	}

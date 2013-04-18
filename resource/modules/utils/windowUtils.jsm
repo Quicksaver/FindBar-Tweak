@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.0.5';
+moduleAid.VERSION = '2.0.6';
 moduleAid.LAZY = true;
 
 // listenerAid - Object to aid in setting and removing all kinds of event listeners to an object;
@@ -27,7 +27,10 @@ this.loadWindowTools = function() {
 moduleAid.LOADMODULE = function() {
 	listenerAid.add(window, 'unload', function(e) {
 		window.willClose = true; // window.closed is not reliable in some cases
-		removeObject(window, objName);
+		for(var i=0; i<fullClean.length; i++) {
+			fullClean[i](window);
+		}
+		delete window.willClose;
 	}, false, true);
 };
 

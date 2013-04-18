@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.0';
+moduleAid.VERSION = '1.1.1';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -142,6 +142,9 @@ this.reHighlight = function(reDo) {
 
 // Add the reHighlight attribute to all tabs
 this.reHighlightAll = function() {
+	// This happens sometimes when opening new windows, I can't find out how this is getting called before viewSource is defined but it makes no functional difference
+	if(typeof(viewSource) == 'undefined') { return; }
+	
 	if(!viewSource) {
 		for(var i=0; i<gBrowser.tabContainer.childNodes.length; i++) {
 			setAttribute(gBrowser.tabContainer.childNodes[i], 'reHighlight', 'true');

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.2.4';
+moduleAid.VERSION = '2.2.5';
 moduleAid.LAZY = true;
 
 // overlayAid - to use overlays in my bootstraped add-ons. The behavior is as similar to what is described in https://developer.mozilla.org/en/XUL_Tutorial/Overlays as I could manage.
@@ -1474,8 +1474,13 @@ moduleAid.LOADMODULE = function() {
 	browserMediator.register(overlayAid.scheduleBrowser, 'pageshow');
 	browserMediator.register(overlayAid.scheduleBrowser, 'SidebarFocused');
 	browserMediator.register(overlayAid.closedBrowser, 'pagehide');
-	browserMediator.unregister(overlayAid.closedBrowser, 'SidebarClosed');
+	browserMediator.register(overlayAid.closedBrowser, 'SidebarClosed');
 	observerAid.add(overlayAid.observingSchedules, 'window-overlayed');
+	
+	// Ensure that closed windows are clean of our objects to prevent ZCs
+	fullClean.push(function(aWindow) {
+		delete aWindow['_OVERLAYS_'+objName];
+	});
 };
 
 moduleAid.UNLOADMODULE = function() {

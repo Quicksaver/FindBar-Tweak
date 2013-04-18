@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.1';
+moduleAid.VERSION = '1.1.2';
 
 // The counter and grid are so intricately connected I can't separate them and put them in their own modules.
 
@@ -109,7 +109,7 @@ this.checkCurrentHighlight = function(contentWindow, current, highlight) {
 };
 
 this.toggleCounter = function() {
-	if(!prefAid.useCounter || UNLOADED) {
+	if(!prefAid.useCounter || UNLOADED || window.closed || window.willClose) {
 		listenerAid.remove(gFindBar, 'UpdatedStatusFindBar', fillHighlightCounter);
 		listenerAid.remove(gFindBar, 'ToggledHighlight', alwaysUpdateStatusUI);
 		listenerAid.remove(gFindBar, 'FoundFindBar', alwaysToggleHighlight);
@@ -120,7 +120,7 @@ this.toggleCounter = function() {
 		listenerAid.add(gFindBar, 'FoundFindBar', alwaysToggleHighlight);
 	}
 	
-	if(!UNLOADED) {
+	if(!UNLOADED && !window.closed && !window.willClose) {
 		observerAid.notify('ReHighlightAll');
 	}
 }
@@ -139,6 +139,9 @@ this.__defineGetter__('grid', function() {
 	// First the grid itself
 	var boxNode = document.createElement('hbox');
 	boxNode.setAttribute('anonid', 'gridBox');
+	
+	// It shouldn't depend on the stylesheet being loaded, it could error and the browser would be unusable
+	boxNode.setAttribute('style', 'pointer-events: none;');
 	
 	var gridNode = document.createElement('grid');
 	gridNode.setAttribute('anonid', 'findGrid');
@@ -310,7 +313,7 @@ this.gridResizeViewSource = function() {
 };
 
 this.toggleGrid = function() {
-	if(!prefAid.useGrid || UNLOADED) {
+	if(!prefAid.useGrid || UNLOADED || window.closed || window.willClose) {
 		listenerAid.remove(browserPanel, 'resize', delayResizeGridSpacers);
 		
 		if(!viewSource) {
@@ -331,7 +334,7 @@ this.toggleGrid = function() {
 		}
 	}
 		
-	if(!UNLOADED) {
+	if(!UNLOADED && !window.closed && !window.willClose) {
 		observerAid.notify('ReHighlightAll');
 	}
 };

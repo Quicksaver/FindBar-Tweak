@@ -1,31 +1,37 @@
 <!ENTITY Options.title "Barra de Procura Refinada">
 <!ENTITY OptHighlights.label "Realces">
 <!ENTITY OptGeneral.label "Geral">
-
+<!ENTITY Optabout.label "Sobre">
 <!ENTITY Optgen.label "Opções da Barra de Procura">
 <!ENTITY Optdisplay.label "Opções de Visualização">
 <!ENTITY Optgrid.label "Grelha de Realces">
-
 <!ENTITY OpthighlightByDefault.label "Realçar todas as ocorrências por defeito">
-<!ENTITY OptgridInScrollbar.label "Mostrar a grelha na barra de rolagem">
+<!ENTITY OpthideWhenFinderHidden.label "Remover os realces quando a barra de procura é fechada">
+<!ENTITY OptgridInScrollbar.label "Mostrar a grelha de realces na barra de rolagem">
 <!ENTITY OptuseCounter.label "Mostrar número de ocorrências na barra de procura">
 <!ENTITY Optcolor.label "Cor dos realces">
+<!ENTITY OptcolorReset.label "(reset)">
 <!ENTITY OptgridLimit.labela "Não usar a grelha se exceder os">
 <!ENTITY OptgridLimit.labelb "realces">
 <!ENTITY OptminNoDelay.labela "Atrasar o realce se o termo de procura for menor que">
 <!ENTITY OptminNoDelay.labelb "caracteres">
-
 <!ENTITY OpthideLabels.label "Esconder o texto dos botões">
 <!ENTITY OpthideClose.label "Esconder o botão de fecho da barra de procura">
 <!ENTITY OptmovetoTop.label "Mover a barra de procura para o topo da janela">
+<!ENTITY OptmovetoRight.label "Colocar à direita">
+<!ENTITY OptblurCloses.label "Fechar a barra de procura ao realizar outra ação">
+<!ENTITY OptperTab.label "Novos separadores são iniciados com a barra de procura fechada">
 <!ENTITY OptonStartup.label "Lembrar o estado aberto/fechado da barra de procura ao iniciar">
-
 <!ENTITY OptkeepButtons.label "Mostrar botões na barra de procura rápida">
 <!ENTITY OptFAYT.label "Procurar logo ao introduzir texto">
 <!ENTITY OptFAYTTimeout.beforeLabel "Fechar automaticamente após">
 <!ENTITY OptFAYTTimeout.afterLabel "segundos">
 <!ENTITY OptFAYTmode.quickFind "Usar a barra de procura rápida se não estiver já aberta">
 <!ENTITY OptFAYTmode.normalFind "Usar sempre a barra de procura normal">
-
 <!ENTITY OptctrlFCloses.win "Ctrl+F para também fechar a barra de procura">
 <!ENTITY OptctrlFCloses.mac "Comando+F para também fechar a barra de procura">
+<!ENTITY findbartweakabout.name "Barra de Procura Refinada">
+<!ENTITY findbartweakabout.by "por Quicksaver">
+<!ENTITY findbartweakabout.desc "Toda a informação relativa a este extra e ao seu autor pode ser encontrada na página dos Extras do Mozilla. Se gostou da extensão, pode mostrar o seu agrado ao lá deixar um comentário ou pode também fazer uma pequena contribuição para manter o seu desenvolvimento. Sugestões e problemas podem ser comunicados na página de suporte técnico.">
+<!ENTITY findbartweakabout.home "Página do Extra do Mozilla">
+<!ENTITY findbartweakabout.tech "Suporte Técnico">

@@ -1,0 +1,37 @@
+<!ENTITY Options.title "FindBar Tweak">
+<!ENTITY OptHighlights.label "高亮">
+<!ENTITY OptGeneral.label "一般">
+<!ENTITY Optabout.label "关于">
+<!ENTITY Optgen.label "Findbar 选项">
+<!ENTITY Optdisplay.label "显示选项">
+<!ENTITY Optgrid.label "高亮网格">
+<!ENTITY OpthighlightByDefault.label "默认高亮所有匹配项">
+<!ENTITY OpthideWhenFinderHidden.label "关闭查找栏时移除高亮">
+<!ENTITY OptgridInScrollbar.label "在滚动条内显示高亮网格">
+<!ENTITY OptuseCounter.label "在查找栏上显示匹配项计数器">
+<!ENTITY Optcolor.label "高亮颜色">
+<!ENTITY OptcolorReset.label "(重置)">
+<!ENTITY OptgridLimit.labela "超过时不要使用网格">
+<!ENTITY OptgridLimit.labelb "高亮">
+<!ENTITY OptminNoDelay.labela "延迟高亮如果搜索字串少于">
+<!ENTITY OptminNoDelay.labelb "个字符">
+<!ENTITY OpthideLabels.label "隐藏按钮文字">
+<!ENTITY OpthideClose.label "隐藏查找栏关闭按钮">
+<!ENTITY OptmovetoTop.label "移动查找栏到窗口顶部">
+<!ENTITY OptmovetoRight.label "置于右侧">
+<!ENTITY OptblurCloses.label "失去焦点时关闭查找栏">
+<!ENTITY OptperTab.label "在新标签页关闭查找栏">
+<!ENTITY OptonStartup.label "启动时恢复查找栏的开启/关闭状态">
+<!ENTITY OptkeepButtons.label "在快速查找栏显示按钮">
+<!ENTITY OptFAYT.label "输入时即时查找文本">
+<!ENTITY OptFAYTTimeout.beforeLabel "自动关闭于">
+<!ENTITY OptFAYTTimeout.afterLabel "秒后">
+<!ENTITY OptFAYTmode.quickFind "若未开启快速查找栏则使用它">
+<!ENTITY OptFAYTmode.normalFind "总是使用常规查找栏">
+<!ENTITY OptctrlFCloses.win "Ctrl+F 也用于关闭查找栏">
+<!ENTITY OptctrlFCloses.mac "Command+F 也用于关闭查找栏">
+<!ENTITY findbartweakabout.name "FindBar Tweak">
+<!ENTITY findbartweakabout.by "由 Quicksaver">
+<!ENTITY findbartweakabout.desc "关于这个附加组件及其开发者的信息可以在Mozilla Add-ons主页上查看，如果您喜欢这个附加组件，请考虑留下好评或小小捐助一笔以支持其后续开发。缺陷报告及建议请前往技术支持页面.">
+<!ENTITY findbartweakabout.home "Add-on 主页">
+<!ENTITY findbartweakabout.tech "技术支持">

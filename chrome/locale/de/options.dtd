@@ -1,13 +1,16 @@
 <!ENTITY Options.title "FindBar Tweak - Einstellungen">
 <!ENTITY OptHighlights.label "Hervorhebungen">
 <!ENTITY OptGeneral.label "Allgemein">
+<!ENTITY Optabout.label "Über">
 <!ENTITY Optgen.label "Suchleisten-Einstellungen">
 <!ENTITY Optdisplay.label "Anzeigeeinstellungen">
 <!ENTITY Optgrid.label "Hervorhebungsbalken">
 <!ENTITY OpthighlightByDefault.label "Automatisch alle Vorkommen des gesuchten Begriffs hervorheben">
+<!ENTITY OpthideWhenFinderHidden.label "Hervorhebungen entfernen, wenn die Suchleiste geschlossen wird">
 <!ENTITY OptgridInScrollbar.label "Hervorhebungsbalken innerhalb der Bildlaufleiste anzeigen">
 <!ENTITY OptuseCounter.label "Trefferanzahl in der Suchleiste anzeigen">
 <!ENTITY Optcolor.label "Markierungsfarbe">
+<!ENTITY OptcolorReset.label "(zurücksetzen)">
 <!ENTITY OptgridLimit.labela "Den Hervorhebungsbalken bei mehr als">
 <!ENTITY OptgridLimit.labelb "Hervorhebungen nicht anzeigen">
 <!ENTITY OptminNoDelay.labela "Hervorhebungen verzögert einblenden bei weniger als">
@@ -15,6 +18,9 @@
 <!ENTITY OpthideLabels.label "Schaltflächentext ausblenden">
 <!ENTITY OpthideClose.label "Die Schließen-Schaltfläche ausblenden">
 <!ENTITY OptmovetoTop.label "Die Such-Symbolleiste an den oberen Rand des Browsers verschieben">
+<!ENTITY OptmovetoRight.label "Rechts anordnen">
+<!ENTITY OptblurCloses.label "Die Suchleiste schließen, wenn sie den Fokus verliert">
+<!ENTITY OptperTab.label "Neue Tabs ohne Suchleiste öffnen">
 <!ENTITY OptonStartup.label "Den Zustand der Such-Symbolleiste (eingeblendet/ausgeblendet) beim Start wiederherstellen">
 <!ENTITY OptkeepButtons.label "Schaltflächen in der Suchleiste anzeigen">
 <!ENTITY OptFAYT.label "Suche bereits beim Eintippen starten">
@@ -24,3 +30,8 @@
 <!ENTITY OptFAYTmode.normalFind "Immer die normale Such-Symbolleiste verwenden">
 <!ENTITY OptctrlFCloses.win "Strg+F um die Suchleiste zu schließen">
 <!ENTITY OptctrlFCloses.mac "Befehlstaste+F um die Suchleiste zu schließen">
+<!ENTITY findbartweakabout.name "FindBar Tweak">
+<!ENTITY findbartweakabout.by "von Quicksaver">
+<!ENTITY findbartweakabout.desc "Alle Informationen über das Add-on und seinen Entwickler finden Sie auf seiner Homepage bei Mozilla-Add-ons. Wenn Ihnen das Add-on gefällt, können Sie dort eine positive Bewertung abgeben oder eine kleine Spende geben, um seine weitere Entwicklung zu unterstützen. Fehlermeldungen und Vorschläge können auf der Webseite für technische Unterstützung eingetragen werden.">
+<!ENTITY findbartweakabout.home "Homepage der Erweiterung">
+<!ENTITY findbartweakabout.tech "Technische Unterstützung">

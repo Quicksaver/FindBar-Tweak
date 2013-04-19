@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.1';
+moduleAid.VERSION = '1.1.2';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -214,8 +214,9 @@ moduleAid.LOADMODULE = function() {
 	gFindBar.__findAgain = gFindBar._findAgain;
 	gFindBar._findAgain = function(aFindPrevious) {
 		if(dispatch(gFindBar, { type: 'WillFindAgain', detail: aFindPrevious })) {
-			gFindBar.__findAgain(aFindPrevious);
+			var ret = gFindBar.__findAgain(aFindPrevious);
 			dispatch(gFindBar, { type: 'FoundAgain', cancelable: false, detail: aFindPrevious });
+			return ret;
 		}
 	};
 	

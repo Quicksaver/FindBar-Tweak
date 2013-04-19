@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.1';
+moduleAid.VERSION = '1.1.2';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -13,8 +13,9 @@ moduleAid.LOADMODULE = function() {
 	gFindBar._open = gFindBar.open;
 	gFindBar.open = function(aMode) {
 		if(dispatch(gFindBar, { type: 'WillOpenFindBar', detail: aMode })) {
-			gFindBar._open(aMode);
+			var ret = gFindBar._open(aMode);
 			dispatch(gFindBar, { type: 'OpenedFindBar', cancelable: false, detail: aMode });
+			return ret;
 		}
 	};
 	gFindBar._close = gFindBar.close;
@@ -41,8 +42,9 @@ moduleAid.LOADMODULE = function() {
 	gFindBar.__find = gFindBar._find;
 	gFindBar._find = function(aValue) {
 		if(dispatch(gFindBar, { type: 'WillFindFindBar', detail: aValue })) {
-			gFindBar.__find(aValue);
+			var ret = gFindBar.__find(aValue);
 			dispatch(gFindBar, { type: 'FoundFindBar', cancelable: false });
+			return ret;
 		}
 	};
 };

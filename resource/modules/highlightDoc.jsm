@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.0';
+moduleAid.VERSION = '1.2.1';
 
 this.toggleCounter = function() {
 	moduleAid.loadIf('counter', prefAid.useCounter);
@@ -6,6 +6,10 @@ this.toggleCounter = function() {
 
 this.toggleGrid = function() {
 	moduleAid.loadIf('grid', prefAid.useGrid);
+};
+
+this.toggleSights = function() {
+	moduleAid.loadIf('sights', prefAid.sightsCurrent);
 };
 
 moduleAid.LOADMODULE = function() {
@@ -140,15 +144,19 @@ moduleAid.LOADMODULE = function() {
 	
 	prefAid.listen('useCounter', toggleCounter);
 	prefAid.listen('useGrid', toggleGrid);
+	prefAid.listen('sightsCurrent', toggleSights);
 	
 	toggleCounter();
 	toggleGrid();
+	toggleSights();
 };
 
 moduleAid.UNLOADMODULE = function() {
 	prefAid.unlisten('useCounter', toggleCounter);
 	prefAid.unlisten('useGrid', toggleGrid);
+	prefAid.unlisten('sightsCurrent', toggleSights);
 	
+	moduleAid.unload('sights');
 	moduleAid.unload('grid');
 	moduleAid.unload('counter');
 	

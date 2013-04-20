@@ -1,9 +1,8 @@
-moduleAid.VERSION = '1.1.2';
+moduleAid.VERSION = '1.1.3';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
 
-this.__defineGetter__('contentDocument', function() { return (!viewSource) ? gBrowser.mCurrentBrowser.contentDocument : $('content').contentDocument; });
 this.__defineGetter__('documentHighlighted', function() {
 	return (contentDocument && contentDocument.documentElement && contentDocument.documentElement.getAttribute('highlighted') == 'true');
 });
@@ -213,9 +212,9 @@ moduleAid.LOADMODULE = function() {
 	
 	gFindBar.__findAgain = gFindBar._findAgain;
 	gFindBar._findAgain = function(aFindPrevious) {
-		if(dispatch(gFindBar, { type: 'WillFindAgain', detail: aFindPrevious })) {
+		if(dispatch(gFindBar, { type: 'WillFindAgain', detail: { aFindPrevious: aFindPrevious } })) {
 			var ret = gFindBar.__findAgain(aFindPrevious);
-			dispatch(gFindBar, { type: 'FoundAgain', cancelable: false, detail: aFindPrevious });
+			dispatch(gFindBar, { type: 'FoundAgain', cancelable: false, detail: { aFindPrevious: aFindPrevious, retValue: ret } });
 			return ret;
 		}
 	};

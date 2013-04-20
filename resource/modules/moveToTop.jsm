@@ -1,12 +1,8 @@
-moduleAid.VERSION = '1.3.0';
+moduleAid.VERSION = '1.3.1';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
 this.__defineGetter__('browser', function() { return $('browser'); });
-this.__defineGetter__('contentDocument', function() {
-	if(!viewSource) { return (gBrowser.mCurrentBrowser.contentDocument) ? gBrowser.mCurrentBrowser.contentDocument : null; }
-	else { return $('content').contentDocument; }
-});
 this.getComputedStyle = function(el) { return window.getComputedStyle(el); };
 
 this.moveTopStyle = {

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.0.1';
+moduleAid.VERSION = '2.0.2';
 moduleAid.LAZY = true;
 
 // timerAid - Object to aid in setting, initializing and cancelling timers
@@ -12,7 +12,8 @@ moduleAid.LAZY = true;
 //		(string) 'precise_skip' not really sure what this one does,
 //		(string) 'once' fires only once,
 //		defaults to once
-// create(aFunc, aDelay, aType) - creates a timer object and returns it
+// create(aFunc, aDelay, aType, toBind) - creates a timer object and returns it
+//	toBind - (object) to bind aFunc to, if unset aFunc will be bound to self
 //	see init()
 this.timerAid = {
 	timers: {},
@@ -61,11 +62,11 @@ this.timerAid = {
 		}
 	},
 	
-	create: function(aFunc, aDelay, aType) {
+	create: function(aFunc, aDelay, aType, toBind) {
 		var type = this._switchType(aType);
 		var newTimer = {
 			timer: Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer),
-			handler: aFunc.bind(self),
+			handler: (toBind) ? aFunc.bind(toBind) : aFunc.bind(self),
 			cancel: function() {
 				this.timer.cancel();
 			}

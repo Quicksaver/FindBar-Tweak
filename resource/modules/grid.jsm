@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.0';
+moduleAid.VERSION = '1.0.1';
 
 this.ROWS_MINIMUM = 150; // number of rows in the highlight grid - kind of the "highlight granularity"
 this.ROWS_MULTIPLIER = 2; // Add extra rows if their height exceeds this value
@@ -87,7 +87,7 @@ this.resetHighlightGrid = function() {
 	
 	if(!viewSource) {
 		removeAttribute($$('[anonid="gridBox"]')[0], 'style');
-		listenerAid.remove(viewSource, 'resize', delayResizeViewSource);
+		listenerAid.remove(viewSource, 'resize', delayGridResizeViewSource);
 	}
 	
 	// Fix for non-html files (e.g. xml files)
@@ -172,7 +172,7 @@ this.gridResizeSpacers = function() {
 	}
 };
 
-this.delayResizeViewSource = function() {
+this.delayGridResizeViewSource = function() {
 	timerAid.init('resizeViewSource', gridResizeViewSource, 0);
 };
 
@@ -182,7 +182,7 @@ this.gridResizeViewSource = function() {
 	var styleString = 'top: '+$('viewSource-toolbox').clientHeight+'px;';
 	styleString += ' height: '+$('content').clientHeight+'px;';
 	setAttribute($$('[anonid="gridBox"]')[0], 'style', styleString);
-	listenerAid.add(viewSource, 'resize', delayResizeViewSource);
+	listenerAid.add(viewSource, 'resize', delayGridResizeViewSource);
 };
 
 moduleAid.UNLOADMODULE = function() {
@@ -202,7 +202,7 @@ moduleAid.UNLOADMODULE = function() {
 		if(innerGrid.length > 0) {
 			innerGrid[0].parentNode.removeChild(innerGrid[0]);
 		}
-		listenerAid.remove(viewSource, 'resize', delayResizeViewSource);
+		listenerAid.remove(viewSource, 'resize', delayGridResizeViewSource);
 	}
 		
 	if(!UNLOADED && !window.closed && !window.willClose) {

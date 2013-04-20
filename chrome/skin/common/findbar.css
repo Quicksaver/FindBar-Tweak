@@ -100,14 +100,35 @@
 		height: 0px;
 	}
 	
-	/* Grid for the View Source window */
-	#viewSource hbox[anonid="gridBox"] {
-		position: fixed;
+	/* Sights stuff */
+	hbox[anonid="findSights"] {
+		pointer-events: none;
+		width: 100%;
+		height: 100%;
+	}
+	#main-window hbox[anonid="findSights"] {
+		position: relative !important;
+	}
+	
+	box[anonid="highlightSights"] {
+		border-radius: 50%;
+		position: absolute;
+		border: 8px solid transparent;
+	}
+	
+	/* Grid and sights for the View Source window */
+	#viewSource hbox[anonid="gridBox"],
+	#viewSource hbox[anonid="findSights"] {
+		position: fixed !important;
 	}
 	
 	#viewSource grid[anonid="findGrid"] {
 		height: 100%;
 		position: relative;
 		top: -13px;
+	}
+	
+	#viewSource hbox[anonid="findSights"] {
+		top: 0px;
 	}
 }

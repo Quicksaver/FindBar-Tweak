@@ -1,4 +1,4 @@
-var defaultsVersion = '1.0.3';
+var defaultsVersion = '1.0.4';
 var objName = 'findbartweak';
 var objPathString = 'findbartweak';
 var prefList = {
@@ -9,6 +9,8 @@ var prefList = {
 	useCounter: true,
 	useGrid: true,
 	gridLimit: 250,
+	
+	sightsCurrent: true,
 	
 	blurCloses: false,
 	perTab: false,

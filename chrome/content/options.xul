@@ -113,7 +113,7 @@
 				        </hbox>
 					</groupbox>
 					<groupbox align="start">
-						<caption label="Optsights.label;"/>
+						<caption label="&Optsights.label;"/>
 						<checkbox label="&OptsightsCurrent.label;" preference="pref-sightsCurrent"/>
 					</groupbox>
 					<groupbox align="center">

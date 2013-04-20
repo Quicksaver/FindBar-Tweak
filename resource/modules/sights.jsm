@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.0';
+moduleAid.VERSION = '1.0.1';
 
 this.__defineGetter__('sights', function() {
 	var sights = linkedPanel.querySelectorAll('[anonid="findSights"]');
@@ -107,12 +107,32 @@ this.currentSights = function(e) {
 	}
 	
 	if(sel.rangeCount == 1) {
-		var dimensions = sel.getRangeAt(0).getClientRects()[0];
-		buildSights(dimensions.right -(dimensions.width /2), dimensions.bottom -(dimensions.height /2), scrollLeft, scrollTop, true);
+		var retRange = sel.getRangeAt(0);
+		
+		// We need to account for frames positions as well, as the ranges values are relative to them
+		var xMod = 0;
+		var yMod = 0;
+		
+		var ownDoc = retRange.startContainer.ownerDocument;
+		while(ownDoc != contentDocument) {
+			try {
+				var frameElement = ownDoc.defaultView.frameElement.getBoundingClientRect();
+				xMod += frameElement.left;
+				yMod += frameElement.top;
+				
+				ownDoc = ownDoc.defaultView.parent.document;
+			}
+			catch(ex) { return; } // failsafe
+		}
+		
+		var dimensions = retRange.getClientRects()[0];
+		buildSights(dimensions.right -(dimensions.width /2) +xMod, dimensions.bottom -(dimensions.height /2) +yMod, scrollLeft, scrollTop, true);
 	}
-}		
+}
 
 this.sightsColor = function() {
+	if(!prefAid.sightsCurrent) { return; }
+	
 	var m = prefAid.highlightColor.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
 	if(!m) { return; }
 	if(m[1].length === 6) { // 6-char notation

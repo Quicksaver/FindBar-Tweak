@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.0';
+moduleAid.VERSION = '1.1.1';
 
 this.__defineGetter__('sights', function() {
 	var sights = linkedPanel.querySelectorAll('[anonid="findSights"]');
@@ -27,6 +27,8 @@ this.positionSights = function(range, scrollTop, scrollLeft, clientHeight, clien
 	// If these aren't set, we just assume the range is visible and should be always sighted, such as in FindAgain (F3) which scrolls to the search hit
 	var current = (!clientHeight && !clientWidth);
 	var dimensions = range.node.getClientRects()[0];
+	var editableNode = gFindBar._getEditableNode(range.node.startContainer);
+	var editableRect = (editableNode) ? editableNode.getClientRects()[0] : null;
 	
 	// We need to account for frames positions as well, as the ranges values are relative to them
 	var xMod = 0;
@@ -35,9 +37,23 @@ this.positionSights = function(range, scrollTop, scrollLeft, clientHeight, clien
 	var ownDoc = range.node.startContainer.ownerDocument;
 	while(ownDoc != contentDocument) {
 		try {
+			// We need to check for this inside each frame because the xMod and yMod values change with each
+			if(editableNode && editableNode.ownerDocument == ownDoc) {
+				if(dimensions.bottom +yMod < editableRect.top
+				|| dimensions.top +yMod > editableRect.bottom
+				|| dimensions.right +xMod < editableRect.left
+				|| dimensions.left +xMod > editableRect.right) {
+					range.sights = false;
+					return;
+				}
+			}
+			
 			var frame = ownDoc.defaultView.frameElement;
 			if(clientHeight && clientWidth) {
-				if(dimensions.bottom +yMod < 0 || dimensions.top +yMod > frame.clientHeight || dimensions.right +xMod < 0 || dimensions.left +xMod > frame.clientWidth) {
+				if(dimensions.bottom +yMod < 0
+				|| dimensions.top +yMod > frame.clientHeight
+				|| dimensions.right +xMod < 0
+				|| dimensions.left +xMod > frame.clientWidth) {
 					range.sights = false;
 					return;
 				}
@@ -56,13 +72,26 @@ this.positionSights = function(range, scrollTop, scrollLeft, clientHeight, clien
 		}
 	}
 	
+	if(editableNode && editableNode.ownerDocument == contentDocument) {
+		if(dimensions.bottom +yMod < editableRect.top
+		|| dimensions.top +yMod > editableRect.bottom
+		|| dimensions.right +xMod < editableRect.left
+		|| dimensions.left +xMod > editableRect.right) {
+			range.sights = false;
+			return;
+		}
+	}
+	
 	var limitTop = dimensions.top +yMod;
 	var limitLeft = dimensions.left +xMod;
 	
 	if(clientHeight && clientWidth) {
 		var limitBottom = dimensions.bottom +yMod;
 		var limitRight = dimensions.right +xMod;
-		if(limitBottom < 0 || limitTop > clientHeight || limitRight < 0 || limitLeft > clientWidth) {
+		if(limitBottom < 0
+		|| limitTop > clientHeight
+		|| limitRight < 0
+		|| limitLeft > clientWidth) {
 			range.sights = false;
 			return;
 		}
@@ -268,9 +297,9 @@ this.toggleSightsCurrent = function() {
 
 this.toggleSightsHighlights = function() {
 	if(prefAid.sightsHighlights) {
-		listenerAid.add(browserPanel, 'scroll', sightsOnScroll);
+		listenerAid.add(browserPanel, 'scroll', sightsOnScroll, true);
 	} else {
-		listenerAid.remove(browserPanel, 'scroll', sightsOnScroll);
+		listenerAid.remove(browserPanel, 'scroll', sightsOnScroll, true);
 	}
 	
 	observerAid.notify('ReHighlightAll');

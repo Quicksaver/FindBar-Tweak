@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.3.3';
+moduleAid.VERSION = '1.3.4';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -85,7 +85,7 @@ this.moveTop = function() {
 		sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 		sscode += '@-moz-document url("chrome://global/content/viewSource.xul") {\n';
 		sscode += '	#viewSource['+objName+'_UUID="'+_UUID+'"] #FindToolbar[movetotop] {\n';
-		sscode += '		max-width: ' + moveTopStyle.maxWidth + 'px;\n';
+		sscode += '		max-width: ' + Math.max(moveTopStyle.maxWidth, 5) + 'px;\n';
 		sscode += (!prefAid.movetoRight) ? '		left: ' + moveTopStyle.left + 'px;\n' : '		right: ' + moveTopStyle.right + 'px;\n';
 		sscode += '		top: ' + moveTopStyle.top + 'px;\n';
 		sscode += '	}';
@@ -204,7 +204,7 @@ this.moveTop = function() {
 	sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 	sscode += '@-moz-document url("chrome://browser/content/browser.xul") {\n';
 	sscode += '	window['+objName+'_UUID="'+_UUID+'"] #FindToolbar[movetotop] {\n';
-	sscode += '		max-width: ' + moveTopStyle.maxWidth + 'px;\n';
+	sscode += '		max-width: ' + Math.max(moveTopStyle.maxWidth, 5) + 'px;\n';
 	sscode += (!prefAid.movetoRight) ? '		left: ' + moveTopStyle.left + 'px;\n' : '		right: ' + moveTopStyle.right + 'px;\n';
 	sscode += '		top: ' + moveTopStyle.top + 'px;\n';
 	sscode += '	}';

@@ -11,6 +11,7 @@ var prefList = {
 	gridLimit: 250,
 	
 	sightsCurrent: true,
+	sightsHighlights: false,
 	
 	blurCloses: false,
 	perTab: false,

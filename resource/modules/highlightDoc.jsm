@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.1';
+moduleAid.VERSION = '1.2.2';
 
 this.toggleCounter = function() {
 	moduleAid.loadIf('counter', prefAid.useCounter);
@@ -9,7 +9,7 @@ this.toggleGrid = function() {
 };
 
 this.toggleSights = function() {
-	moduleAid.loadIf('sights', prefAid.sightsCurrent);
+	moduleAid.loadIf('sights', prefAid.sightsCurrent || prefAid.sightsHighlights);
 };
 
 moduleAid.LOADMODULE = function() {
@@ -19,21 +19,29 @@ moduleAid.LOADMODULE = function() {
 	
 	// Add found words to counter and grid arrays if needed,
 	// Modified to more accurately handle frames
-	gFindBar._highlightDoc = function _highlightDoc(aHighlight, aWord, aWindow, aLevel) {
-		if(!aWindow && !aLevel) {
+	gFindBar._highlightDoc = function _highlightDoc(aHighlight, aWord, aWindow, aLevel, aSights) {
+		if(!aWindow) {
+			// Using the counter?
 			linkedPanel._counterHighlights = null;
 			if(prefAid.useCounter) {
 				var counterLevels = [];
 				aLevel = counterLevels;
 			}
 			
+			// Using the grid?
 			var fillGrid = false;
 			if(prefAid.useGrid) {
 				var toAddtoGrid = [];
 				fillGrid = resetHighlightGrid();
 			}
-		}
 			
+			// Using the sights?
+			if(prefAid.sightsHighlights) {
+				aSights = [];
+			}
+		}
+		
+		// Prepare counter levels for every frame, later we add them in order (frames last)
 		if(aLevel) {
 			aLevel.push({ highlights: [], levels: [] });
 			var thisLevel = aLevel.length -1;
@@ -45,8 +53,11 @@ moduleAid.LOADMODULE = function() {
 			var nextLevel = null;
 			if(aLevel) { nextLevel = aLevel[thisLevel].levels; }
 			
-			if(this._highlightDoc(aHighlight, aWord, win.frames[i], nextLevel)) {
+			if(this._highlightDoc(aHighlight, aWord, win.frames[i], nextLevel, aSights)) {
 				textFound = true;
+				
+				// Frames get a pattern in the grid, with the whole extesion of the frame instead of just the highlight,
+				// frames can be scrolled so the highlights position may not reflect their actual page position, they may not even be visible at the moment.
 				if(aHighlight && fillGrid && !aWindow) {
 					fillGrid = (toAddtoGrid.push({ node: win.frames[i].frameElement, pattern: true }) <= prefAid.gridLimit);
 				}
@@ -97,8 +108,13 @@ moduleAid.LOADMODULE = function() {
 							fillGrid = (toAddtoGrid.push({ node: retRange }) <= prefAid.gridLimit);
 						}
 					}
+					
+					if(aSights) {
+						aSights.push({ node: retRange, sights: false });
+					}
 				}
 				
+				// Always add to counter, whether we are highlighting or not
 				if(aLevel) {
 					aLevel[thisLevel].highlights.push({
 						contentWindow: win,
@@ -111,14 +127,20 @@ moduleAid.LOADMODULE = function() {
 			}
 		}
 		
-		if(!aWindow && aLevel && aLevel == counterLevels) {
-			var counterHighlights = [];
-			moveHighlightsArray(counterLevels, counterHighlights);
-			linkedPanel._counterHighlights = counterHighlights;
-		}
-		
-		if(!aWindow && fillGrid) {
-			fillHighlightGrid(toAddtoGrid);
+		if(!aWindow) {
+			if(aLevel && aLevel == counterLevels) {
+				var counterHighlights = [];
+				moveHighlightsArray(counterLevels, counterHighlights);
+				linkedPanel._counterHighlights = counterHighlights;
+			}
+			
+			if(fillGrid) {
+				fillHighlightGrid(toAddtoGrid);
+			}
+			
+			if(aSights) {
+				sightsOnVisibleHighlights(aSights);
+			}
 		}
 		
 		if(!aHighlight) {
@@ -145,6 +167,7 @@ moduleAid.LOADMODULE = function() {
 	prefAid.listen('useCounter', toggleCounter);
 	prefAid.listen('useGrid', toggleGrid);
 	prefAid.listen('sightsCurrent', toggleSights);
+	prefAid.listen('sightsHighlights', toggleSights);
 	
 	toggleCounter();
 	toggleGrid();
@@ -155,6 +178,7 @@ moduleAid.UNLOADMODULE = function() {
 	prefAid.unlisten('useCounter', toggleCounter);
 	prefAid.unlisten('useGrid', toggleGrid);
 	prefAid.unlisten('sightsCurrent', toggleSights);
+	prefAid.unlisten('sightsHighlights', toggleSights);
 	
 	moduleAid.unload('sights');
 	moduleAid.unload('grid');

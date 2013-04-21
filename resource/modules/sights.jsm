@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.1';
+moduleAid.VERSION = '1.1.0';
 
 this.__defineGetter__('sights', function() {
 	var sights = linkedPanel.querySelectorAll('[anonid="findSights"]');
@@ -21,6 +21,69 @@ this.__defineGetter__('sights', function() {
 	
 	return boxNode;
 });
+
+// We pass it scrollLeft and scrollTop because it's much lighter when just getting them once and passing them along instead of getting them every position cycle
+this.positionSights = function(range, scrollTop, scrollLeft, clientHeight, clientWidth) {
+	// If these aren't set, we just assume the range is visible and should be always sighted, such as in FindAgain (F3) which scrolls to the search hit
+	var current = (!clientHeight && !clientWidth);
+	var dimensions = range.node.getClientRects()[0];
+	
+	// We need to account for frames positions as well, as the ranges values are relative to them
+	var xMod = 0;
+	var yMod = 0;
+	
+	var ownDoc = range.node.startContainer.ownerDocument;
+	while(ownDoc != contentDocument) {
+		try {
+			var frame = ownDoc.defaultView.frameElement;
+			if(clientHeight && clientWidth) {
+				if(dimensions.bottom +yMod < 0 || dimensions.top +yMod > frame.clientHeight || dimensions.right +xMod < 0 || dimensions.left +xMod > frame.clientWidth) {
+					range.sights = false;
+					return;
+				}
+			}
+			
+			var frameElementRect = frame.getClientRects()[0];
+			xMod += frameElementRect.left;
+			yMod += frameElementRect.top;
+			
+			ownDoc = ownDoc.defaultView.parent.document;
+		}
+		// failsafe
+		catch(ex) {
+			range.sights = false;
+			return;
+		}
+	}
+	
+	var limitTop = dimensions.top +yMod;
+	var limitLeft = dimensions.left +xMod;
+	
+	if(clientHeight && clientWidth) {
+		var limitBottom = dimensions.bottom +yMod;
+		var limitRight = dimensions.right +xMod;
+		if(limitBottom < 0 || limitTop > clientHeight || limitRight < 0 || limitLeft > clientWidth) {
+			range.sights = false;
+			return;
+		}
+	}
+	
+	// On scrolling, only show sights on those that haven't been shown already
+	if(range.sights) { return; }
+	range.sights = true;
+	
+	var centerX = limitLeft +(dimensions.width /2);
+	var centerY = limitTop +(dimensions.height /2);
+	
+	// Don't add a sight if there's already one with the same coords
+	for(var i=0; i<sights.childNodes.length; i++) {
+		if(sights.childNodes[i]._sights.top == centerY && sights.childNodes[i]._sights.left == centerY) {
+			return;
+		}
+	}
+	
+	buildSights(centerX, centerY, scrollLeft, scrollTop, current);
+};
 
 // x and y are the center of the box
 this.buildSights = function(x, y, scrollLeft, scrollTop, current) {
@@ -59,7 +122,10 @@ this.buildSights = function(x, y, scrollLeft, scrollTop, current) {
 			var scrollTop = contentDocument.getElementsByTagName('html')[0].scrollTop || contentDocument.getElementsByTagName('body')[0].scrollTop;
 			var scrollLeft = contentDocument.getElementsByTagName('html')[0].scrollLeft || contentDocument.getElementsByTagName('body')[0].scrollLeft;
 		}
-		catch(ex) { return; }
+		catch(ex) {
+			this.parentNode.removeChild(this);
+			return;
+		}
 		
 		var newTop = (this._sights.top -(newSize /2));
 		var newLeft = (this._sights.left -(newSize /2));
@@ -107,28 +173,35 @@ this.currentSights = function(e) {
 	}
 	
 	if(sel.rangeCount == 1) {
-		var retRange = sel.getRangeAt(0);
-		
-		// We need to account for frames positions as well, as the ranges values are relative to them
-		var xMod = 0;
-		var yMod = 0;
-		
-		var ownDoc = retRange.startContainer.ownerDocument;
-		while(ownDoc != contentDocument) {
-			try {
-				var frameElement = ownDoc.defaultView.frameElement.getBoundingClientRect();
-				xMod += frameElement.left;
-				yMod += frameElement.top;
-				
-				ownDoc = ownDoc.defaultView.parent.document;
-			}
-			catch(ex) { return; } // failsafe
-		}
-		
-		var dimensions = retRange.getClientRects()[0];
-		buildSights(dimensions.right -(dimensions.width /2) +xMod, dimensions.bottom -(dimensions.height /2) +yMod, scrollLeft, scrollTop, true);
+		positionSights({ node: sel.getRangeAt(0) }, scrollTop, scrollLeft);
 	}
-}
+};
+
+this.sightsOnVisibleHighlights = function(aHighlights) {
+	if(aHighlights) {
+		sights._highlights = aHighlights;
+		sights._findWord = gFindBar._findField.value;
+	}
+	
+	if(!prefAid.sightsHighlights || !sights._highlights || !documentHighlighted || gFindBar._findField.value != sights._findWord) { return; }
+	
+	// Let's make sure the document actually exists
+	try {
+		var scrollTop = contentDocument.getElementsByTagName('html')[0].scrollTop || contentDocument.getElementsByTagName('body')[0].scrollTop;
+		var scrollLeft = contentDocument.getElementsByTagName('html')[0].scrollLeft || contentDocument.getElementsByTagName('body')[0].scrollLeft;
+		var clientHeight = Math.min(contentDocument.getElementsByTagName('html')[0].clientHeight, contentDocument.getElementsByTagName('body')[0].clientHeight);
+		var clientWidth = Math.min(contentDocument.getElementsByTagName('html')[0].clientWidth, contentDocument.getElementsByTagName('body')[0].clientWidth);
+	}
+	catch(ex) { return; }
+	
+	for(var i=0; i<sights._highlights.length; i++) {
+		positionSights(sights._highlights[i], scrollTop, scrollLeft, clientHeight, clientWidth);
+	}
+};
+
+this.sightsOnScroll = function() {
+	timerAid.init('sightsOnScroll', function() { sightsOnVisibleHighlights(); }, 10);
+};
 
 this.sightsColor = function() {
 	if(!prefAid.sightsCurrent) { return; }
@@ -181,17 +254,42 @@ this.sightsResizeViewSource = function() {
 	listenerAid.add(viewSource, 'resize', delaySightsResizeViewSource);
 };
 
+this.toggleSightsCurrent = function() {
+	if(prefAid.sightsCurrent) {
+		listenerAid.add(gFindBar, 'FoundFindBar', currentSights);
+		listenerAid.add(gFindBar, 'FoundAgain', currentSights);
+	} else {
+		listenerAid.remove(gFindBar, 'FoundFindBar', currentSights);
+		listenerAid.remove(gFindBar, 'FoundAgain', currentSights);
+	}
+	
+	observerAid.notify('ReHighlightAll');
+};
+
+this.toggleSightsHighlights = function() {
+	if(prefAid.sightsHighlights) {
+		listenerAid.add(browserPanel, 'scroll', sightsOnScroll);
+	} else {
+		listenerAid.remove(browserPanel, 'scroll', sightsOnScroll);
+	}
+	
+	observerAid.notify('ReHighlightAll');
+};
+
 moduleAid.LOADMODULE = function() {
 	prefAid.listen('highlightColor', sightsColor);
-	sightsColor();
+	prefAid.listen('sightsCurrent', toggleSightsCurrent);
+	prefAid.listen('sightsHighlights', toggleSightsHighlights);
 	
-	listenerAid.add(gFindBar, 'FoundFindBar', currentSights);
-	listenerAid.add(gFindBar, 'FoundAgain', currentSights);
+	sightsColor();
+	toggleSightsCurrent();
+	toggleSightsHighlights();
 }
 
 moduleAid.UNLOADMODULE = function() {
 	listenerAid.remove(gFindBar, 'FoundFindBar', currentSights);
 	listenerAid.remove(gFindBar, 'FoundAgain', currentSights);
+	listenerAid.remove(browserPanel, 'scroll', sightsOnScroll);
 	
 	if(!viewSource) {
 		for(var t=0; t<gBrowser.mTabs.length; t++) {
@@ -211,8 +309,14 @@ moduleAid.UNLOADMODULE = function() {
 	}
 	
 	prefAid.unlisten('highlightColor', sightsColor);
+	prefAid.unlisten('sightsCurrent', toggleSightsCurrent);
+	prefAid.unlisten('sightsHighlights', toggleSightsHighlights);
 	
 	if(UNLOADED || !prefAid.sightsCurrent) {
 		styleAid.unload('sightsColor');
+	}
+	
+	if(!UNLOADED && !window.closed && !window.willClose) {
+		observerAid.notify('ReHighlightAll');
 	}
 };

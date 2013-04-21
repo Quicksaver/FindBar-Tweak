@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.3.1';
+moduleAid.VERSION = '1.3.2';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -11,8 +11,8 @@ this.moveTopStyle = {
 	top: 0
 };
 this.lwthemeImage = null;
-this.MIN_LEFT = 20;
-this.MIN_RIGHT = 30;
+this.__defineGetter__('MIN_LEFT', function() { return (!prefAid.squareLook) ? 20 : 0; });
+this.__defineGetter__('MIN_RIGHT', function() { return (!prefAid.squareLook) ? 30 : 17; });
 this.lastFindBarWidth = 0;
 
 this.shouldReMoveTop = function() {
@@ -51,7 +51,7 @@ this.moveTop = function() {
 		maxWidth: -MIN_RIGHT -MIN_LEFT,
 		left: MIN_LEFT,
 		right: MIN_RIGHT,
-		top: -1 // Move the find bar one pixel up so it covers the toolbox borders, giving it a more seamless look
+		top: (!prefAid.squareLook) ? -1 : 0 // Move the find bar one pixel up so it covers the toolbox borders, giving it a more seamless look
 	};
 	
 	// For the view source window
@@ -337,8 +337,16 @@ this.hideOnChromeAttrWatcher = function(obj, prop, oldVal, newVal) {
 	}
 };
 
+this.toggleSquareLook = function() {
+	toggleAttribute(gFindBar, 'squareLook', prefAid.squareLook);
+};
+
 moduleAid.LOADMODULE = function() {
 	prefAid.listen('movetoRight', moveTop);
+	prefAid.listen('squareLook', toggleSquareLook);
+	prefAid.listen('squareLook', moveTop);
+	
+	toggleSquareLook();
 	
 	listenerAid.add(browserPanel, 'resize', browserPanelResized);
 	listenerAid.add(gFindBar, 'OpenedFindBar', moveTop);
@@ -399,7 +407,11 @@ moduleAid.UNLOADMODULE = function() {
 	gFindBar.removeAttribute('movetotop');
 	hideIt(gFindBar, true);
 	
+	removeAttribute(gFindBar, 'squareLook');
+	
 	prefAid.unlisten('movetoRight', moveTop);
+	prefAid.unlisten('squareLook', toggleSquareLook);
+	prefAid.unlisten('squareLook', moveTop);
 	
 	styleAid.unload('personaFindBar_'+_UUID);
 	styleAid.unload('topFindBar_'+_UUID);

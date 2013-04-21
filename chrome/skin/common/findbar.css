@@ -131,4 +131,14 @@
 	#viewSource hbox[anonid="findSights"] {
 		top: 0px;
 	}
+	
+	/* Findbar square look on top */
+	#FindToolbar[movetotop][squareLook] {
+		border-radius: 0px !important;
+	}
+		
+	#FindToolbar[movetotop][squareLook]:before,
+	#FindToolbar[movetotop][squareLook]:after {
+		display: none;
+	}
 }

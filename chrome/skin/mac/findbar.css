@@ -61,4 +61,33 @@
 	grid[anonid="findGrid"][gridSpacers="double"] row.bottomSpacer[flex="0"] {
 		height: 14px;
 	}
+	
+	/* OSX version doesn't have these images, by hiding the labels we are pretty much making the buttons useless, so I'm adding the images back */
+	#FindToolbar[hideLabels] .findbar-find-next image,
+	#FindToolbar[hideLabels] .findbar-find-previous image {
+		max-height: 14px;
+		max-width: 14px;
+	}
+	
+	#FindToolbar[hideLabels] .findbar-find-next {
+		list-style-image: url("chrome://findbartweak-os/skin/find.png");
+		-moz-image-region: rect(0px 16px 16px 0px);
+	}
+	#FindToolbar[hideLabels] .findbar-find-next:hover {
+		-moz-image-region: rect(16px 16px 32px 0px);
+	}
+	#FindToolbar[hideLabels] .findbar-find-next[disabled="true"] {
+		-moz-image-region: rect(32px 16px 48px 0px) !important;
+	}
+	
+	#FindToolbar[hideLabels] .findbar-find-previous {
+		list-style-image: url("chrome://findbartweak-os/skin/find.png");
+		-moz-image-region: rect(0px 32px 16px 16px);
+	}
+	#FindToolbar[hideLabels] .findbar-find-previous:hover {
+		-moz-image-region: rect(16px 32px 32px 16px);
+	}
+	#FindToolbar[hideLabels] .findbar-find-previous[disabled="true"] {
+		-moz-image-region: rect(32px 32px 48px 16px) !important;
+	}
 }

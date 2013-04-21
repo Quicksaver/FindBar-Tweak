@@ -141,4 +141,8 @@
 	#FindToolbar[movetotop][squareLook]:after {
 		display: none;
 	}
+	
+	#FindToolbar[movetotop][squareLook]:not([movetoright]) {
+		border-left: none !important;
+	}
 }

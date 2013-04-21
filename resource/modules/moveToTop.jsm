@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.3.2';
+moduleAid.VERSION = '1.3.3';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -11,8 +11,23 @@ this.moveTopStyle = {
 	top: 0
 };
 this.lwthemeImage = null;
+
+this._scrollBarWidth = null;
+this.__defineGetter__('scrollBarWidth', function() {
+	if(_scrollBarWidth === null) {
+		var scrollDiv = document.createElement("div");
+		scrollDiv.setAttribute('style', 'width: 100px; height: 100px; overflow: scroll; position: fixed; top: -9999px;');
+		scrollDiv = browserPanel.appendChild(scrollDiv);
+		
+		_scrollBarWidth = 100 -scrollDiv.clientWidth;
+		
+		browserPanel.removeChild(scrollDiv);
+	}
+	
+	return _scrollBarWidth;
+});
 this.__defineGetter__('MIN_LEFT', function() { return (!prefAid.squareLook) ? 20 : 0; });
-this.__defineGetter__('MIN_RIGHT', function() { return (!prefAid.squareLook) ? 30 : 17; });
+this.__defineGetter__('MIN_RIGHT', function() { return (!prefAid.squareLook) ? 30 : scrollBarWidth; });
 this.lastFindBarWidth = 0;
 
 this.shouldReMoveTop = function() {
@@ -84,6 +99,9 @@ this.moveTop = function() {
 			sscode += '@-moz-document url("chrome://global/content/viewSource.xul") {\n';
 			// !important tag necessary for OSX, CSS stylesheet sets this one
 			sscode += '	#viewSource['+objName+'_UUID="'+_UUID+'"] #FindToolbar[movetotop]:after { margin-left: -' + gFindBar.scrollLeftMax + 'px !important; }\n';
+			if(prefAid.movetoRight && prefAid.squareLook) {
+				sscode += '	#FindToolbar[movetotop][movetoright][squareLook] { border-left: none !important; }\n'
+			}
 			sscode += '}';
 			styleAid.load('topFindBarCorners_'+_UUID, sscode, true);
 		}
@@ -95,6 +113,7 @@ this.moveTop = function() {
 	var computedStyle = {
 		appcontent: getComputedStyle($('appcontent')),
 		navigatortoolbox: getComputedStyle($('navigator-toolbox')),
+		window: getComputedStyle($('main-window')),
 		browser: getComputedStyle(browser)
 	};
 	
@@ -114,7 +133,9 @@ this.moveTop = function() {
 	
 	for(var i=0; i<browser.childNodes.length; i++) {
 		if(browser.childNodes[i].id != 'appcontent') {
-			if(browser.childNodes[i].nodeName == 'splitter') { continue; }
+			if(browser.childNodes[i].nodeName == 'splitter') {
+				if(!prefAid.squareLook || browser.childNodes[i].hidden) { continue; }
+			}
 			
 			// Compatibility with OmniSidebar
 			if((browser.childNodes[i].classList.contains('sidebar-box') && browser.childNodes[i].getAttribute('renderabove'))
@@ -126,6 +147,10 @@ this.moveTop = function() {
 				if((computedStyle.browser.getPropertyValue('direction') == 'ltr' && !doneAppContent)
 				|| (computedStyle.browser.getPropertyValue('direction') != 'ltr' && doneAppContent)) {
 					moveTopStyle.left += browser.childNodes[i].clientWidth;
+					if(browser.childNodes[i].nodeName == 'splitter') {
+						moveTopStyle.left += parseFloat(getComputedStyle(browser.childNodes[i]).getPropertyValue('margin-left'));
+						moveTopStyle.left += parseFloat(getComputedStyle(browser.childNodes[i]).getPropertyValue('margin-right'));
+					}
 					moveTopStyle.left += parseFloat(getComputedStyle(browser.childNodes[i]).getPropertyValue('border-left-width'));
 					moveTopStyle.left += parseFloat(getComputedStyle(browser.childNodes[i]).getPropertyValue('border-right-width'));
 				}
@@ -133,6 +158,10 @@ this.moveTop = function() {
 				if((computedStyle.browser.getPropertyValue('direction') != 'ltr' && !doneAppContent)
 				|| (computedStyle.browser.getPropertyValue('direction') == 'ltr' && doneAppContent)) {
 					moveTopStyle.right += browser.childNodes[i].clientWidth;
+					if(browser.childNodes[i].nodeName == 'splitter') {
+						moveTopStyle.right += parseFloat(getComputedStyle(browser.childNodes[i]).getPropertyValue('margin-left'));
+						moveTopStyle.right += parseFloat(getComputedStyle(browser.childNodes[i]).getPropertyValue('margin-right'));
+					}
 					moveTopStyle.right += parseFloat(getComputedStyle(browser.childNodes[i]).getPropertyValue('border-left-width'));
 					moveTopStyle.right += parseFloat(getComputedStyle(browser.childNodes[i]).getPropertyValue('border-right-width'));
 				}
@@ -164,6 +193,9 @@ this.moveTop = function() {
 	moveTopStyle.top += parseFloat(computedStyle.navigatortoolbox.getPropertyValue('border-bottom-width'));
 	moveTopStyle.top += parseFloat(computedStyle.navigatortoolbox.getPropertyValue('margin-top'));
 	
+	// Personas in OSX screw this one up
+	moveTopStyle.top += parseFloat(computedStyle.window.getPropertyValue('padding-top'));
+	
 	// Unload current stylesheet if it's been loaded
 	styleAid.unload('topFindBar_'+_UUID);
 	styleAid.unload('topFindBarCorners_'+_UUID);
@@ -186,6 +218,9 @@ this.moveTop = function() {
 		sscode += '@-moz-document url("chrome://browser/content/browser.xul") {\n';
 		// !important tag necessary for OSX, CSS stylesheet sets this one
 		sscode += '	window['+objName+'_UUID="'+_UUID+'"] #FindToolbar[movetotop]:after { margin-left: -' + gFindBar.scrollLeftMax + 'px !important; }\n'; 
+		if(prefAid.movetoRight && prefAid.squareLook) {
+			sscode += '	#FindToolbar[movetotop][movetoright][squareLook] { border-left: none !important; }\n'
+		}
 		sscode += '}';
 		styleAid.load('topFindBarCorners_'+_UUID, sscode, true);
 	}
@@ -250,6 +285,17 @@ this.stylePersonaFindBar = function() {
 	styleAid.unload('personaFindBar_'+_UUID);
 	
 	if(prefAid.lwthemebgImage != '') {
+		var computedStyle = {
+			window: getComputedStyle($('main-window'))
+		};
+		
+		// Another personas in OSX tweak
+		var offsetPersonaY = -moveTopStyle.top;
+		var offsetWindowPadding = computedStyle.window.getPropertyValue('background-position');
+		if(offsetWindowPadding.indexOf(' ') > -1 && offsetWindowPadding.indexOf('px', offsetWindowPadding.indexOf(' ') +1) > -1) {
+			offsetPersonaY += parseInt(offsetWindowPadding.substr(offsetWindowPadding.indexOf(' ') +1, offsetWindowPadding.indexOf('px', offsetWindowPadding.indexOf(' ') +1)));
+		}
+		
 		var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 		sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 		sscode += '@-moz-document url("chrome://browser/content/browser.xul") {\n';
@@ -258,7 +304,7 @@ this.stylePersonaFindBar = function() {
 		sscode += '	  background-color: ' + prefAid.lwthemecolor + ' !important;\n';
 		sscode += '	  color: ' + prefAid.lwthemecolor + ' !important;\n';
 		// I have no idea where does the -1 come from, it's not the findbars own border
-		sscode += '	  background-position: ' + (-moveTopStyle.left - (prefAid.lwthemebgWidth - mainWindow.clientWidth) -1) + 'px ' + (-moveTopStyle.top) + 'px !important;\n';
+		sscode += '	  background-position: ' + (-moveTopStyle.left - (prefAid.lwthemebgWidth - mainWindow.clientWidth) -1) + 'px ' +offsetPersonaY+ 'px !important;\n';
 		sscode += '	  background-repeat: repeat !important;\n';
 		sscode += '	  background-size: auto auto !important;\n';
 		sscode += '	}\n';
@@ -337,15 +383,23 @@ this.hideOnChromeAttrWatcher = function(obj, prop, oldVal, newVal) {
 	}
 };
 
+this.toggleMoveToRight = function(startup) {
+	toggleAttribute(gFindBar, 'movetoright', prefAid.movetoRight);
+	if(!startup) {
+		moveTop();
+	}
+};
+
 this.toggleSquareLook = function() {
 	toggleAttribute(gFindBar, 'squareLook', prefAid.squareLook);
 };
 
 moduleAid.LOADMODULE = function() {
-	prefAid.listen('movetoRight', moveTop);
+	prefAid.listen('movetoRight', toggleMoveToRight);
 	prefAid.listen('squareLook', toggleSquareLook);
 	prefAid.listen('squareLook', moveTop);
 	
+	toggleMoveToRight(true);
 	toggleSquareLook();
 	
 	listenerAid.add(browserPanel, 'resize', browserPanelResized);
@@ -407,9 +461,10 @@ moduleAid.UNLOADMODULE = function() {
 	gFindBar.removeAttribute('movetotop');
 	hideIt(gFindBar, true);
 	
+	removeAttribute(gFindBar, 'movetoright');
 	removeAttribute(gFindBar, 'squareLook');
 	
-	prefAid.unlisten('movetoRight', moveTop);
+	prefAid.unlisten('movetoRight', toggleMoveToRight);
 	prefAid.unlisten('squareLook', toggleSquareLook);
 	prefAid.unlisten('squareLook', moveTop);
 	

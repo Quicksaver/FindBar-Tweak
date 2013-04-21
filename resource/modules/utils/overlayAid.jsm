@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.2.5';
+moduleAid.VERSION = '2.2.6';
 moduleAid.LAZY = true;
 
 // overlayAid - to use overlays in my bootstraped add-ons. The behavior is as similar to what is described in https://developer.mozilla.org/en/XUL_Tutorial/Overlays as I could manage.
@@ -460,6 +460,7 @@ this.overlayAid = {
 		}
 		
 		if(aWindow._RESCHEDULE_OVERLAY && !aWindow.closed && !aWindow.willClose) {
+			delete aWindow._RESCHEDULE_OVERLAY;
 			observerAid.notify('window-overlayed', aWindow);
 		}
 	},

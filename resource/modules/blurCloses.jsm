@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.1';
+moduleAid.VERSION = '1.0.2';
 
 this.blurClosesAdd = function() {
 	listenerAid.add(window, 'focus', delayBlurCloses, true);
@@ -15,7 +15,7 @@ this.delayBlurCloses = function(e) {
 
 this.blurCloses = function(e) {
 	var focusedNode = document.commandDispatcher.focusedElement || e.target;
-	if(!isAncestor(focusedNode, gFindBar) && !isAncestor(focusedNode, $('findBarMenu'))) {
+	if(!isAncestor(focusedNode, gFindBar) && !isAncestor(focusedNode, $(objPathString+'_findbarMenu'))) {
 		gFindBar.close();
 	}
 };

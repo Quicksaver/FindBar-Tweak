@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.3.4';
+moduleAid.VERSION = '1.3.5';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -60,7 +60,7 @@ this.moveTop = function() {
 	
 	// Bugfix: ensure these declarations only take effect when the stylesheet is loaded (from the overlay) as well.
 	// Otherwise, at startup, the browser would jump for half a second with empty space on the right.
-	if(gFindBar.getAttribute('context') != 'findbarMenu') { return; }
+	if(gFindBar.getAttribute('context') != objPathString+'_findbarMenu') { return; }
 	
 	moveTopStyle = {
 		maxWidth: -MIN_RIGHT -MIN_LEFT,

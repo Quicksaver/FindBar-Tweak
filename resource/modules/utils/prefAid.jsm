@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.0.2';
+moduleAid.VERSION = '2.0.3';
 moduleAid.LAZY = true;
 
 // prefAid - Object to contain and manage all preferences related to the add-on (and others if necessary)
@@ -33,12 +33,40 @@ this.prefAid = {
 		var branchString = ((trunk) ? trunk+'.' : '') +branch+'.';
 		var defaultBranch = Services.prefs.getDefaultBranch(branchString);
 		for(var pref in prefList) {
-			if(typeof(prefList[pref]) == 'string') {
-				defaultBranch.setCharPref(pref, prefList[pref]);
-			} else if(typeof(prefList[pref]) == 'boolean') {
-				defaultBranch.setBoolPref(pref, prefList[pref]);
-			} else if(typeof(prefList[pref]) == 'number') {
-				defaultBranch.setIntPref(pref, prefList[pref]);
+			// When updating from a version with prefs of same name but different type would throw an error and stop.
+			// In this case, we need to clear it before we can set its default value again.
+			var savedPrefType = defaultBranch.getPrefType(pref);
+			var prefType = typeof(prefList[pref]);
+			var compareType = '';
+			switch(savedPrefType) {
+				case defaultBranch.PREF_STRING:
+					compareType = 'string';
+					break;
+				case defaultBranch.PREF_INT:
+					compareType = 'number';
+					break;
+				case defaultBranch.PREF_BOOL:
+					compareType = 'boolean';
+					break;
+				default: break;
+			}
+			if(compareType && prefType != compareType) {
+				defaultBranch.clearUserPref(pref);
+			}
+			
+			switch(prefType) {
+				case 'string':
+					defaultBranch.setCharPref(pref, prefList[pref]);
+					break;
+				case 'boolean':
+					defaultBranch.setBoolPref(pref, prefList[pref]);
+					break;
+				case 'number':
+					defaultBranch.setIntPref(pref, prefList[pref]);
+					break;
+				default:
+					Cu.reportError('Preferece '+pref+' is of unrecognizeable type!');
+					break;
 			}
 			
 			readyList.push(pref);

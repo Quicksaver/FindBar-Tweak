@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.0.1';
+moduleAid.VERSION = '2.0.2';
 moduleAid.LAZY = true;
 
 // browserMediator - Aid object to track and perform tasks on all document browsers across the windows
@@ -46,14 +46,14 @@ this.browserMediator = {
 					}
 				}
 				
-				if(aWindow.document.getElementById('sidebar-twin')
-				&& aWindow.document.getElementById('sidebar-twin').docShell
-				&& aWindow.document.getElementById('sidebar-twin').contentWindow
-				&& (!aURI || aWindow.document.getElementById('sidebar-twin').contentDocument.documentURI == aURI)) {
-					if(aWindow.document.getElementById('sidebar-twin').contentDocument.readyState == "complete" || beforeComplete) {
-						aCallback(aWindow.document.getElementById('sidebar-twin').contentWindow);
+				if(aWindow.document.getElementById('omnisidebar-sidebar-twin')
+				&& aWindow.document.getElementById('omnisidebar-sidebar-twin').docShell
+				&& aWindow.document.getElementById('omnisidebar-sidebar-twin').contentWindow
+				&& (!aURI || aWindow.document.getElementById('omnisidebar-sidebar-twin').contentDocument.documentURI == aURI)) {
+					if(aWindow.document.getElementById('omnisidebar-sidebar-twin').contentDocument.readyState == "complete" || beforeComplete) {
+						aCallback(aWindow.document.getElementById('omnisidebar-sidebar-twin').contentWindow);
 					} else if(!UNLOADED) {
-						callOnLoad(aWindow.document.getElementById('sidebar-twin').contentWindow, aCallback);
+						callOnLoad(aWindow.document.getElementById('omnisidebar-sidebar-twin').contentWindow, aCallback);
 					}
 				}
 			}

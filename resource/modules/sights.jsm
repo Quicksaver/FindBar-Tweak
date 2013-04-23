@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.0';
+moduleAid.VERSION = '1.2.1';
 
 this.__defineGetter__('preferencesDialog', function() { return (typeof(inPreferences) != 'undefined' && inPreferences); });
 
@@ -294,7 +294,7 @@ this.sightsOnScroll = function() {
 this.sightsColor = function(forceSheet) {
 	if(!forceSheet && !prefAid.sightsCurrent && !prefAid.sightsHighlights) { return; }
 	
-	var m = prefAid.highlightColor.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
+	var m = forceSheet.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i) || prefAid.highlightColor.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
 	if(!m) { return; }
 	if(m[1].length === 6) { // 6-char notation
 		var rgb = {
@@ -313,13 +313,18 @@ this.sightsColor = function(forceSheet) {
 	var c = rgb.r+','+rgb.g+','+rgb.b;
 	var o = (0.213 * (rgb.r /255) + 0.715 * (rgb.g /255) + 0.072 * (rgb.b /255) < 0.5) ? '255,255,255' : '0,0,0';
 	
-	styleAid.unload('sightsColor');
+	var sheetName = (forceSheet) ? 'sightsColorPref' : 'sightsColor';
+	styleAid.unload(sheetName);
 	
 	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 	sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
-	sscode += '@-moz-document url("chrome://browser/content/browser.xul"), url("chrome://global/content/viewSource.xul"), url("chrome://findbartweak/content/options.xul") {\n';
+	if(forceSheet) {
+		sscode += '@-moz-document url("chrome://findbartweak/content/options.xul") {\n';
+	} else {
+		sscode += '@-moz-document url("chrome://browser/content/browser.xul"), url("chrome://global/content/viewSource.xul") {\n';
+	}
 	sscode += ' box[anonid="highlightSights"][sightsStyle="focus"],\n';
-	sscode += ' box[anonid="highlightSights"][sightsStyle="circle"] box {\n';
+	sscode += ' box[anonid="highlightSights"][sightsStyle="circle"] box[innerContainer] box {\n';
 	sscode += '  -moz-border-top-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+', 0.85) rgba('+o+', 0.5) rgba('+c+', 0.4) rgba('+c+', 0.15) !important;\n';
 	sscode += '  -moz-border-bottom-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+', 0.85) rgba('+o+', 0.5) rgba('+c+', 0.4) rgba('+c+', 0.15) !important;\n';
 	sscode += '  -moz-border-left-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+', 0.85) rgba('+o+', 0.5) rgba('+c+', 0.4) rgba('+c+', 0.15) !important;\n';
@@ -327,7 +332,7 @@ this.sightsColor = function(forceSheet) {
 	sscode += ' }\n';
 	sscode += '}';
 	
-	styleAid.load('sightsColor', sscode, true);
+	styleAid.load(sheetName, sscode, true);
 };
 
 this.delaySightsResizeViewSource = function() {
@@ -341,6 +346,10 @@ this.sightsResizeViewSource = function() {
 	styleString += ' height: '+$('content').clientHeight+'px;';
 	setAttribute($$('[anonid="findSights"]')[0], 'style', styleString);
 	listenerAid.add(viewSource, 'resize', delaySightsResizeViewSource);
+};
+
+this.preferencesColorListener = function() {
+	sightsColor($('color').getAttribute('color'));
 };
 
 this.toggleSightsCurrent = function() {
@@ -367,7 +376,8 @@ this.toggleSightsHighlights = function() {
 
 moduleAid.LOADMODULE = function() {
 	if(preferencesDialog) {
-		sightsColor(true);
+		objectWatcher.addAttributeWatcher($('color'), 'color', preferencesColorListener);
+		sightsColor($('color').getAttribute('color'));
 		return;
 	}
 	
@@ -381,11 +391,9 @@ moduleAid.LOADMODULE = function() {
 }
 
 moduleAid.UNLOADMODULE = function() {
-	if(UNLOADED || (!prefAid.sightsCurrent && !prefAid.sightsHighlights)) {
-		styleAid.unload('sightsColor');
-	}
-	
 	if(preferencesDialog) {
+		styleAid.unload('sightsColorPref');
+		objectWatcher.removeAttributeWatcher($('color'), 'color', preferencesColorListener);
 		return;
 	}
 	
@@ -413,6 +421,10 @@ moduleAid.UNLOADMODULE = function() {
 	prefAid.unlisten('highlightColor', sightsColor);
 	prefAid.unlisten('sightsCurrent', toggleSightsCurrent);
 	prefAid.unlisten('sightsHighlights', toggleSightsHighlights);
+	
+	if(UNLOADED || (!prefAid.sightsCurrent && !prefAid.sightsHighlights)) {
+		styleAid.unload('sightsColor');
+	}
 	
 	if(!UNLOADED && !window.closed && !window.willClose) {
 		observerAid.notify('ReHighlightAll');

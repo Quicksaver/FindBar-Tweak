@@ -1,4 +1,6 @@
-moduleAid.VERSION = '1.1.1';
+moduleAid.VERSION = '1.2.0';
+
+this.__defineGetter__('preferencesDialog', function() { return (typeof(inPreferences) != 'undefined' && inPreferences); });
 
 this.__defineGetter__('sights', function() {
 	var sights = linkedPanel.querySelectorAll('[anonid="findSights"]');
@@ -115,11 +117,14 @@ this.positionSights = function(range, scrollTop, scrollLeft, clientHeight, clien
 };
 
 // x and y are the center of the box
-this.buildSights = function(x, y, scrollLeft, scrollTop, current) {
+this.buildSights = function(x, y, scrollLeft, scrollTop, current, style) {
+	if(!style) { style = prefAid.sightsStyle; }
+	
 	var box = document.createElement('box');
 	box.setAttribute('anonid', 'highlightSights');
-	box.style.height = '400px';
-	box.style.width = '400px';
+	box.setAttribute('sightsStyle', style);
+	box.style.height = (style == 'focus') ? '400px' : '100px';
+	box.style.width = (style == 'focus') ? '400px' : '100px';
 	
 	box._sights = {
 		top: y,
@@ -127,31 +132,83 @@ this.buildSights = function(x, y, scrollLeft, scrollTop, current) {
 		scrollTop: scrollTop,
 		scrollLeft: scrollLeft,
 		current: current || false,
+		preferences: preferencesDialog,
+		style: style,
+		phase: 0,
 		timer: null
 	};
+	
+	if(style == 'circle') {
+		var innerContainer = document.createElement('box');
+		var otherInnerContainer = innerContainer.cloneNode();
+		var innerBox = innerContainer.cloneNode();
+		var otherInnerBox = innerContainer.cloneNode();
+		innerContainer.setAttribute('innerContainer', 'true');
+		otherInnerContainer.setAttribute('innerContainer', 'true');
+		otherInnerContainer.setAttribute('class', 'otherHalf');
+		innerContainer.appendChild(innerBox);
+		otherInnerContainer.appendChild(otherInnerBox);
+		box.appendChild(innerContainer);
+		box.appendChild(otherInnerContainer);
+	}
 	
 	// Method for the sight to auto-update itself
 	box.updateSights = function() {
 		// A few failsafes
 		if(typeof(linkedPanel) == 'undefined' || typeof(timerAid) == 'undefined' || UNLOADED || this.hidden) {
+			if(this._sights.timer) { this._sights.timer.cancel(); }
 			this.parentNode.removeChild(this);
 			return;
 		}
 		
-		var newSize = this.clientWidth /1.5;
-		
-		// Remove the sight when it gets too small
-		if(newSize < 40) {
-			this.parentNode.removeChild(this);
-			return;
+		var newSize = this.clientWidth +(this.clientLeft *2); // element width plus borders
+		if(this._sights.style == 'focus') {
+			var newSize = this.clientWidth /1.5;
+			
+			// Remove the sight when it gets too small
+			if(newSize < 40) {
+				if(this._sights.timer) { this._sights.timer.cancel(); }
+				this.parentNode.removeChild(this);
+				return;
+			}
+		}
+		else if(this._sights.style == 'circle') {
+			// Let's hold for a bit
+			if(this._sights.phase == 360) {
+				if(!this._sights.hold) { this._sights.hold = 5; }
+				this._sights.hold--;
+			}
+			
+			if(!this._sights.hold) {
+				this._sights.phase += 45;
+				
+				// Remove when we finish animating
+				if(this._sights.phase > 720) {
+					if(this._sights.timer) { this._sights.timer.cancel(); }
+					this.parentNode.removeChild(this);
+					return;
+				}
+				
+				toggleAttribute(this, 'gt0', (this._sights.phase <= 180));
+				toggleAttribute(this, 'gt180', (this._sights.phase > 180 && this._sights.phase <= 360));
+				toggleAttribute(this, 'gt360', (this._sights.phase > 360 && this._sights.phase <= 540));
+				toggleAttribute(this, 'gt540', (this._sights.phase > 540));
+				this.childNodes[0].childNodes[0].setAttribute('style', '-moz-transform: rotate('+this._sights.phase+'deg); transform: rotate('+this._sights.phase+'deg);');
+			}
 		}
 		
 		// Let's make sure the document actually exists
 		try {
-			var scrollTop = contentDocument.getElementsByTagName('html')[0].scrollTop || contentDocument.getElementsByTagName('body')[0].scrollTop;
-			var scrollLeft = contentDocument.getElementsByTagName('html')[0].scrollLeft || contentDocument.getElementsByTagName('body')[0].scrollLeft;
+			if(this._sights.preferences) {
+				var scrollTop = this.scrollTop;
+				var scrollLeft = this.scrollLeft;
+			} else {
+				var scrollTop = contentDocument.getElementsByTagName('html')[0].scrollTop || contentDocument.getElementsByTagName('body')[0].scrollTop;
+				var scrollLeft = contentDocument.getElementsByTagName('html')[0].scrollLeft || contentDocument.getElementsByTagName('body')[0].scrollLeft;
+			}
 		}
 		catch(ex) {
+			if(this._sights.timer) { this._sights.timer.cancel(); }
 			this.parentNode.removeChild(this);
 			return;
 		}
@@ -166,7 +223,9 @@ this.buildSights = function(x, y, scrollLeft, scrollTop, current) {
 		this.style.height = newSize+'px';
 		this.style.width = newSize+'px';
 		
-		this._sights.timer = timerAid.create(this.updateSights, 100, 'once', this);
+		if(!this._sights.timer) {
+			this._sights.timer = timerAid.create(this.updateSights, (this._sights.style == 'focus') ? 100 : 20, 'slack', this);
+		}
 	}
 	
 	sights.appendChild(box);
@@ -232,8 +291,8 @@ this.sightsOnScroll = function() {
 	timerAid.init('sightsOnScroll', function() { sightsOnVisibleHighlights(); }, 10);
 };
 
-this.sightsColor = function() {
-	if(!prefAid.sightsCurrent) { return; }
+this.sightsColor = function(forceSheet) {
+	if(!forceSheet && !prefAid.sightsCurrent && !prefAid.sightsHighlights) { return; }
 	
 	var m = prefAid.highlightColor.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
 	if(!m) { return; }
@@ -258,8 +317,9 @@ this.sightsColor = function() {
 	
 	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 	sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
-	sscode += '@-moz-document url("chrome://browser/content/browser.xul"), url("chrome://global/content/viewSource.xul") {\n';
-	sscode += ' box[anonid="highlightSights"] {\n';
+	sscode += '@-moz-document url("chrome://browser/content/browser.xul"), url("chrome://global/content/viewSource.xul"), url("chrome://findbartweak/content/options.xul") {\n';
+	sscode += ' box[anonid="highlightSights"][sightsStyle="focus"],\n';
+	sscode += ' box[anonid="highlightSights"][sightsStyle="circle"] box {\n';
 	sscode += '  -moz-border-top-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+', 0.85) rgba('+o+', 0.5) rgba('+c+', 0.4) rgba('+c+', 0.15) !important;\n';
 	sscode += '  -moz-border-bottom-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+', 0.85) rgba('+o+', 0.5) rgba('+c+', 0.4) rgba('+c+', 0.15) !important;\n';
 	sscode += '  -moz-border-left-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+', 0.85) rgba('+o+', 0.5) rgba('+c+', 0.4) rgba('+c+', 0.15) !important;\n';
@@ -306,6 +366,11 @@ this.toggleSightsHighlights = function() {
 };
 
 moduleAid.LOADMODULE = function() {
+	if(preferencesDialog) {
+		sightsColor(true);
+		return;
+	}
+	
 	prefAid.listen('highlightColor', sightsColor);
 	prefAid.listen('sightsCurrent', toggleSightsCurrent);
 	prefAid.listen('sightsHighlights', toggleSightsHighlights);
@@ -316,6 +381,14 @@ moduleAid.LOADMODULE = function() {
 }
 
 moduleAid.UNLOADMODULE = function() {
+	if(UNLOADED || (!prefAid.sightsCurrent && !prefAid.sightsHighlights)) {
+		styleAid.unload('sightsColor');
+	}
+	
+	if(preferencesDialog) {
+		return;
+	}
+	
 	listenerAid.remove(gFindBar, 'FoundFindBar', currentSights);
 	listenerAid.remove(gFindBar, 'FoundAgain', currentSights);
 	listenerAid.remove(browserPanel, 'scroll', sightsOnScroll);
@@ -340,10 +413,6 @@ moduleAid.UNLOADMODULE = function() {
 	prefAid.unlisten('highlightColor', sightsColor);
 	prefAid.unlisten('sightsCurrent', toggleSightsCurrent);
 	prefAid.unlisten('sightsHighlights', toggleSightsHighlights);
-	
-	if(UNLOADED || !prefAid.sightsCurrent) {
-		styleAid.unload('sightsColor');
-	}
 	
 	if(!UNLOADED && !window.closed && !window.willClose) {
 		observerAid.notify('ReHighlightAll');

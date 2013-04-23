@@ -1,3 +1,5 @@
+@import url("chrome://findbartweak/skin/sights.css");
+
 textbox[type="number"] input {
 	text-align: center;
 }

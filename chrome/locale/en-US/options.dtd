@@ -22,6 +22,9 @@
 <!ENTITY OptsightsCurrent.label "Show sights on the current search hit">
 <!ENTITY OptsightsHighlights.label "Show sights on all the highlighted hits (*)">
 <!ENTITY OptsightsHighlights.warning "(*) Warning: This can be very resource intensive! Rendering and page scrolling may become slow!">
+<!ENTITY OptsightsStyle.label "Sights Style (click to preview):">
+<!ENTITY OptsightsStyle.focus "Focus Location">
+<!ENTITY OptsightsStyle.circle "Circle Location">
 
 <!ENTITY OpthideLabels.label "Hide button labels">
 <!ENTITY OpthideClose.label "Hide the Findbar close button">

@@ -18,6 +18,7 @@
 			<preference id="pref-gridLimit" name="extensions.findbartweak.gridLimit" type="int"/>
 			<preference id="pref-sightsCurrent" name="extensions.findbartweak.sightsCurrent" type="bool"/>
 			<preference id="pref-sightsHighlights" name="extensions.findbartweak.sightsHighlights" type="bool"/>
+			<preference id="pref-sightsStyle" name="extensions.findbartweak.sightsStyle" type="string"/>
 			<preference id="pref-movetoTop" name="extensions.findbartweak.movetoTop" type="bool"/>
 			<preference id="pref-movetoRight" name="extensions.findbartweak.movetoRight" type="bool"/>
 			<preference id="pref-hideClose" name="extensions.findbartweak.hideClose" type="bool"/>
@@ -52,6 +53,7 @@
 						<caption label="&Optdisplay.label;"/>
 						<checkbox label="&OptmovetoTop.label;" preference="pref-movetoTop"/>
 						<checkbox label="&OptmovetoRight.label;" dependson="pref-movetoTop" preference="pref-movetoRight"/>
+						<checkbox label="&OptuseCounter.label;" preference="pref-useCounter"/>
 						<checkbox label="&OpthideClose.label;" preference="pref-hideClose"/>
 						<checkbox label="&OpthideLabels.label;" preference="pref-hideLabels"/>
 					</groupbox>
@@ -87,7 +89,6 @@
 						<caption label="&OptHighlights.label;"/>
 						<checkbox label="&OpthighlightByDefault.label;" preference="pref-highlightByDefault"/>
 						<checkbox label="&OpthideWhenFinderHidden.label;" preference="pref-hideWhenFinderHidden"/>
-						<checkbox label="&OptuseCounter.label;" preference="pref-useCounter"/>
 						<hbox>
 							<label value="&OptminNoDelay.labela;"/>
 							<textbox type="number"
@@ -113,11 +114,28 @@
 				            <label dependson="pref-useGrid" value="&OptgridLimit.labelb;"/>
 				        </hbox>
 					</groupbox>
-					<groupbox align="start">
+					<groupbox align="center">
 						<caption label="&Optsights.label;"/>
-						<checkbox label="&OptsightsCurrent.label;" preference="pref-sightsCurrent"/>
-						<checkbox label="&OptsightsHighlights.label;" preference="pref-sightsHighlights"/>
-						<description class="justify">&OptsightsHighlights.warning;</description>
+						<vbox align="start">
+							<checkbox label="&OptsightsCurrent.label;" preference="pref-sightsCurrent"/>
+							<checkbox label="&OptsightsHighlights.label;" preference="pref-sightsHighlights"/>
+							<description class="justify">&OptsightsHighlights.warning;</description>
+						</vbox>
+						<groupbox align="center">
+							<caption label="&OptsightsStyle.label;"/>
+							<radiogroup preference="pref-sightsStyle">
+								<hbox>
+									<radio dependson="pref-sightsCurrent;pref-sightsHighlights"
+										label="&OptsightsStyle.focus;"
+										value="focus"
+										oncommand="objName.previewSights(this, 'focus');"/>
+									<radio dependson="pref-sightsCurrent;pref-sightsHighlights"
+										label="&OptsightsStyle.circle;"
+										value="circle"
+										oncommand="objName.previewSights(this, 'circle');"/>
+								</hbox>
+							</radiogroup>
+						</groupbox>
 					</groupbox>
 					<groupbox align="center">
 						<caption>
@@ -143,5 +161,7 @@
 				</tabpanel>
 			</tabpanels>
 		</tabbox>
+		
+		<hbox anonid="findSights" />
 	</prefpane>
 </prefwindow>

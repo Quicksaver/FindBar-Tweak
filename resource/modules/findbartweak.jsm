@@ -17,7 +17,7 @@ this.togglePerTab = function() {
 this.toggleRememberStartup = function() {
 	moduleAid.loadIf('rememberStartup', !viewSource && prefAid.onStartup && !prefAid.perTab && !prefAid.blurCloses);
 };
-	
+
 moduleAid.LOADMODULE = function() {
 	if(document.documentElement.getAttribute('windowtype') == 'navigator:view-source') { viewSource = $('viewSource'); }
 	

@@ -1,4 +1,4 @@
-var defaultsVersion = '1.0.5';
+var defaultsVersion = '1.0.6';
 var objName = 'findbartweak';
 var objPathString = 'findbartweak';
 var prefList = {
@@ -12,6 +12,7 @@ var prefList = {
 	
 	sightsCurrent: true,
 	sightsHighlights: false,
+	sightsStyle: 'focus',
 	
 	blurCloses: false,
 	perTab: false,
@@ -46,6 +47,7 @@ function stopAddon(window) {
 function startPreferences(window) {
 	replaceObjStrings(window.document);
 	preparePreferences(window);
+	window[objName].moduleAid.load('preferences', true);
 }
 
 function startConditions(aReason) {

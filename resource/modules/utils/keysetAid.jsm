@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.1';
+moduleAid.VERSION = '1.0.2';
 moduleAid.LAZY = true;
 
 // keysetAid - handles editable keysets for the add-on
@@ -163,7 +163,7 @@ this.keysetAid = {
 			
 			var key = {
 				id: keys[k].id,
-				self: keys[k].getAttribute('keysetAid') == objPathString
+				self: keys[k].getAttribute('keysetAid') == objName
 			};
 			
 			var modifiers = keys[k].getAttribute('modifiers').toLowerCase();
@@ -327,7 +327,7 @@ this.keysetAid = {
 			return;
 		}
 			
-		var keyset = aWindow.document.getElementById('keyset_'+objPathString);
+		var keyset = aWindow.document.getElementById(objName+'-keyset');
 		if(keyset && keyset.parentNode) {
 			keyset.parentNode.removeChild(keyset);
 		}
@@ -336,12 +336,12 @@ this.keysetAid = {
 		
 		if(keysetAid.registered.length > 0) {
 			var keyset = aWindow.document.createElement('keyset');
-			keyset.id = 'keyset_'+objPathString;
+			keyset.id = objName+'-keyset';
 			
 			for(var r=0; r<keysetAid.registered.length; r++) {
 				var key = aWindow.document.createElement('key');
 				key.id = keysetAid.registered[r].id;
-				key.setAttribute('keysetAid', objPathString);
+				key.setAttribute('keysetAid', objName);
 				key.setAttribute((keysetAid.registered[r].keycode.indexOf('VK_') == 0 ? 'keycode' : 'key'), keysetAid.registered[r].keycode);
 				toggleAttribute(key, 'command', keysetAid.registered[r].command, keysetAid.registered[r].command);
 				toggleAttribute(key, 'oncommand', keysetAid.registered[r].oncommand, keysetAid.registered[r].oncommand);

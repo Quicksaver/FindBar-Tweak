@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.1';
+moduleAid.VERSION = '1.2.2';
 
 this.__defineGetter__('preferencesDialog', function() { return (typeof(inPreferences) != 'undefined' && inPreferences); });
 
@@ -294,7 +294,7 @@ this.sightsOnScroll = function() {
 this.sightsColor = function(forceSheet) {
 	if(!forceSheet && !prefAid.sightsCurrent && !prefAid.sightsHighlights) { return; }
 	
-	var m = forceSheet.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i) || prefAid.highlightColor.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
+	var m = (forceSheet) ? forceSheet.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i) : prefAid.highlightColor.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
 	if(!m) { return; }
 	if(m[1].length === 6) { // 6-char notation
 		var rgb = {

@@ -11,10 +11,17 @@
 <!ENTITY OptuseCounter.label "在查找栏上显示匹配项计数器">
 <!ENTITY Optcolor.label "高亮颜色">
 <!ENTITY OptcolorReset.label "(重置)">
-<!ENTITY OptgridLimit.labela "超过时不要使用网格">
-<!ENTITY OptgridLimit.labelb "高亮">
-<!ENTITY OptminNoDelay.labela "延迟高亮如果搜索字串少于">
-<!ENTITY OptminNoDelay.labelb "个字符">
+<!ENTITY OptgridLimit.labela "超过">
+<!ENTITY OptgridLimit.labelb "项时不要使用网格高亮">
+<!ENTITY OptminNoDelay.labela "如果搜索字串少于">
+<!ENTITY OptminNoDelay.labelb "个字符则延迟高亮">
+<!ENTITY Optsights.label "聚焦视点">
+<!ENTITY OptsightsCurrent.label "在当前搜索项上显示聚焦视点">
+<!ENTITY OptsightsHighlights.label "在所有高亮项上显示聚焦视点 (*)">
+<!ENTITY OptsightsHighlights.warning "(*) 警告: 此功能较耗费资源，可能导致渲染和滚动页面缓慢！">
+<!ENTITY OptsightsStyle.label "聚焦视点样式(点击可预览):">
+<!ENTITY OptsightsStyle.focus "聚焦位置">
+<!ENTITY OptsightsStyle.circle "圆环位置">
 <!ENTITY OpthideLabels.label "隐藏按钮文字">
 <!ENTITY OpthideClose.label "隐藏查找栏关闭按钮">
 <!ENTITY OptmovetoTop.label "移动查找栏到窗口顶部">

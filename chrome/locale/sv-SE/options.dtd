@@ -15,6 +15,13 @@
 <!ENTITY OptgridLimit.labelb "markeringar">
 <!ENTITY OptminNoDelay.labela "Fördröj färgmarkering om söktermen är kortare än">
 <!ENTITY OptminNoDelay.labelb "tecken">
+<!ENTITY Optsights.label "Fokuseringssikten">
+<!ENTITY OptsightsCurrent.label "Visa fokuseringssikte för den aktuella sökträffen">
+<!ENTITY OptsightsHighlights.label "Visa fokuseringssikten för alla färgmarkerade sökträffar (*)">
+<!ENTITY OptsightsHighlights.warning "(*) Varning: Detta kan vara mycket resurskrävande! Rendering och sidrullning kan bli långsam!">
+<!ENTITY OptsightsStyle.label "Format för sikten (klicka för förhandsvisning):">
+<!ENTITY OptsightsStyle.focus "Fokuseringens plats">
+<!ENTITY OptsightsStyle.circle "Cirkelns plats">
 <!ENTITY OpthideLabels.label "Dölj knappetiketter">
 <!ENTITY OpthideClose.label "Dölj söklistens stängknapp">
 <!ENTITY OptmovetoTop.label "Placera söklisten överst i webbläsarfönstret">

@@ -15,6 +15,13 @@
 <!ENTITY OptgridLimit.labelb "Hervorhebungen nicht anzeigen">
 <!ENTITY OptminNoDelay.labela "Hervorhebungen verzögert einblenden bei weniger als">
 <!ENTITY OptminNoDelay.labelb "Zeichen">
+<!ENTITY Optsights.label "Fundstellenhervorhebung">
+<!ENTITY OptsightsCurrent.label "Aktuellen Suchtreffer kurzzeitig eingekreist hervorheben">
+<!ENTITY OptsightsHighlights.label "Alle markierten Vorkommen des gesuchten Begriffs kurzzeitig eingekreist hervorheben (*)">
+<!ENTITY OptsightsHighlights.warning "(*) Zur Beachtung: Dies kann sehr ressourcenintensiv sein! Darstellung und seitenweises Blättern können sehr verlangsamt werden!">
+<!ENTITY OptsightsStyle.label "Stil der Hervorhebung (Anklicken, um eine Vorschau anzuzeigen):">
+<!ENTITY OptsightsStyle.focus "Ort der Hervorhebung">
+<!ENTITY OptsightsStyle.circle "Ort des Kreises">
 <!ENTITY OpthideLabels.label "Schaltflächentext ausblenden">
 <!ENTITY OpthideClose.label "Die Schließen-Schaltfläche ausblenden">
 <!ENTITY OptmovetoTop.label "Die Such-Symbolleiste an den oberen Rand des Browsers verschieben">

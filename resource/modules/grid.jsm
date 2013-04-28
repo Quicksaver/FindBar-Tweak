@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.1';
+moduleAid.VERSION = '1.0.2';
 
 this.ROWS_MINIMUM = 150; // number of rows in the highlight grid - kind of the "highlight granularity"
 this.ROWS_MULTIPLIER = 2; // Add extra rows if their height exceeds this value
@@ -85,7 +85,7 @@ this.resetHighlightGrid = function() {
 	removeAttribute(grid, 'gridSpacers');
 	listenerAid.remove(browserPanel, 'resize', delayResizeGridSpacers);
 	
-	if(!viewSource) {
+	if(viewSource) {
 		removeAttribute($$('[anonid="gridBox"]')[0], 'style');
 		listenerAid.remove(viewSource, 'resize', delayGridResizeViewSource);
 	}

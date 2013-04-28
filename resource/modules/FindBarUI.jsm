@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.1';
+moduleAid.VERSION = '1.1.2';
 
 this.doOpenOptions = function() {
 	openOptions();
@@ -62,6 +62,7 @@ moduleAid.LOADMODULE = function() {
 	// The dummy function in this call prevents a weird bug where the overlay wouldn't be properly applied when opening a second window... for some reason...
 	overlayAid.overlayURI('chrome://browser/content/browser.xul', 'findbar', function(window) { window.gFindBar; });
 	overlayAid.overlayURI('chrome://global/content/viewSource.xul', 'findbar');
+	overlayAid.overlayURI('chrome://global/content/viewPartialSource.xul', 'findbar');
 	
 	listenerAid.add(gFindBar, 'UpdatedUIFindBar', updateButtonsUI, false);
 	listenerAid.add(gFindBar, 'UpdatedUIFindBar', updateCSUI, false);
@@ -95,5 +96,6 @@ moduleAid.UNLOADMODULE = function() {
 	if(UNLOADED) {
 		overlayAid.removeOverlayURI('chrome://browser/content/browser.xul', 'findbar');
 		overlayAid.removeOverlayURI('chrome://global/content/viewSource.xul', 'findbar');
+		overlayAid.removeOverlayURI('chrome://global/content/viewPartialSource.xul', 'findbar');
 	}
 };

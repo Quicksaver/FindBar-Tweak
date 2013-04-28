@@ -1,7 +1,10 @@
 @import url("chrome://findbartweak/skin/sights.css");
 
 @namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
-@-moz-document url("chrome://browser/content/browser.xul"), url("chrome://global/content/viewSource.xul") {
+@-moz-document
+	url("chrome://browser/content/browser.xul"),
+	url("chrome://global/content/viewSource.xul"),
+	url("chrome://global/content/viewPartialSource.xul") {
 
 	#FindToolbar[hideLabels] toolbarbutton label,
 	#FindToolbar[hideLabels] checkbox label,

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.3.5';
+moduleAid.VERSION = '1.3.6';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -83,7 +83,7 @@ this.moveTop = function() {
 		
 		var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 		sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
-		sscode += '@-moz-document url("chrome://global/content/viewSource.xul") {\n';
+		sscode += '@-moz-document url("chrome://global/content/viewSource.xul"), url("chrome://global/content/viewPartialSource.xul") {\n';
 		sscode += '	#viewSource['+objName+'_UUID="'+_UUID+'"] #FindToolbar[movetotop] {\n';
 		sscode += '		max-width: ' + Math.max(moveTopStyle.maxWidth, 5) + 'px;\n';
 		sscode += (!prefAid.movetoRight) ? '		left: ' + moveTopStyle.left + 'px;\n' : '		right: ' + moveTopStyle.right + 'px;\n';
@@ -96,7 +96,7 @@ this.moveTop = function() {
 		if(gFindBar.scrollLeftMax > 0) {
 			var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 			sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
-			sscode += '@-moz-document url("chrome://global/content/viewSource.xul") {\n';
+			sscode += '@-moz-document url("chrome://global/content/viewSource.xul"), url("chrome://global/content/viewPartialSource.xul") {\n';
 			// !important tag necessary for OSX, CSS stylesheet sets this one
 			sscode += '	#viewSource['+objName+'_UUID="'+_UUID+'"] #FindToolbar[movetotop]:after { margin-left: -' + gFindBar.scrollLeftMax + 'px !important; }\n';
 			if(prefAid.movetoRight && prefAid.squareLook) {
@@ -235,7 +235,10 @@ this.forceCornerRedraw = function() {
 	// Bugfix (a bit ugly, I know) to force the corners to redraw on changing tabs or resizing windows
 	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 	sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
-	sscode += '@-moz-document url("chrome://browser/content/browser.xul"), url("chrome://global/content/viewSource.xul") {\n';
+	sscode += '@-moz-document\n';
+	sscode += '	url("chrome://browser/content/browser.xul"),\n';
+	sscode += '	url("chrome://global/content/viewSource.xul"),\n';
+	sscode += '	url("chrome://global/content/viewPartialSource.xul") {\n';
 	sscode += '	window['+objName+'_UUID="'+_UUID+'"] #FindToolbar[movetotop]:before, #FindToolbar[movetotop]:after { padding-bottom: 1px !important; }\n';
 	sscode += '}';
 	styleAid.load('tempRedrawCorners_'+_UUID, sscode, true);

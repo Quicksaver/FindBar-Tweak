@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.0';
+moduleAid.VERSION = '1.1.1';
 
 // Handler for Ctrl+F, it closes the findbar if it is already opened
 this.ctrlF = function(event) {
@@ -22,11 +22,13 @@ this.ctrlF = function(event) {
 moduleAid.LOADMODULE = function() {
 	overlayAid.overlayURI('chrome://browser/content/browser.xul', 'ctrlF');
 	overlayAid.overlayURI('chrome://global/content/viewSource.xul', 'ctrlF');
+	overlayAid.overlayURI('chrome://global/content/viewPartialSource.xul', 'ctrlF');
 };
 
 moduleAid.UNLOADMODULE = function() {
 	if(UNLOADED || !prefAid.ctrlFCloses) {
 		overlayAid.removeOverlayURI('chrome://browser/content/browser.xul', 'ctrlF');
 		overlayAid.removeOverlayURI('chrome://global/content/viewSource.xul', 'ctrlF');
+		overlayAid.removeOverlayURI('chrome://global/content/viewPartialSource.xul', 'ctrlF');
 	}
 };

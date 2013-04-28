@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.2';
+moduleAid.VERSION = '1.2.3';
 
 this.__defineGetter__('preferencesDialog', function() { return (typeof(inPreferences) != 'undefined' && inPreferences); });
 
@@ -321,7 +321,10 @@ this.sightsColor = function(forceSheet) {
 	if(forceSheet) {
 		sscode += '@-moz-document url("chrome://findbartweak/content/options.xul") {\n';
 	} else {
-		sscode += '@-moz-document url("chrome://browser/content/browser.xul"), url("chrome://global/content/viewSource.xul") {\n';
+		sscode += '@-moz-document\n';
+		sscode += '	url("chrome://browser/content/browser.xul"),\n';
+		sscode += '	url("chrome://global/content/viewSource.xul"),\n';
+		sscode += '	url("chrome://global/content/viewPartialSource.xul") {\n';
 	}
 	sscode += ' box[anonid="highlightSights"][sightsStyle="focus"],\n';
 	sscode += ' box[anonid="highlightSights"][sightsStyle="circle"] box[innerContainer] box {\n';

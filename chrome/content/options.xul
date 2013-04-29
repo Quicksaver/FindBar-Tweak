@@ -52,7 +52,7 @@
 					<groupbox align="start">
 						<caption label="&Optdisplay.label;"/>
 						<checkbox label="&OptmovetoTop.label;" preference="pref-movetoTop"/>
-						<checkbox label="&OptmovetoRight.label;" dependson="pref-movetoTop" preference="pref-movetoRight"/>
+						<checkbox label="&OptmovetoRight.label;" preference="pref-movetoRight"/>
 						<checkbox label="&OptuseCounter.label;" preference="pref-useCounter"/>
 						<checkbox label="&OpthideClose.label;" preference="pref-hideClose"/>
 						<checkbox label="&OpthideLabels.label;" preference="pref-hideLabels"/>

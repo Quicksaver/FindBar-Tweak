@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.2';
+moduleAid.VERSION = '1.1.3';
 
 this.doOpenOptions = function() {
 	openOptions();
@@ -57,6 +57,10 @@ this.toggleLabels = function() {
 this.toggleMoveToTop = function() {
 	moduleAid.loadIf('moveToTop', prefAid.movetoTop);
 };
+
+this.toggleMoveToRight = function(startup) {
+	toggleAttribute(gFindBar, 'movetoright', prefAid.movetoRight);
+};
 	
 moduleAid.LOADMODULE = function() {
 	// The dummy function in this call prevents a weird bug where the overlay wouldn't be properly applied when opening a second window... for some reason...
@@ -72,21 +76,25 @@ moduleAid.LOADMODULE = function() {
 	prefAid.listen('hideClose', toggleClose);
 	prefAid.listen('hideLabels', toggleLabels);
 	prefAid.listen('movetoTop', toggleMoveToTop);
+	prefAid.listen('movetoRight', toggleMoveToRight);
 	
 	toggleClose();
 	toggleLabels();
 	toggleMoveToTop();
+	toggleMoveToRight();
 };
 
 moduleAid.UNLOADMODULE = function() {
 	prefAid.unlisten('hideClose', toggleClose);
 	prefAid.unlisten('hideLabels', toggleLabels);
 	prefAid.unlisten('movetoTop', toggleMoveToTop);
+	prefAid.unlisten('movetoRight', toggleMoveToRight);
 	
 	moduleAid.unload('moveToTop');
 	
 	removeAttribute(gFindBar, 'noClose');
 	removeAttribute(gFindBar, 'hideLabels');
+	removeAttribute(gFindBar, 'movetoright');
 	
 	listenerAid.remove(gFindBar, 'UpdatedUIFindBar', updateButtonsUI, false);
 	listenerAid.remove(gFindBar, 'UpdatedUIFindBar', updateCSUI, false);

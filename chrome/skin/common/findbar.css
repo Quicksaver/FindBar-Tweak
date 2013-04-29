@@ -24,8 +24,17 @@
 		border-radius: 0 0 8px 8px;
 	}
 	
-	#FindToolbar[movetotop] description[anonid="find-status"] {
+	#FindToolbar description[anonid="find-status"] {
 		margin-right: 4px !important;
+	}
+	
+	#FindToolbar:not([movetotop])[movetoright] > hbox.findbar-container {
+		position: absolute;
+		text-align: end;
+	}
+	#FindToolbar:not([movetotop])[movetoright] > hbox.findbar-container > * {
+		position: static;
+		text-align: start;
 	}
 	
 	/* Rounded inner corners */

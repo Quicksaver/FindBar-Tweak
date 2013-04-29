@@ -19,4 +19,9 @@
 		</menupopup>
 	</window>
 	
+	<!-- for the squareLook -->
+	<vbox id="appcontent">
+		<box id="objName-squareLook_spacer" hidden="true" insertbefore="content" />
+	</vbox>
+	
 </overlay>

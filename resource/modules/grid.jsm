@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.2';
+moduleAid.VERSION = '1.0.3';
 
 this.ROWS_MINIMUM = 150; // number of rows in the highlight grid - kind of the "highlight granularity"
 this.ROWS_MULTIPLIER = 2; // Add extra rows if their height exceeds this value
@@ -179,8 +179,9 @@ this.delayGridResizeViewSource = function() {
 this.gridResizeViewSource = function() {
 	if(!viewSource) { return; }
 	
-	var styleString = 'top: '+$('viewSource-toolbox').clientHeight+'px;';
-	styleString += ' height: '+$('content').clientHeight+'px;';
+	var contentPos = $('content').getBoundingClientRect();
+	var styleString = 'top: '+contentPos.top+'px;';
+	styleString += ' height: '+contentPos.height+'px;';
 	setAttribute($$('[anonid="gridBox"]')[0], 'style', styleString);
 	listenerAid.add(viewSource, 'resize', delayGridResizeViewSource);
 };

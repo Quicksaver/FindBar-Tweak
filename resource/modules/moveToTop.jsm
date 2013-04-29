@@ -1,15 +1,13 @@
-moduleAid.VERSION = '1.3.6';
+moduleAid.VERSION = '1.3.7';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
 this.__defineGetter__('browser', function() { return $('browser'); });
+this.__defineGetter__('appcontent', function() { return $('appcontent'); });
+this.__defineGetter__('squareLookSpacer', function() { return $(objName+'-squareLook_spacer'); });
 this.getComputedStyle = function(el) { return window.getComputedStyle(el); };
 
-this.moveTopStyle = {
-	maxWidth: 0,
-	left: 0,
-	top: 0
-};
+this.moveTopStyle = {};
 this.lwthemeImage = null;
 
 this._scrollBarWidth = null;
@@ -27,11 +25,28 @@ this.__defineGetter__('scrollBarWidth', function() {
 	return _scrollBarWidth;
 });
 this.__defineGetter__('MIN_LEFT', function() { return (!prefAid.squareLook) ? 20 : 0; });
-this.__defineGetter__('MIN_RIGHT', function() { return (!prefAid.squareLook) ? 30 : scrollBarWidth; });
-this.lastFindBarWidth = 0;
+this.__defineGetter__('MIN_RIGHT', function() { return (!prefAid.squareLook) ? 30 : (!prefAid.placeAbove) ? scrollBarWidth : 0; });
+this.lastTopStyle = null;
 
-this.shouldReMoveTop = function() {
-	return (gFindBar.clientWidth != lastFindBarWidth);
+this.shouldReMoveTop = function(newStyle) {
+	if(!lastTopStyle) { return true; }
+	
+	if(!newStyle) {
+		return (gFindBar.clientWidth != lastTopStyle.clientWidth);
+	}
+	else if(newStyle.top != lastTopStyle.top
+		|| newStyle.right != lastTopStyle.right
+		|| newStyle.left != lastTopStyle.left
+		|| newStyle.maxWidth != lastTopStyle.maxWidth
+		|| newStyle.clientWidth != lastTopStyle.clientWidth
+		|| newStyle.movetoRight != lastTopStyle.moveToRight
+		|| (prefAid.squareLook && prefAid.placeAbove && newStyle.marginTop != lastTopStyle.marginTop)
+		|| newStyle.squareLook != lastTopStyle.squareLook
+		|| newStyle.placeAbove != lastTopStyle.placeAbove) {
+			return true;
+	}
+	
+	return false;
 };
 
 this.browserPanelResized = function() {
@@ -56,145 +71,65 @@ this.moveTopAsNeeded = function(e) {
 
 // Handles the position of the findbar
 this.moveTop = function() {
-	if(gFindBar.hidden) { return; }
-	
 	// Bugfix: ensure these declarations only take effect when the stylesheet is loaded (from the overlay) as well.
 	// Otherwise, at startup, the browser would jump for half a second with empty space on the right.
-	if(gFindBar.getAttribute('context') != objPathString+'_findbarMenu') { return; }
+	if(!squareLookSpacer || gFindBar.getAttribute('context') != objPathString+'_findbarMenu') { return; }
 	
-	moveTopStyle = {
-		maxWidth: -MIN_RIGHT -MIN_LEFT,
-		left: MIN_LEFT,
-		right: MIN_RIGHT,
-		top: (!prefAid.squareLook) ? -1 : 0 // Move the find bar one pixel up so it covers the toolbox borders, giving it a more seamless look
-	};
-	
-	// For the view source window
-	if(viewSource) {
-		var menuBarStyle = getComputedStyle($('viewSource-toolbox'));
-		moveTopStyle.top += $('viewSource-toolbox').clientHeight;
-		moveTopStyle.top += parseFloat(menuBarStyle.getPropertyValue('border-top-width'));
-		moveTopStyle.top += parseFloat(menuBarStyle.getPropertyValue('border-bottom-width'));
-		
-		moveTopStyle.maxWidth += $('content').clientWidth;
-		
-		styleAid.unload('topFindBar_'+_UUID);
-		styleAid.unload('topFindBarCorners_'+_UUID);
-		
-		var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
-		sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
-		sscode += '@-moz-document url("chrome://global/content/viewSource.xul"), url("chrome://global/content/viewPartialSource.xul") {\n';
-		sscode += '	#viewSource['+objName+'_UUID="'+_UUID+'"] #FindToolbar[movetotop] {\n';
-		sscode += '		max-width: ' + Math.max(moveTopStyle.maxWidth, 5) + 'px;\n';
-		sscode += (!prefAid.movetoRight) ? '		left: ' + moveTopStyle.left + 'px;\n' : '		right: ' + moveTopStyle.right + 'px;\n';
-		sscode += '		top: ' + moveTopStyle.top + 'px;\n';
-		sscode += '	}';
-		sscode += '}';
-		
-		styleAid.load('topFindBar_'+_UUID, sscode, true);
-		
-		if(gFindBar.scrollLeftMax > 0) {
-			var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
-			sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
-			sscode += '@-moz-document url("chrome://global/content/viewSource.xul"), url("chrome://global/content/viewPartialSource.xul") {\n';
-			// !important tag necessary for OSX, CSS stylesheet sets this one
-			sscode += '	#viewSource['+objName+'_UUID="'+_UUID+'"] #FindToolbar[movetotop]:after { margin-left: -' + gFindBar.scrollLeftMax + 'px !important; }\n';
-			if(prefAid.movetoRight && prefAid.squareLook) {
-				sscode += '	#FindToolbar[movetotop][movetoright][squareLook] { border-left: none !important; }\n'
-			}
-			sscode += '}';
-			styleAid.load('topFindBarCorners_'+_UUID, sscode, true);
-		}
-		
-		forceCornerRedraw();
+	if(gFindBar.hidden) {
+		if(prefAid.placeAbove) { squareLookSpacer.hidden = true; }
 		return;
 	}
 	
-	var computedStyle = {
-		appcontent: getComputedStyle($('appcontent')),
-		navigatortoolbox: getComputedStyle($('navigator-toolbox')),
-		window: getComputedStyle($('main-window')),
-		browser: getComputedStyle(browser)
+	moveTopStyle = {
+		marginTop: null,
+		movetoRight: prefAid.movetoRight,
+		squareLook: prefAid.squareLook,
+		placeAbove: prefAid.placeAbove,
+		maxWidth: -MIN_RIGHT -MIN_LEFT,
+		left: MIN_LEFT,
+		right: MIN_RIGHT,
+		top: (!prefAid.squareLook || prefAid.placeAbove) ? -1 : 0 // Move the find bar one pixel up so it covers the toolbox borders, giving it a more seamless look
 	};
 	
-	// Determining the position of the Findbar is a pain...
-	var doneAppContent = false;
+	if(prefAid.squareLook && prefAid.placeAbove) {
+		moveTopStyle.top -= gFindBar.clientHeight;
+	}
+	
+	var appContentPos = $('content').getBoundingClientRect();
+	moveTopStyle.maxWidth += appContentPos.width;
+	moveTopStyle.top += appContentPos.top;
+	moveTopStyle.left += appContentPos.left;
+	moveTopStyle.right += document.documentElement.clientWidth -appContentPos.right;
 	
 	// Compatibility with TreeStyleTab
-	if(!$('TabsToolbar').collapsed) {
+	if($('TabsToolbar') && !$('TabsToolbar').collapsed) {
 		// This is also needed when the tabs are on the left, the width of the findbar doesn't follow with the rest of the window for some reason
 		if($('TabsToolbar').getAttribute('treestyletab-tabbar-position') == 'left' || $('TabsToolbar').getAttribute('treestyletab-tabbar-position') == 'right') {
-			moveTopStyle.maxWidth -= $('TabsToolbar').clientWidth;
-			if($('TabsToolbar').getAttribute('treestyletab-tabbar-position') == 'left') {
-				moveTopStyle.left += $('TabsToolbar').clientWidth;
+			var TabsToolbar = $('TabsToolbar');
+			var TabsSplitter = document.getAnonymousElementByAttribute($('content'), 'class', 'treestyletab-splitter');
+			moveTopStyle.maxWidth -= TabsToolbar.clientWidth;
+			moveTopStyle.maxWidth -= TabsSplitter.clientWidth +(TabsSplitter.clientLeft *2);
+			if(!prefAid.movetoRight && TabsToolbar.getAttribute('treestyletab-tabbar-position') == 'left') {
+				moveTopStyle.left += TabsToolbar.clientWidth;
+				moveTopStyle.left += TabsSplitter.clientWidth +(TabsSplitter.clientLeft *2);
+			}
+			if(prefAid.movetoRight && TabsToolbar.getAttribute('treestyletab-tabbar-position') == 'right') {
+				moveTopStyle.right += TabsToolbar.clientWidth;
+				moveTopStyle.right += TabsSplitter.clientWidth +(TabsSplitter.clientLeft *2);
 			}
 		}
 	}
 	
-	for(var i=0; i<browser.childNodes.length; i++) {
-		if(browser.childNodes[i].id != 'appcontent') {
-			if(browser.childNodes[i].nodeName == 'splitter') {
-				if(!prefAid.squareLook || browser.childNodes[i].hidden) { continue; }
-			}
-			
-			// Compatibility with OmniSidebar
-			if((browser.childNodes[i].classList.contains('sidebar-box') && browser.childNodes[i].getAttribute('renderabove'))
-			|| browser.childNodes[i].classList.contains('omnisidebar_switch')) { continue; }
-			
-			// AiOS sets 'direction' property to 'rtl' when sidebar is on the right;
-			// this accounts for that and for anything else that might do the same
-			if(!prefAid.movetoRight) {
-				if((computedStyle.browser.getPropertyValue('direction') == 'ltr' && !doneAppContent)
-				|| (computedStyle.browser.getPropertyValue('direction') != 'ltr' && doneAppContent)) {
-					moveTopStyle.left += browser.childNodes[i].clientWidth;
-					if(browser.childNodes[i].nodeName == 'splitter') {
-						moveTopStyle.left += parseFloat(getComputedStyle(browser.childNodes[i]).getPropertyValue('margin-left'));
-						moveTopStyle.left += parseFloat(getComputedStyle(browser.childNodes[i]).getPropertyValue('margin-right'));
-					}
-					moveTopStyle.left += parseFloat(getComputedStyle(browser.childNodes[i]).getPropertyValue('border-left-width'));
-					moveTopStyle.left += parseFloat(getComputedStyle(browser.childNodes[i]).getPropertyValue('border-right-width'));
-				}
-			} else {
-				if((computedStyle.browser.getPropertyValue('direction') != 'ltr' && !doneAppContent)
-				|| (computedStyle.browser.getPropertyValue('direction') == 'ltr' && doneAppContent)) {
-					moveTopStyle.right += browser.childNodes[i].clientWidth;
-					if(browser.childNodes[i].nodeName == 'splitter') {
-						moveTopStyle.right += parseFloat(getComputedStyle(browser.childNodes[i]).getPropertyValue('margin-left'));
-						moveTopStyle.right += parseFloat(getComputedStyle(browser.childNodes[i]).getPropertyValue('margin-right'));
-					}
-					moveTopStyle.right += parseFloat(getComputedStyle(browser.childNodes[i]).getPropertyValue('border-left-width'));
-					moveTopStyle.right += parseFloat(getComputedStyle(browser.childNodes[i]).getPropertyValue('border-right-width'));
-				}
-			}
-		} else {
-			moveTopStyle.maxWidth += $('appcontent').clientWidth;
-			moveTopStyle.maxWidth += parseFloat(computedStyle.appcontent.getPropertyValue('border-left-width'));
-			moveTopStyle.maxWidth += parseFloat(computedStyle.appcontent.getPropertyValue('border-right-width'));
-			
-			if(!prefAid.movetoRight && computedStyle.browser.getPropertyValue('direction') == 'ltr') {
-				break;
-			}
-			
-			doneAppContent = true;
-		}
+	moveTopStyle.clientWidth = gFindBar.clientWidth;
+	if(prefAid.squareLook && prefAid.placeAbove && !gFindBar.collapsed) {
+		moveTopStyle.marginTop = gFindBar.clientHeight +1;
+		squareLookSpacer.style.height = moveTopStyle.marginTop +'px';
+		squareLookSpacer.hidden = false;
+	} else {
+		squareLookSpacer.hidden = true;
 	}
-	
-	if(mainWindow.getAttribute('sizemode') != 'fullscreen') {
-		if($('titlebar')) {				
-			moveTopStyle.top += $('titlebar').clientHeight;
-			moveTopStyle.top += parseFloat(getComputedStyle($('titlebar')).getPropertyValue('margin-bottom'));
-		}	
-	}
-	else if($('fullscr-toggler').getAttribute('collapsed') != 'true') {
-		moveTopStyle.top += $('fullscr-toggler').clientHeight;
-	}
-	moveTopStyle.top += $('navigator-toolbox').clientHeight;
-	moveTopStyle.top += parseFloat(computedStyle.navigatortoolbox.getPropertyValue('border-top-width'));
-	moveTopStyle.top += parseFloat(computedStyle.navigatortoolbox.getPropertyValue('border-bottom-width'));
-	moveTopStyle.top += parseFloat(computedStyle.navigatortoolbox.getPropertyValue('margin-top'));
-	
-	// Personas in OSX screw this one up
-	moveTopStyle.top += parseFloat(computedStyle.window.getPropertyValue('padding-top'));
+	if(!shouldReMoveTop(moveTopStyle)) { return; }
+	lastTopStyle = moveTopStyle;
 	
 	// Unload current stylesheet if it's been loaded
 	styleAid.unload('topFindBar_'+_UUID);
@@ -202,11 +137,14 @@ this.moveTop = function() {
 	
 	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 	sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
-	sscode += '@-moz-document url("chrome://browser/content/browser.xul") {\n';
+	sscode += '@-moz-document url("'+document.baseURI+'") {\n';
 	sscode += '	window['+objName+'_UUID="'+_UUID+'"] #FindToolbar[movetotop] {\n';
 	sscode += '		max-width: ' + Math.max(moveTopStyle.maxWidth, 5) + 'px;\n';
-	sscode += (!prefAid.movetoRight) ? '		left: ' + moveTopStyle.left + 'px;\n' : '		right: ' + moveTopStyle.right + 'px;\n';
+	sscode += (prefAid.squareLook && prefAid.placeAbove || !prefAid.movetoRight) ? '		left: ' + moveTopStyle.left + 'px;\n' : '		right: ' + moveTopStyle.right + 'px;\n';
 	sscode += '		top: ' + moveTopStyle.top + 'px;\n';
+	if(prefAid.squareLook && prefAid.placeAbove) {
+		sscode += '		width: '+ Math.max(moveTopStyle.maxWidth, 5) + 'px;\n';
+	}
 	sscode += '	}';
 	sscode += '}';
 	
@@ -215,9 +153,9 @@ this.moveTop = function() {
 	if(gFindBar.scrollLeftMax > 0) {
 		var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 		sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
-		sscode += '@-moz-document url("chrome://browser/content/browser.xul") {\n';
+		sscode += '@-moz-document url("'+document.baseURI+'") {\n';
 		// !important tag necessary for OSX, CSS stylesheet sets this one
-		sscode += '	window['+objName+'_UUID="'+_UUID+'"] #FindToolbar[movetotop]:after { margin-left: -' + gFindBar.scrollLeftMax + 'px !important; }\n'; 
+		sscode += '	window['+objName+'_UUID="'+_UUID+'"] #FindToolbar[movetotop]:after { margin-left: -' + gFindBar.scrollLeftMax + 'px !important; }\n';
 		if(prefAid.movetoRight && prefAid.squareLook) {
 			sscode += '	#FindToolbar[movetotop][movetoright][squareLook] { border-left: none !important; }\n'
 		}
@@ -226,19 +164,14 @@ this.moveTop = function() {
 	}
 	
 	forceCornerRedraw();
-	findPersonaPosition();
-	
-	lastFindBarWidth = gFindBar.clientWidth;
+	if(!viewSource) { findPersonaPosition(); }
 };
 
 this.forceCornerRedraw = function() {
 	// Bugfix (a bit ugly, I know) to force the corners to redraw on changing tabs or resizing windows
 	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 	sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
-	sscode += '@-moz-document\n';
-	sscode += '	url("chrome://browser/content/browser.xul"),\n';
-	sscode += '	url("chrome://global/content/viewSource.xul"),\n';
-	sscode += '	url("chrome://global/content/viewPartialSource.xul") {\n';
+	sscode += '@-moz-document url("'+document.baseURI+'") {\n';
 	sscode += '	window['+objName+'_UUID="'+_UUID+'"] #FindToolbar[movetotop]:before, #FindToolbar[movetotop]:after { padding-bottom: 1px !important; }\n';
 	sscode += '}';
 	styleAid.load('tempRedrawCorners_'+_UUID, sscode, true);
@@ -257,7 +190,7 @@ this.findPersonaPosition = function() {
 		return;
 	}
 	
-	var windowStyle = window.getComputedStyle(mainWindow);
+	var windowStyle = getComputedStyle(mainWindow);
 	if(prefAid.lwthemebgImage != windowStyle.getPropertyValue('background-image') && windowStyle.getPropertyValue('background-image') != 'none') {
 		prefAid.lwthemebgImage = windowStyle.getPropertyValue('background-image');
 		prefAid.lwthemecolor = windowStyle.getPropertyValue('color');
@@ -289,7 +222,7 @@ this.stylePersonaFindBar = function() {
 	
 	if(prefAid.lwthemebgImage != '') {
 		var computedStyle = {
-			window: getComputedStyle($('main-window'))
+			window: getComputedStyle(mainWindow)
 		};
 		
 		// Another personas in OSX tweak
@@ -301,7 +234,7 @@ this.stylePersonaFindBar = function() {
 		
 		var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 		sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
-		sscode += '@-moz-document url("chrome://browser/content/browser.xul") {\n';
+		sscode += '@-moz-document url("'+document.baseURI+'") {\n';
 		sscode += '	window['+objName+'_UUID="'+_UUID+'"] #FindToolbar[movetotop]  {\n';
 		sscode += '	  background-image: ' + prefAid.lwthemebgImage + ' !important;\n';
 		sscode += '	  background-color: ' + prefAid.lwthemecolor + ' !important;\n';
@@ -395,12 +328,21 @@ this.toggleMoveToRight = function(startup) {
 
 this.toggleSquareLook = function() {
 	toggleAttribute(gFindBar, 'squareLook', prefAid.squareLook);
+	toggleAttribute(gFindBar, 'placeAbove', prefAid.squareLook && prefAid.placeAbove);
+	
+	if(prefAid.squareLook && prefAid.placeAbove) {
+		listenerAid.add(gFindBar, 'ClosedFindBar', moveTop);
+	} else {
+		listenerAid.remove(gFindBar, 'ClosedFindBar', moveTop);
+	}
 };
 
 moduleAid.LOADMODULE = function() {
 	prefAid.listen('movetoRight', toggleMoveToRight);
 	prefAid.listen('squareLook', toggleSquareLook);
+	prefAid.listen('placeAbove', toggleSquareLook);
 	prefAid.listen('squareLook', moveTop);
+	prefAid.listen('placeAbove', moveTop);
 	
 	toggleMoveToRight(true);
 	toggleSquareLook();
@@ -466,10 +408,14 @@ moduleAid.UNLOADMODULE = function() {
 	
 	removeAttribute(gFindBar, 'movetoright');
 	removeAttribute(gFindBar, 'squareLook');
+	removeAttribute(gFindBar, 'placeAbove');
+	listenerAid.remove(gFindBar, 'ClosedFindBar', moveTop);
 	
 	prefAid.unlisten('movetoRight', toggleMoveToRight);
 	prefAid.unlisten('squareLook', toggleSquareLook);
+	prefAid.unlisten('placeAbove', toggleSquareLook);
 	prefAid.unlisten('squareLook', moveTop);
+	prefAid.unlisten('placeAbove', moveTop);
 	
 	styleAid.unload('personaFindBar_'+_UUID);
 	styleAid.unload('topFindBar_'+_UUID);

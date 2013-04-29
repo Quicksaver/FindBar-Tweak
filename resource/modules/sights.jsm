@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.3';
+moduleAid.VERSION = '1.2.4';
 
 this.__defineGetter__('preferencesDialog', function() { return (typeof(inPreferences) != 'undefined' && inPreferences); });
 
@@ -245,6 +245,9 @@ this.currentSights = function(e) {
 	var contentWindow = gFindBar.browser._fastFind.currentWindow || gFindBar.browser.contentWindow;
 	if(!contentWindow) { return; } // Usually triggered when a selection is on a frame and the frame closes
 	
+	// Make sure the box updates its position and size when closing the find bar
+	if(prefAid.squareLook && prefAid.placeAbove) { sightsResizeViewSource(); }
+	
 	// Let's make sure the document actually exists
 	try {
 		var scrollTop = contentDocument.getElementsByTagName('html')[0].scrollTop || contentDocument.getElementsByTagName('body')[0].scrollTop;
@@ -272,6 +275,9 @@ this.sightsOnVisibleHighlights = function(aHighlights) {
 	}
 	
 	if(!prefAid.sightsHighlights || !sights._highlights || !documentHighlighted || gFindBar._findField.value != sights._findWord) { return; }
+	
+	// Make sure the box updates its position and size when closing the find bar
+	if(prefAid.squareLook && prefAid.placeAbove) { sightsResizeViewSource(); }
 	
 	// Let's make sure the document actually exists
 	try {
@@ -345,8 +351,9 @@ this.delaySightsResizeViewSource = function() {
 this.sightsResizeViewSource = function() {
 	if(!viewSource) { return; }
 	
-	var styleString = 'top: '+$('viewSource-toolbox').clientHeight+'px;';
-	styleString += ' height: '+$('content').clientHeight+'px;';
+	var contentPos = $('content').getBoundingClientRect();
+	var styleString = 'top: '+contentPos.top+'px;';
+	styleString += ' height: '+contentPos.height+'px;';
 	setAttribute($$('[anonid="findSights"]')[0], 'style', styleString);
 	listenerAid.add(viewSource, 'resize', delaySightsResizeViewSource);
 };

@@ -120,13 +120,19 @@
 	#FindToolbar[movetotop][squareLook] {
 		border-radius: 0px !important;
 	}
-		
-	#FindToolbar[movetotop][squareLook]:before,
-	#FindToolbar[movetotop][squareLook]:after {
-		display: none;
+	
+	#FindToolbar[movetotop][placeAbove] {
+		border-left: none !important;
+		border-right: none !important;
 	}
 	
 	#FindToolbar[movetotop][squareLook]:not([movetoright]) {
 		border-left: none !important;
+	}
+
+		
+	#FindToolbar[movetotop][squareLook]:before,
+	#FindToolbar[movetotop][squareLook]:after {
+		display: none;
 	}
 }

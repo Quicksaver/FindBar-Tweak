@@ -1,4 +1,4 @@
-var defaultsVersion = '1.0.6';
+var defaultsVersion = '1.0.7';
 var objName = 'findbartweak';
 var objPathString = 'findbartweak';
 var prefList = {
@@ -23,7 +23,10 @@ var prefList = {
 	movetoRight: false,
 	hideClose: false,
 	hideLabels: false,
+	
+	/* hidden settings for now, mechanism isn't good enough yet */
 	squareLook: false,
+	placeAbove: false,
 	
 	ctrlFCloses: true,
 	keepButtons: false,

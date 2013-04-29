@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.4';
+moduleAid.VERSION = '1.1.5';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -171,11 +171,11 @@ moduleAid.LOADMODULE = function() {
 	
 	gFindBar._setHighlightTimeout = function() {
 		// We want this to be updated regardless of what happens
-		linkedPanel._findWord = gFindBar._findField.value;
+		linkedPanel._findWord = this._findField.value;
 		
 		// Just reset any highlights and the counter if it's not supposed to highlight
 		if(!this.getElement("highlight").checked || !this._findField.value) {
-			gFindBar.toggleHighlight(false);
+			this.toggleHighlight(false);
 			return;
 		}
 		
@@ -208,16 +208,16 @@ moduleAid.LOADMODULE = function() {
 	gFindBar._toggleHighlight = gFindBar.toggleHighlight;
 	gFindBar.toggleHighlight = function(aHighlight) {
 		if(dispatch(gFindBar, { type: 'WillToggleHighlight', detail: aHighlight })) {
-			gFindBar._toggleHighlight(aHighlight);
-			dispatch(gFindBar, { type: 'ToggledHighlight', detail: aHighlight, cancelable: false });
+			this._toggleHighlight(aHighlight);
+			dispatch(this, { type: 'ToggledHighlight', detail: aHighlight, cancelable: false });
 		}
 	};
 	
 	gFindBar.__findAgain = gFindBar._findAgain;
 	gFindBar._findAgain = function(aFindPrevious) {
-		if(dispatch(gFindBar, { type: 'WillFindAgain', detail: { aFindPrevious: aFindPrevious } })) {
-			var ret = gFindBar.__findAgain(aFindPrevious);
-			dispatch(gFindBar, { type: 'FoundAgain', cancelable: false, detail: { aFindPrevious: aFindPrevious, retValue: ret } });
+		if(dispatch(this, { type: 'WillFindAgain', detail: { aFindPrevious: aFindPrevious } })) {
+			var ret = this.__findAgain(aFindPrevious);
+			dispatch(this, { type: 'FoundAgain', cancelable: false, detail: { aFindPrevious: aFindPrevious, retValue: ret } });
 			return ret;
 		}
 	};

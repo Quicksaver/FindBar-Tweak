@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.3';
+moduleAid.VERSION = '1.1.4';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -14,37 +14,37 @@ moduleAid.LOADMODULE = function() {
 	gFindBar._open = gFindBar.open;
 	gFindBar.open = function(aMode) {
 		if(dispatch(gFindBar, { type: 'WillOpenFindBar', detail: aMode })) {
-			var ret = gFindBar._open(aMode);
-			dispatch(gFindBar, { type: 'OpenedFindBar', cancelable: false, detail: aMode });
+			var ret = this._open(aMode);
+			dispatch(this, { type: 'OpenedFindBar', cancelable: false, detail: aMode });
 			return ret;
 		}
 	};
 	gFindBar._close = gFindBar.close;
 	gFindBar.close = function() {
 		if(dispatch(gFindBar, { type: 'WillCloseFindBar' })) {
-			gFindBar._close();
-			dispatch(gFindBar, { type: 'ClosedFindBar', cancelable: false });
+			this._close();
+			dispatch(this, { type: 'ClosedFindBar', cancelable: false });
 		}
 	};
 	gFindBar.__updateFindUI = gFindBar._updateFindUI;
 	gFindBar._updateFindUI = function() {
 		if(dispatch(gFindBar, { type: 'WillUpdateUIFindBar' })) {
-			gFindBar.__updateFindUI();
-			dispatch(gFindBar, { type: 'UpdatedUIFindBar', cancelable: false });
+			this.__updateFindUI();
+			dispatch(this, { type: 'UpdatedUIFindBar', cancelable: false });
 		}
 	};
 	gFindBar.__updateStatusUI = gFindBar._updateStatusUI;
 	gFindBar._updateStatusUI = function(res, aFindPrevious) {
 		if(dispatch(gFindBar, { type: 'WillUpdateStatusFindBar', detail: { res: res, aFindPrevious: aFindPrevious } })) {
-			gFindBar.__updateStatusUI(res, aFindPrevious);
-			dispatch(gFindBar, { type: 'UpdatedStatusFindBar', cancelable: false, detail: { res: res, aFindPrevious: aFindPrevious } });
+			this.__updateStatusUI(res, aFindPrevious);
+			dispatch(this, { type: 'UpdatedStatusFindBar', cancelable: false, detail: { res: res, aFindPrevious: aFindPrevious } });
 		}
 	};
 	gFindBar.__find = gFindBar._find;
 	gFindBar._find = function(aValue) {
-		if(dispatch(gFindBar, { type: 'WillFindFindBar', detail: aValue })) {
-			var ret = gFindBar.__find(aValue);
-			dispatch(gFindBar, { type: 'FoundFindBar', cancelable: false, detail: { aValue: aValue, retValue: ret } });
+		if(dispatch(this, { type: 'WillFindFindBar', detail: aValue })) {
+			var ret = this.__find(aValue);
+			dispatch(this, { type: 'FoundFindBar', cancelable: false, detail: { aValue: aValue, retValue: ret } });
 			return ret;
 		}
 	};

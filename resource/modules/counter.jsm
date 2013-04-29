@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.0';
+moduleAid.VERSION = '1.0.1';
 
 this.__defineGetter__('findbarContainer', function() { return gFindBar.getElement('findbar-container'); });
 
@@ -89,6 +89,8 @@ this.fillHighlightCounter = function(e) {
 	}
 	
 	counter = stringsAid.get('counter', 'counterFormat', [ ["$hit$", h], ["$total$", linkedPanel._counterHighlights.length] ]);
+	gFindBar._findStatusDesc.hidden = false;
+	gFindBar._findStatusIcon.hidden = false;
 	
 	dispatch(gFindBar, { type: 'HighlightCounterUpdated', cancelable: false });
 };

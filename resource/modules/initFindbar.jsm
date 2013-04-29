@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.4';
+moduleAid.VERSION = '1.1.5';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -37,6 +37,8 @@ moduleAid.LOADMODULE = function() {
 	gFindBar._updateStatusUI = function(res, aFindPrevious) {
 		if(dispatch(gFindBar, { type: 'WillUpdateStatusFindBar', detail: { res: res, aFindPrevious: aFindPrevious } })) {
 			this.__updateStatusUI(res, aFindPrevious);
+			this._findStatusDesc.hidden = !this._findStatusDesc.textContent;
+			this._findStatusIcon.hidden = !this._findStatusIcon.getAttribute('status');
 			dispatch(this, { type: 'UpdatedStatusFindBar', cancelable: false, detail: { res: res, aFindPrevious: aFindPrevious } });
 		}
 	};
@@ -61,4 +63,7 @@ moduleAid.UNLOADMODULE = function() {
 	delete gFindBar.__updateFindUI;
 	delete gFindBar.__updateStatusUI;
 	delete gFindBar.__find;
+	
+	gFindBar._findStatusDesc.hidden = false;
+	gFindBar._findStatusIcon.hidden = false;
 };

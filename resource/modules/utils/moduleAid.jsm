@@ -20,7 +20,7 @@ this.self = this;
 //	moduleAid.UNLOADMODULE - (function) to be executed on module unloading
 //	moduleAid.LAZY - (bool) vital modules that should be the last ones to be unloaded (like the utils) should have this set to true
 this.moduleAid = {
-	version: '2.2.1',
+	version: '2.2.2',
 	modules: [],
 	moduleVars: {},
 	
@@ -143,6 +143,7 @@ this.moduleAid = {
 			try { this.modules[i].unload(); }
 			catch(ex) {
 				if(!force) { Cu.reportError(ex); }
+				Cu.reportError('Failed to load module '+aModule);
 				this.modules[i].failed = true;
 				return false;
 			}
@@ -151,6 +152,7 @@ this.moduleAid = {
 		try { this.deleteVars(this.modules[i].vars); }
 		catch(ex) {
 			if(!force) { Cu.reportError(ex); }
+			Cu.reportError('Failed to load module '+aModule);
 			this.modules[i].failed = true;
 			return false;
 		}

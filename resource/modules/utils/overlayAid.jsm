@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.2.6';
+moduleAid.VERSION = '2.2.7';
 moduleAid.LAZY = true;
 
 // overlayAid - to use overlays in my bootstraped add-ons. The behavior is as similar to what is described in https://developer.mozilla.org/en/XUL_Tutorial/Overlays as I could manage.
@@ -130,6 +130,7 @@ this.overlayAid = {
 		
 		if(typeof(aWindow['_OVERLAYS_'+objName]) == 'undefined') {
 			aWindow['_OVERLAYS_'+objName] = [];
+			this.addToAttr(aWindow);
 		}
 		aWindow['_OVERLAYS_'+objName].push(newOverlay);
 		
@@ -181,8 +182,10 @@ this.overlayAid = {
 	
 	loadedWindow: function(aWindow, aWith, loaded) {
 		// We have to look not only for this object's array but also for other possible ones from other add-ons
-		for(var x in aWindow) {
-			if(x.indexOf('_OVERLAYS_') !== 0) { continue; }
+		var allAttr = this.getAllInAttr(aWindow);
+		for(var y=0; y<allAttr.length; y++) {
+			var x = '_OVERLAYS_'+allAttr[y];
+			if(!aWindow[x]) { continue; }
 			
 			for(var i = 0; i < aWindow[x].length; i++) {
 				if(aWindow[x][i].uri == aWith) {
@@ -456,6 +459,7 @@ this.overlayAid = {
 					
 			delete aWindow['_OVERLAYS_'+objName];
 			delete aWindow._BEING_OVERLAYED;
+			overlayAid.removeFromAttr(aWindow);
 			aWindow._RESCHEDULE_OVERLAY = true;
 		}
 		
@@ -511,8 +515,10 @@ this.overlayAid = {
 		}
 		
 		nodeList = [];
-		for(var x in aWindow) {
-			if(x.indexOf('_OVERLAYS_') !== 0) { continue; }
+		var allAttr = this.getAllInAttr(aWindow);
+		for(var y=0; y<allAttr.length; y++) {
+			var x = '_OVERLAYS_'+allAttr[y];
+			if(!aWindow[x]) { continue; }
 			
 			for(var i = 0; i < aWindow[x].length; i++) {
 				for(var j = 0; j < aWindow[x][i].traceBack.length; j++) {
@@ -530,8 +536,10 @@ this.overlayAid = {
 	
 	getNewOrder: function(aWindow) {
 		var time = new Date().getTime();
-		for(var x in aWindow) {
-			if(x.indexOf('_OVERLAYS_') !== 0) { continue; }
+		var allAttr = this.getAllInAttr(aWindow);
+		for(var y=0; y<allAttr.length; y++) {
+			var x = '_OVERLAYS_'+allAttr[y];
+			if(!aWindow[x]) { continue; }
 			
 			for(var i=0; i<aWindow[x].length; i++) {
 				if(aWindow[x][i].time > time) {
@@ -551,8 +559,10 @@ this.overlayAid = {
 		}
 		
 		var overlayList = [];
-		for(var x in aWindow) {
-			if(x.indexOf('_OVERLAYS_') !== 0) { continue; }
+		var allAttr = this.getAllInAttr(aWindow);
+		for(var y=0; y<allAttr.length; y++) {
+			var x = '_OVERLAYS_'+allAttr[y];
+			if(!aWindow[x]) { continue; }
 			
 			for(var i=0; i<aWindow[x].length; i++) {
 				if(aWindow[x][i].time >= first) {
@@ -573,8 +583,10 @@ this.overlayAid = {
 	},
 	
 	removeOverlay: function(aWindow, overlay) {
-		loop_lookForArray: for(var x in aWindow) {
-			if(x.indexOf('_OVERLAYS_') !== 0) { continue; }
+		var allAttr = this.getAllInAttr(aWindow);
+		loop_lookForArray: for(var y=0; y<allAttr.length; y++) {
+			var x = '_OVERLAYS_'+allAttr[y];
+			if(!aWindow[x]) { continue; }
 			
 			for(var i=0; i<aWindow[x].length; i++) {
 				if(aWindow[x][i] == overlay) {
@@ -838,15 +850,18 @@ this.overlayAid = {
 		
 		if(typeof(aWindow['_OVERLAYS_'+objName]) == 'undefined') {
 			aWindow['_OVERLAYS_'+objName] = [];
+			this.addToAttr(aWindow);
 		}
 		
 		if(aWindow._UNLOAD_OVERLAYS) {
 			while(aWindow._UNLOAD_OVERLAYS.length > 0) {
 				var i = this.loadedWindow(aWindow, aWindow._UNLOAD_OVERLAYS[0]);
 				if(i !== false) {
+					var allAttr = this.getAllInAttr(aWindow);
 					// the i returned can refer to an array of another add-on, we need to make sure we get the right one
-					for(var x in aWindow) {
-						if(x.indexOf('_OVERLAYS_') !== 0) { continue; }
+					for(var y=0; y<allAttr.length; y++) {
+						var x = '_OVERLAYS_'+allAttr[y];
+						if(!aWindow[x]) { continue; }
 						if(i < aWindow[x].length && aWindow[x][i].uri == aWindow._UNLOAD_OVERLAYS[0]) { break; }
 					}
 					this.removeInOrder(aWindow, aWindow[x][i].time);
@@ -860,6 +875,7 @@ this.overlayAid = {
 		if(aWindow.closed || aWindow.willClose) {
 			if(aWindow['_OVERLAYS_'+objName].length == 0) {
 				delete aWindow['_OVERLAYS_'+objName];
+				this.removeFromAttr(aWindow);
 			}
 			delete aWindow._BEING_OVERLAYED;
 			return;
@@ -897,6 +913,7 @@ this.overlayAid = {
 		
 		if(aWindow['_OVERLAYS_'+objName].length == 0) {
 			delete aWindow['_OVERLAYS_'+objName];
+			this.removeFromAttr(aWindow);
 		}
 		delete aWindow._BEING_OVERLAYED;
 		
@@ -1467,6 +1484,28 @@ this.overlayAid = {
 			node: node,
 			palette: palette
 		});
+	},
+	
+	addToAttr: function(aWindow) {
+		var attr = this.getAllInAttr(aWindow);
+		if(attr.indexOf(objName) > -1) { return; }
+		
+		attr.push(objName);
+		setAttribute(aWindow.document.documentElement, 'Bootstrapped_Overlays', attr.join(' '));
+	},
+	
+	getAllInAttr: function(aWindow) {
+		var attr = aWindow.document.documentElement.getAttribute('Bootstrapped_Overlays');
+		if(!attr) { return new Array(); }
+		else { return attr.split(' '); }
+	},
+	
+	removeFromAttr: function(aWindow) {
+		var attr = this.getAllInAttr(aWindow);
+		if(attr.indexOf(objName) == -1) { return; }
+		
+		attr.splice(attr.indexOf(objName), 1);
+		toggleAttribute(aWindow.document.documentElement, 'Bootstrapped_Overlays', attr.length > 0, attr.join(' '));
 	}
 };
 
@@ -1481,6 +1520,19 @@ moduleAid.LOADMODULE = function() {
 	// Ensure that closed windows are clean of our objects to prevent ZCs
 	fullClean.push(function(aWindow) {
 		delete aWindow['_OVERLAYS_'+objName];
+		
+		try {
+			var attr = aWindow.document.documentElement.getAttribute('Bootstrapped_Overlays').split(' ');
+			if(attr.indexOf(objName) == -1) { return; }
+			
+			attr.splice(attr.indexOf(objName), 1);
+			if(attr.length > 0) {
+				aWindow.document.documentElement.setAttribute('Bootstrapped_Overlays', attr.join(' '));
+			} else {
+				aWindow.document.documentElement.removeAttribute('Bootstrapped_Overlays');
+			}
+		}
+		catch(ex) {} // Prevent some unforeseen error here
 	});
 };
 

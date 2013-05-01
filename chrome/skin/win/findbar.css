@@ -12,31 +12,31 @@
 	#FindToolbar[movetotop]:after {
 		margin-top: -1px;
 	}
-	#main-window:not([oscpu="Windows NT 5.1"]) #FindToolbar[movetotop]:before {
+	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]) #FindToolbar[movetotop]:before {
 		box-shadow: 	2px -2px 0 -2px rgb(160,160,160),
 		                7px -4px 0px -4px rgb(219,234,249),
 		                6px -4px 0px -4px rgb(219,234,249);
 	}
-	#main-window:not([oscpu="Windows NT 5.1"]) #FindToolbar[movetotop]:after {
+	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]) #FindToolbar[movetotop]:after {
 		box-shadow: 	-2px -2px 0 -2px rgb(160,160,160),
 		                -7px -4px 0px -4px rgb(219,234,249),
 		                -6px -4px 0px -4px rgb(219,234,249);
 	}
 	
 	/* Rounded inner corners Windows XP */
-	window[oscpu="Windows NT 5.1"] #FindToolbar[movetotop]:before {
+	window[findbartweak-oscpu="Windows NT 5.1"] #FindToolbar[movetotop]:before {
 		box-shadow: 	2px -2px 0 -2px rgb(160,160,160),
 		                7px -4px 0px -4px -moz-dialog,
 		                6px -4px 0px -4px -moz-dialog;
 	}
-	window[oscpu="Windows NT 5.1"] #FindToolbar[movetotop]:after {
+	window[findbartweak-oscpu="Windows NT 5.1"] #FindToolbar[movetotop]:after {
 		box-shadow: 	-2px -2px 0 -2px rgb(160,160,160),
 		                -7px -4px 0px -4px -moz-dialog,
 		                -6px -4px 0px -4px -moz-dialog;
 	}
 	
 	/* Find Bar */
-	window[oscpu="Windows NT 5.1"]:not([theme="nasanightlaunch"]) #FindToolbar[movetotop] {
+	window[findbartweak-oscpu="Windows NT 5.1"]:not([theme="nasanightlaunch"]) #FindToolbar[movetotop] {
 		background-color: -moz-dialog;
 	}
 	
@@ -49,7 +49,7 @@
 		-moz-border-left-colors: rgb(160, 160, 160);
 	}
 	
-	#main-window:not([oscpu="Windows NT 5.1"]):not([theme="nasanightlaunch"]) #FindToolbar[movetotop] {
+	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]):not([theme="nasanightlaunch"]) #FindToolbar[movetotop] {
 		background-color: rgb(219,234,249);
 	}
 	
@@ -75,20 +75,20 @@
 	grid[anonid="findGrid"] {
 		width: 13px;
 	}
-	window:not([oscpu="Windows NT 5.1"]) grid[anonid="findGrid"]:not([gridSpacers="none"]) row.topSpacer[flex="0"],
-	window:not([oscpu="Windows NT 5.1"]) grid[anonid="findGrid"][gridSpacers="single"] row.bottomSpacer[flex="0"] {
+	window:not([findbartweak-oscpu="Windows NT 5.1"]) grid[anonid="findGrid"]:not([gridSpacers="none"]) row.topSpacer[flex="0"],
+	window:not([findbartweak-oscpu="Windows NT 5.1"]) grid[anonid="findGrid"][gridSpacers="single"] row.bottomSpacer[flex="0"] {
 		height: 18px;
 	}
-	window:not([oscpu="Windows NT 5.1"]) grid[anonid="findGrid"][gridSpacers="double"] row.bottomSpacer[flex="0"] {
+	window:not([findbartweak-oscpu="Windows NT 5.1"]) grid[anonid="findGrid"][gridSpacers="double"] row.bottomSpacer[flex="0"] {
 		height: 36px;
 	}
 	
 	/* Grid stuff Windows XP */
-	window[oscpu="Windows NT 5.1"] grid[anonid="findGrid"]:not([gridSpacers="none"]) row.topSpacer[flex="0"],
-	window[oscpu="Windows NT 5.1"] grid[anonid="findGrid"][gridSpacers="single"] row.bottomSpacer[flex="0"] {
+	window[findbartweak-oscpu="Windows NT 5.1"] grid[anonid="findGrid"]:not([gridSpacers="none"]) row.topSpacer[flex="0"],
+	window[findbartweak-oscpu="Windows NT 5.1"] grid[anonid="findGrid"][gridSpacers="single"] row.bottomSpacer[flex="0"] {
 		height: 17px;
 	}
-	window[oscpu="Windows NT 5.1"] grid[anonid="findGrid"][gridSpacers="double"] row.bottomSpacer[flex="0"] {
+	window[findbartweak-oscpu="Windows NT 5.1"] grid[anonid="findGrid"][gridSpacers="double"] row.bottomSpacer[flex="0"] {
 		height: 34px;
 	}
 }

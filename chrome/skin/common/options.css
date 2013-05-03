@@ -14,3 +14,7 @@ textbox[type="number"] input {
 	max-height: 200px;
 	margin: 20px 0;
 }
+
+.justify {
+	text-align: justify;
+}

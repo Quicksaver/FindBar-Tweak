@@ -1,4 +1,4 @@
-var defaultsVersion = '1.0.7';
+var defaultsVersion = '1.0.8';
 var objName = 'findbartweak';
 var objPathString = 'findbartweak';
 var prefList = {
@@ -32,6 +32,11 @@ var prefList = {
 	keepButtons: false,
 	FAYTmode: 'quick',
 	
+	/* to revert the builtin preferences */
+	FAYTtimeout: 5000,
+	FAYTenabled: false,
+	FAYToriginal: false,
+	
 	lwthemebgImage: '',
 	lwthemebgWidth: 0,
 	lwthemecolor: '',
@@ -58,6 +63,7 @@ function startConditions(aReason) {
 }
 
 function onStartup(aReason) {
+	moduleAid.load('builtinPrefs');
 	moduleAid.load('highlightColor');
 	moduleAid.load('compatibilityFix/sandboxFixes');
 	
@@ -83,4 +89,5 @@ function onShutdown(aReason) {
 	
 	moduleAid.unload('compatibilityFix/sandboxFixes');
 	moduleAid.unload('highlightColor');
+	moduleAid.unload('builtinPrefs');
 }

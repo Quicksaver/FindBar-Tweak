@@ -29,8 +29,8 @@
 			<preference id="pref-ctrlFCloses" name="extensions.findbartweak.ctrlFCloses" type="bool"/>
 			<preference id="pref-FAYTmode" name="extensions.findbartweak.FAYTmode" type="string"/>
 			<preference id="pref-keepButtons" name="extensions.findbartweak.keepButtons" type="bool"/>
-			<preference id="pref-timeout" name="accessibility.typeaheadfind.timeout" type="int"/>
-			<preference id="pref-typeaheadfind" name="accessibility.typeaheadfind" type="bool"/>
+			<preference id="pref-timeout" name="extensions.findbartweak.FAYTtimeout" type="int"/>
+			<preference id="pref-typeaheadfind" name="extensions.findbartweak.FAYTenabled" type="bool"/>
 		</preferences>
 		
 		<tabbox id="findbartweakTabBox">

@@ -1,4 +1,5 @@
 // This looks for file defaults.js in resource folder, expects:
+//	defaultsVersion - (string) version of defaults.js file, not mandatory but always helpful
 //	objName - (string) main object name for the add-on, to be added to window element
 //	objPathString - (string) add-on path name to use in URIs
 //	prefList: (object) { prefName: defaultValue } - add-on preferences

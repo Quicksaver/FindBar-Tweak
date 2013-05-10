@@ -80,24 +80,6 @@
 		background-image: none;
 	}
 	
-	/* The barlesque add-on forces no borders with !important tags, so I have to override them */
-	.barlesque-bar[findmode] #FindToolbar[movetotop] {
-		border-top: none !important;
-	}
-	#main-window:not([theme="nasanightlaunch"]) .barlesque-bar[findmode] #FindToolbar[movetotop] {
-		border-bottom: 1px solid rgb(0,0,0) !important;
-		border-right: 1px solid rgb(0,0,0) !important;
-		border-left: 1px solid rgb(0,0,0) !important;
-		-moz-border-bottom-colors: rgb(160, 160, 160) !important;
-		-moz-border-right-colors: rgb(160, 160, 160) !important;
-		-moz-border-left-colors: rgb(160, 160, 160) !important;
-	}
-	#main-window[theme="nasanightlaunch"] .barlesque-bar[findmode] #FindToolbar[movetotop] {
-		border-bottom: 1px solid rgb(0,0,0) !important;
-		border-right: 1px solid rgb(0,0,0) !important;
-		border-left: 1px solid rgb(0,0,0) !important;
-	}
-	
 	/* Grid stuff */
 	hbox[anonid="gridBox"] {
 		pointer-events: none;

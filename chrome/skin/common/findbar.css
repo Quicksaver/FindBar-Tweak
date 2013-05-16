@@ -126,4 +126,19 @@
 	#FindToolbar[movetotop][squareLook]:after {
 		display: none;
 	}
+	
+	/* For the toolbar button */
+	#findbartweak-button {
+		list-style-image: url("chrome://findbartweak/skin/button.png");
+	}
+	
+	#navigator-toolbox[iconsize="small"] :not(#TabsToolbar) .adequate-size .toolbarbutton-icon,
+	#navigator-toolbox[mode="full"] :not(#TabsToolbar) .adequate-size .toolbarbutton-icon {
+		height: 18px;
+	}
+	#navigator-toolbox:not([mode="full"])[iconsize="large"] :not(#TabsToolbar) .adequate-size .toolbarbutton-icon { height: 24px; }
+	
+	#TabsToolbar .adequate-size .toolbarbutton-icon { height: 20px; }
+	
+	#navigator-toolbox[iconsize=large][mode=icons] > :not(#TabsToolbar) > .adequate-size > .toolbarbutton-icon { padding: 2px 6px; }
 }

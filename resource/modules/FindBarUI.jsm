@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.3';
+moduleAid.VERSION = '1.1.4';
 
 this.doOpenOptions = function() {
 	openOptions();
@@ -44,6 +44,29 @@ this.triggerUIChange = function() {
 	dispatch(gFindBar, { type: 'FindBarUIChanged', cancelable: false });
 };
 
+// Handler for Ctrl+F, it closes the findbar if it is already opened
+this.ctrlF = function(event) {
+	if(!viewSource && window.TabView.isVisible()) {
+		window.TabView.enableSearch(event);
+	}
+	else {
+		if(gFindBar.hidden) {
+			gFindBar.onFindCommand();
+			gFindBar.open();
+			if(gFindBar._findField.value) {
+				gFindBar._setHighlightTimeout();
+			}
+		}
+		else {
+			gFindBar.close();
+		}
+	}
+};
+
+this.toggleButtonState = function(e) {
+	toggleAttribute($(objName+'-button'), 'checked', (e.type == 'OpenedFindBar'));
+};
+
 this.toggleClose = function() {
 	toggleAttribute(gFindBar, 'noClose', prefAid.hideClose);
 	triggerUIChange();
@@ -72,6 +95,8 @@ moduleAid.LOADMODULE = function() {
 	listenerAid.add(gFindBar, 'UpdatedUIFindBar', updateCSUI, false);
 	listenerAid.add(gFindBar, 'FoundFindBar', updateCSUI, false);
 	listenerAid.add(gFindBar, 'WillOpenFindBar', alwaysFindNormal, true);
+	listenerAid.add(gFindBar, 'OpenedFindBar', toggleButtonState);
+	listenerAid.add(gFindBar, 'ClosedFindBar', toggleButtonState);
 	
 	prefAid.listen('hideClose', toggleClose);
 	prefAid.listen('hideLabels', toggleLabels);
@@ -100,6 +125,8 @@ moduleAid.UNLOADMODULE = function() {
 	listenerAid.remove(gFindBar, 'UpdatedUIFindBar', updateCSUI, false);
 	listenerAid.remove(gFindBar, 'FoundFindBar', updateCSUI, false);
 	listenerAid.remove(gFindBar, 'WillOpenFindBar', alwaysFindNormal, true);
+	listenerAid.remove(gFindBar, 'OpenedFindBar', toggleButtonState);
+	listenerAid.remove(gFindBar, 'ClosedFindBar', toggleButtonState);
 	
 	if(UNLOADED) {
 		overlayAid.removeOverlayURI('chrome://browser/content/browser.xul', 'findbar');

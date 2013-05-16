@@ -1,5 +1,6 @@
 <!ENTITY Options.title "FindBar Tweak">
 <!ENTITY OptHighlights.label "Highlights">
+<!ENTITY OptSightsTab.label "Sights">
 <!ENTITY OptGeneral.label "General">
 <!ENTITY Optabout.label "About">
 
@@ -25,6 +26,8 @@
 <!ENTITY OptsightsStyle.label "Sights Style (click to preview):">
 <!ENTITY OptsightsStyle.focus "Focus Location">
 <!ENTITY OptsightsStyle.circle "Circle Location">
+<!ENTITY OptsightsColor.label "Sights Color">
+<!ENTITY OptsightsSameColor.label "Use the same color from highlights">
 
 <!ENTITY OpthideLabels.label "Hide button labels">
 <!ENTITY OpthideClose.label "Hide the Findbar close button">

@@ -19,6 +19,8 @@
 			<preference id="pref-sightsCurrent" name="extensions.findbartweak.sightsCurrent" type="bool"/>
 			<preference id="pref-sightsHighlights" name="extensions.findbartweak.sightsHighlights" type="bool"/>
 			<preference id="pref-sightsStyle" name="extensions.findbartweak.sightsStyle" type="string"/>
+			<preference id="pref-sightsSameColor" name="extensions.findbartweak.sightsSameColor" type="bool"/>
+			<preference id="pref-sightsColor" name="extensions.findbartweak.sightsColor" type="string"/>
 			<preference id="pref-movetoTop" name="extensions.findbartweak.movetoTop" type="bool"/>
 			<preference id="pref-movetoRight" name="extensions.findbartweak.movetoRight" type="bool"/>
 			<preference id="pref-hideClose" name="extensions.findbartweak.hideClose" type="bool"/>
@@ -37,6 +39,7 @@
 			<tabs id="tabsElement">
 				<tab id="generalTab" label="&OptGeneral.label;"/>
 				<tab id="highlightsTab" label="&OptHighlights.label;"/>
+				<tab id="sightsTab" label="&OptSightsTab.label;"/>
 				<tab id="aboutTab" label="&Optabout.label;"/>
 			</tabs>
 			
@@ -115,29 +118,6 @@
 				        </hbox>
 					</groupbox>
 					<groupbox align="center">
-						<caption label="&Optsights.label;"/>
-						<vbox align="start">
-							<checkbox label="&OptsightsCurrent.label;" preference="pref-sightsCurrent"/>
-							<checkbox label="&OptsightsHighlights.label;" preference="pref-sightsHighlights"/>
-							<description class="justify">&OptsightsHighlights.warning;</description>
-						</vbox>
-						<groupbox align="center">
-							<caption label="&OptsightsStyle.label;"/>
-							<radiogroup preference="pref-sightsStyle">
-								<hbox>
-									<radio dependson="pref-sightsCurrent;pref-sightsHighlights"
-										label="&OptsightsStyle.focus;"
-										value="focus"
-										oncommand="objName.previewSights(this, 'focus');"/>
-									<radio dependson="pref-sightsCurrent;pref-sightsHighlights"
-										label="&OptsightsStyle.circle;"
-										value="circle"
-										oncommand="objName.previewSights(this, 'circle');"/>
-								</hbox>
-							</radiogroup>
-						</groupbox>
-					</groupbox>
-					<groupbox align="center">
 						<caption>
 							<label value="&Optcolor.label;"/>
 							<label class="text-link"
@@ -146,6 +126,46 @@
 								value="&OptcolorReset.label;"/>
 						</caption>
 						<colorpicker id="color" type="button" preference="pref-highlightColor" style="width: 50px;"/>
+					</groupbox>
+				</tabpanel>
+				
+				<tabpanel id="sightsTab" orient="vertical">
+					<groupbox align="start">
+						<caption label="&Optsights.label;"/>
+						<checkbox label="&OptsightsCurrent.label;" preference="pref-sightsCurrent"/>
+						<checkbox label="&OptsightsHighlights.label;" preference="pref-sightsHighlights"/>
+						<description class="justify">&OptsightsHighlights.warning;</description>
+					</groupbox>
+					<groupbox align="center">
+						<caption label="&OptsightsStyle.label;"/>
+						<radiogroup preference="pref-sightsStyle">
+							<hbox>
+								<radio dependson="pref-sightsCurrent;pref-sightsHighlights"
+									label="&OptsightsStyle.focus;"
+									value="focus"
+									oncommand="objName.previewSights(this, 'focus');"/>
+								<radio dependson="pref-sightsCurrent;pref-sightsHighlights"
+									label="&OptsightsStyle.circle;"
+									value="circle"
+									oncommand="objName.previewSights(this, 'circle');"/>
+							</hbox>
+						</radiogroup>
+					</groupbox>
+					<groupbox align="center">
+						<caption>
+							<label value="&OptsightsColor.label;"/>
+							<label class="text-link"
+								href="#"
+								dependson="!pref-sightsSameColor,pref-sightsCurrent;pref-sightsHighlights"
+								onclick="if(!this.getAttribute('disabled')) { document.getElementById('pref-sightsColor').reset(); return false; }"
+								value="&OptcolorReset.label;"/>
+						</caption>
+						<checkbox dependson="pref-sightsCurrent;pref-sightsHighlights" label="&OptsightsSameColor.label;" preference="pref-sightsSameColor"/>
+						<colorpicker id="sightsColor"
+							dependson="!pref-sightsSameColor,pref-sightsCurrent;pref-sightsHighlights"
+							type="button"
+							preference="pref-sightsColor"
+							style="width: 50px;"/>
 					</groupbox>
 				</tabpanel>
 				

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.4';
+moduleAid.VERSION = '1.2.5';
 
 this.__defineGetter__('preferencesDialog', function() { return (typeof(inPreferences) != 'undefined' && inPreferences); });
 
@@ -300,7 +300,8 @@ this.sightsOnScroll = function() {
 this.sightsColor = function(forceSheet) {
 	if(!forceSheet && !prefAid.sightsCurrent && !prefAid.sightsHighlights) { return; }
 	
-	var m = (forceSheet) ? forceSheet.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i) : prefAid.highlightColor.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
+	var color = forceSheet || (!prefAid.sightsSameColor ? prefAid.sightsColor : prefAid.highlightColor);
+	var m = color.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
 	if(!m) { return; }
 	if(m[1].length === 6) { // 6-char notation
 		var rgb = {
@@ -359,7 +360,7 @@ this.sightsResizeViewSource = function() {
 };
 
 this.preferencesColorListener = function() {
-	sightsColor($('color').getAttribute('color'));
+	sightsColor($(!$('pref-sightsSameColor').value ? 'sightsColor' : 'color').getAttribute('color'));
 };
 
 this.toggleSightsCurrent = function() {
@@ -386,12 +387,16 @@ this.toggleSightsHighlights = function() {
 
 moduleAid.LOADMODULE = function() {
 	if(preferencesDialog) {
+		listenerAid.add($('pref-sightsSameColor'), 'change', preferencesColorListener);
 		objectWatcher.addAttributeWatcher($('color'), 'color', preferencesColorListener);
-		sightsColor($('color').getAttribute('color'));
+		objectWatcher.addAttributeWatcher($('sightsColor'), 'color', preferencesColorListener);
+		preferencesColorListener();
 		return;
 	}
 	
 	prefAid.listen('highlightColor', sightsColor);
+	prefAid.listen('sightsColor', sightsColor);
+	prefAid.listen('sightsSameColor', sightsColor);
 	prefAid.listen('sightsCurrent', toggleSightsCurrent);
 	prefAid.listen('sightsHighlights', toggleSightsHighlights);
 	
@@ -403,7 +408,9 @@ moduleAid.LOADMODULE = function() {
 moduleAid.UNLOADMODULE = function() {
 	if(preferencesDialog) {
 		styleAid.unload('sightsColorPref');
+		listenerAid.remove($('pref-sightsSameColor'), 'change', preferencesColorListener);
 		objectWatcher.removeAttributeWatcher($('color'), 'color', preferencesColorListener);
+		objectWatcher.removeAttributeWatcher($('sightsColor'), 'color', preferencesColorListener);
 		return;
 	}
 	
@@ -429,6 +436,8 @@ moduleAid.UNLOADMODULE = function() {
 	}
 	
 	prefAid.unlisten('highlightColor', sightsColor);
+	prefAid.unlisten('sightsColor', sightsColor);
+	prefAid.unlisten('sightsSameColor', sightsColor);
 	prefAid.unlisten('sightsCurrent', toggleSightsCurrent);
 	prefAid.unlisten('sightsHighlights', toggleSightsHighlights);
 	

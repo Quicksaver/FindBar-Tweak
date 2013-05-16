@@ -18,3 +18,8 @@ textbox[type="number"] input {
 .justify {
 	text-align: justify;
 }
+
+.text-link[disabled="true"] {
+	cursor: default;
+	text-decoration: none;
+}

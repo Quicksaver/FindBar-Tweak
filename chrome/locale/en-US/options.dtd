@@ -18,6 +18,10 @@
 <!ENTITY OptgridLimit.labelb "highlights">
 <!ENTITY OptminNoDelay.labela "Delay highlights if search term is shorter than">
 <!ENTITY OptminNoDelay.labelb "characters">
+<!ENTITY OptadjustGridPadding.labela "Adjust distance between the grid and the border:">
+<!ENTITY OptadjustGridPadding.labelb "pixels">
+<!ENTITY OptadjustGridWidth.labela "Adjust width of the grid:">
+<!ENTITY OptadjustGridWidth.labelb "pixels">
 
 <!ENTITY Optsights.label "Focus Sights">
 <!ENTITY OptsightsCurrent.label "Show sights on the current search hit">

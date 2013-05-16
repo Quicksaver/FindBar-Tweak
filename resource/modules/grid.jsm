@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.3';
+moduleAid.VERSION = '1.0.4';
 
 this.ROWS_MINIMUM = 150; // number of rows in the highlight grid - kind of the "highlight granularity"
 this.ROWS_MULTIPLIER = 2; // Add extra rows if their height exceeds this value
@@ -186,7 +186,33 @@ this.gridResizeViewSource = function() {
 	listenerAid.add(viewSource, 'resize', delayGridResizeViewSource);
 };
 
+this.adjustGrid = function() {
+	var defaultPadding = (Services.appinfo.OS == 'WINNT') ? 2 : 0;
+	var defaultWidth = (Services.appinfo.OS == 'WINNT') ? 13 : (Services.appinfo.OS == 'Darwin') ? 14 : 12;
+	
+	styleAid.unload('adjustGrid_'+_UUID);
+	
+	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
+	sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
+	sscode += '@-moz-document url("'+document.baseURI+'") {\n';
+	sscode += '	window['+objName+'_UUID="'+_UUID+'"] hbox[anonid="gridBox"] { padding-right: '+(defaultPadding +prefAid.gridAdjustPadding)+'px; }\n';
+	sscode += '	window['+objName+'_UUID="'+_UUID+'"] grid[anonid="findGrid"] { width: '+(defaultWidth +prefAid.gridAdjustWidth)+'px; }\n';
+	sscode += '}';
+	
+	styleAid.load('adjustGrid_'+_UUID, sscode, true);
+};
+
+moduleAid.LOADMODULE = function() {
+	prefAid.listen('gridAdjustPadding', adjustGrid);
+	prefAid.listen('gridAdjustWidth', adjustGrid);
+	adjustGrid();
+};
+
 moduleAid.UNLOADMODULE = function() {
+	prefAid.unlisten('gridAdjustPadding', adjustGrid);
+	prefAid.unlisten('gridAdjustWidth', adjustGrid);
+	styleAid.unload('adjustGrid_'+_UUID);
+	
 	listenerAid.remove(browserPanel, 'resize', delayResizeGridSpacers);
 	
 	if(!viewSource) {

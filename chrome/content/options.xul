@@ -16,6 +16,8 @@
 			<preference id="pref-useCounter" name="extensions.findbartweak.useCounter" type="bool"/>
 			<preference id="pref-useGrid" name="extensions.findbartweak.useGrid" type="bool"/>
 			<preference id="pref-gridLimit" name="extensions.findbartweak.gridLimit" type="int"/>
+			<preference id="pref-gridAdjustPadding" name="extensions.findbartweak.gridAdjustPadding" type="int"/>
+			<preference id="pref-gridAdjustWidth" name="extensions.findbartweak.gridAdjustWidth" type="int"/>
 			<preference id="pref-sightsCurrent" name="extensions.findbartweak.sightsCurrent" type="bool"/>
 			<preference id="pref-sightsHighlights" name="extensions.findbartweak.sightsHighlights" type="bool"/>
 			<preference id="pref-sightsStyle" name="extensions.findbartweak.sightsStyle" type="string"/>
@@ -115,6 +117,26 @@
 								max="10000"
 								preference="pref-gridLimit"/>
 				            <label dependson="pref-useGrid" value="&OptgridLimit.labelb;"/>
+				        </hbox>
+						<hbox>
+							<label dependson="pref-useGrid" value="&OptadjustGridPadding.labela;"/>
+							<textbox dependson="pref-useGrid"
+								type="number"
+								size="2"
+								min="-50"
+								max="50"
+								preference="pref-gridAdjustPadding"/>
+				            <label dependson="pref-useGrid" value="&OptadjustGridPadding.labelb;"/>
+				        </hbox>
+						<hbox>
+							<label dependson="pref-useGrid" value="&OptadjustGridWidth.labela;"/>
+							<textbox dependson="pref-useGrid"
+								type="number"
+								size="2"
+								min="-50"
+								max="50"
+								preference="pref-gridAdjustWidth"/>
+				            <label dependson="pref-useGrid" value="&OptadjustGridWidth.labelb;"/>
 				        </hbox>
 					</groupbox>
 					<groupbox align="center">

@@ -69,12 +69,6 @@
 	}
 	
 	/* Grid stuff */
-	hbox[anonid="gridBox"] {
-		padding-right: 2px;
-	}
-	grid[anonid="findGrid"] {
-		width: 13px;
-	}
 	window:not([findbartweak-oscpu="Windows NT 5.1"]) grid[anonid="findGrid"]:not([gridSpacers="none"]) row.topSpacer[flex="0"],
 	window:not([findbartweak-oscpu="Windows NT 5.1"]) grid[anonid="findGrid"][gridSpacers="single"] row.bottomSpacer[flex="0"] {
 		height: 18px;

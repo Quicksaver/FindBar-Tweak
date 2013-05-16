@@ -51,12 +51,6 @@
 	}
 	
 	/* Grid stuff */
-	hbox[anonid="gridBox"] {
-		padding-right: 0px;
-	}
-	grid[anonid="findGrid"] {
-		width: 14px;
-	}
 	grid[anonid="findGrid"]:not([gridSpacers="none"]) row.topSpacer[flex="0"],
 	grid[anonid="findGrid"][gridSpacers="single"] row.bottomSpacer[flex="0"] {
 		height: 0px;

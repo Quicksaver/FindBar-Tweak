@@ -12,7 +12,7 @@
 	
 	<toolbarpalette id="BrowserToolbarPalette">
 		<toolbarbutton id="objName-button"
-			class="toolbarbutton-1 chromeclass-toolbar-additional adequate-size"
+			class="toolbarbutton-1 chromeclass-toolbar-additional"
 			label="&ToolbarButton.label;"
 			tooltiptext="&ToolbarButton.tooltip;"
 			onload="if(document.getElementById('FindToolbar')) { if(!document.getElementById('FindToolbar').hidden) { this.setAttribute('checked', 'true'); } else { this.removeAttribute('checked'); } }"

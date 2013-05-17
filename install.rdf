@@ -54,7 +54,7 @@
 			<Description>
 				<em:locale>zh-CN</em:locale>
 				<em:name>FindBar Tweak</em:name>
-				<em:description>以您喜欢的方式调整查找栏</em:description>
+				<em:description>随您所好调整查找栏！</em:description>
 				<em:translator>http://t.qq.com/HeartBlade</em:translator>
 			</Description>
 		</em:localized>
@@ -63,7 +63,7 @@
 				<em:locale>zh-TW</em:locale>
 				<em:name>FindBar Tweak</em:name>
 				<em:description>依照您喜歡的方式調整搜尋列</em:description>
-				<em:translator>http://t.qq.com/HeartBlade</em:translator>
+				<em:translator>http://t.qq.com/HeartBlade, YFdyh000</em:translator>
 			</Description>
 		</em:localized>
 	</Description>

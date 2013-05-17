@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.3.8';
+moduleAid.VERSION = '1.3.9';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -165,6 +165,9 @@ this.moveTop = function() {
 	
 	forceCornerRedraw();
 	if(!viewSource) { findPersonaPosition(); }
+	
+	// Doing it aSync prevents the window elements from jumping at startup (stylesheet not loaded yet)
+	aSync(function() { setAttribute(gFindBar, 'movetotop', 'true'); });
 };
 
 this.forceCornerRedraw = function() {
@@ -361,10 +364,6 @@ moduleAid.LOADMODULE = function() {
 	
 	// Reposition the findbar when the window resizes
 	listenerAid.add(browserPanel, "browserPanelResized", delayMoveTop, false);
-	
-	// We need this to be first to "remove" the findbar from the bottombox so we can use correct values below
-	// Not true anymore, but now it's irrelevant, so I'm leaving it this way in case I need it again.
-	gFindBar.setAttribute('movetotop', 'true');
 	
 	moveTop();
 	

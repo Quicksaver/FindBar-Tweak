@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.5';
+moduleAid.VERSION = '1.1.6';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -220,6 +220,7 @@ moduleAid.LOADMODULE = function() {
 			dispatch(this, { type: 'FoundAgain', cancelable: false, detail: { aFindPrevious: aFindPrevious, retValue: ret } });
 			return ret;
 		}
+		return null;
 	};
 	
 	listenerAid.add(gFindBar, 'WillUpdateStatusFindBar', emptyNoFindUpdating);

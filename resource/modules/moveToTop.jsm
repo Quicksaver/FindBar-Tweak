@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.3.9';
+moduleAid.VERSION = '1.3.10';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -73,11 +73,11 @@ this.moveTopAsNeeded = function(e) {
 this.moveTop = function() {
 	// Bugfix: ensure these declarations only take effect when the stylesheet is loaded (from the overlay) as well.
 	// Otherwise, at startup, the browser would jump for half a second with empty space on the right.
-	if(!squareLookSpacer || gFindBar.getAttribute('context') != objPathString+'_findbarMenu') { return; }
+	if((prefAid.placeAbove && !squareLookSpacer) || gFindBar.getAttribute('context') != objPathString+'_findbarMenu') { return; }
 	
 	if(gFindBar.hidden) {
 		if(prefAid.placeAbove) { squareLookSpacer.hidden = true; }
-		return;
+		if(lastTopStyle) { return; } // always move it at least once to prevent the initial hangup
 	}
 	
 	moveTopStyle = {
@@ -126,7 +126,7 @@ this.moveTop = function() {
 		squareLookSpacer.style.height = moveTopStyle.marginTop +'px';
 		squareLookSpacer.hidden = false;
 	} else {
-		squareLookSpacer.hidden = true;
+		try{ squareLookSpacer.hidden = true; } catch(ex) {} // doesn't matter if this fails, it just means we're not using it
 	}
 	if(!shouldReMoveTop(moveTopStyle)) { return; }
 	lastTopStyle = moveTopStyle;
@@ -333,6 +333,12 @@ this.toggleSquareLook = function() {
 	}
 };
 
+this.setOnTop = function(e) {
+	if(!e.defaultPrevented) {
+		setAttribute(gFindBar, 'movetotop', 'true');
+	}
+};
+
 moduleAid.LOADMODULE = function() {
 	prefAid.listen('movetoRight', moveTop);
 	prefAid.listen('squareLook', toggleSquareLook);
@@ -343,6 +349,7 @@ moduleAid.LOADMODULE = function() {
 	toggleSquareLook();
 	
 	listenerAid.add(browserPanel, 'resize', browserPanelResized);
+	listenerAid.add(gFindBar, 'WillOpenFindBar', setOnTop);
 	listenerAid.add(gFindBar, 'OpenedFindBar', moveTop);
 	listenerAid.add(gFindBar, "UpdatedStatusFindBar", moveTopAsNeeded);
 	listenerAid.add(gFindBar, "HighlightCounterUpdated", moveTopAsNeeded);
@@ -389,6 +396,7 @@ moduleAid.UNLOADMODULE = function() {
 	listenerAid.remove(browserPanel, "browserPanelResized", delayMoveTop, false);
 	
 	listenerAid.remove(gFindBar, 'FindBarUIChanged', moveTopAsNeeded);
+	listenerAid.remove(gFindBar, 'WillOpenFindBar', setOnTop);
 	listenerAid.remove(gFindBar, 'OpenedFindBar', moveTop);
 	listenerAid.remove(gFindBar, "UpdatedStatusFindBar", moveTopAsNeeded);
 	listenerAid.remove(gFindBar, "HighlightCounterUpdated", moveTopAsNeeded);

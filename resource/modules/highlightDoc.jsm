@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.2';
+moduleAid.VERSION = '1.2.3';
 
 this.toggleCounter = function() {
 	moduleAid.loadIf('counter', prefAid.useCounter);
@@ -74,7 +74,9 @@ moduleAid.LOADMODULE = function() {
 		}
 		
 		var doc = win.document;
-		if(!doc || !(doc instanceof window.HTMLDocument) || !doc.body) {
+		// should be !(doc instanceof window.HTMLDocument) but this doesn't work in FF23
+		// see https://bugzilla.mozilla.org/show_bug.cgi?id=870423
+		if(!doc || !doc.defaultView || !(doc instanceof doc.defaultView.HTMLDocument) || !doc.body) {
 			return textFound;
 		}
 		

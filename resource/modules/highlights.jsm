@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.6';
+moduleAid.VERSION = '1.1.7';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -89,7 +89,7 @@ this.highlightsTabSelected = function() {
 this.highlightsContentLoaded = function(e) {
 	// this is the content document of the loaded page.
 	var doc = e.originalTarget;
-	if(doc instanceof window.HTMLDocument) {
+	if(doc.defaultView && doc instanceof doc.defaultView.HTMLDocument) {
 		// is this an inner frame?
 		// Find the root document:
 		while(doc.defaultView.frameElement) {

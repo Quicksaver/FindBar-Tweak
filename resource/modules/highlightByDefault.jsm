@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.1';
+moduleAid.VERSION = '1.1.2';
 
 this.highlightByDefault = function() {
 	gFindBar.getElement("highlight").checked = true;
@@ -7,7 +7,7 @@ this.highlightByDefault = function() {
 this.highlightByDefaultOnContentLoaded = function(e) {
 	// this is the content document of the loaded page.
 	var doc = e.originalTarget;
-	if(doc instanceof window.HTMLDocument) {
+	if(doc.defaultView && doc instanceof doc.defaultView.HTMLDocument) {
 		// is this an inner frame?
 		// Find the root document:
 		while(doc.defaultView.frameElement) {

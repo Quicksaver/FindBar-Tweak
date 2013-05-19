@@ -10,7 +10,7 @@ this._getFindBarHidden = function() { return gFindBar.hidden; };
 this.__defineGetter__('findBarHidden', function() { return _getFindBarHidden(); });
 this.__defineSetter__('findBarHidden', function(v) { return gFindBar.hidden = v; });
 
-moduleAid.LOADMODULE = function() { printO(gFindBar);
+moduleAid.LOADMODULE = function() {
 	gFindBar._open = gFindBar.open;
 	gFindBar.open = function(aMode) {
 		if(dispatch(gFindBar, { type: 'WillOpenFindBar', detail: aMode })) {

@@ -60,7 +60,7 @@
 							<vbox align="start">
 								<checkbox id="ctrlFClosesCheckbox" label="&OptctrlFCloses.win;" preference="pref-ctrlFCloses"/>
 								<checkbox label="&OptfindInTabs.label;" preference="pref-findInTabs"/>
-								<checkbox label="&OptalwaysOpenFIT.label;" preference="pref-alwaysOpenFIT"/>
+								<checkbox label="&OptalwaysOpenFIT.label;" dependson="pref-findInTabs" preference="pref-alwaysOpenFIT"/>
 							</vbox>
 						</hbox>
 					</groupbox>

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.1';
+moduleAid.VERSION = '1.0.2';
 
 this.__defineGetter__('FITresizer', function() { return $(objName+'-findInTabs-resizer'); });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -17,7 +17,7 @@ this.toggleFIT = function() {
 	
 	/* Open the findbar if it isn't already when opening FIT */
 	if(toggle && gFindBar.hidden) {
-		gFindBar.open();
+		ctrlF();
 	}
 	
 	FITbox.hidden = !toggle;
@@ -561,14 +561,25 @@ this.allStringsLength = function(list) {
 	return count;
 };
 
+this.alwaysOpenFIT = function() {
+	if(prefAid.alwaysOpenFIT && !gFindBar.hidden && FITbox.hidden) {
+		toggleFIT();
+	}
+};
+
 this.loadFindInTabs = function() {
 	addFITButton();
 	
+	listenerAid.add(gFindBar, 'OpenedFindBar', alwaysOpenFIT);
 	listenerAid.add(gFindBar, 'ClosedFindBar', closeFITWithFindBar);
 	listenerAid.add(gFindBar, 'FoundFindBar', shouldFindAll);
 	listenerAid.add(gFindBar, 'UpdatedUIFindBar', updateButtonKeepHidden, false);
 	listenerAid.add(gFindBar, 'FoundAgain', autoSelectFITtab);
 	listenerAid.add(gBrowser.tabContainer, 'TabSelect', autoSelectFITtab);
+	
+	prefAid.listen('alwaysOpenFIT', alwaysOpenFIT);
+	
+	alwaysOpenFIT();
 };
 
 moduleAid.LOADMODULE = function() {
@@ -585,11 +596,14 @@ moduleAid.UNLOADMODULE = function() {
 		gFindBar.getElement("findbar-container").removeChild(FITupdate);
 	}
 	
+	listenerAid.remove(gFindBar, 'OpenedFindBar', alwaysOpenFIT);
 	listenerAid.remove(gFindBar, 'ClosedFindBar', closeFITWithFindBar);
 	listenerAid.remove(gFindBar, 'FoundFindBar', shouldFindAll);
 	listenerAid.remove(gFindBar, 'UpdatedUIFindBar', updateButtonKeepHidden, false);
 	listenerAid.remove(gFindBar, 'FoundAgain', autoSelectFITtab);
 	listenerAid.remove(gBrowser.tabContainer, 'TabSelect', autoSelectFITtab);
+	
+	prefAid.unlisten('alwaysOpenFIT', alwaysOpenFIT);
 	
 	overlayAid.removeOverlayWindow(window, 'findInTabs');
 };

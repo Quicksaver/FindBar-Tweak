@@ -15,6 +15,7 @@
 			<preference id="pref-hideWhenFinderHidden" name="extensions.findbartweak.hideWhenFinderHidden" type="bool"/>
 			<preference id="pref-useCounter" name="extensions.findbartweak.useCounter" type="bool"/>
 			<preference id="pref-findInTabs" name="extensions.findbartweak.findInTabs" type="bool"/>
+			<preference id="pref-alwaysOpenFIT" name="extensions.findbartweak.alwaysOpenFIT" type="bool"/>
 			<preference id="pref-useGrid" name="extensions.findbartweak.useGrid" type="bool"/>
 			<preference id="pref-gridLimit" name="extensions.findbartweak.gridLimit" type="int"/>
 			<preference id="pref-gridAdjustPadding" name="extensions.findbartweak.gridAdjustPadding" type="int"/>
@@ -59,6 +60,7 @@
 							<vbox align="start">
 								<checkbox id="ctrlFClosesCheckbox" label="&OptctrlFCloses.win;" preference="pref-ctrlFCloses"/>
 								<checkbox label="&OptfindInTabs.label;" preference="pref-findInTabs"/>
+								<checkbox label="&OptalwaysOpenFIT.label;" preference="pref-alwaysOpenFIT"/>
 							</vbox>
 						</hbox>
 					</groupbox>

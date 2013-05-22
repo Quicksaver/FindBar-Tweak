@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.3';
+moduleAid.VERSION = '1.2.4';
 
 this.toggleCounter = function() {
 	moduleAid.loadIf('counter', prefAid.useCounter);
@@ -164,7 +164,7 @@ moduleAid.LOADMODULE = function() {
 			}
 		}
 		return textFound;
-	}
+	};
 	
 	prefAid.listen('useCounter', toggleCounter);
 	prefAid.listen('useGrid', toggleGrid);

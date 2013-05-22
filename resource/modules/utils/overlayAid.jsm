@@ -20,6 +20,8 @@ moduleAid.LAZY = true;
 //	If the overlay's element contains an position attribute, the element is added at the one-based index specified in this attribute.
 //	Otherwise, the element is added as the last child.
 // If you would like to remove an element that is already in the XUL file, create elements with removeelement attribute.
+// To move an already existant node to another place, add a newparent attribute with the id of the new parent element. If it exists, it will be moved there. This can be used
+//	together with insertafter, insertbefore and position attributes, which will be relative to the new parent and consequently new siblings.
 // For overlaying preferences dialogs, you can add new preferences in an unnamed <preferences> element. They will be added to an already existing <preferences> element if present,
 // or the whole element will be overlayed if not.
 // Elements with a getchildrenof attribute will inherit all the children from the elements specified by the comma-separated list of element ids.

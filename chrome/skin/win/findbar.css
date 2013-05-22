@@ -98,4 +98,9 @@
 	window:not([findbartweak-oscpu="Windows NT 5.1"]) #findbartweak-findInTabs-box[movetotop] {
 		background-color: rgb(219,234,249);
 	}
+	
+	window[findbartweak-oscpu="Windows NT 5.1"] #FindToolbar:not([hideLabels]) .findbar-tabs image,
+	window[findbartweak-oscpu="Windows NT 5.1"] #FindToolbar:not([hideLabels]) .findbar-tabs-update image {
+		margin: 0 5px 0 0;
+	}
 }

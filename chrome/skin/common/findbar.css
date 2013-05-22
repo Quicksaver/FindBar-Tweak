@@ -14,7 +14,7 @@
 	
 	#FindToolbar[hideLabels] toolbarbutton image,
 	#FindToolbar[hideLabels] checkbox image {
-		margin-right: 0;
+		margin: 0;
 	}
 	
 	#FindToolbar[movetotop] {
@@ -183,6 +183,14 @@
 	.findbar-tabs-update {
 		list-style-image: url("chrome://findbartweak/skin/findintabs.png");
 		-moz-image-region: rect(0px, 32px, 16px, 16px);
+	}
+	
+	.findbar-tabs image,
+	.findbar-tabs-update image {
+		min-height: 16px;
+		max-height: 16px;
+		background: none;
+		border: none;
 	}
 	
 	.findInTabs-list {

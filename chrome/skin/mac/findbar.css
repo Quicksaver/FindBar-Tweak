@@ -99,4 +99,9 @@
 		border-bottom: 1px solid rgba(0,0,0,0.32);
 		-moz-border-bottom-colors: rgba(0,0,0,0.32);
 	}
+	
+	#FindToolbar:not([hideLabels]) toolbarbutton image,
+	#FindToolbar:not([hideLabels]) toolbarbutton image {
+		margin: 0 0 0 4px;
+	}
 }

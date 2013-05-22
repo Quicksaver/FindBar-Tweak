@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.0';
+moduleAid.VERSION = '1.0.1';
 
 this.__defineGetter__('FITresizer', function() { return $(objName+'-findInTabs-resizer'); });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -41,7 +41,7 @@ this.addFITButton = function() {
 	if(!FITbutton) {
 		var button = document.createElement('toolbarbutton');
 		button.setAttribute('anonid', objName+'-find-tabs');
-		button.setAttribute('class', 'findbar-tabs tabbable findbar-no-find-fast');
+		button.setAttribute('class', 'findbar-highlight findbar-tabs tabbable findbar-no-find-fast');
 		button.setAttribute('observes', objName+'-findInTabs-broadcaster');
 		gFindBar.getElement("findbar-container").insertBefore(button, gFindBar.getElement('highlight'));
 	}
@@ -190,7 +190,7 @@ this.beginFITFind = function() {
 this.getFITTabs = function(aWindow) {
 	if(!aWindow.document.defaultView || !(aWindow.document instanceof aWindow.document.defaultView.HTMLDocument)) { return; }
 	
-	if(aWindow.document.baseURI != 'about:blank' && aWindow.document.readyState == "complete") {
+	if(aWindow.document.baseURI != 'about:blank' && aWindow.document.baseURI != 'chrome://browser/content/browser.xul' && aWindow.document.readyState == "complete") {
 		var newHits = document.createElement('richlistbox');
 		newHits.setAttribute('flex', '1');
 		newHits.onselect = selectFIThit;

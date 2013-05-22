@@ -23,3 +23,7 @@ textbox[type="number"] input {
 	cursor: default;
 	text-decoration: none;
 }
+
+tabpanel#aboutTab {
+	min-height: 400px;
+}

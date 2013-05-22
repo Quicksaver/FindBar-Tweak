@@ -1,12 +1,13 @@
-moduleAid.VERSION = '2.0.3';
+moduleAid.VERSION = '2.0.4';
 moduleAid.LAZY = true;
 
 // browserMediator - Aid object to track and perform tasks on all document browsers across the windows
-// callOnAll(aCallback, aURI, beforeComplete) - goes through every opened browser (tabs and sidebar) and executes aCallback on it
+// callOnAll(aCallback, aURI, beforeComplete, onlyTabs) - goes through every opened browser (tabs and sidebar) and executes aCallback on it
 //	aCallback - (function(aBrowser)) to be called on aBrowser
 //	(optional) aURI - (string) when defined, checks the documentURI property against the aURI value and only executes aCallback when true, defaults to null
 //	(optional) beforeComplete - 	true calls aCallback immediatelly regardless of readyState, false fires aCallback when window loads if readyState != complete, defaults to false
 //					see notes on windowMediator.register()
+//	(optional) onlyTabs - (bool) true only executes aCallback on actual tabs, not sidebars or others, defaults to (bool) false
 // register(aHandler, aTopic, aURI, beforeComplete) - registers aHandler to be notified of every aTopic
 //	aHandler - (function(aBrowser)) handler to be fired
 //	aTopic - (string) "pageshow" or (string) "pagehide" or (string) "SidebarFocused"
@@ -19,7 +20,7 @@ this.browserMediator = {
 	watchers: [],
 	
 	// expects aCallback() and sets its this as the window
-	callOnAll: function(aCallback, aURI, beforeComplete) {
+	callOnAll: function(aCallback, aURI, beforeComplete, onlyTabs) {
 		var browserEnumerator = Services.wm.getEnumerator('navigator:browser');
 		while(browserEnumerator.hasMoreElements()) {
 			var aWindow = browserEnumerator.getNext();
@@ -35,6 +36,8 @@ this.browserMediator = {
 						}
 					}
 				}
+				
+				if(onlyTabs) { continue; }
 				
 				// Customize panel in OS X
 				if(aWindow.document.getElementById('customizeToolbarSheetIFrame')

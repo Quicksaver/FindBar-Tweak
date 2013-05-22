@@ -85,4 +85,17 @@
 	window[findbartweak-oscpu="Windows NT 5.1"] grid[anonid="findGrid"][gridSpacers="double"] row.bottomSpacer[flex="0"] {
 		height: 34px;
 	}
+	
+	/* Find in Tabs */
+	window[findbartweak-oscpu="Windows NT 5.1"] #findbartweak-findInTabs-box[movetotop] {
+		background-color: -moz-dialog;
+	}
+	
+	#findbartweak-findInTabs-box[movetotop] {
+		border-bottom: 1px solid rgb(160, 160, 160);
+	}
+	
+	window:not([findbartweak-oscpu="Windows NT 5.1"]) #findbartweak-findInTabs-box[movetotop] {
+		background-color: rgb(219,234,249);
+	}
 }

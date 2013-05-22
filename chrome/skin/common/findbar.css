@@ -141,4 +141,80 @@
 	#TabsToolbar #findbartweak-button .toolbarbutton-icon { height: 20px; }
 	
 	#navigator-toolbox[iconsize=large][mode=icons] > :not(#TabsToolbar) > #findbartweak-button > .toolbarbutton-icon { padding: 2px 6px; }
+	
+	/* Find In Tabs */
+	#browser-bottombox[lwthemefooter="true"] {
+		background-repeat: repeat-y;
+	}
+	
+	#findbartweak-findInTabs-resizer {
+		-moz-appearance: none;
+		background: none;
+		height: 4px;
+	}
+	#findbartweak-findInTabs-resizer:not([movetotop]) {
+		margin-bottom: -4px;
+	}
+	#findbartweak-findInTabs-resizer[movetotop] {
+		margin-top: -4px;
+	}
+	
+	#findbartweak-findInTabs-box {
+		min-height: 20px;
+	}
+	
+	#findbartweak-findInTabs-box[movetotop] {
+		margin-top: -1px;
+	}
+	
+	#findbartweak-findInTabs-hits richlistitem {
+		padding: 0 5px;
+	}
+	#findbartweak-findInTabs-hits richlistitem label {
+		margin-left: 0;
+		margin-right: 0;
+	}
+	
+	.findbar-tabs {
+		list-style-image: url("chrome://findbartweak/skin/findintabs.png");
+		-moz-image-region: rect(0px, 16px, 16px, 0px);
+	}
+	
+	.findbar-tabs-update {
+		list-style-image: url("chrome://findbartweak/skin/findintabs.png");
+		-moz-image-region: rect(0px, 32px, 16px, 16px);
+	}
+	
+	.findInTabs-list {
+		min-width: 30px;
+		height: 100%;
+		padding: 3px;
+		overflow: hidden;
+	}
+	
+	.findInTabs-list listheader {
+		-moz-appearance: none;
+		background: none;
+		border: none;
+		box-shadow: none;
+		padding: 0;
+		pointer-events: none;
+	}
+	
+	.findInTabs-list listheader .hitsHeader {
+		text-align: center;
+	}
+	
+	.findInTabs-list listheader image {
+		display: none;
+	}
+	
+	.findInTabs-list image {
+		min-width: 16px;
+		max-height: 16px;
+	}
+	
+	.findInTabs-list .right {
+		text-align: end;
+	}
 }

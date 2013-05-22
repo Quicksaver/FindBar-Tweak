@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.3.11';
+moduleAid.VERSION = '1.3.12';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -251,6 +251,19 @@ this.stylePersonaFindBar = function() {
 		// There's just no way I can have rounded corners with personas
 		sscode += '	window['+objName+'_UUID="'+_UUID+'"] #FindToolbar[movetotop]:before, #FindToolbar[movetotop]:after { display: none !important; }\n';
 		
+		// Find in Tabs box
+		if(prefAid.findInTabs && typeof(FITbox) != 'undefined' && FITbox) {
+			sscode += '	window['+objName+'_UUID="'+_UUID+'"] #'+objName+'-findInTabs-box[movetotop] {\n';
+			sscode += '	  background-image: ' + prefAid.lwthemebgImage + ' !important;\n';
+			sscode += '	  background-color: ' + prefAid.lwthemecolor + ' !important;\n';
+			sscode += '	  color: ' + prefAid.lwthemecolor + ' !important;\n';
+			// The +1 comes from the box negative margin
+			sscode += '	  background-position: ' + (-(prefAid.lwthemebgWidth - mainWindow.clientWidth)) + 'px ' +(offsetPersonaY +FITbox.clientHeight)+ 'px !important;\n';
+			sscode += '	  background-repeat: repeat !important;\n';
+			sscode += '	  background-size: auto auto !important;\n';
+			sscode += '	}\n';
+		}
+		
 		sscode += '}';
 		
 		styleAid.load('personaFindBar_'+_UUID, sscode, true);
@@ -372,6 +385,9 @@ moduleAid.LOADMODULE = function() {
 	// Reposition the findbar when the window resizes
 	listenerAid.add(browserPanel, "browserPanelResized", delayMoveTop, false);
 	
+	// Move the FIT box to top as well
+	overlayAid.overlayURI('chrome://'+objPathString+'/content/findInTabs.xul', 'movetoTop_FIT');
+	
 	moveTop();
 	
 	if(!viewSource) {
@@ -380,6 +396,10 @@ moduleAid.LOADMODULE = function() {
 };
 
 moduleAid.UNLOADMODULE = function() {
+	if(UNLOADED || !prefAid.movetoTop) {
+		overlayAid.removeOverlayURI('chrome://'+objPathString+'/content/findInTabs.xul', 'movetoTop_FIT');
+	}
+	
 	if(!viewSource) {
 		observerAid.remove(findPersonaPosition, "lightweight-theme-changed");
 		

@@ -37,4 +37,10 @@
 		height: 32px;
 	}
 	
+	/* Find in Tabs */
+	#findbartweak-findInTabs-box[movetotop] {
+		background-color: -moz-dialog;
+		border-bottom: 1px solid rgb(0,0,0);
+		-moz-border-bottom-colors: rgb(178,174,170);
+	}
 }

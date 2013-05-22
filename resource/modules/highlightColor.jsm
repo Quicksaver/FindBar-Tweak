@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.0';
+moduleAid.VERSION = '1.0.1';
 
 this.uiBackup = {};
 
@@ -45,7 +45,24 @@ this.changeHighlightColor = function() {
 	prefAid.listen('textHighlightBackground', handleUIBackground);
 	prefAid.listen('textHighlightForeground', handleUIForeground);
 	
+	setColorStyleSheet(rgb);
+	
 	observerAid.notify('ReHighlightAll');
+};
+
+this.setColorStyleSheet = function(rgb) {
+	styleAid.unload('colorStyleSheet');
+	
+	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
+	sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
+	sscode += '@-moz-document url("chrome://browser/content/browser.xul") {\n';
+	sscode += '	.findInTabs-list label[highlight] {\n';
+	sscode += '		background-color: '+prefAid.highlightColor+';\n';
+	sscode += '		color: '+((0.213 * rgb.r + 0.715 * rgb.g + 0.072 * rgb.b < 0.5) ? '#FFFFFF' : '#000000')+';\n';
+	sscode += '	}\n';
+	sscode += '}';
+	
+	styleAid.load('colorStyleSheet', sscode, true);
 };
 
 moduleAid.LOADMODULE = function() {
@@ -58,6 +75,8 @@ moduleAid.LOADMODULE = function() {
 };
 
 moduleAid.UNLOADMODULE = function() {
+	styleAid.unload('colorStyleSheet');
+	
 	prefAid.unlisten('highlightColor', changeHighlightColor);
 	prefAid.unlisten('textHighlightBackground', handleUIBackground);
 	prefAid.unlisten('textHighlightForeground', handleUIForeground);

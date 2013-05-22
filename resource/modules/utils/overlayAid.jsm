@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.2.7';
+moduleAid.VERSION = '2.2.8';
 moduleAid.LAZY = true;
 
 // overlayAid - to use overlays in my bootstraped add-ons. The behavior is as similar to what is described in https://developer.mozilla.org/en/XUL_Tutorial/Overlays as I could manage.
@@ -1200,6 +1200,12 @@ this.overlayAid = {
 			}
 		}
 		
+		var newParent = null;
+		if(overlayNode.getAttribute('newparent')) {
+			newParent = aWindow.document.getElementById(overlayNode.getAttribute('newparent'));
+			if(newParent) { parent = newParent; }
+		}
+		
 		if(overlayNode.getAttribute('insertafter')) {
 			var idList = overlayNode.getAttribute('insertafter').split(',');
 			for(var i = 0; i < idList.length; i++) {
@@ -1236,7 +1242,7 @@ this.overlayAid = {
 			return this.insertBefore(aWindow, node, parent, sibling);
 		}
 		
-		if(!node.parentNode) {
+		if(!node.parentNode || newParent) {
 			return this.appendChild(aWindow, node, parent);
 		}
 		return node;

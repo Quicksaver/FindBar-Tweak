@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.5';
+moduleAid.VERSION = '1.2.6';
 
 this.__defineGetter__('preferencesDialog', function() { return (typeof(inPreferences) != 'undefined' && inPreferences); });
 
@@ -240,9 +240,11 @@ this.currentSights = function(e) {
 		}
 	}
 	
-	if(!gFindBar._findField.value || e.detail.retValue == gFindBar.nsITypeAheadFind.FIND_NOTFOUND) { return; }
+	// order could come from another window from FIT
+	if(e && e.detail && typeof(e.detail.retValue) != 'undefined') {
+		if(!gFindBar._findField.value || e.detail.retValue == gFindBar.nsITypeAheadFind.FIND_NOTFOUND) { return; }
+	}
 	
-	var contentWindow = gFindBar.browser._fastFind.currentWindow || gFindBar.browser.contentWindow;
 	if(!contentWindow) { return; } // Usually triggered when a selection is on a frame and the frame closes
 	
 	// Make sure the box updates its position and size when closing the find bar
@@ -367,9 +369,11 @@ this.toggleSightsCurrent = function() {
 	if(prefAid.sightsCurrent) {
 		listenerAid.add(gFindBar, 'FoundFindBar', currentSights);
 		listenerAid.add(gFindBar, 'FoundAgain', currentSights);
+		listenerAid.add(gFindBar, 'SelectedFIThit', currentSights);
 	} else {
 		listenerAid.remove(gFindBar, 'FoundFindBar', currentSights);
 		listenerAid.remove(gFindBar, 'FoundAgain', currentSights);
+		listenerAid.remove(gFindBar, 'SelectedFIThit', currentSights);
 	}
 	
 	observerAid.notify('ReHighlightAll');
@@ -416,6 +420,7 @@ moduleAid.UNLOADMODULE = function() {
 	
 	listenerAid.remove(gFindBar, 'FoundFindBar', currentSights);
 	listenerAid.remove(gFindBar, 'FoundAgain', currentSights);
+	listenerAid.remove(gFindBar, 'SelectedFIThit', currentSights);
 	listenerAid.remove(browserPanel, 'scroll', sightsOnScroll);
 	
 	if(!viewSource) {

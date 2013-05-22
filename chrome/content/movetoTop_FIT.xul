@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!DOCTYPE overlay SYSTEM "chrome://findbartweak/locale/findbar.dtd">
+<overlay id="findInTabs_overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	
+	<resizer id="objName-findInTabs-resizer" newparent="browser-panel" insertafter="navigator-toolbox" dir="bottom" movetotop="true" />
+	<hbox id="objName-findInTabs-box" newparent="browser-panel" insertafter="navigator-toolbox" movetotop="true" />
+	
+</overlay>

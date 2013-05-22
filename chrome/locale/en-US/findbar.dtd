@@ -1,3 +1,7 @@
 <!ENTITY MenuOptions.label "FindBar Options">
 <!ENTITY ToolbarButton.label "Toggle the FindBar">
-<!ENTITY ToolbarButton.tooltip "Click to open or close the FindBar">
+<!ENTITY ToolbarButton.tooltip "Open/Close the FindBar">
+
+<!ENTITY FITbutton.label "Find in All Tabs">
+<!ENTITY FITbutton.tooltip "Find the phrase in all opened tabs">
+<!ENTITY FITbutton.accesskey "T">

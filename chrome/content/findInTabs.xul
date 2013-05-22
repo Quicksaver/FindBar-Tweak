@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!DOCTYPE overlay SYSTEM "chrome://findbartweak/locale/findbar.dtd">
+<overlay id="findInTabs_overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	
+	<broadcasterset id="mainBroadcasterSet">
+		<broadcaster id="objName-findInTabs-broadcaster"
+			label="&FITbutton.label;"
+			tooltiptext="&FITbutton.tooltip;"
+			accesskey="&FITbutton.accesskey;"
+			type="checkbox"
+			autoCheck="false"
+			oncommand="objName.toggleFIT();" />
+	</broadcasterset>
+	
+	<window id="main-window">
+		<keyset id="objName-findInTabs-keyset">
+			<key id="objName-findInTabs-key"
+				keycode="VK_F3"
+				modifiers="alt"
+				oncommand="objName.commandUpdateFIT();" />
+		</keyset>
+	</window>
+	
+	<vbox id="browser-bottombox">
+		<resizer id="objName-findInTabs-resizer"
+			insertbefore="FindToolbar"
+			hidden="true"
+			dir="top"
+			element="objName-findInTabs-box"/>
+		<hbox id="objName-findInTabs-box"
+			insertafter="FindToolbar"
+			hidden="true"
+			height="200"
+			persist="height">
+			
+			<box id="objName-findInTabs-tabs" class="findInTabs-list" flex="1" width="400" persist="width" />
+			<splitter/>
+			<box id="objName-findInTabs-hits" class="findInTabs-list" flex="1" width="800" persist="width" />
+		</hbox>
+	</vbox>
+	
+</overlay>

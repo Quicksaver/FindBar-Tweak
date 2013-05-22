@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.4';
+moduleAid.VERSION = '1.1.5';
 
 this.doOpenOptions = function() {
 	openOptions();
@@ -8,7 +8,7 @@ this.updateButtonsUI = function() {
 	if(prefAid.keepButtons && gFindBar._findMode != gFindBar.FIND_NORMAL) {
 		var nodes = gFindBar.getElement("findbar-container").childNodes;
 		for(var i = 0; i < nodes.length; i++) {
-			if(nodes[i].className.indexOf("findbar-find-fast") != -1) { continue; }
+			if(nodes[i].className.indexOf("findbar-find-fast") != -1 || nodes[i].className.indexOf('findbar-no-find-fast') > -1) { continue; }
 			nodes[i].hidden = false;
 		}
 	}

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.1';
+moduleAid.VERSION = '1.0.2';
 
 this.__defineGetter__('findbarContainer', function() { return gFindBar.getElement('findbar-container'); });
 
@@ -36,13 +36,12 @@ this.moveHighlightsArray = function(level, highlights) {
 };
 
 this.fillHighlightCounter = function(e) {
-	if(e && e.detail.res && e.detail.res == gFindBar.nsITypeAheadFind.FIND_NOTFOUND) {
+	if(e && e.detail && e.detail.res && e.detail.res == gFindBar.nsITypeAheadFind.FIND_NOTFOUND) {
 		return;
 	}
 	
 	if(!linkedPanel._counterHighlights || linkedPanel._counterHighlights.length == 0) { return; }
 	
-	var contentWindow = gFindBar.browser._fastFind.currentWindow || gFindBar.browser.contentWindow;
 	if(!contentWindow) { return; } // Usually triggered when a selection is on a frame and the frame closes
 		
 	var editableNode = gFindBar.browser._fastFind.foundEditable;
@@ -63,7 +62,7 @@ this.fillHighlightCounter = function(e) {
 		linkedPanel._currentHighlight = 0;
 		
 		for(var i=start; i<linkedPanel._counterHighlights.length; i++) {
-			if(checkCurrentHighlight(contentWindow, sel.getRangeAt(0), linkedPanel._counterHighlights[i])) {
+			if(checkCurrentHighlight(sel.getRangeAt(0), linkedPanel._counterHighlights[i])) {
 				h = i+1;
 				linkedPanel._currentHighlight = i;
 				break;
@@ -72,7 +71,7 @@ this.fillHighlightCounter = function(e) {
 		
 		if(h == 0 && start > 0) {
 			for(var i=0; i<start; i++) {
-				if(checkCurrentHighlight(contentWindow, sel.getRangeAt(0), linkedPanel._counterHighlights[i])) {
+				if(checkCurrentHighlight(sel.getRangeAt(0), linkedPanel._counterHighlights[i])) {
 					h = i+1;
 					linkedPanel._currentHighlight = i;
 					break;
@@ -95,7 +94,7 @@ this.fillHighlightCounter = function(e) {
 	dispatch(gFindBar, { type: 'HighlightCounterUpdated', cancelable: false });
 };
 
-this.checkCurrentHighlight = function(contentWindow, current, highlight) {
+this.checkCurrentHighlight = function(current, highlight) {
 	if(highlight.contentWindow == contentWindow
 	&& highlight.startContainer == current.startContainer
 	&& highlight.startOffset == current.startOffset
@@ -107,12 +106,14 @@ this.checkCurrentHighlight = function(contentWindow, current, highlight) {
 };
 
 moduleAid.LOADMODULE = function() {
+	listenerAid.add(gFindBar, 'SelectedFIThit', fillHighlightCounter);
 	listenerAid.add(gFindBar, 'UpdatedStatusFindBar', fillHighlightCounter);
 	listenerAid.add(gFindBar, 'ToggledHighlight', alwaysUpdateStatusUI);
 	listenerAid.add(gFindBar, 'FoundFindBar', alwaysToggleHighlight);
 };
 
 moduleAid.UNLOADMODULE = function() {
+	listenerAid.remove(gFindBar, 'SelectedFIThit', fillHighlightCounter);
 	listenerAid.remove(gFindBar, 'UpdatedStatusFindBar', fillHighlightCounter);
 	listenerAid.remove(gFindBar, 'ToggledHighlight', alwaysUpdateStatusUI);
 	listenerAid.remove(gFindBar, 'FoundFindBar', alwaysToggleHighlight);

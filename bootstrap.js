@@ -28,7 +28,7 @@
 // disable() - disables the add-on, in general the add-on disabling itself is a bad idea so I shouldn't use it
 // Note: Firefox 8 is the minimum version supported as the bootstrap requires the chrome.manifest file to be loaded, which was implemented in Firefox 8.
 
-let bootstrapVersion = '1.2.10';
+let bootstrapVersion = '1.2.11';
 let UNLOADED = false;
 let STARTED = false;
 let Addon = {};
@@ -207,10 +207,6 @@ function disable() {
 
 function continueStartup(aReason) {
 	STARTED = aReason;
-	
-	// set add-on preferences defaults
-	prefAid.setDefaults(prefList);
-	
 	onStartup(aReason);
 }
 
@@ -226,6 +222,10 @@ function startup(aData, aReason) {
 	
 	// add resource:// protocol handler so I can access my modules
 	setResourceHandler();
+	
+	// set add-on preferences defaults
+	// This should come before startConditions() so we can use it in there
+	prefAid.setDefaults(prefList);
 	
 	// In the case of OmnibarPlus, I need the Omnibar add-on enabled for everything to work
 	if(startConditions(aReason)) {

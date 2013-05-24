@@ -36,11 +36,11 @@
 	}
 	
 	/* Find Bar */
-	window[findbartweak-oscpu="Windows NT 5.1"]:not([theme="nasanightlaunch"]) #FindToolbar[movetotop] {
+	window[findbartweak-oscpu="Windows NT 5.1"] #FindToolbar[movetotop] {
 		background-color: -moz-dialog;
 	}
 	
-	window:not([theme="nasanightlaunch"]) #FindToolbar[movetotop] {
+	#FindToolbar[movetotop] {
 		border-bottom: 1px solid rgb(0,0,0);
 		border-right: 1px solid rgb(0,0,0);
 		border-left: 1px solid rgb(0,0,0);
@@ -49,7 +49,7 @@
 		-moz-border-left-colors: rgb(160, 160, 160);
 	}
 	
-	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]):not([theme="nasanightlaunch"]) #FindToolbar[movetotop] {
+	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]) #FindToolbar[movetotop] {
 		background-color: rgb(219,234,249);
 	}
 	

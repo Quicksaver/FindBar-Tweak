@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.1.2';
+moduleAid.VERSION = '2.1.3';
 moduleAid.LAZY = true;
 
 // xmlHttpRequest(url, callback, method, async) - aid for quickly using the nsIXMLHttpRequest interface
@@ -128,19 +128,38 @@ this.closeCustomize = function() {
 	}, 'navigator:browser');
 };
 
-// replaceObjStrings(node) - replace all objName and objPathString references in the node attributes and its children with the proper names
+// replaceObjStrings(node, prop) - replace all objName, objPathString and UserAgentLocale references in the node attributes and its children with the proper names
 //	node - (xul element) to replace the strings in
-this.replaceObjStrings = function(node) {
+//	(optional) prop - (string) if specified, instead of checking attributes, it will check for node.prop for occurences of what needs to be replaced. This will not check child nodes.
+this.replaceObjStrings = function(node, prop) {
 	if(!node) { return; }
+	
+	if(prop) {
+		if(!node[prop]) { return; }
+		
+		while(node[prop].indexOf('objName') > -1) {
+			node[prop] = node[prop].replace('objName', objName);
+		}
+		while(node[prop].indexOf('objPathString') > -1) {
+			node[prop] = node[prop].replace('objPathString', objPathString);
+		}
+		while(node[prop].indexOf('UserAgentLocale') > -1) {
+			node[prop] = node[prop].replace('UserAgentLocale', UserAgentLocale);
+		}
+		
+		return;
+	}
 	
 	if(node.attributes) {
 		for(var a=0; a<node.attributes.length; a++) {
-			// Replace objName with this objName in every attribute
 			while(node.attributes[a].value.indexOf('objName') > -1) {
 				node.attributes[a].value = node.attributes[a].value.replace('objName', objName);
 			}
 			while(node.attributes[a].value.indexOf('objPathString') > -1) {
 				node.attributes[a].value = node.attributes[a].value.replace('objPathString', objPathString);
+			}
+			while(node.attributes[a].value.indexOf('UserAgentLocale') > -1) {
+				node.attributes[a].value = node.attributes[a].value.replace('UserAgentLocale', UserAgentLocale);
 			}
 		}
 	}

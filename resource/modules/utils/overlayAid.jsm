@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.2.8';
+moduleAid.VERSION = '2.2.9';
 moduleAid.LAZY = true;
 
 // overlayAid - to use overlays in my bootstraped add-ons. The behavior is as similar to what is described in https://developer.mozilla.org/en/XUL_Tutorial/Overlays as I could manage.
@@ -82,6 +82,7 @@ this.overlayAid = {
 					return;
 				}
 				
+				replaceObjStrings(overlayAid.overlays[i].document);
 				overlayAid.cleanXUL(overlayAid.overlays[i].document, overlayAid.overlays[i]);
 				overlayAid.overlays[i].ready = true;
 				windowMediator.callOnAll(overlayAid.scheduleAll);
@@ -153,6 +154,7 @@ this.overlayAid = {
 					return;
 				}
 				
+				replaceObjStrings(aWindow['_OVERLAYS_'+objName][i].document);
 				overlayAid.cleanXUL(aWindow['_OVERLAYS_'+objName][i].document, aWindow['_OVERLAYS_'+objName][i]);
 				aWindow['_OVERLAYS_'+objName][i].ready = true;
 				overlayAid.scheduleAll(aWindow);
@@ -206,23 +208,11 @@ this.overlayAid = {
 	},
 	
 	cleanXUL: function(node, overlay) {
-		if(node.attributes) {
-			for(var a = 0; a < node.attributes.length; a++) {
-				// Replace objName with this objName in every attribute
-				while(node.attributes[a].value.indexOf('objName') > -1) {
-					node.attributes[a].value = node.attributes[a].value.replace('objName', objName);
-				}
-				while(node.attributes[a].value.indexOf('objPathString') > -1) {
-					node.attributes[a].value = node.attributes[a].value.replace('objPathString', objPathString);
-				}
-				
-				if(node.attributes[a].name == 'persist' && node.id) {
-					var persists = node.attributes[a].value.split(' ');
-					overlay.persist[node.id] = {};
-					for(var p=0; p<persists.length; p++) {
-						overlay.persist[node.id][persists[p]] = true;
-					}
-				}
+		if(node.attributes && node.getAttribute('persist') && node.id) {
+			var persists = node.getAttribute('persist').split(' ');
+			overlay.persist[node.id] = {};
+			for(var p=0; p<persists.length; p++) {
+				overlay.persist[node.id][persists[p]] = true;
 			}
 		}
 		
@@ -234,12 +224,7 @@ this.overlayAid = {
 		}
 		
 		if(node.nodeName == 'xml-stylesheet') {
-			while(node.textContent.indexOf('objName') > -1) {
-				node.textContent = node.textContent.replace('objName', objName);
-			}
-			while(node.textContent.indexOf('objPathString') > -1) {
-				node.textContent = node.textContent.replace('objPathString', objPathString);
-			}
+			replaceObjStrings(node, 'textContent');
 		}
 		
 		var curChild = node.firstChild;

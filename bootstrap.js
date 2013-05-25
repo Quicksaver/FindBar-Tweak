@@ -28,11 +28,12 @@
 // disable() - disables the add-on, in general the add-on disabling itself is a bad idea so I shouldn't use it
 // Note: Firefox 8 is the minimum version supported as the bootstrap requires the chrome.manifest file to be loaded, which was implemented in Firefox 8.
 
-let bootstrapVersion = '1.2.11';
+let bootstrapVersion = '1.2.12';
 let UNLOADED = false;
 let STARTED = false;
 let Addon = {};
 let AddonData = null;
+let UserAgentLocale = 'en-US';
 let observerLOADED = false;
 let onceListeners = [];
 
@@ -222,6 +223,9 @@ function startup(aData, aReason) {
 	
 	// add resource:// protocol handler so I can access my modules
 	setResourceHandler();
+	
+	// Get the current application locale
+	UserAgentLocale = Services.fuel.prefs.get('general.useragent.locale').value;
 	
 	// set add-on preferences defaults
 	// This should come before startConditions() so we can use it in there

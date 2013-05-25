@@ -213,7 +213,7 @@
 						<description class="closer">&findbartweakabout.name;</description>
 						<description>&findbartweakabout.by;</description>
 						<description class="justify">&findbartweakabout.desc;</description>
-						<label class="text-link closer" href="https://addons.mozilla.org/en-US/firefox/addon/findbar-tweak/" value="&findbartweakabout.home;"/>
+						<label class="text-link closer" href="https://addons.mozilla.org/UserAgentLocale/firefox/addon/findbar-tweak/" value="&findbartweakabout.home;"/>
 						<label class="text-link closer" href="https://github.com/Quicksaver/FindBar-Tweak/issues" value="&findbartweakabout.tech;"/>
 					</vbox>
 				</tabpanel>

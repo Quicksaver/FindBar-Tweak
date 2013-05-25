@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.4';
+moduleAid.VERSION = '1.2.5';
 
 this.toggleCounter = function() {
 	moduleAid.loadIf('counter', prefAid.useCounter);
@@ -80,7 +80,9 @@ moduleAid.LOADMODULE = function() {
 			return textFound;
 		}
 		
-		if(aHighlight || aLevel) {
+		// Bugfix: when using neither the highlights nor the counter, toggling the highlights off would trigger the "Phrase not found" status
+		// because textFound would never have had the chance to be verified. This doesn't need to happen if a frame already triggered the found status.
+		if(aHighlight || aLevel || !textFound) {
 			var searchRange = doc.createRange();
 			searchRange.selectNodeContents(doc.body);
 			
@@ -95,9 +97,13 @@ moduleAid.LOADMODULE = function() {
 			finder.caseSensitive = this._shouldBeCaseSensitive(aWord);
 			
 			while((retRange = finder.Find(aWord, searchRange, startPt, endPt))) {
+				textFound = true;
+				
+				// We can stop now if all we're looking for is the found status
+				if(!aHighlight && !aLevel) { break; }
+				
 				startPt = retRange.cloneRange();
 				startPt.collapse(false);
-				textFound = true;
 				
 				if(aHighlight) {
 					this._highlight(retRange, controller);

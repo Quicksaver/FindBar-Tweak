@@ -88,6 +88,14 @@
 		-moz-image-region: rect(32px 32px 48px 16px) !important;
 	}
 	
+	.findbar-cs-button:not([checked="true"]) {
+		-moz-image-region: rect(16px 16px 32px 0px);
+	}
+	
+	#FindToolbar[hideLabels] toolbarbutton[anonid="highlight"] image {
+		margin: 3px 0;
+	}
+	
 	/* Find in Tabs */
 	#findbartweak-findInTabs-box[movetotop] {
 		background-color: -moz-mac-chrome-active;

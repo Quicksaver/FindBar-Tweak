@@ -1,4 +1,7 @@
-moduleAid.VERSION = '1.1.5';
+moduleAid.VERSION = '1.1.6';
+
+this.__defineGetter__('findCSButton', function() { return gFindBar.getElement(objName+'-find-cs-button'); });
+this.__defineGetter__('findCSCheckbox', function() { return gFindBar.getElement('find-case-sensitive'); });
 
 this.doOpenOptions = function() {
 	openOptions();
@@ -63,6 +66,19 @@ this.ctrlF = function(event) {
 	}
 };
 
+this.csButtonCommand = function(e) {
+	if(e.which != 0) {
+		e.preventDefault();
+		e.stopPropagation();
+		return false;
+	}
+	
+	findCSCheckbox.checked = !findCSCheckbox.checked;
+	toggleAttribute(findCSButton, 'checked', findCSCheckbox.checked);
+  	gFindBar._setCaseSensitivity(findCSCheckbox.checked);
+	return true;
+};
+
 this.toggleButtonState = function(e) {
 	toggleAttribute($(objName+'-button'), 'checked', (e.type == 'OpenedFindBar'));
 };
@@ -73,6 +89,19 @@ this.toggleClose = function() {
 };
 
 this.toggleLabels = function() {
+	if(prefAid.hideLabels && !findCSButton) {
+		var button = document.createElement('toolbarbutton');
+		button.setAttribute('anonid', objName+'-find-cs-button');
+		button.setAttribute('class', 'findbar-highlight findbar-cs-button tabbable');
+		button.setAttribute('tooltiptext', findCSCheckbox.getAttribute('label'));
+		toggleAttribute(button, 'checked', prefAid.casesensitive);
+		gFindBar.getElement("findbar-container").insertBefore(button, findCSCheckbox);
+		listenerAid.add(findCSButton, 'command', csButtonCommand, true);
+	} else if(!prefAid.hideLabels && findCSButton) {
+		listenerAid.remove(findCSButton, 'command', csButtonCommand, true);
+		findCSButton.parentNode.removeChild(findCSButton);
+	}
+	
 	toggleAttribute(gFindBar, 'hideLabels', prefAid.hideLabels);
 	triggerUIChange();
 };
@@ -86,6 +115,9 @@ this.toggleMoveToRight = function(startup) {
 };
 	
 moduleAid.LOADMODULE = function() {
+	// For the case-sensitive button
+	prefAid.setDefaults({ casesensitive: 0 }, 'typeaheadfind', 'accessibility');
+	
 	// The dummy function in this call prevents a weird bug where the overlay wouldn't be properly applied when opening a second window... for some reason...
 	overlayAid.overlayURI('chrome://browser/content/browser.xul', 'findbar', function(window) { window.gFindBar; });
 	overlayAid.overlayURI('chrome://global/content/viewSource.xul', 'findbar');
@@ -120,6 +152,11 @@ moduleAid.UNLOADMODULE = function() {
 	removeAttribute(gFindBar, 'noClose');
 	removeAttribute(gFindBar, 'hideLabels');
 	removeAttribute(gFindBar, 'movetoright');
+	
+	if(findCSButton) {
+		listenerAid.remove(findCSButton, 'command', csButtonCommand, true);
+		findCSButton.parentNode.removeChild(findCSButton);
+	}
 	
 	listenerAid.remove(gFindBar, 'UpdatedUIFindBar', updateButtonsUI, false);
 	listenerAid.remove(gFindBar, 'UpdatedUIFindBar', updateCSUI, false);

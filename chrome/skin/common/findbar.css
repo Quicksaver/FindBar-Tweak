@@ -8,6 +8,7 @@
 
 	#FindToolbar[hideLabels] toolbarbutton label,
 	#FindToolbar[hideLabels] checkbox label,
+	#FindToolbar[hideLabels] checkbox[anonid="find-case-sensitive"],
 	#FindToolbar[noClose] .findbar-closebutton {
 		display: none;
 	}
@@ -36,6 +37,12 @@
 	#FindToolbar:not([movetotop])[movetoright] > hbox.findbar-container > * {
 		position: static;
 		text-align: start;
+	}
+	
+	.findbar-cs-button {
+		list-style-image: url("chrome://findbartweak/skin/toolbar.png");
+		-moz-image-region: rect(0px 16px 16px 0px);
+		margin-right: 3px;
 	}
 	
 	/* Rounded inner corners */
@@ -162,7 +169,8 @@
 	}
 	
 	.findbar-tabs image,
-	.findbar-tabs-update image {
+	.findbar-tabs-update image,
+	.findbar-cs-button image {
 		min-height: 16px;
 		max-height: 16px;
 		background: none;

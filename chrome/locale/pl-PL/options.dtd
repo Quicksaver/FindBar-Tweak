@@ -1,0 +1,60 @@
+<!ENTITY Options.title "FindBar Tweak">
+<!ENTITY OptHighlights.label "Podświetlanie">
+<!ENTITY OptSightsTab.label "Sygnalizowanie">
+<!ENTITY OptGeneral.label "Ogólne">
+<!ENTITY Optabout.label "Informacja">
+
+<!ENTITY Optgen.label "Findbar - Opcje">
+<!ENTITY Optdisplay.label "Wyświetl ustawienia">
+<!ENTITY Optgrid.label "Znaczniki paska przewijania">
+
+<!ENTITY OpthighlightByDefault.label "Podświetlaj domyślnie wszystkie znalezione frazy">
+<!ENTITY OpthideWhenFinderHidden.label "Czyść podświetlenia po zamknięciu paska wyszukiwania">
+<!ENTITY OptgridInScrollbar.label "Zaznaczaj kolorem lokalizacje wyników na pasku przewijania">
+<!ENTITY OptuseCounter.label "Wyświetlaj ilość wyników na pasku">
+<!ENTITY OptfindInTabs.label "Włącz 'Znajdź w kartach'">
+<!ENTITY OptalwaysOpenFIT.label "Otwieraj 'Znajdź w kartach' razem z paskiem wyszukiwania">
+<!ENTITY Optcolor.label "Kolor podświetlania">
+<!ENTITY OptcolorReset.label "(resetuj)">
+<!ENTITY OptgridLimit.labela "Nie pokazuj znaczników, gdy podświetleń jest więcej">
+<!ENTITY OptgridLimit.labelb "">
+<!ENTITY OptminNoDelay.labela "Opóźniaj podświetlenia, gdy zapytanie jest krótsze niż">
+<!ENTITY OptminNoDelay.labelb "znaki(ów)">
+<!ENTITY OptadjustGridPadding.labela "Dostosuj odległość między krawędzią a znacznikami:">
+<!ENTITY OptadjustGridPadding.labelb "pikseli">
+<!ENTITY OptadjustGridWidth.labela "Dostosuj szerokość znaczników:">
+<!ENTITY OptadjustGridWidth.labelb "pikseli">
+
+<!ENTITY Optsights.label "Sygnalizuj wyniki">
+<!ENTITY OptsightsCurrent.label "Wskazuj efektem graficznym lokalizację aktualnego trafienia">
+<!ENTITY OptsightsHighlights.label "Sygnalizuj wszystkie znalezione frazy (*)">
+<!ENTITY OptsightsHighlights.warning "(*) Uwaga: To może znacznie zająć zasoby komputera! Renderowanie i przewijanie stron może stać się powolne!">
+<!ENTITY OptsightsStyle.label "Styl sygnalizowania (kliknij, aby zobaczyć):">
+<!ENTITY OptsightsStyle.focus "Skupianie">
+<!ENTITY OptsightsStyle.circle "Okrąg">
+<!ENTITY OptsightsColor.label "Kolor sygnalizowania">
+<!ENTITY OptsightsSameColor.label "Ten sam kolor co podświetlenia">
+
+<!ENTITY OpthideLabels.label "Ukrywaj etykiety przycisków">
+<!ENTITY OpthideClose.label "Ukrywaj przycisk zamykania paska">
+<!ENTITY OptmovetoTop.label "Przenieś pasek wyszukiwania do góry">
+<!ENTITY OptmovetoRight.label "Pokazuj po prawej stronie">
+<!ENTITY OptblurCloses.label "Zamykaj pasek, gdy traci on fokus">
+<!ENTITY OptperTab.label "Nie pokazuj paska przy otwieraniu nowych kart">
+<!ENTITY OptonStartup.label "Pamiętaj stan pokazania/schowania paska przy starcie">
+
+<!ENTITY OptkeepButtons.label "Pokazuj przyciski w 'Znajdź szybko'">
+<!ENTITY OptFAYT.label "Rozpoczynaj wyszukiwanie podczas wpisywania tekstu">
+<!ENTITY OptFAYTTimeout.beforeLabel "Automatycznie zamykaj po">
+<!ENTITY OptFAYTTimeout.afterLabel "sekundach">
+<!ENTITY OptFAYTmode.quickFind "Używaj paska do wyszukiwania szybkiego, jeśli nie jest otwarty">
+<!ENTITY OptFAYTmode.normalFind "Zawsze używaj zwykłego paska wyszukiwania">
+
+<!ENTITY OptctrlFCloses.win "Ctrl+F zamyka także pasek wyszukiwania">
+<!ENTITY OptctrlFCloses.mac "Command+F zamyka także pasek wyszukiwania">
+
+<!ENTITY findbartweakabout.name "FindBar Tweak">
+<!ENTITY findbartweakabout.by "by Quicksaver">
+<!ENTITY findbartweakabout.desc "Wszelkie informacje o tym dodatku i jego twórcy można znaleźć na stronie dodatków Mozilli. Jeśli podoba Ci się ten dodatek, proszę rozważ napisanie opinii o nim lub wysłanie niewielkiej kwoty, aby pomóc weprzeć dalszy rozwój dodatku. Zgłoszenia błędów i sugestie można wysyłać na stronie wsparcia technicznego.">
+<!ENTITY findbartweakabout.home "Strona domowa dodatku">
+<!ENTITY findbartweakabout.tech "Wsparcie techniczne">

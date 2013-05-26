@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.7';
+moduleAid.VERSION = '1.1.8';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -207,6 +207,11 @@ moduleAid.LOADMODULE = function() {
 	
 	gFindBar._toggleHighlight = gFindBar.toggleHighlight;
 	gFindBar.toggleHighlight = function(aHighlight) {
+		// Bugfix: with PDF.JS find would not work because it would hang when checking for PDFView.pdfDocument.numPages when PDFView.pdfDocument was still null.
+		if(isPDFJS && contentDocument.readyState != 'complete') {
+			return;
+		}
+		
 		if(dispatch(gFindBar, { type: 'WillToggleHighlight', detail: aHighlight })) {
 			this._toggleHighlight(aHighlight);
 			dispatch(this, { type: 'ToggledHighlight', detail: aHighlight, cancelable: false });

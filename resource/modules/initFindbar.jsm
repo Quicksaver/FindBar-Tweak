@@ -1,10 +1,11 @@
-moduleAid.VERSION = '1.1.7';
+moduleAid.VERSION = '1.1.8';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
 this.__defineGetter__('linkedPanel', function() { return (viewSource) ? $('appcontent') : $(gBrowser.mCurrentTab.linkedPanel); });
 this.__defineGetter__('contentDocument', function() { return (!viewSource) ? gBrowser.mCurrentBrowser.contentDocument : $('content').contentDocument; });
 this.__defineGetter__('contentWindow', function() { return gFindBar.browser._fastFind.currentWindow || gFindBar.browser.contentWindow; });
+this.__defineGetter__('isPDFJS', function() { return (contentDocument.contentType == 'application/pdf' && contentDocument.baseURI == 'resource://pdf.js/web/'); });
 this.__defineGetter__('browserPanel', function() { return $('browser-panel') || viewSource; });
 
 this._getFindBarHidden = function() { return gFindBar.hidden; };

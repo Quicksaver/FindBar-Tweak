@@ -63,6 +63,19 @@ this.setColorStyleSheet = function(rgb) {
 	sscode += '}';
 	
 	styleAid.load('colorStyleSheet', sscode, true);
+	
+	// For PDF.JS
+	var r = Math.round(rgb.r *255);
+	var g = Math.round(rgb.g *255);
+	var b = Math.round(rgb.b *255);
+	
+	styleAid.unload('otherColorStyleSheet');
+	
+	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
+	sscode += '@namespace url(http://www.w3.org/1999/xhtml);\n';
+	sscode += 'body #outerContainer #mainContainer #viewerContainer .textLayer .highlight:not(.selected) { background-color: rgba('+r+','+g+','+b+',0.3) !important; }\n';
+	
+	styleAid.load('otherColorStyleSheet', sscode, true);
 };
 
 moduleAid.LOADMODULE = function() {
@@ -76,6 +89,7 @@ moduleAid.LOADMODULE = function() {
 
 moduleAid.UNLOADMODULE = function() {
 	styleAid.unload('colorStyleSheet');
+	styleAid.unload('otherColorStyleSheet');
 	
 	prefAid.unlisten('highlightColor', changeHighlightColor);
 	prefAid.unlisten('textHighlightBackground', handleUIBackground);

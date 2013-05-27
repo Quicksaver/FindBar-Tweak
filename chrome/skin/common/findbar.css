@@ -79,6 +79,10 @@
 		height: 0px;
 	}
 	
+	grid[anonid="findGrid"] row[pattern] {
+		background-image: url("chrome://findbartweak/skin/pattern.gif");
+	}
+	
 	/* Grid for the View Source window */
 	#viewSource hbox[anonid="gridBox"] {
 		position: fixed !important;

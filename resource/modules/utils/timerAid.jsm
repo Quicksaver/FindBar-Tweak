@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.0.2';
+moduleAid.VERSION = '2.0.3';
 moduleAid.LAZY = true;
 
 // timerAid - Object to aid in setting, initializing and cancelling timers
@@ -27,10 +27,11 @@ this.timerAid = {
 			handler: aFunc
 		};
 		this.timers[aName].timer.init(function(aSubject, aTopic, aData) {
-			timerAid.timers[aName].handler.call(self, aSubject, aTopic, aData);
+			var handler = timerAid.timers[aName].handler;
 			if(typeof(timerAid) != 'undefined' && aSubject.type == Ci.nsITimer.TYPE_ONE_SHOT) {
 				timerAid.cancel(aName);
 			}
+			handler.call(self, aSubject, aTopic, aData);
 		}, aDelay, type);
 		
 		this.__defineGetter__(aName, function() { return this.timers[aName]; });

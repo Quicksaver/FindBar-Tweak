@@ -1,4 +1,56 @@
-moduleAid.VERSION = '1.2.5';
+moduleAid.VERSION = '1.3.0';
+
+this.alwaysUpdateStatusUI = function(e) {
+	// toggleHighlight() doesn't update the UI in these conditions, we need it to, to update the counter (basically hide it)
+	if(e.detail && !gFindBar._findField.value) {
+		gFindBar._updateStatusUI(gFindBar.nsITypeAheadFind.FIND_FOUND);
+	}
+};
+
+this.alwaysToggleHighlight = function() {
+	// _find() doesn't toggleHighlight if checkbox is unchecked, we need it to, to update the counter
+	if(!gFindBar.getElement("highlight").checked) {
+              gFindBar._setHighlightTimeout();
+	}
+};
+
+this.trackPDFMatches = function() {
+	if(!isPDFJS) { return; }
+	
+	// Cancel another possible timer if it was scheduled before
+	timerAid.cancel('trackPDFMatches');
+	
+	// We need this to access protected properties, hidden from privileged code
+	var unWrap = XPCNativeWrapper.unwrap(contentWindow);
+	
+	// No matches
+	if(!unWrap.PDFFindController.hadMatch) {
+		linkedPanel._matchesPDFtotal = 0;
+		dispatch(gFindBar, { type: 'UpdatedPDFMatches', cancelable: false }); // We should still dispatch this
+		return;
+	}
+	
+	// This usually means the matches are still being retrieved, however if this isn't true it still doesn't mean it's fully finished.
+	// So later we set a timer to update itself after a while.
+	if(!unWrap.PDFFindController.active || unWrap.PDFFindController.resumeCallback) {
+		timerAid.init('trackPDFMatches', trackPDFMatches, 0);
+		return;
+	}
+	
+	var matches = unWrap.PDFFindController.pageMatches;
+	var total = 0;
+	for(var p=0; p<matches.length; p++) {
+		total += matches[p].length;
+	}
+	
+	if(linkedPanel._matchesPDFtotal != total) {
+		// Because it might still not be finished, we should update later
+		timerAid.init('trackPDFMatches', trackPDFMatches, 250);
+	}
+	linkedPanel._matchesPDFtotal = total;
+	
+	dispatch(gFindBar, { type: 'UpdatedPDFMatches', cancelable: false });
+};
 
 this.toggleCounter = function() {
 	moduleAid.loadIf('counter', prefAid.useCounter);
@@ -172,6 +224,10 @@ moduleAid.LOADMODULE = function() {
 		return textFound;
 	};
 	
+	listenerAid.add(gFindBar, 'ToggledHighlight', alwaysUpdateStatusUI);
+	listenerAid.add(gFindBar, 'FoundFindBar', alwaysToggleHighlight);
+	listenerAid.add(gFindBar, 'UpdatedStatusFindBar', trackPDFMatches);
+	
 	prefAid.listen('useCounter', toggleCounter);
 	prefAid.listen('useGrid', toggleGrid);
 	prefAid.listen('sightsCurrent', toggleSights);
@@ -192,12 +248,17 @@ moduleAid.UNLOADMODULE = function() {
 	moduleAid.unload('grid');
 	moduleAid.unload('counter');
 	
+	listenerAid.remove(gFindBar, 'ToggledHighlight', alwaysUpdateStatusUI);
+	listenerAid.remove(gFindBar, 'FoundFindBar', alwaysToggleHighlight);
+	listenerAid.remove(gFindBar, 'UpdatedStatusFindBar', trackPDFMatches);
+	
 	if(!viewSource) {
 		// Clean up everything this module may have added to tabs and panels and documents
 		for(var t=0; t<gBrowser.mTabs.length; t++) {
 			var panel = $(gBrowser.mTabs[t].linkedPanel);
 			delete panel._counterHighlights;
 			delete panel._currentHighlight;
+			delete panel._matchesPDFtotal;
 		}
 	} else {
 		delete linkedPanel._counterHighlights;

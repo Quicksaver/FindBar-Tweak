@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.6';
+moduleAid.VERSION = '1.3.0';
 
 this.__defineGetter__('preferencesDialog', function() { return (typeof(inPreferences) != 'undefined' && inPreferences); });
 
@@ -25,19 +25,20 @@ this.__defineGetter__('sights', function() {
 });
 
 // We pass it scrollLeft and scrollTop because it's much lighter when just getting them once and passing them along instead of getting them every position cycle
-this.positionSights = function(range, scrollTop, scrollLeft, clientHeight, clientWidth) {
+this.positionSights = function(range, scrollTop, scrollLeft, clientHeight, clientWidth, toOwn, PDFtoolbarHeight) {
 	// If these aren't set, we just assume the range is visible and should be always sighted, such as in FindAgain (F3) which scrolls to the search hit
 	var current = (!clientHeight && !clientWidth);
 	var dimensions = range.node.getClientRects()[0];
-	var editableNode = gFindBar._getEditableNode(range.node.startContainer);
+	var editableNode = (!isPDFJS) ? gFindBar._getEditableNode(range.node.startContainer) : null;
 	var editableRect = (editableNode) ? editableNode.getClientRects()[0] : null;
 	
 	// We need to account for frames positions as well, as the ranges values are relative to them
 	var xMod = 0;
 	var yMod = 0;
 	
-	var ownDoc = range.node.startContainer.ownerDocument;
-	while(ownDoc != contentDocument) {
+	if(!toOwn) { toOwn = contentDocument; }
+	var ownDoc = (!isPDFJS) ? range.node.startContainer.ownerDocument : range.node.ownerDocument;
+	while(ownDoc != toOwn) {
 		try {
 			// We need to check for this inside each frame because the xMod and yMod values change with each
 			if(editableNode && editableNode.ownerDocument == ownDoc) {
@@ -74,7 +75,7 @@ this.positionSights = function(range, scrollTop, scrollLeft, clientHeight, clien
 		}
 	}
 	
-	if(editableNode && editableNode.ownerDocument == contentDocument) {
+	if(editableNode && editableNode.ownerDocument == toOwn) {
 		if(dimensions.bottom +yMod < editableRect.top
 		|| dimensions.top +yMod > editableRect.bottom
 		|| dimensions.right +xMod < editableRect.left
@@ -84,14 +85,17 @@ this.positionSights = function(range, scrollTop, scrollLeft, clientHeight, clien
 		}
 	}
 	
+	var offsetCompare = 0;
+	if(PDFtoolbarHeight) { offsetCompare += PDFtoolbarHeight; }
+	
 	var limitTop = dimensions.top +yMod;
 	var limitLeft = dimensions.left +xMod;
 	
 	if(clientHeight && clientWidth) {
 		var limitBottom = dimensions.bottom +yMod;
 		var limitRight = dimensions.right +xMod;
-		if(limitBottom < 0
-		|| limitTop > clientHeight
+		if(limitBottom < 0 +offsetCompare
+		|| limitTop > clientHeight +offsetCompare
 		|| limitRight < 0
 		|| limitLeft > clientWidth) {
 			range.sights = false;
@@ -202,6 +206,9 @@ this.buildSights = function(x, y, scrollLeft, scrollTop, current, style) {
 			if(this._sights.preferences) {
 				var scrollTop = this.scrollTop;
 				var scrollLeft = this.scrollLeft;
+			} else if(isPDFJS) {
+				var scrollTop = contentDocument.getElementById('viewerContainer').scrollTop;
+				var scrollLeft = contentDocument.getElementById('viewerContainer').scrollLeft;
 			} else {
 				var scrollTop = contentDocument.getElementsByTagName('html')[0].scrollTop || contentDocument.getElementsByTagName('body')[0].scrollTop;
 				var scrollLeft = contentDocument.getElementsByTagName('html')[0].scrollLeft || contentDocument.getElementsByTagName('body')[0].scrollLeft;
@@ -232,13 +239,17 @@ this.buildSights = function(x, y, scrollLeft, scrollTop, current, style) {
 	box.updateSights();
 };
 
-this.currentSights = function(e) {
+this.cancelCurrentSights = function() {
 	// Hide the current sights
 	for(var i=0; i<sights.childNodes.length; i++) {
 		if(sights.childNodes[i]._sights.current) {
 			sights.childNodes[i].hidden = true;
 		}
 	}
+};
+
+this.currentSights = function(e) {
+	cancelCurrentSights();
 	
 	// order could come from another window from FIT
 	if(e && e.detail && typeof(e.detail.retValue) != 'undefined') {
@@ -250,6 +261,30 @@ this.currentSights = function(e) {
 	// Make sure the box updates its position and size when closing the find bar
 	if(prefAid.squareLook && prefAid.placeAbove) { sightsResizeViewSource(); }
 	
+	// For pdf in PDF.JS
+	if(isPDFJS) {
+		try {
+			var scrollTop = contentDocument.getElementById('viewerContainer').scrollTop;
+			var scrollLeft = contentDocument.getElementById('viewerContainer').scrollLeft;
+		}
+		catch(ex) { return; }
+		
+		// We need this to access protected properties, hidden from privileged code
+		var unWrap = XPCNativeWrapper.unwrap(contentWindow);
+		if(unWrap.PDFFindController.selected.matchIdx == -1 || unWrap.PDFFindController.selected.pageIdx == -1) { return; }
+		
+		var sel = contentDocument.getElementById('viewer').querySelectorAll('.highlight.selected');
+		if(sel.length == 0) { return; }
+		
+		// This is so it doesn't sight the previous selected element while the user is typing in the findbar
+		if(sel[0]._findWord && gFindBar._findField.value != sel[0]._findWord) { return; }
+		sel[0]._findWord = gFindBar._findField.value;
+		
+		positionSights({ node: sel[0] }, scrollTop, scrollLeft);
+		return;
+	}
+	
+	// Normal HTML files
 	// Let's make sure the document actually exists
 	try {
 		var scrollTop = contentDocument.getElementsByTagName('html')[0].scrollTop || contentDocument.getElementsByTagName('body')[0].scrollTop;
@@ -271,32 +306,172 @@ this.currentSights = function(e) {
 };
 
 this.sightsOnVisibleHighlights = function(aHighlights) {
-	if(aHighlights) {
+	if(!prefAid.sightsHighlights) { return; } // I don't know if this is possible, but I added it before so let's make sure
+	
+	if(aHighlights && !isPDFJS) {
 		sights._highlights = aHighlights;
 		sights._findWord = gFindBar._findField.value;
+		if(!documentHighlighted) { return; } // I don't know if this is possible either but it's also in the checks below
 	}
-	
-	if(!prefAid.sightsHighlights || !sights._highlights || !documentHighlighted || gFindBar._findField.value != sights._findWord) { return; }
+	else if(isPDFJS) {
+		if(!gFindBar._findField.value || !gFindBar.getElement('highlight').checked) {
+			delete sights._highlights;
+			delete sights._findWord;
+			return;
+		}
+		
+		if(sights._findWord && sights._findWord != gFindBar._findField.value) {
+			sights._highlights = [];
+			sights._findWord = gFindBar._findField.value;
+		}
+		
+		if(!sights._highlights) {
+			sights._highlights = [];
+		}
+		
+		var unWrap = aHighlights.unWrap;
+		var pages = aHighlights.visible.views; // This is actually the visible pages array returned from allSightsOnPDFStatus()
+		var matches = unWrap.PDFFindController.pageMatches;
+		
+		// To remove unnecessary extra looping through all arrays, this could become problematic with lots of matches
+		var visibleMatches = [];
+		for(var i=0; i<sights._highlights.length; i++) {
+			if(!sights._highlights[i].sights) { continue; }
+			for(var p=0; p<pages.length; p++) {
+				if(sights._highlights[i].coords.p == pages[p].view.id) {
+					visibleMatches.push(sights._highlights[i].coords);
+				}
+			}
+		}
+		sights._highlights = [];
+		
+		for(var p=0; p<pages.length; p++) {
+			for(var m=0; m<pages[p].view.textLayer.matches.length; m++) {
+				var match = pages[p].view.textLayer.matches[m];
+				var divs = pages[p].view.textLayer.textDivs;
+				if(divs.length <= match.begin.divIdx) { continue; } // This shouldn't happen
+				
+				var div = divs[match.begin.divIdx];
+				var maxOffset = match.begin.offset;
+				var offset = 0;
+				var child = 0;
+				while(offset <= maxOffset) {
+					if(div.childNodes[child].localName == 'span') {
+						if(offset == maxOffset) { break; }
+						offset += div.childNodes[child].childNodes[0].length;
+						child++;
+					} else {
+						offset += div.childNodes[child].length;
+						child++;
+					}
+				}
+				if(offset > maxOffset) { continue; } // This shouldn't happen either
+				
+				var newRange = {
+					node: div.childNodes[child],
+					sights: false,
+					coords: { p: pages[p].id, m: m }
+				};
+				
+				for(var v=0; v<visibleMatches.length; v++) {
+					if(visibleMatches[v].p == pages[p].id && visibleMatches[v].m == m) {
+						newRange.sights = true;
+						break;
+					}
+				}
+				
+				sights._highlights.push(newRange);
+			}
+		}
+		
+		sights._findWord = gFindBar._findField.value;
+	}
+	else if(!sights._highlights || !documentHighlighted || gFindBar._findField.value != sights._findWord) { return; }
 	
 	// Make sure the box updates its position and size when closing the find bar
 	if(prefAid.squareLook && prefAid.placeAbove) { sightsResizeViewSource(); }
 	
 	// Let's make sure the document actually exists
 	try {
-		var scrollTop = contentDocument.getElementsByTagName('html')[0].scrollTop || contentDocument.getElementsByTagName('body')[0].scrollTop;
-		var scrollLeft = contentDocument.getElementsByTagName('html')[0].scrollLeft || contentDocument.getElementsByTagName('body')[0].scrollLeft;
-		var clientHeight = Math.min(contentDocument.getElementsByTagName('html')[0].clientHeight, contentDocument.getElementsByTagName('body')[0].clientHeight);
-		var clientWidth = Math.min(contentDocument.getElementsByTagName('html')[0].clientWidth, contentDocument.getElementsByTagName('body')[0].clientWidth);
+		if(!isPDFJS) {
+			var scrollTop = contentDocument.getElementsByTagName('html')[0].scrollTop || contentDocument.getElementsByTagName('body')[0].scrollTop;
+			var scrollLeft = contentDocument.getElementsByTagName('html')[0].scrollLeft || contentDocument.getElementsByTagName('body')[0].scrollLeft;
+			var clientHeight = Math.min(contentDocument.getElementsByTagName('html')[0].clientHeight, contentDocument.getElementsByTagName('body')[0].clientHeight);
+			var clientWidth = Math.min(contentDocument.getElementsByTagName('html')[0].clientWidth, contentDocument.getElementsByTagName('body')[0].clientWidth);
+		} else {
+			var scrollTop = contentDocument.getElementById('viewerContainer').scrollTop;
+			var scrollLeft = contentDocument.getElementById('viewerContainer').scrollLeft;
+			var clientHeight = contentDocument.getElementById('viewerContainer').clientHeight;
+			var clientWidth = contentDocument.getElementById('viewerContainer').clientWidth;
+			var toolbarHeight = contentDocument.querySelectorAll('div.toolbar')[0].clientHeight;
+		}
 	}
 	catch(ex) { return; }
 	
 	for(var i=0; i<sights._highlights.length; i++) {
-		positionSights(sights._highlights[i], scrollTop, scrollLeft, clientHeight, clientWidth);
+		positionSights(sights._highlights[i], scrollTop, scrollLeft, clientHeight, clientWidth, (isPDFJS) ? unWrap.document : contentDocument, (isPDFJS) ? toolbarHeight : null);
 	}
 };
 
 this.sightsOnScroll = function() {
-	timerAid.init('sightsOnScroll', function() { sightsOnVisibleHighlights(); }, 10);
+	if(!isPDFJS) {
+		timerAid.init('sightsOnScroll', function() { sightsOnVisibleHighlights(); }, 10);
+	} else {
+		allSightsOnUpdateStatus();
+	}
+};
+
+this.currentSightsOnUpdateStatus = function() {
+	// We only need this in pdf documents, the 'FoundAgain' listener will handle the other documents.
+	if(isPDFJS) { cancelCurrentSights(); }
+	
+	// We do with a delay to allow the page to render the selected element
+	timerAid.init('currentSightsOnUpdateStatus', currentSightsOnPDFStatus, 10);
+};
+
+this.currentSightsOnPDFStatus = function() {
+	if(isPDFJS) {
+		// We need this to access protected properties, hidden from privileged code
+		var unWrap = XPCNativeWrapper.unwrap(contentWindow);
+		if(!unWrap.PDFFindController || unWrap.PDFFindController.selected.matchIdx == -1 || unWrap.PDFFindController.selected.pageIdx == -1) { return; }
+		
+		if(!unWrap.PDFView.pages[unWrap.PDFFindController.selected.pageIdx].textLayer
+		|| !unWrap.PDFView.pages[unWrap.PDFFindController.selected.pageIdx].textLayer.renderingDone
+		|| unWrap.PDFView.pages[unWrap.PDFFindController.selected.pageIdx].renderingState < 3) {
+			timerAid.init('currentSightsOnUpdateStatus', currentSightsOnPDFStatus, 10);
+			return;
+		}
+		
+		currentSights();
+	}
+};
+
+this.allSightsOnUpdateStatus = function(e) {
+	// We only need this in pdf documents, the 'FoundAgain' listener will handle the other documents.
+	// We do with a delay to allow the page to render the selected element
+	// !e means it comes from scroll event, when it comes from UpdateStatusUI it should delay for longer to allow the document to render the new highlights
+	timerAid.init('allSightsOnUpdateStatus', allSightsOnPDFStatus, (e) ? 350 : 10);
+};
+
+this.allSightsOnPDFStatus = function() {
+	if(isPDFJS) {
+		// We need this to access protected properties, hidden from privileged code
+		var unWrap = XPCNativeWrapper.unwrap(contentWindow);
+		if(!unWrap.PDFFindController || !unWrap.PDFView) { return; }
+		
+		// We should wait until the visible pages have finished rendering
+		var visible = unWrap.PDFView.getVisiblePages();
+		for(var p=0; p<visible.views.length; p++) {
+			if(!visible.views[p].view.textLayer
+			|| !visible.views[p].view.textLayer.renderingDone
+			|| visible.views[p].view.renderingState < 3) {
+				timerAid.init('allSightsOnUpdateStatus', allSightsOnPDFStatus, 10);
+				return;
+			}
+		}
+		
+		sightsOnVisibleHighlights({ unWrap: unWrap, visible: visible });
+	}
 };
 
 this.sightsColor = function(forceSheet) {
@@ -369,10 +544,12 @@ this.toggleSightsCurrent = function() {
 	if(prefAid.sightsCurrent) {
 		listenerAid.add(gFindBar, 'FoundFindBar', currentSights);
 		listenerAid.add(gFindBar, 'FoundAgain', currentSights);
+		listenerAid.add(gFindBar, 'UpdatedStatusFindBar', currentSightsOnUpdateStatus);
 		listenerAid.add(gFindBar, 'SelectedFIThit', currentSights);
 	} else {
 		listenerAid.remove(gFindBar, 'FoundFindBar', currentSights);
 		listenerAid.remove(gFindBar, 'FoundAgain', currentSights);
+		listenerAid.remove(gFindBar, 'UpdatedStatusFindBar', currentSightsOnUpdateStatus);
 		listenerAid.remove(gFindBar, 'SelectedFIThit', currentSights);
 	}
 	
@@ -382,8 +559,12 @@ this.toggleSightsCurrent = function() {
 this.toggleSightsHighlights = function() {
 	if(prefAid.sightsHighlights) {
 		listenerAid.add(browserPanel, 'scroll', sightsOnScroll, true);
+		listenerAid.add(gFindBar, 'UpdatedStatusFindBar', allSightsOnUpdateStatus);
+		listenerAid.add(gFindBar, 'UpdatedPDFMatches', allSightsOnUpdateStatus);
 	} else {
 		listenerAid.remove(browserPanel, 'scroll', sightsOnScroll, true);
+		listenerAid.remove(gFindBar, 'UpdatedStatusFindBar', allSightsOnUpdateStatus);
+		listenerAid.remove(gFindBar, 'UpdatedPDFMatches', allSightsOnUpdateStatus);
 	}
 	
 	observerAid.notify('ReHighlightAll');
@@ -420,6 +601,9 @@ moduleAid.UNLOADMODULE = function() {
 	
 	listenerAid.remove(gFindBar, 'FoundFindBar', currentSights);
 	listenerAid.remove(gFindBar, 'FoundAgain', currentSights);
+	listenerAid.remove(gFindBar, 'UpdatedStatusFindBar', currentSightsOnUpdateStatus);
+	listenerAid.remove(gFindBar, 'UpdatedStatusFindBar', allSightsOnUpdateStatus);
+	listenerAid.remove(gFindBar, 'UpdatedPDFMatches', allSightsOnUpdateStatus);
 	listenerAid.remove(gFindBar, 'SelectedFIThit', currentSights);
 	listenerAid.remove(browserPanel, 'scroll', sightsOnScroll);
 	

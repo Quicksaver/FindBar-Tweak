@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.0';
+moduleAid.VERSION = '1.1.1';
 
 this.__defineGetter__('FITresizer', function() { return $(objName+'-findInTabs-resizer'); });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -319,7 +319,7 @@ this.countFITinTab = function(aWindow, itemCount, hitsList) {
 
 // When the user selects a tab in the browser, select the corresponding item in the tabs list if it exists
 this.autoSelectFITtab = function() {
-	if(!contentWindow) { return; } // Usually triggered when a selection is on a frame and the frame closes
+	if(!contentWindow || !FITtabsList) { return; } // Usually triggered when a selection is on a frame and the frame closes
 	
 	for(var i=1; i<FITtabsList.childNodes.length; i++) {
 		if(contentWindow.document == FITtabsList.childNodes[i].linkedDocument) {

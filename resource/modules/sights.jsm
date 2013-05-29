@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.3.0';
+moduleAid.VERSION = '1.3.1';
 
 this.__defineGetter__('preferencesDialog', function() { return (typeof(inPreferences) != 'undefined' && inPreferences); });
 
@@ -273,14 +273,23 @@ this.currentSights = function(e) {
 		var unWrap = XPCNativeWrapper.unwrap(contentWindow);
 		if(unWrap.PDFFindController.selected.matchIdx == -1 || unWrap.PDFFindController.selected.pageIdx == -1) { return; }
 		
-		var sel = contentDocument.getElementById('viewer').querySelectorAll('.highlight.selected');
+		// Let's get the right one
+		var page = unWrap.PDFView.pages[unWrap.PDFFindController.selected.pageIdx];
+		if(!page.textLayer
+		|| !page.textLayer.matches
+		|| !page.textLayer.matches[unWrap.PDFFindController.selected.matchIdx]) {
+			timerAid.init('currentSights', currentSights, 10);
+			return;
+		}
+		
+		var sel = page.textLayer.textDivs[page.textLayer.matches[unWrap.PDFFindController.selected.matchIdx].begin.divIdx].querySelectorAll('.highlight.selected');
 		if(sel.length == 0) { return; }
 		
 		// This is so it doesn't sight the previous selected element while the user is typing in the findbar
 		if(sel[0]._findWord && gFindBar._findField.value != sel[0]._findWord) { return; }
 		sel[0]._findWord = gFindBar._findField.value;
 		
-		positionSights({ node: sel[0] }, scrollTop, scrollLeft);
+		positionSights({ node: sel[0] }, scrollTop, scrollLeft, null, null, unWrap.document);
 		return;
 	}
 	

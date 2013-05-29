@@ -1,4 +1,4 @@
-var defaultsVersion = '1.0.12';
+var defaultsVersion = '1.0.13';
 var objName = 'findbartweak';
 var objPathString = 'findbartweak';
 var prefList = {
@@ -7,8 +7,10 @@ var prefList = {
 	minNoDelay: 3,
 	highlightColor: "#EF0FFF",
 	useCounter: true,
+	
 	findInTabs: true,
 	alwaysOpenFIT: false,
+	maxFIT: 1000,
 	
 	useGrid: true,
 	gridLimit: 250,

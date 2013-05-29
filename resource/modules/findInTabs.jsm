@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.2';
+moduleAid.VERSION = '1.1.0';
 
 this.__defineGetter__('FITresizer', function() { return $(objName+'-findInTabs-resizer'); });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -114,6 +114,44 @@ this.selectFIThit = function() {
 	if(!inWindow || !FITtabsList.currentItem.linkedHits.currentItem) { return; }
 	
 	var inFindBar = inWindow.document.getElementById('FindToolbar');
+	var ranges = FITtabsList.currentItem.linkedHits.currentItem.linkedRanges;
+	
+	if(inPDFJS(FITtabsList.currentItem.linkedDocument)) {
+		// We need this to access protected properties, hidden from privileged code
+		var unWrap = XPCNativeWrapper.unwrap(FITtabsList.currentItem.linkedDocument.defaultView);
+		if(!unWrap.PDFFindController) { return; } // Don't know if this is possible but I need this so better make sure
+		
+		for(var r=0; r<ranges.length; r++) {
+			// Don't do anything when the current selection is contained within the ranges of this item.
+			// We don't want to keep re-selecting it.
+			if(unWrap.PDFFindController.selected.pageIdx == ranges[r].p
+			&& unWrap.PDFFindController.selected.matchIdx == ranges[r].m) {
+				return;
+			}
+		}
+		
+		inWindow.focus();
+		inWindow.gBrowser.selectedTab = inWindow.gBrowser._getTabForContentWindow(FITtabsList.currentItem.linkedDocument.defaultView);
+		
+		// Make sure we trigger a find event, so the pdf document renders our matches
+		if(!unWrap.PDFFindController.state
+		|| unWrap.PDFFindController.state.query != gFindBar._findField.value
+		|| unWrap.PDFFindController.state.caseSensitive != !!gFindBar._typeAheadCaseSensitive) {
+			var caseSensitive = !!gFindBar._typeAheadCaseSensitive;
+			inWindow.gFindBar._findField.value = gFindBar._findField.value;
+			inWindow.gFindBar.getElement('find-case-sensitive').checked = caseSensitive;
+			inWindow.gFindBar._setCaseSensitivity(caseSensitive); // This should be enough to trigger the find
+			
+			aSync(function() {
+				// Select the first one when the richlistitem contains more than one
+				finishSelectingPDFhit(unWrap, inFindBar, ranges[0]);
+			});
+		}
+		
+		// Select the first one when the richlistitem contains more than one
+		finishSelectingPDFhit(unWrap, inFindBar, ranges[0]);
+		return;
+	}
 	
 	var editableNode = inFindBar.browser._fastFind.foundEditable;
 	var controller = (editableNode && editableNode.editor) ? editableNode.editor.selectionController : null;
@@ -122,7 +160,6 @@ this.selectFIThit = function() {
 	}
 	var sel = controller.getSelection(gFindBar.nsISelectionController.SELECTION_NORMAL);
 	
-	var ranges = FITtabsList.currentItem.linkedHits.currentItem.linkedRanges;
 	if(sel.rangeCount == 1) {
 		for(var r=0; r<ranges.length; r++) {
 			// Don't do anything when the current selection is contained within the ranges of this item.
@@ -145,6 +182,19 @@ this.selectFIThit = function() {
 	controller.scrollSelectionIntoView(gFindBar.nsISelectionController.SELECTION_NORMAL, gFindBar.nsISelectionController.SELECTION_WHOLE_SELECTION, gFindBar.nsISelectionController.SCROLL_CENTER_VERTICALLY);
 	
 	dispatch(inFindBar, { type: 'SelectedFIThit', cancelable: false });
+};
+
+this.finishSelectingPDFhit = function(unWrap, inFindBar, range) {
+	unWrap.PDFFindController.selected.pageIdx = range.p;
+	unWrap.PDFFindController.selected.matchIdx = range.m;
+	unWrap.PDFFindController.offset.pageIdx = range.p;
+	unWrap.PDFFindController.offset.matchIdx = range.m;
+	unWrap.PDFFindController.offset.wrapped = false;
+	unWrap.PDFFindController.updatePage(range.p);
+	
+	timerAid.init('finishSelectingPDFhit', function() {
+		inFindBar._updateStatusUI(gFindBar.nsITypeAheadFind.FIND_FOUND);
+	}, 50);
 };
 
 // The main commander of the FIT function, cleans up results and schedules new ones if the box is opened	
@@ -190,7 +240,9 @@ this.beginFITFind = function() {
 this.getFITTabs = function(aWindow) {
 	if(!aWindow.document.defaultView || !(aWindow.document instanceof aWindow.document.defaultView.HTMLDocument)) { return; }
 	
-	if(aWindow.document.baseURI != 'about:blank' && aWindow.document.baseURI != 'chrome://browser/content/browser.xul' && aWindow.document.readyState == "complete") {
+	if(aWindow.document.baseURI != 'about:blank'
+	&& aWindow.document.baseURI != 'chrome://browser/content/browser.xul'
+	&& aWindow.document.readyState == "complete") {
 		var newHits = document.createElement('richlistbox');
 		newHits.setAttribute('flex', '1');
 		newHits.onselect = selectFIThit;
@@ -228,10 +280,26 @@ this.getFITTabs = function(aWindow) {
 };
 
 this.countFITinTab = function(aWindow, itemCount, hitsList) {
+	if(inPDFJS(aWindow.document)) {
+		// We need this to access protected properties, hidden from privileged code
+		if(!aWindow.PDFFindController) { aWindow = XPCNativeWrapper.unwrap(aWindow); }
+		aWindow.PDFFindController.extractText();
+		// This takes time to build apparently
+		if(aWindow.PDFFindController.pageContents.length != aWindow.PDFView.pages.length) {
+			aSync(function() { countFITinTab(aWindow, itemCount, hitsList); }, 100);
+			return;
+		}
+	}
+		
 	var levels = countFITinDoc(gFindBar._findField.value, aWindow);
-	var hits = countFITinLevels(levels, hitsList);
 	
-	setAttribute(itemCount, 'value', hits);
+	// This means there are too many results, which could slow down the browser
+	if(levels === null) {
+		setAttribute(itemCount, 'value', prefAid.maxFIT+'+');
+	} else {
+		var hits = countFITinLevels(levels, hitsList, aWindow);
+		setAttribute(itemCount, 'value', hits);
+	}
 	
 	// Resize the header so it fits nicely into the results
 	// +8 comes from padding
@@ -239,7 +307,7 @@ this.countFITinTab = function(aWindow, itemCount, hitsList) {
 		FITtabsHeader.childNodes[1].minWidth = (itemCount.clientWidth +8)+'px';
 	}
 	
-	if(!contentWindow) { return; } // Usually triggered when a selection is on a frame and the frame closes
+	if(!contentWindow || levels === null) { return; } // Usually triggered when a selection is on a frame and the frame closes
 	
 	if(contentWindow.document == itemCount.parentNode.linkedDocument) {
 		FITtabsList.selectItem(itemCount.parentNode);
@@ -266,15 +334,31 @@ this.autoSelectFITtab = function() {
 
 // When the user finds for text or uses the find again button, select the corresponding item in the hits list
 this.autoSelectFIThit = function(aList) {
-	var editableNode = gFindBar.browser._fastFind.foundEditable;
-	var controller = (editableNode && editableNode.editor) ? editableNode.editor.selectionController : null;
-	if(controller) {
-		var sel = controller.getSelection(gFindBar.nsISelectionController.SELECTION_NORMAL);
+	if(isPDFJS) {
+		// We need this to access protected properties, hidden from privileged code
+		var unWrap = XPCNativeWrapper.unwrap(contentWindow);
+		if(!unWrap.PDFFindController || unWrap.PDFFindController.selected.matchIdx == -1 || unWrap.PDFFindController.selected.pageIdx == -1) { return; }
+		
+		for(var i=0; i<aList.childNodes.length; i++) {
+			for(var r=0; r<aList.childNodes[i].linkedRanges.length; r++) {
+				if(aList.childNodes[i].linkedRanges[r].p == unWrap.PDFFindController.selected.pageIdx
+				&& aList.childNodes[i].linkedRanges[r].m == unWrap.PDFFindController.selected.matchIdx) {
+					aList.selectItem(aList.childNodes[i]);
+					aList.ensureSelectedElementIsVisible();
+					return;
+				}
+			}
+		}
 	} else {
-		var sel = gFindBar._getSelectionController(contentWindow).getSelection(gFindBar.nsISelectionController.SELECTION_NORMAL);
-	}
-	
-	if(sel.rangeCount == 1) {
+		var editableNode = gFindBar.browser._fastFind.foundEditable;
+		var controller = (editableNode && editableNode.editor) ? editableNode.editor.selectionController : null;
+		if(controller) {
+			var sel = controller.getSelection(gFindBar.nsISelectionController.SELECTION_NORMAL);
+		} else {
+			var sel = gFindBar._getSelectionController(contentWindow).getSelection(gFindBar.nsISelectionController.SELECTION_NORMAL);
+		}
+		if(sel.rangeCount != 1) { return; }
+		
 		for(var i=0; i<aList.childNodes.length; i++) {
 			for(var r=0; r<aList.childNodes[i].linkedRanges.length; r++) {
 				if(sel.getRangeAt(0).startContainer == aList.childNodes[i].linkedRanges[r].startContainer
@@ -293,6 +377,31 @@ this.autoSelectFIThit = function(aList) {
 this.countFITinDoc = function(aWord, aWindow) {
 	var aLevel = { hits: [], levels: [] };
 	
+	// For pdfs
+	if(inPDFJS(aWindow.document)) {
+		var pages = aWindow.PDFFindController.pageContents;
+		var caseSensitive = gFindBar._shouldBeCaseSensitive(aWord);
+		var query = (!caseSensitive) ? aWord.toLowerCase() : aWord;
+		
+		for(var p=0; p<pages.length; p++) {
+			var m = 0;
+			var o = -query.length;
+			var textContent = (!caseSensitive) ? pages[p].toLowerCase() : pages[p];
+			while(true) {
+				o = textContent.indexOf(query, o +query.length);
+				if(o === -1) {
+					break;
+				}
+				aLevel.hits.push({ p: p, m: m, o: o });
+				m++;
+				if(aLevel.hits.length > prefAid.maxFIT) { return null; } // The browser gets useless past a point
+			}
+		}
+		
+		return aLevel;
+	};
+	
+	// Normal HTML files
 	var win = aWindow;
 	for(var i = 0; win.frames && i < win.frames.length; i++) {
 		aLevel.levels.push(countFITinDoc(aWord, win.frames[i]));
@@ -322,7 +431,8 @@ this.countFITinDoc = function(aWord, aWindow) {
 		startPt = retRange.cloneRange();
 		startPt.collapse(false);
 		
-		aLevel.hits.push(retRange);
+		var newLen = aLevel.hits.push(retRange);
+		if(newLen > prefAid.maxFIT) { return null; }
 	}
 	
 	return aLevel;
@@ -344,7 +454,10 @@ this.orderHits = function(level, ordered) {
 };
 
 // This constructs the richlistitems for the hits list
-this.countFITinLevels = function(level, hitsList) {
+this.countFITinLevels = function(level, hitsList, aWindow) {
+	var isPDF = (inPDFJS(aWindow.document));
+	var aWord = gFindBar._findField.value;
+	
 	var list = [];
 	orderHits(level, list);
 	
@@ -360,19 +473,37 @@ this.countFITinLevels = function(level, hitsList) {
 		var endNumber = h +1;
 		
 		var itemStrings = new Array();
-		itemStrings.push({ text: range.toString(), highlight: true });
 		
-		var doLastStart = range.endOffset;
-		var doFirstLength = range.startOffset;
+		if(isPDF) {
+			itemStrings.push({ text: aWindow.PDFFindController.pageContents[range.p].substr(range.o, aWord.length), highlight: true });
+			
+			var doLastStart = range.o +aWord.length;
+			var doFirstLength = range.o;
+			
+			var startContainer = range.p;
+			var startContainerText = aWindow.PDFFindController.pageContents[range.p];
+			var endContainer = range.p;
+			var endContainerText = aWindow.PDFFindController.pageContents[range.p];
+		} else {
+			itemStrings.push({ text: range.toString(), highlight: true });
+			
+			var doLastStart = range.endOffset;
+			var doFirstLength = range.startOffset;
+			
+			var startContainer = range.startContainer;
+			var startContainerText = startContainer.textContent;
+			var endContainer = range.endContainer;
+			var endContainerText = endContainer.textContent;
+		}
 		
 		var initialPoints = (doFirstLength != 0);
-		var finalPoints = (range.endOffset != range.endContainer.length);
+		var finalPoints = (doLastStart != endContainer.length);
 		
 		// Let's try to add whole words whenever possible
-		if(doFirstLength > 0 && range.startContainer.textContent[doFirstLength -1] != ' ') {
-			var doFirstStart = range.startContainer.textContent.lastIndexOf(' ', doFirstLength) +1;
+		if(doFirstLength > 0 && startContainerText[doFirstLength -1] != ' ') {
+			var doFirstStart = startContainerText.lastIndexOf(' ', doFirstLength) +1;
 			
-			var fillString = range.startContainer.textContent.substr(doFirstStart, doFirstLength -doFirstStart);
+			var fillString = startContainerText.substr(doFirstStart, doFirstLength -doFirstStart);
 			itemStrings.unshift({ text: fillString, highlight: false });
 			
 			doFirstLength = doFirstStart;
@@ -380,20 +511,20 @@ this.countFITinLevels = function(level, hitsList) {
 				initialPoints = false;
 			}
 		}
-		if(doLastStart +1 < range.endContainer.length && range.endContainer.textContent[doLastStart] != ' ') {
+		if(doLastStart +1 < endContainerText.length && endContainerText[doLastStart] != ' ') {
 			if(h +1 == list.length
-			|| list[h +1].startContainer != range.endContainer
-			|| 	(range.endContainer.textContent.indexOf(' ', doLastStart) > -1
-				&& list[h +1].startOffset > range.endContainer.textContent.indexOf(' ', doLastStart))) {
-					var doLastLength = range.endContainer.textContent.indexOf(' ', doLastStart);
-					if(doLastLength == -1) { doLastLength = range.endContainer.length; }
+			|| ((!isPDF) ? list[h +1].startContainer != endContainer : list[h +1].p != list[h].p)
+			|| 	(endContainerText.indexOf(' ', doLastStart) > -1
+				&& ((!isPDF) ? list[h +1].startOffset : list[h +1].o) > endContainerText.indexOf(' ', doLastStart))) {
+					var doLastLength = endContainerText.indexOf(' ', doLastStart);
+					if(doLastLength == -1) { doLastLength = endContainerText.length; }
 					doLastLength -= doLastStart;
 					
-					var fillString = range.endContainer.textContent.substr(doLastStart, doLastLength);
+					var fillString = endContainerText.substr(doLastStart, doLastLength);
 					itemStrings.push({ text: fillString, highlight: false });
 					
 					doLastStart += doLastLength;
-					if(doLastStart == range.endContainer.length) {
+					if(doLastStart == endContainerText.length) {
 						finalPoints = false;
 					}
 			}
@@ -405,34 +536,51 @@ this.countFITinLevels = function(level, hitsList) {
 		var lastRange = range;
 		var hh = h+1;
 		if(remaining > 0) {
-			while(hh < list.length && list[hh].startContainer == range.endContainer) {
-				var nextString = list[hh].toString();
+			while(hh < list.length && ((isPDF) ? list[hh].p : list[hh].startContainer) == endContainer) {
+				if(isPDF) {
+					var nextString = aWindow.PDFFindController.pageContents[list[hh].p].substr(list[hh].o, aWord.length);
+					var nextLastStart = list[hh].o +aWord.length;
+					var nextFirstLength = list[hh].o;
+					var nextStartContainer = list[hh].p;
+					var nextStartContainerText = aWindow.PDFFindController.pageContents[list[hh].p];
+					var nextEndContainer = list[hh].p;
+					var nextEndContainerText = aWindow.PDFFindController.pageContents[list[hh].p];
+				} else {
+					var nextString = list[hh].toString();
+					var nextLastStart = list[hh].endOffset;
+					var nextFirstLength = list[hh].startOffset;
+					var nextStartContainer = list[hh].startContainer;
+					var nextStartContainerText = nextStartContainer.textContent;
+					var nextEndContainer = list[hh].endContainer;
+					var nextEndContainerText = nextEndContainer.textContent;
+				}
+				
 				var fillNext = '';
-				if(list[hh].endOffset < list[hh].endContainer.length
-				&& list[hh].endContainer.textContent[list[hh].endOffset] != ' ') {
+				if(nextLastStart < nextEndContainerText.length
+				&& nextEndContainerText[nextLastStart] != ' ') {
 					if(hh +1 == list.length
-					|| list[hh +1].startContainer != list[hh].endContainer
-					|| 	(list[hh].endContainer.textContent.indexOf(' ', list[hh].endOffset) > -1
-						&& list[hh +1].startOffset > list[hh].endContainer.textContent.indexOf(' ', list[hh].endOffset))) {
-							var fillNextLength = list[hh].endContainer.textContent.indexOf(' ', list[hh].endOffset);
-							if(fillNextLength == -1) { fillNextLength = list[hh].endContainer.length; }
-							fillNextLength -= list[hh].endOffset;
+					|| ((!isPDF) ? list[hh +1].startContainer != list[hh].endContainer : list[hh +1].p != list[hh].p)
+					|| 	(nextEndContainerText.indexOf(' ', nextLastStart) > -1
+						&& ((!isPDF) ? list[hh +1].startOffset : list[hh +1].o) > nextEndContainerText.indexOf(' ', nextLastStart))) {
+							var fillNextLength = nextEndContainerText.indexOf(' ', nextLastStart);
+							if(fillNextLength == -1) { fillNextLength = nextEndContainerText.length; }
+							fillNextLength -= nextLastStart;
 							
-							fillNext = list[hh].endContainer.textContent.substr(list[hh].endOffset, fillNextLength);
+							fillNext = nextEndContainerText.substr(nextLastStart, fillNextLength);
 					}
 				}
 				
 				var inBetweenStart = doLastStart;
-				var inBetweenLength = list[hh].startOffset -inBetweenStart;
-				var inBetween = list[hh].startContainer.textContent.substr(inBetweenStart, inBetweenLength);
+				var inBetweenLength = nextFirstLength -inBetweenStart;
+				var inBetween = nextStartContainerText.substr(inBetweenStart, inBetweenLength);
 				if(allStringsLength(itemStrings) +nextString.length +fillNext.length +inBetween.length <= HITS_LENGTH) {
 					itemStrings.push({ text: inBetween, highlight: false });
 					itemStrings.push({ text: nextString, highlight: true });
 					itemStrings.push({ text: fillNext, highlight: false });
 					
 					lastRange = list[hh];
-					doLastStart = list[hh].endOffset +fillNext.length;
-					if(doLastStart == list[hh].endContainer.length) {
+					doLastStart = nextLastStart +fillNext.length;
+					if(doLastStart == nextEndContainerText.length) {
 						finalPoints = false;
 					}
 					
@@ -451,6 +599,12 @@ this.countFITinLevels = function(level, hitsList) {
 		var doLast = false;
 		var didOne = true;
 		
+		if(isPDF) {
+			var lastEndContainerText = aWindow.PDFFindController.pageContents[lastRange.p];
+		} else {
+			var lastEndContainerText = lastRange.endContainer.textContent;
+		}
+		
 		// Now we complete with some before and after text strings
 		while(remaining > 0) {
 			doLast = !doLast;
@@ -462,10 +616,10 @@ this.countFITinLevels = function(level, hitsList) {
 					continue;
 				}
 				
-				var doLastLength = lastRange.endContainer.textContent.indexOf(' ', doLastStart +1);
-				if(doLastLength == -1) { doLastLength = lastRange.endContainer.length; }
+				var doLastLength = lastEndContainerText.indexOf(' ', doLastStart +1);
+				if(doLastLength == -1) { doLastLength = lastEndContainerText.length; }
 				doLastLength -= doLastStart;
-				var fillString = lastRange.endContainer.textContent.substr(doLastStart, doLastLength);
+				var fillString = lastEndContainerText.substr(doLastStart, doLastLength);
 			} else {
 				if(!initialPoints) {
 					if(!didOne) { break; }
@@ -473,17 +627,17 @@ this.countFITinLevels = function(level, hitsList) {
 					continue;
 				}
 				
-				var doFirstStart = (doFirstLength < 2) ? 0 : range.startContainer.textContent.lastIndexOf(' ', Math.max(doFirstLength -2, 0)) +1;
+				var doFirstStart = (doFirstLength < 2) ? 0 : startContainerText.lastIndexOf(' ', Math.max(doFirstLength -2, 0)) +1;
 				doFirstLength -= doFirstStart;
 				
 				// Don't use text that has been used before
-				if(range.startContainer == lastEndContainer && doFirstStart < lastEndOffset) {
+				if(startContainer == lastEndContainer && doFirstStart < lastEndOffset) {
 					if(!didOne) { break; }
 					didOne = false;
 					continue;
 				}
 				
-				var fillString = range.startContainer.textContent.substr(doFirstStart, doFirstLength);
+				var fillString = startContainerText.substr(doFirstStart, doFirstLength);
 			}
 			
 			if(fillString.length > 0 && remaining -fillString.length >= 0) {
@@ -495,7 +649,7 @@ this.countFITinLevels = function(level, hitsList) {
 					}
 					
 					doLastStart += doLastLength;
-					if(doLastStart == lastRange.endContainer.length) {
+					if(doLastStart == lastEndContainerText.length) {
 						finalPoints = false;
 					}
 				} else {
@@ -519,7 +673,7 @@ this.countFITinLevels = function(level, hitsList) {
 			}
 		}
 		
-		lastEndContainer = lastRange.endContainer;
+		lastEndContainer = (isPDF) ? lastRange.p : lastRange.endContainer;
 		lastEndOffset = doLastStart;
 		
 		if(initialPoints) { itemStrings.unshift({ text: '... ', highlight: false }); }
@@ -567,6 +721,12 @@ this.alwaysOpenFIT = function() {
 	}
 };
 
+this.autoSelectOnUpdateStatus = function() {
+	// We only need this in pdf documents, the 'FoundAgain' listener will handle the other documents.
+	// We do with a delay to allow the page to render the selected element
+	if(isPDFJS) { timerAid.init('autoSelectOnUpdateStatus', autoSelectFITtab, 10); }
+};
+
 this.loadFindInTabs = function() {
 	addFITButton();
 	
@@ -575,6 +735,7 @@ this.loadFindInTabs = function() {
 	listenerAid.add(gFindBar, 'FoundFindBar', shouldFindAll);
 	listenerAid.add(gFindBar, 'UpdatedUIFindBar', updateButtonKeepHidden, false);
 	listenerAid.add(gFindBar, 'FoundAgain', autoSelectFITtab);
+	listenerAid.add(gFindBar, 'UpdatedStatusFindBar', autoSelectOnUpdateStatus);
 	listenerAid.add(gBrowser.tabContainer, 'TabSelect', autoSelectFITtab);
 	
 	prefAid.listen('alwaysOpenFIT', alwaysOpenFIT);
@@ -601,6 +762,7 @@ moduleAid.UNLOADMODULE = function() {
 	listenerAid.remove(gFindBar, 'FoundFindBar', shouldFindAll);
 	listenerAid.remove(gFindBar, 'UpdatedUIFindBar', updateButtonKeepHidden, false);
 	listenerAid.remove(gFindBar, 'FoundAgain', autoSelectFITtab);
+	listenerAid.remove(gFindBar, 'UpdatedStatusFindBar', autoSelectOnUpdateStatus);
 	listenerAid.remove(gBrowser.tabContainer, 'TabSelect', autoSelectFITtab);
 	
 	prefAid.unlisten('alwaysOpenFIT', alwaysOpenFIT);

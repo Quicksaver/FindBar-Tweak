@@ -63,6 +63,36 @@
 		position: fixed;
 	}
 	
+	/* Find Toolbar styled for PDF.JS documents */
+	#FindToolbar[movetotop][inPDFJS]:before {
+		box-shadow: 	2px -2px 0 -2px rgba(255,255,255,0.08),
+		                1px -1px 0 -1px rgba(0,0,0,0.15),
+		                7px -4px 0px -4px rgba(68,68,68,0.95),
+		                6px -4px 0px -4px rgba(68,68,68,0.95);
+	}
+	#FindToolbar[movetotop][inPDFJS]:after {
+		box-shadow: 	-2px -2px 0 -2px rgba(255,255,255,0.08),
+		                -1px -1px 0 -1px rgba(0,0,0,0.15),
+		                -7px -4px 0px -4px rgba(68,68,68,0.95),
+		                -6px -4px 0px -4px rgba(68,68,68,0.95);
+	}
+	#FindToolbar[movetotop][inPDFJS] {
+		border: none;
+		background-color: rgb(71,71,71);
+		background-image: url("resource://pdf.js/web/images/texture.png"), -moz-linear-gradient(rgba(68,68,68,0.95), rgba(68,68,68,0.95));
+		background-image: url("resource://pdf.js/web/images/texture.png"), linear-gradient(rgba(68,68,68,0.95), rgba(68,68,68,0.95)); /* Firefox 16 */
+		background-repeat: repeat;
+		background-size: auto auto;
+		color: rgb(216,216,216);
+		box-shadow: 	rgba(255,255,255,0.08) 1px 0px 0px 0px inset,
+		                rgba(255,255,255,0.05) 0px -1px 0px 0px inset,
+		                rgba(0,0,0,0.15) 0px 1px 0px 0px,
+		                rgba(0,0,0,0.1) 0px 1px 1px 0px;
+	}
+	#FindToolbar[movetotop][inPDFJS] toolbarbutton:not([disabled="true"]) {
+		color: rgb(216,216,216);
+	}
+	
 	/* Grid stuff */
 	hbox[anonid="gridBox"] {
 		pointer-events: none;

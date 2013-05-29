@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.3.12';
+moduleAid.VERSION = '1.4.0';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -39,7 +39,7 @@ this.shouldReMoveTop = function(newStyle) {
 		|| newStyle.left != lastTopStyle.left
 		|| newStyle.maxWidth != lastTopStyle.maxWidth
 		|| newStyle.clientWidth != lastTopStyle.clientWidth
-		|| newStyle.movetoRight != lastTopStyle.moveToRight
+		|| newStyle.movetoRight != lastTopStyle.movetoRight
 		|| (prefAid.squareLook && prefAid.placeAbove && newStyle.marginTop != lastTopStyle.marginTop)
 		|| newStyle.squareLook != lastTopStyle.squareLook
 		|| newStyle.placeAbove != lastTopStyle.placeAbove) {
@@ -67,6 +67,11 @@ this.moveTopAsNeeded = function(e) {
 			delayMoveTop();
 		}
 	}
+};
+
+this.containerPDFResize = function(e) {
+	if(!inPDFJS(e.target.document)) { return; }
+	delayMoveTop();
 };
 
 // Handles the position of the findbar
@@ -119,6 +124,22 @@ this.moveTop = function() {
 			}
 		}
 	}
+	
+	// Compatibility with PDF.JS
+	if(isPDFJS) {
+		var toolbar = contentDocument.getElementById('toolbarViewer');
+		if(toolbar) {
+			moveTopStyle.top += toolbar.clientHeight;
+			var outerContainer = contentDocument.getElementById('outerContainer');
+			var sidebarContainer = contentDocument.getElementById('sidebarContainer');
+			if(outerContainer.classList.contains('sidebarOpen')) {
+				moveTopStyle.left += sidebarContainer.clientWidth;
+			}
+			listenerAid.add(contentDocument.defaultView, 'resize', containerPDFResize, true);
+		}
+	}
+	
+	toggleAttribute(gFindBar, 'inPDFJS', (isPDFJS && toolbar));
 	
 	moveTopStyle.clientWidth = gFindBar.clientWidth;
 	if(prefAid.squareLook && prefAid.placeAbove && !gFindBar.collapsed) {
@@ -238,7 +259,7 @@ this.stylePersonaFindBar = function() {
 		var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 		sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 		sscode += '@-moz-document url("'+document.baseURI+'") {\n';
-		sscode += '	window['+objName+'_UUID="'+_UUID+'"] #FindToolbar[movetotop]  {\n';
+		sscode += '	window['+objName+'_UUID="'+_UUID+'"] #FindToolbar[movetotop]:not([inPDFJS])  {\n';
 		sscode += '	  background-image: ' + prefAid.lwthemebgImage + ' !important;\n';
 		sscode += '	  background-color: ' + prefAid.lwthemecolor + ' !important;\n';
 		sscode += '	  color: ' + prefAid.lwthemecolor + ' !important;\n';
@@ -249,7 +270,7 @@ this.stylePersonaFindBar = function() {
 		sscode += '	}\n';
 		
 		// There's just no way I can have rounded corners with personas
-		sscode += '	window['+objName+'_UUID="'+_UUID+'"] #FindToolbar[movetotop]:before, #FindToolbar[movetotop]:after { display: none !important; }\n';
+		sscode += '	window['+objName+'_UUID="'+_UUID+'"] #FindToolbar[movetotop]:not([inPDFJS]):before, #FindToolbar[movetotop]:not([inPDFJS]):after { display: none !important; }\n';
 		
 		// Find in Tabs box
 		if(prefAid.findInTabs && typeof(FITbox) != 'undefined' && FITbox) {
@@ -267,6 +288,14 @@ this.stylePersonaFindBar = function() {
 		sscode += '}';
 		
 		styleAid.load('personaFindBar_'+_UUID, sscode, true);
+	}
+};
+
+this.changeLook = function() {
+	// Apply the special style for the findbar in pdf documents
+	if((isPDFJS && !gFindBar.getAttribute('inPDFJS'))
+	|| (!isPDFJS && gFindBar.getAttribute('inPDFJS') == 'true')) {
+		delayMoveTop();
 	}
 };
 
@@ -288,6 +317,8 @@ this.hideOnChrome = function() {
 		if(gFindBar.collapsed != beforeState) {
 			moveTop();
 		}
+		
+		changeLook();
 	}, 0);
 };
 
@@ -411,6 +442,13 @@ moduleAid.UNLOADMODULE = function() {
 		listenerAid.remove(gBrowser.tabContainer, "TabSelect", hideOnChrome, false);
 		listenerAid.remove(gBrowser, "DOMContentLoaded", hideOnChromeContentLoaded, false);
 		gBrowser.removeTabsProgressListener(hideOnChromeProgressListener);
+		
+		for(var b=0; b<gBrowser.browsers.length; b++) {
+			var inDoc = gBrowser.browsers[b].contentDocument;
+			if(inPDFJS(inDoc)) {
+				listenerAid.remove(contentDocument.defaultView, 'resize', containerPDFResize, true);
+			}
+		}
 	}
 	
 	listenerAid.remove(browserPanel, "browserPanelResized", delayMoveTop, false);
@@ -423,6 +461,7 @@ moduleAid.UNLOADMODULE = function() {
 	listenerAid.remove(browserPanel, 'resize', browserPanelResized);
 	
 	gFindBar.removeAttribute('movetotop');
+	gFindBar.removeAttribute('inPDFJS');
 	hideIt(gFindBar, true);
 	
 	removeAttribute(gFindBar, 'squareLook');

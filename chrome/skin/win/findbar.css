@@ -12,35 +12,35 @@
 	#FindToolbar[movetotop]:after {
 		margin-top: -1px;
 	}
-	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]) #FindToolbar[movetotop]:before {
+	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]) #FindToolbar[movetotop]:not([inPDFJS]):before {
 		box-shadow: 	2px -2px 0 -2px rgb(160,160,160),
 		                7px -4px 0px -4px rgb(219,234,249),
 		                6px -4px 0px -4px rgb(219,234,249);
 	}
-	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]) #FindToolbar[movetotop]:after {
+	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]) #FindToolbar[movetotop]:not([inPDFJS]):after {
 		box-shadow: 	-2px -2px 0 -2px rgb(160,160,160),
 		                -7px -4px 0px -4px rgb(219,234,249),
 		                -6px -4px 0px -4px rgb(219,234,249);
 	}
 	
 	/* Rounded inner corners Windows XP */
-	window[findbartweak-oscpu="Windows NT 5.1"] #FindToolbar[movetotop]:before {
+	window[findbartweak-oscpu="Windows NT 5.1"] #FindToolbar[movetotop]:not([inPDFJS]):before {
 		box-shadow: 	2px -2px 0 -2px rgb(160,160,160),
 		                7px -4px 0px -4px -moz-dialog,
 		                6px -4px 0px -4px -moz-dialog;
 	}
-	window[findbartweak-oscpu="Windows NT 5.1"] #FindToolbar[movetotop]:after {
+	window[findbartweak-oscpu="Windows NT 5.1"] #FindToolbar[movetotop]:not([inPDFJS]):after {
 		box-shadow: 	-2px -2px 0 -2px rgb(160,160,160),
 		                -7px -4px 0px -4px -moz-dialog,
 		                -6px -4px 0px -4px -moz-dialog;
 	}
 	
 	/* Find Bar */
-	window[findbartweak-oscpu="Windows NT 5.1"] #FindToolbar[movetotop] {
+	window[findbartweak-oscpu="Windows NT 5.1"] #FindToolbar[movetotop]:not([inPDFJS]) {
 		background-color: -moz-dialog;
 	}
 	
-	#FindToolbar[movetotop] {
+	#FindToolbar[movetotop]:not([inPDFJS]) {
 		border-bottom: 1px solid rgb(0,0,0);
 		border-right: 1px solid rgb(0,0,0);
 		border-left: 1px solid rgb(0,0,0);
@@ -49,7 +49,7 @@
 		-moz-border-left-colors: rgb(160, 160, 160);
 	}
 	
-	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]) #FindToolbar[movetotop] {
+	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]) #FindToolbar[movetotop]:not([inPDFJS]) {
 		background-color: rgb(219,234,249);
 	}
 	

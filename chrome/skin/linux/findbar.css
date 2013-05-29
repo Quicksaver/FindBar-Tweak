@@ -7,18 +7,20 @@
 	/* Rounded inner corners */
 	#FindToolbar[movetotop]:before {
 		margin-left: -16px;
+	}
+	#FindToolbar[movetotop]:not([inPDFJS]):before {
 		box-shadow: 	2px -2px 0 -2px rgb(178,174,170),
 		                7px -4px 0px -4px -moz-dialog,
 		                6px -4px 0px -4px -moz-dialog;
 	}
-	#FindToolbar[movetotop]:after {
+	#FindToolbar[movetotop]:not([inPDFJS]):after {
 		box-shadow: 	-2px -2px 0 -2px rgb(178,174,170),
 		                -7px -4px 0px -4px -moz-dialog,
 		                -6px -4px 0px -4px -moz-dialog;
 	}
 	
 	/* Find Bar */
-	#FindToolbar[movetotop] {
+	#FindToolbar[movetotop]:not([inPDFJS]) {
 		background-color: -moz-dialog;
 		border-bottom: 1px solid rgb(0,0,0);
 		border-right: 1px solid rgb(0,0,0);

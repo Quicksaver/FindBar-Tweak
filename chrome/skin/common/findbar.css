@@ -37,6 +37,7 @@
 	#FindToolbar:not([movetotop])[movetoright] > hbox.findbar-container > * {
 		position: static;
 		text-align: start;
+		vertical-align: middle;
 	}
 	
 	.findbar-cs-button {

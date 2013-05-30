@@ -36,10 +36,6 @@
 	}
 	
 	/* Find Bar */
-	window[findbartweak-oscpu="Windows NT 5.1"] #FindToolbar[movetotop]:not([inPDFJS]) {
-		background-color: -moz-dialog;
-	}
-	
 	#FindToolbar[movetotop]:not([inPDFJS]) {
 		border-bottom: 1px solid rgb(0,0,0);
 		border-right: 1px solid rgb(0,0,0);
@@ -49,8 +45,25 @@
 		-moz-border-left-colors: rgb(160, 160, 160);
 	}
 	
+	window[findbartweak-oscpu="Windows NT 5.1"] #FindToolbar[movetotop]:not([inPDFJS]) {
+		background-color: -moz-dialog;
+	}
 	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]) #FindToolbar[movetotop]:not([inPDFJS]) {
 		background-color: rgb(219,234,249);
+	}
+	
+	window[findbartweak-oscpu="Windows NT 5.1"] #FindToolbar:not([movetotop])[movetoright] textbox[anonid="findbar-textbox"] {
+		max-height: 19px;
+	}
+	
+	window[findbartweak-oscpu="Windows NT 6.2"] #FindToolbar[hideLabels] toolbarbutton {
+		min-height: 23px;
+	}
+	window[findbartweak-oscpu="Windows NT 6.2"] #FindToolbar[hideLabels] textbox[anonid="findbar-textbox"] {
+		min-height: 21px;
+	}
+	window[findbartweak-oscpu="Windows NT 6.2"] #FindToolbar:not([movetotop])[movetoright] textbox[anonid="findbar-textbox"] {
+		max-height: 21px;
 	}
 	
 	/* For the View Source window */

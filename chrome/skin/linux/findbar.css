@@ -30,6 +30,13 @@
 		-moz-border-left-colors: rgb(178,174,170);
 	}
 	
+	#FindToolbar:not([movetotop])[movetoright] textbox[anonid="findbar-textbox"] {
+		max-height: 24px;
+	}
+	#FindToolbar:not([movetotop])[movetoright] toolbarbutton {
+		max-height: 28px;
+	}
+	
 	/* Grid stuff */
 	grid[anonid="findGrid"]:not([gridSpacers="none"]) row.topSpacer[flex="0"],
 	grid[anonid="findGrid"][gridSpacers="single"] row.bottomSpacer[flex="0"] {

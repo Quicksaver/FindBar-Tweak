@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.6';
+moduleAid.VERSION = '1.1.7';
 
 this.__defineGetter__('findCSButton', function() { return gFindBar.getElement(objName+'-find-cs-button'); });
 this.__defineGetter__('findCSCheckbox', function() { return gFindBar.getElement('find-case-sensitive'); });
@@ -118,6 +118,14 @@ moduleAid.LOADMODULE = function() {
 	// For the case-sensitive button
 	prefAid.setDefaults({ casesensitive: 0 }, 'typeaheadfind', 'accessibility');
 	
+	if(Services.navigator.oscpu) { // I don't know if this could simply not exist or whatever
+		var oscpu = Services.navigator.oscpu;
+		if(oscpu.indexOf(';') > -1) {
+			oscpu = oscpu.split(';')[0];
+		}
+		setAttribute(viewSource || $('main-window'), objName+'-oscpu', oscpu);
+	}
+	
 	// The dummy function in this call prevents a weird bug where the overlay wouldn't be properly applied when opening a second window... for some reason...
 	overlayAid.overlayURI('chrome://browser/content/browser.xul', 'findbar', function(window) { window.gFindBar; });
 	overlayAid.overlayURI('chrome://global/content/viewSource.xul', 'findbar');
@@ -170,4 +178,6 @@ moduleAid.UNLOADMODULE = function() {
 		overlayAid.removeOverlayURI('chrome://global/content/viewSource.xul', 'findbar');
 		overlayAid.removeOverlayURI('chrome://global/content/viewPartialSource.xul', 'findbar');
 	}
+	
+	removeAttribute(viewSource || $('main-window'), objName+'-oscpu');
 };

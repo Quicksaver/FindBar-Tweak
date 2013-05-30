@@ -1,1 +1,6 @@
 <!ENTITY MenuOptions.label "Alternativ för söklisten">
+<!ENTITY ToolbarButton.label "Växla söklisten">
+<!ENTITY ToolbarButton.tooltip "Öppna/stäng söklisten">
+<!ENTITY FITbutton.label "Sök i alla flikar">
+<!ENTITY FITbutton.tooltip "Sök efter frasen i alla öppnade flikar">
+<!ENTITY FITbutton.accesskey "f">

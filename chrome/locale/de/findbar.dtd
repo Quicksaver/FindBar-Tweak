@@ -1,1 +1,6 @@
 <!ENTITY MenuOptions.label "Suchleisten-Einstellungen (Findbar Tweaks)">
+<!ENTITY ToolbarButton.label "Suchleiste ein-/ausblenden">
+<!ENTITY ToolbarButton.tooltip "Suchleiste öffnen/schließen">
+<!ENTITY FITbutton.label "In allen Tabs suchen">
+<!ENTITY FITbutton.tooltip "Den Suchbegriff in allen geöffneten Tabs suchen">
+<!ENTITY FITbutton.accesskey "T">

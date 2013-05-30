@@ -1,5 +1,6 @@
 <!ENTITY Options.title "FindBar Tweak - Einstellungen">
 <!ENTITY OptHighlights.label "Hervorhebungen">
+<!ENTITY OptSightsTab.label "Kreisförmige Hervorhebung">
 <!ENTITY OptGeneral.label "Allgemein">
 <!ENTITY Optabout.label "Über">
 <!ENTITY Optgen.label "Suchleisten-Einstellungen">
@@ -9,12 +10,18 @@
 <!ENTITY OpthideWhenFinderHidden.label "Hervorhebungen entfernen, wenn die Suchleiste geschlossen wird">
 <!ENTITY OptgridInScrollbar.label "Hervorhebungsbalken innerhalb der Bildlaufleiste anzeigen">
 <!ENTITY OptuseCounter.label "Trefferanzahl in der Suchleiste anzeigen">
+<!ENTITY OptfindInTabs.label "„In allen Tabs suchen“ aktivieren">
+<!ENTITY OptalwaysOpenFIT.label "„In allen Tabs suchen“ mit der Suchleiste öffnen">
 <!ENTITY Optcolor.label "Markierungsfarbe">
 <!ENTITY OptcolorReset.label "(zurücksetzen)">
 <!ENTITY OptgridLimit.labela "Den Hervorhebungsbalken bei mehr als">
 <!ENTITY OptgridLimit.labelb "Hervorhebungen nicht anzeigen">
 <!ENTITY OptminNoDelay.labela "Hervorhebungen verzögert einblenden bei weniger als">
 <!ENTITY OptminNoDelay.labelb "Zeichen">
+<!ENTITY OptadjustGridPadding.labela "Abstand zwischen Muster und Rand anpassen:">
+<!ENTITY OptadjustGridPadding.labelb "Pixel">
+<!ENTITY OptadjustGridWidth.labela "Breite des Musters anpassen:">
+<!ENTITY OptadjustGridWidth.labelb "Pixel">
 <!ENTITY Optsights.label "Fundstellenhervorhebung">
 <!ENTITY OptsightsCurrent.label "Aktuellen Suchtreffer kurzzeitig eingekreist hervorheben">
 <!ENTITY OptsightsHighlights.label "Alle markierten Vorkommen des gesuchten Begriffs kurzzeitig eingekreist hervorheben (*)">
@@ -22,6 +29,8 @@
 <!ENTITY OptsightsStyle.label "Stil der Hervorhebung (Anklicken, um eine Vorschau anzuzeigen):">
 <!ENTITY OptsightsStyle.focus "Ort der Hervorhebung">
 <!ENTITY OptsightsStyle.circle "Ort des Kreises">
+<!ENTITY OptsightsColor.label "Farbe der kreisförmigen Hervorhebung">
+<!ENTITY OptsightsSameColor.label "Selbe Farbe wie bei den Hervorhebungen verwenden">
 <!ENTITY OpthideLabels.label "Schaltflächentext ausblenden">
 <!ENTITY OpthideClose.label "Die Schließen-Schaltfläche ausblenden">
 <!ENTITY OptmovetoTop.label "Die Such-Symbolleiste an den oberen Rand des Browsers verschieben">

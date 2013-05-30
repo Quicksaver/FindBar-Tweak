@@ -1,40 +1,49 @@
 <!ENTITY Options.title "FindBar Tweak">
 <!ENTITY OptHighlights.label "高亮">
+<!ENTITY OptSightsTab.label "聚焦">
 <!ENTITY OptGeneral.label "常规">
 <!ENTITY Optabout.label "关于">
-<!ENTITY Optgen.label "Findbar 选项">
-<!ENTITY Optdisplay.label "显示选项">
+<!ENTITY Optgen.label "查找栏选项">
+<!ENTITY Optdisplay.label "显示效果选项">
 <!ENTITY Optgrid.label "高亮网格">
 <!ENTITY OpthighlightByDefault.label "默认高亮所有匹配项">
 <!ENTITY OpthideWhenFinderHidden.label "关闭查找栏时移除高亮">
 <!ENTITY OptgridInScrollbar.label "在滚动条上显示高亮网格">
 <!ENTITY OptuseCounter.label "在查找栏上显示匹配项计数器">
+<!ENTITY OptfindInTabs.label "启用“查找所有标签页”">
+<!ENTITY OptalwaysOpenFIT.label "默认开启“查找所有标签页”">
 <!ENTITY Optcolor.label "高亮颜色">
 <!ENTITY OptcolorReset.label "(重置)">
 <!ENTITY OptgridLimit.labela "超过">
 <!ENTITY OptgridLimit.labelb "项时不使用网格高亮">
 <!ENTITY OptminNoDelay.labela "如果搜索词少于">
 <!ENTITY OptminNoDelay.labelb "个字符则延迟高亮">
+<!ENTITY OptadjustGridPadding.labela "调整网格与边框的距离:">
+<!ENTITY OptadjustGridPadding.labelb "像素">
+<!ENTITY OptadjustGridWidth.labela "调整网格宽度:">
+<!ENTITY OptadjustGridWidth.labelb "像素">
 <!ENTITY Optsights.label "聚焦视点">
 <!ENTITY OptsightsCurrent.label "在当前搜索项上显示聚焦视点">
 <!ENTITY OptsightsHighlights.label "在所有高亮项上显示聚焦视点 (*)">
 <!ENTITY OptsightsHighlights.warning "(*) 警告：此功能较耗费资源，可能导致渲染和页面滚动缓慢！">
-<!ENTITY OptsightsStyle.label "聚焦视点样式(点击可预览):">
+<!ENTITY OptsightsStyle.label "聚焦视点样式（点击可预览）">
 <!ENTITY OptsightsStyle.focus "位置聚焦">
 <!ENTITY OptsightsStyle.circle "位置画环">
-<!ENTITY OpthideLabels.label "隐藏按钮文字">
+<!ENTITY OptsightsColor.label "聚焦颜色">
+<!ENTITY OptsightsSameColor.label "使用与高亮相同的颜色">
+<!ENTITY OpthideLabels.label "隐藏按钮的说明文字">
 <!ENTITY OpthideClose.label "隐藏查找栏关闭按钮">
-<!ENTITY OptmovetoTop.label "移动查找栏到窗口顶部">
-<!ENTITY OptmovetoRight.label "置于右侧">
+<!ENTITY OptmovetoTop.label "查找栏置于窗口顶部">
+<!ENTITY OptmovetoRight.label "查找栏置于右侧">
 <!ENTITY OptblurCloses.label "失去焦点时关闭查找栏">
 <!ENTITY OptperTab.label "在新标签页中关闭查找栏">
-<!ENTITY OptonStartup.label "启动时恢复查找栏的开启/关闭状态">
+<!ENTITY OptonStartup.label "启动时恢复最后开/关状态">
 <!ENTITY OptkeepButtons.label "在快速查找栏上显示按钮">
 <!ENTITY OptFAYT.label "开始输入时即时查找文本">
 <!ENTITY OptFAYTTimeout.beforeLabel "自动关闭于">
 <!ENTITY OptFAYTTimeout.afterLabel "秒后">
-<!ENTITY OptFAYTmode.quickFind "若未开启则使用快速查找栏">
-<!ENTITY OptFAYTmode.normalFind "总是使用常规查找栏">
+<!ENTITY OptFAYTmode.quickFind "若未开启标准查找栏则使用快速查找栏">
+<!ENTITY OptFAYTmode.normalFind "总是使用标准查找栏">
 <!ENTITY OptctrlFCloses.win "Ctrl+F 也可关闭查找栏">
 <!ENTITY OptctrlFCloses.mac "Command+F 也可关闭查找栏">
 <!ENTITY findbartweakabout.name "FindBar Tweak">

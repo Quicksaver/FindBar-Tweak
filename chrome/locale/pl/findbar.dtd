@@ -1,0 +1,6 @@
+<!ENTITY MenuOptions.label "FindBar - Opcje">
+<!ENTITY ToolbarButton.label "Pokaż/Ukryj pasek wyszukiwania">
+<!ENTITY ToolbarButton.tooltip "Pokaż/Ukryj pasek wyszukiwania">
+<!ENTITY FITbutton.label "Znajdź w kartach">
+<!ENTITY FITbutton.tooltip "Znajdź frazę we wszystkich otwartych kartach">
+<!ENTITY FITbutton.accesskey "k">

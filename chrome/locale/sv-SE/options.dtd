@@ -1,5 +1,6 @@
 <!ENTITY Options.title "FindBar Tweak - Söklistalternativ">
 <!ENTITY OptHighlights.label "Färgmarkering">
+<!ENTITY OptSightsTab.label "Sikten">
 <!ENTITY OptGeneral.label "Allmänt">
 <!ENTITY Optabout.label "Om">
 <!ENTITY Optgen.label "Söklistalternativ">
@@ -9,12 +10,18 @@
 <!ENTITY OpthideWhenFinderHidden.label "Ta bort färgmarkeringar när söklisten stängs">
 <!ENTITY OptgridInScrollbar.label "Visa markeringspositionslinjalen i rullningslisten">
 <!ENTITY OptuseCounter.label "Visa antalet träffar i söklisten">
+<!ENTITY OptfindInTabs.label "Aktivera &quot;Sök i alla flikar&quot;">
+<!ENTITY OptalwaysOpenFIT.label "Öppna &quot;Sök i alla flikar&quot; med söklisten">
 <!ENTITY Optcolor.label "Markeringsfärg">
 <!ENTITY OptcolorReset.label "(återställ)">
 <!ENTITY OptgridLimit.labela "Använd inte linjalen vid fler än">
 <!ENTITY OptgridLimit.labelb "markeringar">
 <!ENTITY OptminNoDelay.labela "Fördröj färgmarkering om söktermen är kortare än">
 <!ENTITY OptminNoDelay.labelb "tecken">
+<!ENTITY OptadjustGridPadding.labela "Justera avståndet mellan rutnätet och kanten:">
+<!ENTITY OptadjustGridPadding.labelb "px">
+<!ENTITY OptadjustGridWidth.labela "Justera rutnätets bredd:">
+<!ENTITY OptadjustGridWidth.labelb "px">
 <!ENTITY Optsights.label "Fokuseringssikten">
 <!ENTITY OptsightsCurrent.label "Visa fokuseringssikte för den aktuella sökträffen">
 <!ENTITY OptsightsHighlights.label "Visa fokuseringssikten för alla färgmarkerade sökträffar (*)">
@@ -22,6 +29,8 @@
 <!ENTITY OptsightsStyle.label "Format för sikten (klicka för förhandsvisning):">
 <!ENTITY OptsightsStyle.focus "Fokuseringens plats">
 <!ENTITY OptsightsStyle.circle "Cirkelns plats">
+<!ENTITY OptsightsColor.label "Färg på sikten">
+<!ENTITY OptsightsSameColor.label "Använd samma färg som vid färgmarkering">
 <!ENTITY OpthideLabels.label "Dölj knappetiketter">
 <!ENTITY OpthideClose.label "Dölj söklistens stängknapp">
 <!ENTITY OptmovetoTop.label "Placera söklisten överst i webbläsarfönstret">

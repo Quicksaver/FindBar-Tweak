@@ -1,1 +1,6 @@
 <!ENTITY MenuOptions.label "Opções da Barra de Procura">
+<!ENTITY ToolbarButton.label "Barra de Procura">
+<!ENTITY ToolbarButton.tooltip "Abrir ou Fechar a Barra de Procura">
+<!ENTITY FITbutton.label "Procurar em todos os Separadores">
+<!ENTITY FITbutton.tooltip "Procura a frase em todos os separadores abertos em todas as janelas">
+<!ENTITY FITbutton.accesskey "P">

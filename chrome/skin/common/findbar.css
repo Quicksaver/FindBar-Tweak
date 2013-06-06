@@ -243,6 +243,7 @@
 	.findInTabs-list image {
 		min-width: 16px;
 		max-height: 16px;
+		margin-left: 1px;
 	}
 	
 	.findInTabs-list .right {

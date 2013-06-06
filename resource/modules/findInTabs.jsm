@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.1';
+moduleAid.VERSION = '1.1.2';
 
 this.__defineGetter__('FITresizer', function() { return $(objName+'-findInTabs-resizer'); });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -67,6 +67,45 @@ this.closeFITWithFindBar = function() {
 	if(FITbroadcaster.getAttribute('checked')) { toggleFIT(); }
 };
 
+this.getWindowForContent = function(aDoc) {
+	var exists = null;
+	windowMediator.callOnAll(function(aWindow) {
+		if(!exists && aWindow.gBrowser.getBrowserForDocument(aDoc)) {
+			exists = aWindow;
+		}
+	}, 'navigator:browser');
+	
+	if(!exists) {
+		windowMediator.callOnAll(function(aWindow) {
+			if(!exists && aWindow.document.getElementById('content').contentDocument == aDoc) {
+				exists = aWindow;
+			}
+		}, 'navigator:view-source');
+	}
+	
+	return exists;
+};
+
+this.getPanelForContent = function(aDoc) {
+	var exists = null;
+	windowMediator.callOnAll(function(aWindow) {
+		if(!exists) {
+			var tab = aWindow.gBrowser._getTabForContentWindow(aDoc.defaultView);
+			if(tab) { exists = tab.linkedPanel; }
+		}
+	}, 'navigator:browser');
+	
+	if(!exists) {
+		windowMediator.callOnAll(function(aWindow) {
+			if(!exists && aWindow.document.getElementById('content').contentDocument == aDoc) {
+				exists = 'viewSource';
+			}
+		}, 'navigator:view-source');
+	}
+	
+	return exists;
+};
+
 this.verifyFITselection = function() {
 	// Re-Do the list if something is invalid
 	if(!FITtabsList.currentItem) { return null; }
@@ -75,20 +114,7 @@ this.verifyFITselection = function() {
 		return null;
 	}
 	
-	var exists = null;
-	windowMediator.callOnAll(function(aWindow) {
-		if(!exists && aWindow.gBrowser.getBrowserForDocument(FITtabsList.currentItem.linkedDocument)) {
-			exists = aWindow;
-		}
-	}, 'navigator:browser');
-	
-	if(!exists) {
-		windowMediator.callOnAll(function(aWindow) {
-			if(!exists && aWindow.document.getElementById('content').contentDocument == FITtabsList.currentItem.linkedDocument) {
-				exists = aWindow;
-			}
-		}, 'navigator:view-source');
-	}
+	var exists = getWindowForContent(FITtabsList.currentItem.linkedDocument);
 	
 	// Should Re-Do the lists when the tab is closed for example
 	if(!exists) {
@@ -236,6 +262,71 @@ this.beginFITFind = function() {
 	}, 'navigator:view-source');
 };
 
+this.createTabItem = function(aWindow) {
+	var newHits = document.createElement('richlistbox');
+	newHits.setAttribute('flex', '1');
+	newHits.onselect = selectFIThit;
+	newHits.hidden = true;
+	newHits = FIThits.appendChild(newHits);
+	
+	var newItem = document.createElement('richlistitem');
+	newItem.setAttribute('align', 'center');
+	newItem.linkedHits = newHits;
+	newItem.linkedDocument = aWindow.document;
+	newItem.linkedPanel = getPanelForContent(aWindow.document);
+	
+	var itemFavicon = document.createElement('image');
+	var itemCount = document.createElement('label');
+	
+	var itemLabel = document.createElement('label');
+	itemLabel.setAttribute('flex', '1');
+	itemLabel.setAttribute('crop', 'end');
+	
+	itemFavicon = newItem.appendChild(itemFavicon);
+	itemLabel = newItem.appendChild(itemLabel);
+	itemCount = newItem.appendChild(itemCount);
+	
+	newItem.linkedFavicon = itemFavicon;
+	newItem.linkedTitle = itemLabel;
+	newItem.linkedCount = itemCount;
+	
+	return FITtabsList.appendChild(newItem);
+};
+
+this.updateTabItem = function(item) {
+	item.linkedTitle.setAttribute('value', item.linkedDocument.title || item.linkedDocument.baseURI);
+	
+	// Let's make it pretty with the favicons
+	var newURI = Services.io.newURI(item.linkedDocument.baseURI, item.linkedDocument.characterSet, null);
+	PlacesUtils.favicons.getFaviconDataForPage(newURI, function(aURI) {
+		if(aURI) { item.linkedFavicon.setAttribute('src', aURI.spec); }
+		else if(item.linkedPanel) {
+			if(item.linkedPanel == 'viewSource') {
+				// I'm actually not adding a favicon if it's the view source window, I don't think it makes much sense to do it,
+				// and it's easier to distinguish these windows in the list this way.
+				//item.linkedFavicon.setAttribute('src', 'chrome://branding/content/icon16.png');
+			} else {
+				var inWindow = getWindowForContent(item.linkedDocument);
+				if(!inWindow) { return; }
+				
+				var inTab = inWindow.gBrowser._getTabForContentWindow(item.linkedDocument.defaultView);
+				if(!inTab) { return; }
+				
+				var inBox = inTab.boxObject.firstChild;
+				while(inBox.className.indexOf('tab-stack') < 0) {
+					inBox = inBox.nextSibling;
+					if(!inBox) { return; }
+				}
+				
+				var icon = inBox.getElementsByClassName('tab-icon-image');
+				if(icon.length < 1) { return; }
+				
+				item.linkedFavicon.setAttribute('src', icon[0].getAttribute('src'));
+			}
+		}
+	});
+};
+
 // This returns the list of tabs in this window along with their data
 this.getFITTabs = function(aWindow) {
 	if(!aWindow.document.defaultView || !(aWindow.document instanceof aWindow.document.defaultView.HTMLDocument)) { return; }
@@ -243,50 +334,24 @@ this.getFITTabs = function(aWindow) {
 	if(aWindow.document.baseURI != 'about:blank'
 	&& aWindow.document.baseURI != 'chrome://browser/content/browser.xul'
 	&& aWindow.document.readyState == "complete") {
-		var newHits = document.createElement('richlistbox');
-		newHits.setAttribute('flex', '1');
-		newHits.onselect = selectFIThit;
-		newHits.hidden = true;
-		newHits = FIThits.appendChild(newHits);
-		
-		var newItem = document.createElement('richlistitem');
-		newItem.linkedHits = newHits;
-		newItem.linkedDocument = aWindow.document;
-		
-		var itemFavicon = document.createElement('image');
-		var itemCount = document.createElement('label');
-		
-		var itemLabel = document.createElement('label');
-		itemLabel.setAttribute('flex', '1');
-		itemLabel.setAttribute('crop', 'end');
-		itemLabel.setAttribute('value', aWindow.document.title || aWindow.document.baseURI);
-		
-		newItem.appendChild(itemFavicon);
-		newItem.appendChild(itemLabel);
-		itemCount = newItem.appendChild(itemCount);
-		
-		newItem = FITtabsList.appendChild(newItem);
+		var newItem = createTabItem(aWindow);
 		
 		aSync(function() {
-			countFITinTab(aWindow, itemCount, newHits);
+			countFITinTab(aWindow, newItem);
 		});
 		
-		// Let's make it pretty with the favicons
-		var newURI = Services.io.newURI(aWindow.document.baseURI, aWindow.document.characterSet, null);
-		PlacesUtils.favicons.getFaviconDataForPage(newURI, function(aURI) {
-			if(aURI) { newItem.firstChild.setAttribute('src', aURI.spec); }
-		});
+		updateTabItem(newItem);
 	}
 };
 
-this.countFITinTab = function(aWindow, itemCount, hitsList) {
+this.countFITinTab = function(aWindow, item) {
 	if(inPDFJS(aWindow.document)) {
 		// We need this to access protected properties, hidden from privileged code
 		if(!aWindow.PDFFindController) { aWindow = XPCNativeWrapper.unwrap(aWindow); }
 		aWindow.PDFFindController.extractText();
 		// This takes time to build apparently
 		if(aWindow.PDFFindController.pageContents.length != aWindow.PDFView.pages.length) {
-			aSync(function() { countFITinTab(aWindow, itemCount, hitsList); }, 100);
+			aSync(function() { countFITinTab(aWindow, item); }, 100);
 			return;
 		}
 	}
@@ -295,25 +360,25 @@ this.countFITinTab = function(aWindow, itemCount, hitsList) {
 	
 	// This means there are too many results, which could slow down the browser
 	if(levels === null) {
-		setAttribute(itemCount, 'value', prefAid.maxFIT+'+');
+		setAttribute(item.linkedCount, 'value', prefAid.maxFIT+'+');
 	} else {
-		var hits = countFITinLevels(levels, hitsList, aWindow);
-		setAttribute(itemCount, 'value', hits);
+		var hits = countFITinLevels(levels, item.linkedHits, aWindow);
+		setAttribute(item.linkedCount, 'value', hits);
 	}
 	
 	// Resize the header so it fits nicely into the results
 	// +8 comes from padding
-	if(itemCount.clientWidth +8 > FITtabsHeader.childNodes[1].clientWidth) {
-		FITtabsHeader.childNodes[1].minWidth = (itemCount.clientWidth +8)+'px';
+	if(item.linkedCount.clientWidth +8 > FITtabsHeader.childNodes[1].clientWidth) {
+		FITtabsHeader.childNodes[1].minWidth = (item.linkedCount.clientWidth +8)+'px';
 	}
 	
 	if(!contentWindow || levels === null) { return; } // Usually triggered when a selection is on a frame and the frame closes
 	
-	if(contentWindow.document == itemCount.parentNode.linkedDocument) {
-		FITtabsList.selectItem(itemCount.parentNode);
+	if(contentWindow.document == item.linkedDocument) {
+		FITtabsList.selectItem(item);
 		FITtabsList.ensureSelectedElementIsVisible();
 		
-		autoSelectFIThit(hitsList);
+		autoSelectFIThit(item.linkedHits);
 	}
 };
 

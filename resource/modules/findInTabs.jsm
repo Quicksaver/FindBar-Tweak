@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.2';
+moduleAid.VERSION = '1.1.3';
 
 this.__defineGetter__('FITresizer', function() { return $(objName+'-findInTabs-resizer'); });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -294,7 +294,14 @@ this.createTabItem = function(aWindow) {
 };
 
 this.updateTabItem = function(item) {
-	item.linkedTitle.setAttribute('value', item.linkedDocument.title || item.linkedDocument.baseURI);
+	var newTitle = item.linkedDocument.title || item.linkedDocument.baseURI;
+	// I want the value on the title of the window, not just the URI of where the view source is pointing at
+	if(item.linkedPanel == 'viewSource') {
+		var sourceWindow = getWindowForContent(item.linkedDocument);
+		newTitle = sourceWindow.document.documentElement.getAttribute('titlepreface') +newTitle;
+	}
+	
+	item.linkedTitle.setAttribute('value', newTitle);
 	
 	// Let's make it pretty with the favicons
 	var newURI = Services.io.newURI(item.linkedDocument.baseURI, item.linkedDocument.characterSet, null);

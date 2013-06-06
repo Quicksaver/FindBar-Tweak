@@ -307,6 +307,8 @@ this.updateTabItem = function(item) {
 	var newURI = Services.io.newURI(item.linkedDocument.baseURI, item.linkedDocument.characterSet, null);
 	PlacesUtils.favicons.getFaviconDataForPage(newURI, function(aURI) {
 		if(aURI) { item.linkedFavicon.setAttribute('src', aURI.spec); }
+		
+		// Since the API didn't return an URI, lets try to use the favicon image displayed in the tabs
 		else if(item.linkedPanel) {
 			if(item.linkedPanel == 'viewSource') {
 				// I'm actually not adding a favicon if it's the view source window, I don't think it makes much sense to do it,

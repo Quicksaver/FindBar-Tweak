@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.9';
+moduleAid.VERSION = '1.1.10';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -148,7 +148,7 @@ this.reHighlightAll = function() {
 		
 		if(!viewSource) {
 			for(var i=0; i<gBrowser.tabContainer.childNodes.length; i++) {
-				setAttribute(gBrowser.tabContainer.childNodes[i], 'reHighlight', 'true');
+				setAttribute(gBrowser.tabContainer.childNodes[i].linkedBrowser.contentDocument.documentElement, 'reHighlight', 'true');
 			}
 		}
 		

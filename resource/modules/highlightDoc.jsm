@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.3.0';
+moduleAid.VERSION = '1.3.1';
 
 this.alwaysUpdateStatusUI = function(e) {
 	// toggleHighlight() doesn't update the UI in these conditions, we need it to, to update the counter (basically hide it)
@@ -126,9 +126,7 @@ moduleAid.LOADMODULE = function() {
 		}
 		
 		var doc = win.document;
-		// should be !(doc instanceof window.HTMLDocument) but this doesn't work in FF23
-		// see https://bugzilla.mozilla.org/show_bug.cgi?id=870423
-		if(!doc || !doc.defaultView || !(doc instanceof doc.defaultView.HTMLDocument) || !doc.body) {
+		if(!doc || !(doc instanceof window.HTMLDocument) || !doc.body) {
 			return textFound;
 		}
 		

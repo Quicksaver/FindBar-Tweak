@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.3';
+moduleAid.VERSION = '1.1.4';
 
 this.__defineGetter__('FITresizer', function() { return $(objName+'-findInTabs-resizer'); });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -338,7 +338,7 @@ this.updateTabItem = function(item) {
 
 // This returns the list of tabs in this window along with their data
 this.getFITTabs = function(aWindow) {
-	if(!aWindow.document.defaultView || !(aWindow.document instanceof aWindow.document.defaultView.HTMLDocument)) { return; }
+	if(!(aWindow.document instanceof window.HTMLDocument)) { return; }
 	
 	if(aWindow.document.baseURI != 'about:blank'
 	&& aWindow.document.baseURI != 'chrome://browser/content/browser.xul'
@@ -482,9 +482,7 @@ this.countFITinDoc = function(aWord, aWindow) {
 	}
 	
 	var doc = win.document;
-	// should be !(doc instanceof window.HTMLDocument) but this doesn't work in FF23
-	// see https://bugzilla.mozilla.org/show_bug.cgi?id=870423
-	if(!doc || !doc.defaultView || !(doc instanceof doc.defaultView.HTMLDocument) || !doc.body) {
+	if(!doc || !(doc instanceof window.HTMLDocument) || !doc.body) {
 		return aLevel;
 	}
 	

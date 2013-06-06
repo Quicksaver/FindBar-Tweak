@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.0';
+moduleAid.VERSION = '1.4.1';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -325,7 +325,7 @@ this.hideOnChrome = function() {
 this.hideOnChromeContentLoaded = function(e) {
 	// this is the content document of the loaded page.
 	var doc = e.originalTarget;
-	if(doc.defaultView && doc instanceof doc.defaultView.HTMLDocument) {
+	if(doc instanceof window.HTMLDocument) {
 		// is this an inner frame?
 		// Find the root document:
 		while(doc.defaultView.frameElement) {

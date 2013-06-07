@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.3.1';
+moduleAid.VERSION = '1.3.2';
 
 this.alwaysUpdateStatusUI = function(e) {
 	// toggleHighlight() doesn't update the UI in these conditions, we need it to, to update the counter (basically hide it)
@@ -163,7 +163,7 @@ moduleAid.LOADMODULE = function() {
 						if(editableNode) {
 							fillGrid = (toAddtoGrid.push({ node: editableNode, pattern: true }) <= prefAid.gridLimit);
 						} else {
-							fillGrid = (toAddtoGrid.push({ node: retRange }) <= prefAid.gridLimit);
+							fillGrid = (toAddtoGrid.push({ node: retRange, pattern: false }) <= prefAid.gridLimit);
 						}
 					}
 					

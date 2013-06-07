@@ -193,6 +193,10 @@
 		margin-right: 0;
 	}
 	
+	#findbartweak-findInTabs-hits label[unloaded] {
+		text-align: center;
+	}
+	
 	.findbar-tabs {
 		list-style-image: url("chrome://findbartweak/skin/findintabs.png");
 		-moz-image-region: rect(0px, 16px, 16px, 0px);
@@ -248,5 +252,11 @@
 	
 	.findInTabs-list .right {
 		text-align: end;
+	}
+	
+	#findbartweak-findInTabs-tabs label[unloaded] {
+		font-style: italic;
+		color: rgb(204,0,0);
+		text-shadow: 0px 0px 9px white, 0px 0px 9px white, 0px 1px 0px rgba(255, 255, 255, 0.3);
 	}
 }

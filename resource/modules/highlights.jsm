@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.10';
+moduleAid.VERSION = '1.1.11';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -65,6 +65,8 @@ this.highlightsOnToggling = function(e) {
 
 // Handler for when switching tabs
 this.highlightsTabSelected = function() {
+	var originalValue = gFindBar._findField.value;
+	
 	if(linkedPanel._findWord && (documentHighlighted || documentReHighlight)) {
 		gFindBar._findField.value = linkedPanel._findWord;
 		gFindBar._enableFindButtons(gFindBar._findField.value);
@@ -81,6 +83,10 @@ this.highlightsTabSelected = function() {
 		reHighlight(documentHighlighted);
 	} else if(linkedPanel._statusUI != undefined && (!linkedPanel._findWord || (!documentHighlighted && !documentReHighlight)) ) {
 		gFindBar._updateStatusUI(linkedPanel._statusUI);
+	}
+	
+	if(gFindBar._keepCurrentValue) {
+		gFindBar._findField.value = originalValue;
 	}
 };
 

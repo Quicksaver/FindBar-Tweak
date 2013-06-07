@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.4';
+moduleAid.VERSION = '1.2.0';
 
 this.__defineGetter__('FITresizer', function() { return $(objName+'-findInTabs-resizer'); });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -24,6 +24,8 @@ this.toggleFIT = function() {
 	FITresizer.hidden = !toggle;
 	FITupdate.hidden = !toggle;
 	toggleAttribute(FITbroadcaster, 'checked', toggle);
+	
+	gFindBar._keepCurrentValue = toggle;
 	
 	shouldFindAll();
 };
@@ -67,6 +69,14 @@ this.closeFITWithFindBar = function() {
 	if(FITbroadcaster.getAttribute('checked')) { toggleFIT(); }
 };
 
+this.docUnloaded = function(aDoc) {
+	if(aDoc.readyState == 'uninitialized'
+	|| (aDoc.baseURI == 'chrome://browser/content/browser.xul' && aDoc.URL == 'about:blank')) {
+		return true;
+	}
+	return false;
+};
+
 this.getWindowForContent = function(aDoc) {
 	var exists = null;
 	windowMediator.callOnAll(function(aWindow) {
@@ -86,12 +96,11 @@ this.getWindowForContent = function(aDoc) {
 	return exists;
 };
 
-this.getPanelForContent = function(aDoc) {
+this.getTabForContent = function(aDoc) {
 	var exists = null;
 	windowMediator.callOnAll(function(aWindow) {
 		if(!exists) {
-			var tab = aWindow.gBrowser._getTabForContentWindow(aDoc.defaultView);
-			if(tab) { exists = tab.linkedPanel; }
+			exists = aWindow.gBrowser._getTabForContentWindow(aDoc.defaultView);
 		}
 	}, 'navigator:browser');
 	
@@ -104,6 +113,13 @@ this.getPanelForContent = function(aDoc) {
 	}
 	
 	return exists;
+};
+
+this.getPanelForContent = function(aDoc) {
+	var tab = getTabForContent(aDoc);
+	if(!tab || tab == 'viewSource') { return tab; }
+	
+	return tab.linkedPanel;
 };
 
 this.verifyFITselection = function() {
@@ -136,8 +152,39 @@ this.selectFITtab = function() {
 
 // When the user selects an item in the hits list
 this.selectFIThit = function() {
+	// Adding these checks prevents various error messages from showing in the console (even though they actually made no difference)
+	if(!FITtabsList.currentItem || !FITtabsList.currentItem.linkedHits.currentItem) { return; }
+	// Multiple clicks on the same item shouldn't re-trigger tab load
+	if(FITtabsList.currentItem.linkedHits.currentItem.loadingTab) {
+		FITtabsList.currentItem.linkedHits.onselect = null;
+		FITtabsList.currentItem.linkedHits.selectedIndex = -1;
+		FITtabsList.currentItem.linkedHits.onselect = selectFIThit;
+		return;
+	}
+	
 	var inWindow = verifyFITselection();
 	if(!inWindow || !FITtabsList.currentItem.linkedHits.currentItem) { return; }
+	
+	// Load the tab if it's unloaded
+	if(FITtabsList.currentItem.linkedHits.currentItem.isUnloadedTab) {
+		var tab = getTabForContent(FITtabsList.currentItem.linkedDocument);
+		// Something went wrong, this should never happen.
+		if(!tab) {
+			FIThits.removeChild(FITtabsList.currentItem.linkedHits);
+			FITtabsList.removeChild(FITtabsList.currentItem);
+			return;
+		}
+		
+		inWindow.gBrowser.reloadTab(tab);
+		
+		FITtabsList.currentItem.linkedHits.currentItem.loadingTab = true;
+		setAttribute(FITtabsList.currentItem.linkedHits.currentItem.childNodes[0], 'value', stringsAid.get('findInTabs', 'loadingTab'));
+		removeAttribute(FITtabsList.currentItem.linkedTitle, 'unloaded');
+		FITtabsList.currentItem.linkedHits.onselect = null;
+		FITtabsList.currentItem.linkedHits.selectedIndex = -1;
+		FITtabsList.currentItem.linkedHits.onselect = selectFIThit;
+		return;
+	}
 	
 	var inFindBar = inWindow.document.getElementById('FindToolbar');
 	var ranges = FITtabsList.currentItem.linkedHits.currentItem.linkedRanges;
@@ -256,22 +303,24 @@ this.shouldFindAll = function() {
 this.beginFITFind = function() {
 	if(!gFindBar._findField.value) { return; }
 	
-	browserMediator.callOnAll(getFITTabs);
+	browserMediator.callOnAll(getFITTabs, null, true, true);
 	windowMediator.callOnAll(function(aWindow) {
 		getFITTabs(aWindow.document.getElementById('content').contentDocument.defaultView);
 	}, 'navigator:view-source');
 };
 
-this.createTabItem = function(aWindow) {
-	var newHits = document.createElement('richlistbox');
-	newHits.setAttribute('flex', '1');
-	newHits.onselect = selectFIThit;
-	newHits.hidden = true;
-	newHits = FIThits.appendChild(newHits);
+this.removeTabItem = function(item) {
+	if(!item) { return; }
 	
+	if(item.linkedHits) {
+		FIThits.removeChild(item.linkedHits);
+	}
+	FITtabsList.removeChild(item);
+};
+
+this.createTabItem = function(aWindow) {
 	var newItem = document.createElement('richlistitem');
 	newItem.setAttribute('align', 'center');
-	newItem.linkedHits = newHits;
 	newItem.linkedDocument = aWindow.document;
 	newItem.linkedPanel = getPanelForContent(aWindow.document);
 	
@@ -290,15 +339,41 @@ this.createTabItem = function(aWindow) {
 	newItem.linkedTitle = itemLabel;
 	newItem.linkedCount = itemCount;
 	
+	resetTabHits(newItem);
+	
 	return FITtabsList.appendChild(newItem);
 };
 
+this.resetTabHits = function(item) {
+	if(item.linkedHits) {
+		FIThits.removeChild(item.linkedHits);
+	}
+	
+	var newHits = document.createElement('richlistbox');
+	newHits.setAttribute('flex', '1');
+	newHits.onselect = selectFIThit;
+	newHits.hidden = (item != FITtabsList.currentItem); // Keep the hits list visible
+	item.linkedHits = FIThits.appendChild(newHits);
+};
+
 this.updateTabItem = function(item) {
+	// Prevent showing the url before it has loaded (and consequently before having a title)
+	// This method will be called again when the document has been fully loaded
+	if(item.linkedDocument.readyState == 'loading') { return; }
+	
 	var newTitle = item.linkedDocument.title || item.linkedDocument.baseURI;
 	// I want the value on the title of the window, not just the URI of where the view source is pointing at
 	if(item.linkedPanel == 'viewSource') {
 		var sourceWindow = getWindowForContent(item.linkedDocument);
 		newTitle = sourceWindow.document.documentElement.getAttribute('titlepreface') +newTitle;
+	}
+	// In case of unloaded tabs, the title value hasn't been filled in yet, so we grab from the session value
+	// viewSource docs should never make it in this loop
+	if(docUnloaded(item.linkedDocument)) {
+		var inTab = getTabForContent(item.linkedDocument);
+		if(inTab && inTab.getAttribute('label')) {
+			newTitle = inTab.getAttribute('label');
+		}
 	}
 	
 	item.linkedTitle.setAttribute('value', newTitle);
@@ -340,23 +415,30 @@ this.updateTabItem = function(item) {
 this.getFITTabs = function(aWindow) {
 	if(!(aWindow.document instanceof window.HTMLDocument)) { return; }
 	
-	if(aWindow.document.baseURI != 'about:blank'
-	&& aWindow.document.baseURI != 'chrome://browser/content/browser.xul'
-	&& aWindow.document.readyState == "complete") {
-		var newItem = createTabItem(aWindow);
-		
-		aSync(function() {
-			countFITinTab(aWindow, newItem);
-		});
-		
-		updateTabItem(newItem);
-	}
+	// about:blank tabs don't need to be listed, they're, by definition, blank
+	if(aWindow.document.baseURI == 'about:blank' && aWindow.document.readyState != "uninitialized") { return; }
+	
+	var newItem = createTabItem(aWindow);
+	
+	aSyncSetTab(aWindow, newItem);
+};
+
+this.aSyncSetTab = function(aWindow, item) {
+	aSync(function() { updateTabItem(item); });
+	aSync(function() { countFITinTab(aWindow, item); });
 };
 
 this.countFITinTab = function(aWindow, item) {
 	if(inPDFJS(aWindow.document)) {
 		// We need this to access protected properties, hidden from privileged code
 		if(!aWindow.PDFFindController) { aWindow = XPCNativeWrapper.unwrap(aWindow); }
+		
+		// If the document has just loaded, this might take a while to populate, it would throw an error and stop working altogether
+		if(!aWindow.PDFView.pdfDocument) {
+			aSync(function() { countFITinTab(aWindow, item); }, 250);
+			return;
+		}
+		
 		aWindow.PDFFindController.extractText();
 		// This takes time to build apparently
 		if(aWindow.PDFFindController.pageContents.length != aWindow.PDFView.pages.length) {
@@ -364,6 +446,38 @@ this.countFITinTab = function(aWindow, item) {
 			return;
 		}
 	}
+	
+	// If it's not completely loaded yet, don't search it, the other handlers should call it when it finishes loading
+	if(aWindow.document.readyState != 'complete' && !docUnloaded(aWindow.document)) { return; }
+	
+	resetTabHits(item);
+	
+	// If the new content isn't possible to be searched through, remove this entry from the lists
+	if(!inPDFJS(aWindow.document)
+	&& (!aWindow.document || !(aWindow.document instanceof window.HTMLDocument) || !aWindow.document.body)) {
+		removeTabItem(item);
+		return;
+	}
+	
+	// If tab is not loaded, add an item telling that to user with the choice to load it
+	if(docUnloaded(aWindow.document)) {
+		setAttribute(item.linkedTitle, 'unloaded', 'true');
+		setAttribute(item.linkedCount, 'value', '');
+		
+		var hit = document.createElement('richlistitem');
+		hit.isUnloadedTab = true;
+		
+		var hitLabel = document.createElement('label');
+		hitLabel.setAttribute('flex', '1');
+		hitLabel.setAttribute('unloaded', 'true');
+		hitLabel.setAttribute('value', stringsAid.get('findInTabs', 'unloadedTab'));
+		hit.appendChild(hitLabel);
+		
+		item.linkedHits.appendChild(hit);
+		return;
+	}
+	
+	removeAttribute(item.linkedTitle, 'unloaded');
 		
 	var levels = countFITinDoc(gFindBar._findField.value, aWindow);
 	
@@ -799,6 +913,117 @@ this.autoSelectOnUpdateStatus = function() {
 	if(isPDFJS) { timerAid.init('autoSelectOnUpdateStatus', autoSelectFITtab, 10); }
 };
 
+this.FITobserver = function(aSubject, aTopic, aData) {
+	// Don't do anything if it's not needed
+	if(!gFindBar._findField.value || FITbox.hidden) { return; }
+	
+	var doc = null;
+	var item = null;
+	
+	try {
+		switch(aData) {
+			case 'TabClose':
+				for(var i=0; i<FITtabsList.childNodes.length; i++) {
+					if(FITtabsList.childNodes[i].linkedPanel == aSubject.linkedPanel) {
+						item = FITtabsList.childNodes[i];
+						break;
+					}
+				}
+				
+				removeTabItem(item);
+				return;
+			
+			case 'domwindowclosed':
+				for(var i=0; i<FITtabsList.childNodes.length; i++) {
+					if(FITtabsList.childNodes[i].linkedDocument == aSubject) {
+						item = FITtabsList.childNodes[i];
+						break;
+					}
+				}
+				
+				removeTabItem(item);
+				return;
+							
+			case 'load':
+			case 'location-change':
+				doc = aSubject;
+				var panel = getPanelForContent(aSubject);
+				for(var i=0; i<FITtabsList.childNodes.length; i++) {
+					if(FITtabsList.childNodes[i].linkedPanel == panel) {
+						item = FITtabsList.childNodes[i];
+						break;
+					}
+				}
+				break;
+			
+			case 'domwindowopened':
+				doc = aSubject;
+				for(var i=0; i<FITtabsList.childNodes.length; i++) {
+					if(FITtabsList.childNodes[i].linkedDocument == aSubject) {
+						item = FITtabsList.childNodes[i];
+						break;
+					}
+				}
+				break;
+			
+			default: return;
+		}
+		
+		if(!item) {
+			item = createTabItem(doc.defaultView);
+		} else {
+			item.linkedDocument = doc;
+		}
+		
+		aSyncSetTab(doc.defaultView, item);
+	}
+	
+	// Something went wrong and it shouldn't
+	catch(ex) { Cu.reportError(ex); }
+};
+
+this.FITtabLoaded = function(e) {
+	// this is the content document of the loaded page.
+	var doc = e.originalTarget;
+	if(doc instanceof window.HTMLDocument) {
+		// is this an inner frame?
+		// Find the root document:
+		while(doc.defaultView.frameElement) {
+			doc = doc.defaultView.frameElement.ownerDocument;
+		}
+		
+		observerAid.notify('FIT-update-doc', doc, e.type);
+	}
+};
+
+this.FITtabClosed = function(e) {	
+	observerAid.notify('FIT-update-doc', e.target, e.type);
+};
+
+this.FITProgressListener = {
+	onLocationChange: function(aBrowser, webProgress, request, location) {
+		// Frames don't need to trigger this
+		if(webProgress.DOMWindow == aBrowser.contentWindow) {
+			observerAid.notify('FIT-update-doc', aBrowser.contentDocument, 'location-change');
+		}
+	}
+};
+
+this.FITViewSourceOpened = function(aWindow) {
+	// Wait for the window to load its content before processing it	
+	if(aWindow.document.getElementById('content').contentDocument.baseURI.indexOf('view-source:') !== 0
+	|| aWindow.document.getElementById('content').contentDocument.readyState != 'complete') {
+		aSync(function() { FITViewSourceOpened(aWindow); }, 250);
+		return;
+	}
+	
+	observerAid.notify('FIT-update-doc', aWindow.document.getElementById('content').contentDocument, 'domwindowopened');
+};
+
+this.FITViewSourceClosed = function(aWindow) {
+	observerAid.notify('FIT-update-doc', aWindow.document.getElementById('content').contentDocument, 'domwindowclosed');
+};
+
 this.loadFindInTabs = function() {
 	addFITButton();
 	
@@ -809,6 +1034,14 @@ this.loadFindInTabs = function() {
 	listenerAid.add(gFindBar, 'FoundAgain', autoSelectFITtab);
 	listenerAid.add(gFindBar, 'UpdatedStatusFindBar', autoSelectOnUpdateStatus);
 	listenerAid.add(gBrowser.tabContainer, 'TabSelect', autoSelectFITtab);
+	
+	// Update FIT lists as needed
+	observerAid.add(FITobserver, 'FIT-update-doc');
+	listenerAid.add(gBrowser, 'load', FITtabLoaded, true);
+	listenerAid.add(gBrowser.tabContainer, 'TabClose', FITtabClosed, false);
+	gBrowser.addTabsProgressListener(FITProgressListener);
+	windowMediator.register(FITViewSourceOpened, 'domwindowopened', 'navigator:view-source');
+	windowMediator.register(FITViewSourceClosed, 'domwindowclosed', 'navigator:view-source');
 	
 	prefAid.listen('alwaysOpenFIT', alwaysOpenFIT);
 	
@@ -829,6 +1062,8 @@ moduleAid.UNLOADMODULE = function() {
 		gFindBar.getElement("findbar-container").removeChild(FITupdate);
 	}
 	
+	delete gFindBar._keepCurrentValue;
+	
 	listenerAid.remove(gFindBar, 'OpenedFindBar', alwaysOpenFIT);
 	listenerAid.remove(gFindBar, 'ClosedFindBar', closeFITWithFindBar);
 	listenerAid.remove(gFindBar, 'FoundFindBar', shouldFindAll);
@@ -836,6 +1071,13 @@ moduleAid.UNLOADMODULE = function() {
 	listenerAid.remove(gFindBar, 'FoundAgain', autoSelectFITtab);
 	listenerAid.remove(gFindBar, 'UpdatedStatusFindBar', autoSelectOnUpdateStatus);
 	listenerAid.remove(gBrowser.tabContainer, 'TabSelect', autoSelectFITtab);
+	
+	observerAid.remove(FITobserver, 'FIT-update-doc');
+	listenerAid.remove(gBrowser, 'load', FITtabLoaded, true);
+	listenerAid.remove(gBrowser.tabContainer, 'TabClose', FITtabClosed, false);
+	gBrowser.removeTabsProgressListener(FITProgressListener);
+	windowMediator.unregister(FITViewSourceOpened, 'domwindowopened', 'navigator:view-source');
+	windowMediator.unregister(FITViewSourceClosed, 'domwindowclosed', 'navigator:view-source');
 	
 	prefAid.unlisten('alwaysOpenFIT', alwaysOpenFIT);
 	

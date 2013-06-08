@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.0';
+moduleAid.VERSION = '1.2.1';
 
 this.__defineGetter__('FITresizer', function() { return $(objName+'-findInTabs-resizer'); });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -1082,4 +1082,11 @@ moduleAid.UNLOADMODULE = function() {
 	prefAid.unlisten('alwaysOpenFIT', alwaysOpenFIT);
 	
 	overlayAid.removeOverlayWindow(window, 'findInTabs');
+	
+	// Ensure we remove tabs of closing windows from lists
+	if((window.closed || window.willClose) && !UNLOADED && prefAid.findInTabs) {
+		for(var t=0; t<gBrowser.mTabs.length; t++) {
+			observerAid.notify('FIT-update-doc', gBrowser.mTabs[t], 'TabClose');
+		}
+	}
 };

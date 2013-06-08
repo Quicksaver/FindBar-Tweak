@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.1';
+moduleAid.VERSION = '1.2.2';
 
 this.__defineGetter__('FITresizer', function() { return $(objName+'-findInTabs-resizer'); });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -175,7 +175,10 @@ this.selectFIThit = function() {
 			return;
 		}
 		
-		inWindow.gBrowser.reloadTab(tab);
+		// If tab is already loading, don't bother reloading
+		if(docUnloaded(tab.linkedBrowser.contentDocument) && tab.linkedBrowser.contentDocument.readyState != 'loading') {
+			inWindow.gBrowser.reloadTab(tab);
+		}
 		
 		FITtabsList.currentItem.linkedHits.currentItem.loadingTab = true;
 		setAttribute(FITtabsList.currentItem.linkedHits.currentItem.childNodes[0], 'value', stringsAid.get('findInTabs', 'loadingTab'));
@@ -429,28 +432,35 @@ this.aSyncSetTab = function(aWindow, item) {
 };
 
 this.countFITinTab = function(aWindow, item) {
+	// Let's not process the same item multiple times
+	if(item.reScheduled) {
+		item.reScheduled.cancel();
+		delete item.reScheduled;
+	}
+	
+	// Because this method can be called with a delay, we should make sure the findword still exists
+	if(!gFindBar._findField.value) { return; }
+	
 	if(inPDFJS(aWindow.document)) {
 		// We need this to access protected properties, hidden from privileged code
 		if(!aWindow.PDFFindController) { aWindow = XPCNativeWrapper.unwrap(aWindow); }
 		
 		// If the document has just loaded, this might take a while to populate, it would throw an error and stop working altogether
-		if(!aWindow.PDFView.pdfDocument) {
-			aSync(function() { countFITinTab(aWindow, item); }, 250);
+		if(!aWindow.PDFView || !aWindow.PDFView.pdfDocument) {
+			item.reScheduled = timerAid.create(function() { countFITinTab(aWindow, item); }, 250);
 			return;
 		}
 		
 		aWindow.PDFFindController.extractText();
 		// This takes time to build apparently
 		if(aWindow.PDFFindController.pageContents.length != aWindow.PDFView.pages.length) {
-			aSync(function() { countFITinTab(aWindow, item); }, 100);
+			item.reScheduled = timerAid.create(function() { countFITinTab(aWindow, item); }, 100);
 			return;
 		}
 	}
 	
 	// If it's not completely loaded yet, don't search it, the other handlers should call it when it finishes loading
 	if(aWindow.document.readyState != 'complete' && !docUnloaded(aWindow.document)) { return; }
-	
-	resetTabHits(item);
 	
 	// If the new content isn't possible to be searched through, remove this entry from the lists
 	if(!inPDFJS(aWindow.document)
@@ -459,10 +469,18 @@ this.countFITinTab = function(aWindow, item) {
 		return;
 	}
 	
+	// If the tab has already been reloaded through our item, don't reset the entry again (it sends a load or location change event that would trigger a new "unloaded" state,
+	// and we want to keep the "loading" state.
+	var loadingTab = (item.linkedHits && item.linkedHits.childNodes.length > 0 && item.linkedHits.childNodes[0].loadingTab);
+	
+	resetTabHits(item);
+	
 	// If tab is not loaded, add an item telling that to user with the choice to load it
 	if(docUnloaded(aWindow.document)) {
-		setAttribute(item.linkedTitle, 'unloaded', 'true');
-		setAttribute(item.linkedCount, 'value', '');
+		if(!loadingTab) {
+			setAttribute(item.linkedTitle, 'unloaded', 'true');
+			setAttribute(item.linkedCount, 'value', '');
+		}
 		
 		var hit = document.createElement('richlistitem');
 		hit.isUnloadedTab = true;
@@ -470,7 +488,7 @@ this.countFITinTab = function(aWindow, item) {
 		var hitLabel = document.createElement('label');
 		hitLabel.setAttribute('flex', '1');
 		hitLabel.setAttribute('unloaded', 'true');
-		hitLabel.setAttribute('value', stringsAid.get('findInTabs', 'unloadedTab'));
+		hitLabel.setAttribute('value', stringsAid.get('findInTabs', (!loadingTab) ? 'unloadedTab' : 'loadingTab'));
 		hit.appendChild(hitLabel);
 		
 		item.linkedHits.appendChild(hit);

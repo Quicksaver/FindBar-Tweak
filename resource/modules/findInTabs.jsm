@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.2';
+moduleAid.VERSION = '1.2.3';
 
 this.__defineGetter__('FITresizer', function() { return $(objName+'-findInTabs-resizer'); });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -1035,11 +1035,12 @@ this.FITViewSourceOpened = function(aWindow) {
 		return;
 	}
 	
-	observerAid.notify('FIT-update-doc', aWindow.document.getElementById('content').contentDocument, 'domwindowopened');
+	// We call the observer directly, no need to pile on notifications from multiple windows
+	FITobserver(aWindow.document.getElementById('content').contentDocument, 'FIT-update-doc', 'domwindowopened');
 };
 
 this.FITViewSourceClosed = function(aWindow) {
-	observerAid.notify('FIT-update-doc', aWindow.document.getElementById('content').contentDocument, 'domwindowclosed');
+	FITobserver(aWindow.document.getElementById('content').contentDocument, 'FIT-update-doc', 'domwindowclosed');
 };
 
 this.loadFindInTabs = function() {

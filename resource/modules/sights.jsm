@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.3.1';
+moduleAid.VERSION = '1.3.2';
 
 this.__defineGetter__('preferencesDialog', function() { return (typeof(inPreferences) != 'undefined' && inPreferences); });
 
@@ -29,6 +29,8 @@ this.positionSights = function(range, scrollTop, scrollLeft, clientHeight, clien
 	// If these aren't set, we just assume the range is visible and should be always sighted, such as in FindAgain (F3) which scrolls to the search hit
 	var current = (!clientHeight && !clientWidth);
 	var dimensions = range.node.getClientRects()[0];
+	if(!dimensions) { return; } // Something's wrong here, maybe the range has changed in the meantime
+	
 	var editableNode = (!isPDFJS) ? gFindBar._getEditableNode(range.node.startContainer) : null;
 	var editableRect = (editableNode) ? editableNode.getClientRects()[0] : null;
 	

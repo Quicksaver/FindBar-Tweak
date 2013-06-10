@@ -2,10 +2,12 @@
 <!ENTITY OptHighlights.label "Highlights">
 <!ENTITY OptSightsTab.label "Sights">
 <!ENTITY OptGeneral.label "General">
+<!ENTITY OptAppearance.label "Appearance">
 <!ENTITY Optabout.label "About">
 
 <!ENTITY Optgen.label "Findbar Options">
 <!ENTITY Optdisplay.label "Display Options">
+<!ENTITY OptButtonAndLabels.label "Buttons and Labels">
 <!ENTITY Optgrid.label "Highlights Grid">
 
 <!ENTITY OpthighlightByDefault.label "Highlight all matches by default">

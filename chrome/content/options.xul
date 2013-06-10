@@ -42,6 +42,7 @@
 		<tabbox id="findbartweakTabBox">
 			<tabs id="tabsElement">
 				<tab id="generalTab" label="&OptGeneral.label;"/>
+				<tab id="appearanceTab" label="&OptAppearance.label;"/>
 				<tab id="highlightsTab" label="&OptHighlights.label;"/>
 				<tab id="sightsTab" label="&OptSightsTab.label;"/>
 				<tab id="aboutTab" label="&Optabout.label;"/>
@@ -51,32 +52,10 @@
 				<tabpanel id="generalTab" orient="vertical">
 					<groupbox align="start">
 						<caption label="&Optgen.label;"/>
-						<hbox align="start">
-							<vbox align="start">
-								<checkbox label="&OptblurCloses.label;" preference="pref-blurCloses"/>
-								<checkbox dependson="!pref-blurCloses" label="&OptperTab.label;" preference="pref-perTab"/>
-								<checkbox dependson="!pref-perTab,!pref-blurCloses" label="&OptonStartup.label;" preference="pref-onStartup"/>
-							</vbox>
-							<vbox align="start">
-								<checkbox id="ctrlFClosesCheckbox" label="&OptctrlFCloses.win;" preference="pref-ctrlFCloses"/>
-								<checkbox label="&OptfindInTabs.label;" preference="pref-findInTabs"/>
-								<checkbox label="&OptalwaysOpenFIT.label;" dependson="pref-findInTabs" preference="pref-alwaysOpenFIT"/>
-							</vbox>
-						</hbox>
-					</groupbox>
-					<groupbox align="start">
-						<caption label="&Optdisplay.label;"/>
-						<hbox align="start">
-							<vbox align="start">
-								<checkbox label="&OptmovetoTop.label;" preference="pref-movetoTop"/>
-								<checkbox label="&OptmovetoRight.label;" preference="pref-movetoRight"/>
-								<checkbox label="&OptuseCounter.label;" preference="pref-useCounter"/>
-							</vbox>
-							<vbox align="start">
-								<checkbox label="&OpthideClose.label;" preference="pref-hideClose"/>
-								<checkbox label="&OpthideLabels.label;" preference="pref-hideLabels"/>
-							</vbox>
-						</hbox>
+						<checkbox label="&OptblurCloses.label;" preference="pref-blurCloses"/>
+						<checkbox dependson="!pref-blurCloses" label="&OptperTab.label;" preference="pref-perTab"/>
+						<checkbox dependson="!pref-perTab,!pref-blurCloses" label="&OptonStartup.label;" preference="pref-onStartup"/>
+						<checkbox id="ctrlFClosesCheckbox" label="&OptctrlFCloses.win;" preference="pref-ctrlFCloses"/>
 					</groupbox>
 					<groupbox align="start">
 						<caption>
@@ -103,6 +82,24 @@
 							<radio dependson="pref-typeaheadfind" label="&OptFAYTmode.normalFind;" value="normal"/>
 						</radiogroup>
 			        </groupbox>
+					<groupbox align="start">
+						<caption><checkbox label="&OptfindInTabs.label;" preference="pref-findInTabs"/></caption>
+						<checkbox label="&OptalwaysOpenFIT.label;" dependson="pref-findInTabs" preference="pref-alwaysOpenFIT"/>
+					</groupbox>
+				</tabpanel>
+				
+				<tabpanel id="appearanceTab" orient="vertical">
+					<groupbox align="start">
+						<caption label="&Optdisplay.label;"/>
+						<checkbox label="&OptmovetoTop.label;" preference="pref-movetoTop"/>
+						<checkbox label="&OptmovetoRight.label;" preference="pref-movetoRight"/>
+					</groupbox>
+					<groupbox align="start">
+						<caption label="&OptButtonAndLabels.label;"/>
+						<checkbox label="&OptuseCounter.label;" preference="pref-useCounter"/>
+						<checkbox label="&OpthideClose.label;" preference="pref-hideClose"/>
+						<checkbox label="&OpthideLabels.label;" preference="pref-hideLabels"/>
+					</groupbox>
 				</tabpanel>
 				
 				<tabpanel id="highlightsTab" orient="vertical">

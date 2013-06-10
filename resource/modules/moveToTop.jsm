@@ -1,11 +1,10 @@
-moduleAid.VERSION = '1.4.1';
+moduleAid.VERSION = '1.4.2';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
 this.__defineGetter__('browser', function() { return $('browser'); });
 this.__defineGetter__('appcontent', function() { return $('appcontent'); });
 this.__defineGetter__('squareLookSpacer', function() { return $(objName+'-squareLook_spacer'); });
-this.getComputedStyle = function(el) { return window.getComputedStyle(el); };
 
 this.moveTopStyle = {};
 this.lwthemeImage = null;
@@ -178,7 +177,7 @@ this.moveTop = function() {
 		// !important tag necessary for OSX, CSS stylesheet sets this one
 		sscode += '	window['+objName+'_UUID="'+_UUID+'"] #FindToolbar[movetotop]:after { margin-left: -' + gFindBar.scrollLeftMax + 'px !important; }\n';
 		if(prefAid.movetoRight && prefAid.squareLook) {
-			sscode += '	#FindToolbar[movetotop][movetoright][squareLook] { border-left: none !important; }\n'
+			sscode += '	#FindToolbar[movetotop][movetoright][squareLook] { -moz-border-start: none !important; }\n'
 		}
 		sscode += '}';
 		styleAid.load('topFindBarCorners_'+_UUID, sscode, true);

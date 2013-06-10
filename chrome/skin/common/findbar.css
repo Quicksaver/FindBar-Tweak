@@ -27,14 +27,16 @@
 	}
 	
 	#FindToolbar description[anonid="find-status"] {
-		margin-right: 4px !important;
+		-moz-margin-end: 4px !important;
 	}
 	
-	#FindToolbar:not([movetotop])[movetoright] > hbox.findbar-container {
+	#FindToolbar:not([movetotop])[movetoright]:-moz-locale-dir(ltr) > hbox.findbar-container,
+	#FindToolbar:not([movetotop]):not([movetoright]):-moz-locale-dir(rtl) > hbox.findbar-container {
 		position: absolute;
 		text-align: end;
 	}
-	#FindToolbar:not([movetotop])[movetoright] > hbox.findbar-container > * {
+	#FindToolbar:not([movetotop])[movetoright]:-moz-locale-dir(ltr) > hbox.findbar-container > *,
+	#FindToolbar:not([movetotop]):not([movetoright]):-moz-locale-dir(rtl) > hbox.findbar-container > * {
 		position: static;
 		text-align: start;
 		vertical-align: middle;
@@ -43,7 +45,7 @@
 	.findbar-cs-button {
 		list-style-image: url("chrome://findbartweak/skin/toolbar.png");
 		-moz-image-region: rect(0px 16px 16px 0px);
-		margin-right: 3px;
+		-moz-margin-end: 3px;
 	}
 	
 	/* Rounded inner corners */
@@ -65,13 +67,15 @@
 	}
 	
 	/* Find Toolbar styled for PDF.JS documents */
-	#FindToolbar[movetotop][inPDFJS]:before {
+	#FindToolbar[movetotop][inPDFJS]:-moz-locale-dir(ltr):before,
+	#FindToolbar[movetotop][inPDFJS]:-moz-locale-dir(rtl):after {
 		box-shadow: 	2px -2px 0 -2px rgba(255,255,255,0.08),
 		                1px -1px 0 -1px rgba(0,0,0,0.15),
 		                7px -4px 0px -4px rgba(68,68,68,0.95),
 		                6px -4px 0px -4px rgba(68,68,68,0.95);
 	}
-	#FindToolbar[movetotop][inPDFJS]:after {
+	#FindToolbar[movetotop][inPDFJS]:-moz-locale-dir(ltr):after,
+	#FindToolbar[movetotop][inPDFJS]:-moz-locale-dir(rtl):before {
 		box-shadow: 	-2px -2px 0 -2px rgba(255,255,255,0.08),
 		                -1px -1px 0 -1px rgba(0,0,0,0.15),
 		                -7px -4px 0px -4px rgba(68,68,68,0.95),
@@ -99,7 +103,6 @@
 		pointer-events: none;
 		width: 100%;
 		height: 100%;
-		direction: rtl !important;
 	}
 	
 	grid[anonid="findGrid"] {
@@ -136,7 +139,7 @@
 	}
 	
 	#FindToolbar[movetotop][squareLook]:not([movetoright]) {
-		border-left: none !important;
+		-moz-border-start: none !important;
 	}
 
 		
@@ -208,7 +211,7 @@
 	}
 	
 	#FindToolbar[noClose] .findbar-tabs-update {
-		margin-left: 3px;
+		-moz-margin-start: 3px;
 	}
 	
 	.findbar-tabs image,
@@ -247,7 +250,7 @@
 	.findInTabs-list image {
 		min-width: 16px;
 		max-height: 16px;
-		margin-left: 1px;
+		-moz-margin-start: 1px;
 	}
 	
 	.findInTabs-list .right {

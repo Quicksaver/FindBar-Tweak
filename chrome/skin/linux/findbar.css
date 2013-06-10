@@ -6,14 +6,16 @@
 
 	/* Rounded inner corners */
 	#FindToolbar[movetotop]:before {
-		margin-left: -16px;
+		-moz-margin-start: -16px;
 	}
-	#FindToolbar[movetotop]:not([inPDFJS]):before {
+	#FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
+	#FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
 		box-shadow: 	2px -2px 0 -2px rgb(178,174,170),
 		                7px -4px 0px -4px -moz-dialog,
 		                6px -4px 0px -4px -moz-dialog;
 	}
-	#FindToolbar[movetotop]:not([inPDFJS]):after {
+	#FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
+	#FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
 		box-shadow: 	-2px -2px 0 -2px rgb(178,174,170),
 		                -7px -4px 0px -4px -moz-dialog,
 		                -6px -4px 0px -4px -moz-dialog;
@@ -30,10 +32,12 @@
 		-moz-border-left-colors: rgb(178,174,170);
 	}
 	
-	#FindToolbar:not([movetotop])[movetoright] textbox[anonid="findbar-textbox"] {
+	#FindToolbar:not([movetotop])[movetoright]:-moz-locale-dir(ltr) textbox[anonid="findbar-textbox"],
+	#FindToolbar:not([movetotop]):not([movetoright]):-moz-locale-dir(rtl) textbox[anonid="findbar-textbox"] {
 		max-height: 24px;
 	}
-	#FindToolbar:not([movetotop])[movetoright] toolbarbutton {
+	#FindToolbar:not([movetotop])[movetoright]:-moz-locale-dir(ltr) toolbarbutton
+	#FindToolbar:not([movetotop]):not([movetoright]):-moz-locale-dir(rtl) toolbarbutton {
 		max-height: 28px;
 	}
 	

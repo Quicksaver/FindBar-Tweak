@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.10';
+moduleAid.VERSION = '1.1.11';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -6,6 +6,7 @@ this.__defineGetter__('linkedPanel', function() { return (viewSource) ? $('appco
 this.__defineGetter__('contentDocument', function() { return (!viewSource) ? gBrowser.mCurrentBrowser.contentDocument : $('content').contentDocument; });
 this.__defineGetter__('contentWindow', function() { return gFindBar.browser._fastFind.currentWindow || gFindBar.browser.contentWindow; });
 this.__defineGetter__('browserPanel', function() { return $('browser-panel') || viewSource; });
+this.getComputedStyle = function(el) { return window.getComputedStyle(el); };
 
 this.inPDFJS = function(aDoc) { return (aDoc && aDoc.contentType == 'application/pdf' && aDoc.baseURI == 'resource://pdf.js/web/'); };
 this.__defineGetter__('isPDFJS', function() { return inPDFJS(contentDocument); });

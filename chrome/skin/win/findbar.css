@@ -6,18 +6,20 @@
 
 	/* Rounded inner corners */
 	#FindToolbar[movetotop]:before {
-		margin-top: -1px;
-		margin-left: -16px;
+		-moz-margin-start: -16px;
 	}
+	#FindToolbar[movetotop]:before,
 	#FindToolbar[movetotop]:after {
 		margin-top: -1px;
 	}
-	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]) #FindToolbar[movetotop]:not([inPDFJS]):before {
+	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]) #FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
+	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]) #FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
 		box-shadow: 	2px -2px 0 -2px rgb(160,160,160),
 		                7px -4px 0px -4px rgb(219,234,249),
 		                6px -4px 0px -4px rgb(219,234,249);
 	}
-	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]) #FindToolbar[movetotop]:not([inPDFJS]):after {
+	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]) #FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
+	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]) #FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
 		box-shadow: 	-2px -2px 0 -2px rgb(160,160,160),
 		                -7px -4px 0px -4px rgb(219,234,249),
 		                -6px -4px 0px -4px rgb(219,234,249);
@@ -52,7 +54,8 @@
 		background-color: rgb(219,234,249);
 	}
 	
-	window[findbartweak-oscpu="Windows NT 5.1"] #FindToolbar:not([movetotop])[movetoright] textbox[anonid="findbar-textbox"] {
+	window[findbartweak-oscpu="Windows NT 5.1"] #FindToolbar:not([movetotop])[movetoright]:-moz-locale-dir(ltr) textbox[anonid="findbar-textbox"],
+	window[findbartweak-oscpu="Windows NT 5.1"] #FindToolbar:not([movetotop]):not([movetoright]):-moz-locale-dir(rtl) textbox[anonid="findbar-textbox"] {
 		max-height: 19px;
 	}
 	
@@ -62,7 +65,8 @@
 	window[findbartweak-oscpu="Windows NT 6.2"] #FindToolbar[hideLabels] textbox[anonid="findbar-textbox"] {
 		min-height: 21px;
 	}
-	window[findbartweak-oscpu="Windows NT 6.2"] #FindToolbar:not([movetotop])[movetoright] textbox[anonid="findbar-textbox"] {
+	window[findbartweak-oscpu="Windows NT 6.2"] #FindToolbar:not([movetotop])[movetoright]:-moz-locale-dir(ltr) textbox[anonid="findbar-textbox"],
+	window[findbartweak-oscpu="Windows NT 6.2"] #FindToolbar:not([movetotop]):not([movetoright]):-moz-locale-dir(rtl) textbox[anonid="findbar-textbox"] {
 		max-height: 21px;
 	}
 	

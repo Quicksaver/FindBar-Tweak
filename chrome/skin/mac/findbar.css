@@ -6,29 +6,35 @@
 
 	/* Rounded inner corners */
 	#FindToolbar[movetotop]:before {
-		margin-left: -18px;
-		margin-top: -4px;
+		-moz-margin-start: -18px;
 	}
 	#FindToolbar[movetotop]:after {
-		margin-top: -4px;
-		margin-left: 2px;
+		-moz-margin-start: 2px;
 	}
-	#FindToolbar[movetotop]:not([inPDFJS]):before {
+	#FindToolbar[movetotop]:before,
+	#FindToolbar[movetotop]:after {
+		margin-top: -4px;
+	}
+	#FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
+	#FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
 		box-shadow:	2px -2px 0 -2px rgba(0,0,0,0.57),
 				7px -4px 0px -4px -moz-mac-chrome-active,
 				6px -4px 0px -4px -moz-mac-chrome-active;
 	}
-	#FindToolbar[movetotop]:not([inPDFJS]):after {
+	#FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
+	#FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
 		box-shadow: 	-2px -2px 0 -2px rgba(0,0,0,0.57),
 				-7px -4px 0px -4px -moz-mac-chrome-active,
 				-6px -4px 0px -4px -moz-mac-chrome-active;
 	}
-	#FindToolbar[movetotop]:not([inPDFJS]):-moz-window-inactive:before {
+	#FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):-moz-window-inactive:before,
+	#FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):-moz-window-inactive:after {
 		box-shadow: 	2px -2px 0 -2px rgba(0,0,0,0.32),
 				7px -4px 0px -4px -moz-mac-chrome-inactive,
 				6px -4px 0px -4px -moz-mac-chrome-inactive;
 	}
-	#FindToolbar[movetotop]:not([inPDFJS]):-moz-window-inactive:after {
+	#FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):-moz-window-inactive:after,
+	#FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):-moz-window-inactive:before {
 		box-shadow: 	-2px -2px 0 -2px rgba(0,0,0,0.32),
 				-7px -4px 0px -4px -moz-mac-chrome-inactive,
 				-6px -4px 0px -4px -moz-mac-chrome-inactive;

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.0';
+moduleAid.VERSION = '1.1.1';
 
 this.ROWS_MINIMUM = 150; // number of rows in the highlight grid - kind of the "highlight granularity"
 this.ROWS_MULTIPLIER = 2; // Add extra rows if their height exceeds this value
@@ -59,6 +59,35 @@ this.__defineGetter__('grid', function() {
 	return gridNode;
 });
 
+// Positions the grid on the right or on the left, accordingly to where the scrollbar should go in different locale layouts
+this.positionGrid = function() {
+	var dir = 'rtl'; // let's make this the default for the grid so it shows on the right
+	
+	switch(prefAid.side) {
+		case 0: // Here's to hoping this one is actually correct as I have no way to test, I need to wait for some user input on this
+			var rtlList = ['ar', 'he', 'fa', 'ps', 'ur'];
+			var appLocale = Services.locale.getApplicationLocale().getCategory("NSILOCALE_MESSAGES");
+			for(var i=0; i<rtlList.length; i++) {
+				if(appLocale.indexOf(rtlList[i]) == 0) { dir = 'ltr'; break; }
+			}
+			break;
+		
+		case 1:
+			if(contentDocument.documentElement.dir == 'rtl') { dir = 'ltr'; }
+			break;
+		
+		case 3:
+			dir = 'ltr';
+			break;
+		
+		case 2:
+		default:
+			break;
+	}
+	
+	grid.parentNode.style.direction = dir;
+};
+
 // Prepares the grid to be filled with the highlights
 this.resetHighlightGrid = function() {
 	var rows = grid.childNodes[1];
@@ -83,6 +112,9 @@ this.resetHighlightGrid = function() {
 		var newNode = rows.childNodes[1].cloneNode(true);
 		rows.insertBefore(newNode, rows.lastChild);
 	}
+	
+	// Somm grid appearance updates
+	positionGrid();
 	
 	removeAttribute(grid, 'gridSpacers');
 	listenerAid.remove(browserPanel, 'resize', delayResizeGridSpacers);
@@ -355,7 +387,7 @@ this.adjustGrid = function() {
 	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 	sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 	sscode += '@-moz-document url("'+document.baseURI+'") {\n';
-	sscode += '	window['+objName+'_UUID="'+_UUID+'"] hbox[anonid="gridBox"] { padding-right: '+(defaultPadding +prefAid.gridAdjustPadding)+'px; }\n';
+	sscode += '	window['+objName+'_UUID="'+_UUID+'"] hbox[anonid="gridBox"] { -moz-padding-start: '+(defaultPadding +prefAid.gridAdjustPadding)+'px; }\n';
 	sscode += '	window['+objName+'_UUID="'+_UUID+'"] grid[anonid="findGrid"] { width: '+(defaultWidth +prefAid.gridAdjustWidth)+'px; }\n';
 	sscode += '}';
 	
@@ -363,6 +395,8 @@ this.adjustGrid = function() {
 };
 
 moduleAid.LOADMODULE = function() {
+	prefAid.setDefaults({ side: 0 }, 'scrollbar', 'layout');
+	
 	listenerAid.add(gFindBar, 'UpdatedPDFMatches', matchesPDFGrid);
 	
 	prefAid.listen('gridAdjustPadding', adjustGrid);

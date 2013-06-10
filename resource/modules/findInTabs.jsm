@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.3';
+moduleAid.VERSION = '1.3.0';
 
 this.__defineGetter__('FITresizer', function() { return $(objName+'-findInTabs-resizer'); });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -679,7 +679,7 @@ this.countFITinLevels = function(level, hitsList, aWindow) {
 		var itemStrings = new Array();
 		
 		if(isPDF) {
-			itemStrings.push({ text: aWindow.PDFFindController.pageContents[range.p].substr(range.o, aWord.length), highlight: true });
+			var partialString = replaceLineBreaks(aWindow.PDFFindController.pageContents[range.p].substr(range.o, aWord.length));
 			
 			var doLastStart = range.o +aWord.length;
 			var doFirstLength = range.o;
@@ -688,8 +688,10 @@ this.countFITinLevels = function(level, hitsList, aWindow) {
 			var startContainerText = aWindow.PDFFindController.pageContents[range.p];
 			var endContainer = range.p;
 			var endContainerText = aWindow.PDFFindController.pageContents[range.p];
+			
+			var directionRTL = (aWindow.document.documentElement.dir == 'rtl');
 		} else {
-			itemStrings.push({ text: range.toString(), highlight: true });
+			var partialString = replaceLineBreaks(range.toString());
 			
 			var doLastStart = range.endOffset;
 			var doFirstLength = range.startOffset;
@@ -698,7 +700,22 @@ this.countFITinLevels = function(level, hitsList, aWindow) {
 			var startContainerText = startContainer.textContent;
 			var endContainer = range.endContainer;
 			var endContainerText = endContainer.textContent;
+			
+			var styleElement = range.startContainer;
+			while(!styleElement.style && styleElement.parentNode) { styleElement = styleElement.parentNode; }
+			var directionRTL = (getComputedStyle(styleElement).getPropertyValue('direction') == 'rtl');
 		}
+		
+		var completeString = appendStringToList(
+			itemStrings,
+			partialString,
+			true,
+			'',
+			false,
+			startContainerText.substr(0, doFirstLength),
+			endContainerText.substr(doLastStart),
+			directionRTL
+		);
 		
 		var initialPoints = (doFirstLength != 0);
 		var finalPoints = (doLastStart != endContainer.length);
@@ -707,13 +724,23 @@ this.countFITinLevels = function(level, hitsList, aWindow) {
 		if(doFirstLength > 0 && startContainerText[doFirstLength -1] != ' ') {
 			var doFirstStart = startContainerText.lastIndexOf(' ', doFirstLength) +1;
 			
-			var fillString = startContainerText.substr(doFirstStart, doFirstLength -doFirstStart);
-			itemStrings.unshift({ text: fillString, highlight: false });
+			var fillString = replaceLineBreaks(startContainerText.substr(doFirstStart, doFirstLength -doFirstStart));
 			
 			doFirstLength = doFirstStart;
 			if(doFirstStart == 0) {
 				initialPoints = false;
 			}
+			
+			completeString = appendStringToList(
+				itemStrings,
+				fillString,
+				false,
+				completeString,
+				true,
+				startContainerText.substr(0, doFirstLength),
+				endContainerText.substr(doLastStart),
+				directionRTL
+			);
 		}
 		if(doLastStart +1 < endContainerText.length && endContainerText[doLastStart] != ' ') {
 			if(h +1 == list.length
@@ -724,25 +751,33 @@ this.countFITinLevels = function(level, hitsList, aWindow) {
 					if(doLastLength == -1) { doLastLength = endContainerText.length; }
 					doLastLength -= doLastStart;
 					
-					var fillString = endContainerText.substr(doLastStart, doLastLength);
-					itemStrings.push({ text: fillString, highlight: false });
+					var fillString = replaceLineBreaks(endContainerText.substr(doLastStart, doLastLength));
 					
 					doLastStart += doLastLength;
 					if(doLastStart == endContainerText.length) {
 						finalPoints = false;
 					}
+					
+					completeString = appendStringToList(
+						itemStrings,
+						fillString,
+						false,
+						completeString,
+						false,
+						startContainerText.substr(0, doFirstLength),
+						endContainerText.substr(doLastStart),
+						directionRTL
+					);
 			}
 		}
-		
-		var remaining = HITS_LENGTH -allStringsLength(itemStrings);
 		
 		// We attempt to merge very close occurences into the same item whenever possible
 		var lastRange = range;
 		var hh = h+1;
-		if(remaining > 0) {
+		if(completeString.length < HITS_LENGTH) {
 			while(hh < list.length && ((isPDF) ? list[hh].p : list[hh].startContainer) == endContainer) {
 				if(isPDF) {
-					var nextString = aWindow.PDFFindController.pageContents[list[hh].p].substr(list[hh].o, aWord.length);
+					var nextString = replaceLineBreaks(aWindow.PDFFindController.pageContents[list[hh].p].substr(list[hh].o, aWord.length));
 					var nextLastStart = list[hh].o +aWord.length;
 					var nextFirstLength = list[hh].o;
 					var nextStartContainer = list[hh].p;
@@ -750,7 +785,7 @@ this.countFITinLevels = function(level, hitsList, aWindow) {
 					var nextEndContainer = list[hh].p;
 					var nextEndContainerText = aWindow.PDFFindController.pageContents[list[hh].p];
 				} else {
-					var nextString = list[hh].toString();
+					var nextString = replaceLineBreaks(list[hh].toString());
 					var nextLastStart = list[hh].endOffset;
 					var nextFirstLength = list[hh].startOffset;
 					var nextStartContainer = list[hh].startContainer;
@@ -770,23 +805,52 @@ this.countFITinLevels = function(level, hitsList, aWindow) {
 							if(fillNextLength == -1) { fillNextLength = nextEndContainerText.length; }
 							fillNextLength -= nextLastStart;
 							
-							fillNext = nextEndContainerText.substr(nextLastStart, fillNextLength);
+							fillNext = replaceLineBreaks(nextEndContainerText.substr(nextLastStart, fillNextLength));
 					}
 				}
 				
 				var inBetweenStart = doLastStart;
 				var inBetweenLength = nextFirstLength -inBetweenStart;
-				var inBetween = nextStartContainerText.substr(inBetweenStart, inBetweenLength);
-				if(allStringsLength(itemStrings) +nextString.length +fillNext.length +inBetween.length <= HITS_LENGTH) {
-					itemStrings.push({ text: inBetween, highlight: false });
-					itemStrings.push({ text: nextString, highlight: true });
-					itemStrings.push({ text: fillNext, highlight: false });
-					
+				var inBetween = replaceLineBreaks(nextStartContainerText.substr(inBetweenStart, inBetweenLength));
+				if(completeString.length +nextString.length +fillNext.length +inBetween.length <= HITS_LENGTH) {
 					lastRange = list[hh];
 					doLastStart = nextLastStart +fillNext.length;
 					if(doLastStart == nextEndContainerText.length) {
 						finalPoints = false;
 					}
+					
+					var lastEndContainerText = (isPDF) ? aWindow.PDFFindController.pageContents[lastRange.p] : lastRange.endContainer.textContent;
+					
+					completeString = appendStringToList(
+						itemStrings,
+						inBetween,
+						false,
+						completeString,
+						false,
+						startContainerText.substr(0, doFirstLength),
+						nextString +fillNext +lastEndContainerText.substr(doLastStart),
+						directionRTL
+					);
+					completeString = appendStringToList(
+						itemStrings,
+						nextString,
+						true,
+						completeString,
+						false,
+						startContainerText.substr(0, doFirstLength),
+						fillNext +lastEndContainerText.substr(doLastStart),
+						directionRTL
+					);
+					completeString = appendStringToList(
+						itemStrings,
+						fillNext,
+						false,
+						completeString,
+						false,
+						startContainerText.substr(0, doFirstLength),
+						lastEndContainerText.substr(doLastStart),
+						directionRTL
+					);
 					
 					ranges.push(lastRange);
 					endNumber = hh +1;
@@ -796,21 +860,15 @@ this.countFITinLevels = function(level, hitsList, aWindow) {
 				}
 				break;
 			}
-			
-			remaining = HITS_LENGTH -allStringsLength(itemStrings);
 		}
 		
 		var doLast = false;
 		var didOne = true;
 		
-		if(isPDF) {
-			var lastEndContainerText = aWindow.PDFFindController.pageContents[lastRange.p];
-		} else {
-			var lastEndContainerText = lastRange.endContainer.textContent;
-		}
+		var lastEndContainerText = (isPDF) ? aWindow.PDFFindController.pageContents[lastRange.p] : lastRange.endContainer.textContent;
 		
 		// Now we complete with some before and after text strings
-		while(remaining > 0) {
+		while(completeString.length < HITS_LENGTH) {
 			doLast = !doLast;
 			
 			if(doLast) {
@@ -823,7 +881,7 @@ this.countFITinLevels = function(level, hitsList, aWindow) {
 				var doLastLength = lastEndContainerText.indexOf(' ', doLastStart +1);
 				if(doLastLength == -1) { doLastLength = lastEndContainerText.length; }
 				doLastLength -= doLastStart;
-				var fillString = lastEndContainerText.substr(doLastStart, doLastLength);
+				var fillString = replaceLineBreaks(lastEndContainerText.substr(doLastStart, doLastLength));
 			} else {
 				if(!initialPoints) {
 					if(!didOne) { break; }
@@ -841,31 +899,47 @@ this.countFITinLevels = function(level, hitsList, aWindow) {
 					continue;
 				}
 				
-				var fillString = startContainerText.substr(doFirstStart, doFirstLength);
+				var fillString = replaceLineBreaks(startContainerText.substr(doFirstStart, doFirstLength));
 			}
 			
-			if(fillString.length > 0 && remaining -fillString.length >= 0) {
+			if(fillString.length > 0 && completeString.length +fillString.length < HITS_LENGTH) {
 				if(doLast) {
-					// Trimming those extra white spaces
-					if(fillString != ' ') {
-						itemStrings.push({ text: fillString, highlight: false });
-						remaining -= fillString.length;
-					}
-					
 					doLastStart += doLastLength;
 					if(doLastStart == lastEndContainerText.length) {
 						finalPoints = false;
 					}
-				} else {
-					// Trimming those extra white spaces
-					if(fillString != ' ') {
-						itemStrings.unshift({ text: fillString, highlight: false });
-						remaining -= fillString.length;
-					}
 					
+					// Trimming those extra white spaces
+					if(trim(fillString)) {
+						completeString = appendStringToList(
+							itemStrings,
+							fillString,
+							false,
+							completeString,
+							false,
+							startContainerText.substr(0, doFirstLength),
+							lastEndContainerText.substr(doLastStart),
+							directionRTL
+						);
+					}
+				} else {
 					doFirstLength = doFirstStart;
 					if(doFirstStart == 0) {
 						initialPoints = false;
+					}
+					
+					// Trimming those extra white spaces
+					if(trim(fillString)) {
+						completeString = appendStringToList(
+							itemStrings,
+							fillString,
+							false,
+							completeString,
+							true,
+							startContainerText.substr(0, doFirstLength),
+							lastEndContainerText.substr(doLastStart),
+							directionRTL
+						);
 					}
 				}
 				
@@ -880,29 +954,63 @@ this.countFITinLevels = function(level, hitsList, aWindow) {
 		lastEndContainer = (isPDF) ? lastRange.p : lastRange.endContainer;
 		lastEndOffset = doLastStart;
 		
-		if(initialPoints) { itemStrings.unshift({ text: '... ', highlight: false }); }
-		if(finalPoints) { itemStrings.push({ text: ' ...', highlight: false }); }
+		if(initialPoints) {
+			appendStringToList(
+				itemStrings,
+				'... ',
+				false,
+				completeString,
+				true,
+				startContainerText.substr(0, doFirstLength),
+				lastEndContainerText.substr(doLastStart),
+				directionRTL
+			);
+		}
+		if(finalPoints) {
+			appendStringToList(
+				itemStrings,
+				' ...',
+				false,
+				completeString,
+				false,
+				startContainerText.substr(0, doFirstLength),
+				lastEndContainerText.substr(doLastStart),
+				directionRTL
+			);
+		}
 		
 		var hit = document.createElement('richlistitem');
 		hit.linkedRanges = [];
-		// Don't just copy the array, they are live so we'd keep this scope open until the lists were deleted unnecessarily
+		// Don't just copy the array, they are live so we'd keep this scope open unnecessarily until the lists were deleted
 		for(var r=0; r<ranges.length; r++) {
 			hit.linkedRanges.push(ranges[r]);
 		}
 		
+		// Place the text inside a hbox so we can change it's direction without affecting the rest of the layout
+		var labelBox = document.createElement('hbox');
+		labelBox.style.direction = (directionRTL) ? 'rtl' : 'ltr';
 		for(var s=0; s<itemStrings.length; s++) {
 			var label = document.createElement('label');
 			toggleAttribute(label, 'highlight', itemStrings[s].highlight);
-			label.setAttribute('value', itemStrings[s].text);
-			hit.appendChild(label);
+			if(itemStrings[s].opposite) {
+				label.style.direction = (directionRTL) ? 'ltr' : 'rtl';
+			}
+			setAttribute(label, 'value', itemStrings[s].text);
+			labelBox.appendChild(label);
 		}
+		hit.appendChild(labelBox);
 		
-		var hitNumberString = ' '+initNumber;
-		if(initNumber != endNumber) { hitNumberString += '-'+endNumber; }
+		var spacer = document.createElement('label');
+		spacer.setAttribute('flex', '1');
+		spacer.setAttribute('value', ' ');
+		hit.appendChild(spacer);
+		
 		var hitNumber = document.createElement('label');
-		hitNumber.setAttribute('flex', '1');
-		hitNumber.setAttribute('class', 'right');
-		hitNumber.setAttribute('value', hitNumberString);
+		var hitNumberValue = initNumber;
+		if(initNumber != endNumber) {
+			hitNumberValue += '-'+endNumber;
+		}
+		hitNumber.setAttribute('value', hitNumberValue);
 		hit.appendChild(hitNumber);
 		
 		hitsList.appendChild(hit);
@@ -911,12 +1019,334 @@ this.countFITinLevels = function(level, hitsList, aWindow) {
 	return list.length;
 };
 
-this.allStringsLength = function(list) {
-	var count = 0;
-	for(var i=0; i<list.length; i++) {
-		count += list[i].text.length;
+// Use this method to append to the beginning or the end of the item, taking into consideration ltr and rtl directions.
+// If the directionality of the last character in the string that leads into the next is not the same as the overall directionality of the document,
+// append the string to the opposite end of the list (if it should come first, place it last).
+// In this case, switch whiteplaces if it has any.
+this.appendStringToList = function(list, text, highlight, original, preceed, predecessor, followup, directionRTL) {
+	var stringWeak = testDirection.isWeak(text);
+	var originalWeak = testDirection.isWeak(original);
+	
+	var toAdd = {
+		text: text,
+		highlight: highlight,
+		opposite: false
+	};
+	
+	//var log = 't: "'+text+'" o: "'+original+'" d: '+directionRTL;
+	if(preceed) { //log += ' preceed';
+		// Full string text is easy to form
+		var modified = text +original;
+		
+		// Get edge directionality of text, these will be the guides to how they will be added to the list
+		if(!stringWeak) { // own string direction
+			var lastStringRTL = testDirection.isLastRTL(text);
+			var firstStringRTL = testDirection.isFirstRTL(text);
+		} else {
+			if(!testDirection.isWeak(predecessor)) { var lastStringRTL = testDirection.isLastRTL(predecessor); } // previous string direction
+			else if(!testDirection.isWeak(original)) { var lastStringRTL = testDirection.isFirstRTL(original); } // next string direction
+			else if(!testDirection.isWeak(followup)) { var lastStringRTL = testDirection.isFirstRTL(followup); } // end of string direction
+			else { var lastStringRTL = directionRTL; } // default to document direction
+			var firstStringRTL = lastStringRTL;
+		}
+		
+		if(!originalWeak) {
+			var firstOriginalRTL = testDirection.isFirstRTL(original);
+			var lastOriginalRTL = testDirection.isLastRTL(original);
+		} else {
+			var firstOriginalRTL = lastStringRTL;
+			var lastOriginalRTL = firstOriginalRTL;
+		}
+		
+		//log += ' sF: '+firstStringRTL+' sL: '+lastStringRTL+' oF: '+firstOriginalRTL+' oL: '+lastOriginalRTL;
+		// Current start position of the item string in the array list
+		var sI = 0;
+		for(var i=0; i<list.length; i++ ) {
+			if(list[i].sI) { sI = i; list[i].sI = false; break; }
+		} //log += ' sI: '+sI;
+		
+		if(!testDirection.isBiDi(text)) { //log += ' !BiDi';
+			toAdd.sI = true;
+			if(firstOriginalRTL == lastStringRTL) { //log += ' f==l';
+				if(lastStringRTL == directionRTL) { //log += ' l==d';
+					list.splice(sI, 0, toAdd);
+				}
+				else { //log += ' l!=d';
+					toAdd.opposite = true;
+					list.push(toAdd);
+				}
+			}
+			else { //log += ' f!=l';
+				if(lastStringRTL == directionRTL) { //log += ' l==d';
+					toAdd.text = testSpaces.moveEdges(toAdd.text, true);
+					list.unshift(toAdd);
+				}
+				else { //log += ' l!=d';
+					toAdd.text = testSpaces.moveEdges(toAdd.text, true, true);
+					toAdd.opposite = true;
+					list.unshift(toAdd);
+				}
+			}	
+		}
+		else { //log += ' BiDi';
+			var bits = testDirection.breakApart(toAdd.text);
+			
+			var lastBit = {
+				text: bits.pop(),
+				highlight: highlight,
+				opposite: false
+			};
+			
+			if(firstOriginalRTL == lastStringRTL) { //log += ' f==l';
+				if(lastStringRTL == directionRTL) { //log += ' l==d';
+					list.splice(sI, 0, lastBit);
+				}
+				else { //log += ' l!=d';
+					lastBit.opposite = true;
+					list.push(lastBit);
+				}
+			}
+			else { //log += ' f!=l';
+				if(lastStringRTL == directionRTL) { //log += ' l==d';
+					list.unshift(lastBit);
+				}
+				else { //log += ' l!=d';
+					lastBit.text = testSpaces.moveEdges(lastBit.text, true, true);
+					lastBit.opposite = true;
+					list.unshift(lastBit);
+				}
+			}
+			
+			var firstBit = {
+				text: bits.shift(),
+				highlight: highlight,
+				opposite: false
+			};
+			
+			if(bits.length > 0) { //log += ' m';
+				var middleBit = {
+					text: bits.join(""),
+					highlight: highlight,
+					opposite: false
+				};
+				list.unshift(middleBit);
+			}
+			
+			firstBit.sI = true;
+			if(firstStringRTL == directionRTL) { //log += ' f==d';
+				list.unshift(firstBit);
+			}
+			else { //log += ' f!=d';
+				firstBit.opposite = true;
+				list.unshift(firstBit);
+			}
+		}
 	}
-	return count;
+	else { //log += ' succeed';
+		// Full string text is easy to form
+		var modified = original +text;
+		
+		// Get edge directionality of text, these will be the guides to how they will be added to the list
+		if(!stringWeak) { // own string direction
+			var firstStringRTL = testDirection.isFirstRTL(text);
+			var lastStringRTL = testDirection.isLastRTL(text);
+		} else {
+			if(!testDirection.isWeak(original)) { var firstStringRTL = testDirection.isLastRTL(original); } // next string direction
+			else if(!testDirection.isWeak(predecessor)) { var firstStringRTL = testDirection.isLastRTL(predecessor); } // previous string direction
+			else if(!testDirection.isWeak(followup)) { var firstStringRTL = testDirection.isFirstRTL(followup); } // end of string direction
+			else { var firstStringRTL = directionRTL; } // default to document direction
+			var lastStringRTL = firstStringRTL;
+		}
+		
+		if(!originalWeak) {
+			var firstOriginalRTL = testDirection.isFirstRTL(original);
+			var lastOriginalRTL = testDirection.isLastRTL(original);
+		} else {
+			var lastOriginalRTL = firstStringRTL;
+			var firstOriginalRTL = lastOriginalRTL;
+		}
+		
+		//log += ' sF: '+firstStringRTL+' sL: '+lastStringRTL+' oF: '+firstOriginalRTL+' oL: '+lastOriginalRTL;
+		// Current end position of the item string in the array list
+		var eI = list.length -1;
+		for(var i=list.length -1; i>=0; i--) {
+			if(list[i].eI) { eI = i; list[i].eI = false; break; }
+		} //log += ' eI: '+eI;
+		
+		if(!testDirection.isBiDi(text)) { //log += ' !BiDi';
+			toAdd.eI = true;
+			if(firstStringRTL == lastOriginalRTL) { //log += ' f==l';
+				if(firstStringRTL == directionRTL) { //log += ' f==d';
+					list.push(toAdd);
+				}
+				else { //log += ' f!=d';
+					toAdd.opposite = true;
+					list.splice((eI > -1) ? eI : eI +1, 0, toAdd);
+				}
+			}
+			else { //log += ' f!=l';
+				if(firstStringRTL == directionRTL) { //log += ' f==d';
+					toAdd.text = testSpaces.moveEdges(toAdd.text, false);
+					list.push(toAdd);
+				}
+				else { //log += ' f!=d';
+					toAdd.text = testSpaces.moveEdges(toAdd.text, false, true);
+					toAdd.opposite = true;
+					list.push(toAdd);
+				}
+			}	
+		}
+		else { //log += ' BiDi';
+			var bits = testDirection.breakApart(toAdd.text);
+			
+			var firstBit = {
+				text: bits.shift(),
+				highlight: highlight,
+				opposite: false
+			};
+			
+			if(firstStringRTL == lastOriginalRTL) { //log += ' f==l';
+				if(firstStringRTL == directionRTL) { //log += ' f==d';
+					list.push(firstBit);
+				}
+				else { //log += ' f!=d';
+					firstBit.opposite = true;
+					list.splice((eI > -1) ? eI : eI +1, 0, firstBit);
+				}
+			}
+			else { //log += ' f!=l';
+				if(firstStringRTL == directionRTL) { //log += ' f==d';
+					list.push(firstBit);
+				}
+				else { //log += ' f!=d';
+					firstBit.text = testSpaces.moveEdges(firstBit.text, false, true);
+					firstBit.opposite = true;
+					list.push(firstBit);
+				}
+			}
+			
+			var lastBit = {
+				text: bits.pop(),
+				highlight: highlight,
+				opposite: false
+			};
+			
+			if(bits.length > 0) { //log += ' m';
+				var middleBit = {
+					text: bits.join(""),
+					highlight: highlight,
+					opposite: false
+				};
+				list.push(middleBit);
+			}
+			
+			lastBit.eI = true;
+			if(lastStringRTL == directionRTL) { //log += ' l==d';
+				list.push(lastBit);
+			}
+			else { //log += ' l!=d';
+				lastBit.opposite = true;
+				list.push(lastBit);
+			}
+		}
+	}
+	//doLog(log);
+	
+	// Return the new complete string
+	return modified;
+};
+
+this.testDirection = {
+	// A practical pattern to identify strong LTR characters. This pattern is not theoretically correct according to the Unicode standard.
+	// It is simplified for performance and small code size.
+	ltrChars: 'A-Za-z0-9_\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02B8\u0300-\u0590\u0800-\u1FFF\u2C00-\uFB1C\uFE00-\uFE6F\uFEFD-\uFFFF',
+	
+	// A practical pattern to identify strong RTL character. This pattern is not theoretically correct according to the Unicode standard.
+	// It is simplified for performance and small code size.
+	rtlChars: '\u0591-\u07FF\uFB1D-\uFDFF\uFE70-\uFEFC',
+	
+	// Checks whether the first strongly-typed character in the string (if any) is of RTL directionality
+	isFirstRTL: function(str) {
+		var test = new RegExp('^[^' + this.ltrChars + ']*[' + this.rtlChars + ']');
+		return test.test(str);
+	},
+	
+	// Checks whether the last strongly-typed character in the string (if any) is of RTL directionality
+	isLastRTL: function(str) {
+		var test = new RegExp('[' + this.rtlChars + '][^' + this.ltrChars + ']*$');
+		return test.test(str);
+	},
+	
+	LTRexp: function() { return new RegExp('[' + this.ltrChars + ']'); },
+	RTLexp: function() { return new RegExp('[' + this.rtlChars + ']'); },
+	
+	// Checks if the string has any LTR chars in it
+	hasLTR: function(str) {
+		return this.LTRexp().test(str);
+	},
+	
+	// Checks if the string has any RTL chars in it
+	hasRTL: function(str) {
+		return this.RTLexp().test(str);
+	},
+	
+	// Checks if the string has only weak characters (actually it just checks if it has either LTR or RTL strong chars)
+	isWeak: function(str) {
+		return (!this.hasLTR(str) && !this.hasRTL(str));
+	},
+	
+	// Checks if the string has both LTR and RTL chars
+	isBiDi: function(str) {
+		return (this.hasLTR(str) && this.hasRTL(str)); 
+	},
+	
+	// Breaks the string into an array of strings of different direction
+	breakApart: function(str) {
+		if(!this.isBiDi(str)) { return new Array(str); }
+		
+		var ret = new Array();
+		var doRTL = !this.isFirstRTL(str);
+		while(this.isBiDi(str)) {
+			var exp = (doRTL) ? this.RTLexp() : this.LTRexp();
+			var i = str.indexOf(exp.exec(str));
+			ret.push(str.substr(0, i));
+			str = str.substr(i);
+			doRTL = !doRTL;
+		}
+		if(str) { ret.push(str); }
+		
+		return ret;
+	}	
+};
+
+// This move all spaces in the beginning of the string to the end when the direction is inverted
+this.testSpaces = {
+	findFirst: function(str) { return str.search(/\s/); },
+	findLast: function(str) { return str.search(/\s\S*$/); },
+	
+	moveEdges: function(str, moveFromEnd, force) {
+		if(trim(str) && force || testDirection.isWeak(str)) {
+			if(moveFromEnd) {
+				var i = this.findLast(str);
+				while(i == str.length -1) {
+					str = ' '+str.substr(0, str.length -1);
+					i = this.findLast(str);
+				}
+			} else {
+				var i = this.findFirst(str);
+				while(i == 0) {
+					str = str.substr(1)+' ';
+					i = this.findFirst(str);
+				}
+			}
+		}
+		return str;
+	}
+};
+
+// Replace all linebreaks with white spaces
+this.replaceLineBreaks = function(str) {
+	return str.replace(/(\r\n|\n|\r)/gm, " ");
 };
 
 this.alwaysOpenFIT = function() {

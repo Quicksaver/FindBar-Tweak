@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.0.3';
+moduleAid.VERSION = '2.0.4';
 moduleAid.LAZY = true;
 
 // prefAid - Object to contain and manage all preferences related to the add-on (and others if necessary)
@@ -107,6 +107,12 @@ this.prefAid = {
 	},
 	
 	listen: function(pref, handler) {
+		// failsafe
+		if(typeof(this._onChange[pref]) == 'undefined') {
+			Cu.reportError('Setting listener on unset preference: '+pref);
+			return false;
+		}
+		
 		if(this.listening(pref, handler) === false) {
 			this._onChange[pref].push(handler);
 			return true;
@@ -115,6 +121,12 @@ this.prefAid = {
 	},
 	
 	unlisten: function(pref, handler) {
+		// failsafe
+		if(typeof(this._onChange[pref]) == 'undefined') {
+			Cu.reportError('Setting listener on unset preference: '+pref);
+			return false;
+		}
+		
 		var i = this.listening(pref, handler)
 		if(i !== false) {
 			this._onChange[pref].splice(i, 1);

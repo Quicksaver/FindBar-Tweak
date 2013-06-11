@@ -17,8 +17,8 @@
 <!ENTITY OptminNoDelay.labelb "個字元則延遲強調">
 <!ENTITY Optsights.label "聚焦視點">
 <!ENTITY OptsightsCurrent.label "在目前項目上顯示聚焦視點">
-<!ENTITY OptsightsHighlights.label "在所有項目上顯示聚焦視點 (*)">
-<!ENTITY OptsightsHighlights.warning "(*) 警告: 此功能較耗費資源，可能導致渲染和滾動頁面緩慢！">
+<!ENTITY OptsightsHighlights.label "在所有項目上顯示聚焦視點">
+<!ENTITY OptsightsHighlights.warning "警告: 此功能較耗費資源，可能導致渲染和滾動頁面緩慢！">
 <!ENTITY OptsightsStyle.label "聚焦視點樣式(點擊可預覽):">
 <!ENTITY OptsightsStyle.focus "聚焦位置">
 <!ENTITY OptsightsStyle.circle "圓環位置">

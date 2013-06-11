@@ -24,8 +24,8 @@
 <!ENTITY OptadjustGridWidth.labelb "Pixel">
 <!ENTITY Optsights.label "Fundstellenhervorhebung">
 <!ENTITY OptsightsCurrent.label "Aktuellen Suchtreffer kurzzeitig eingekreist hervorheben">
-<!ENTITY OptsightsHighlights.label "Alle markierten Vorkommen des gesuchten Begriffs kurzzeitig eingekreist hervorheben (*)">
-<!ENTITY OptsightsHighlights.warning "(*) Zur Beachtung: Dies kann sehr ressourcenintensiv sein! Darstellung und seitenweises Blättern können sehr verlangsamt werden!">
+<!ENTITY OptsightsHighlights.label "Alle markierten Vorkommen des gesuchten Begriffs kurzzeitig eingekreist hervorheben">
+<!ENTITY OptsightsHighlights.warning "Zur Beachtung: Dies kann sehr ressourcenintensiv sein! Darstellung und seitenweises Blättern können sehr verlangsamt werden!">
 <!ENTITY OptsightsStyle.label "Stil der Hervorhebung (Anklicken, um eine Vorschau anzuzeigen):">
 <!ENTITY OptsightsStyle.focus "Fokussierender Kreisring">
 <!ENTITY OptsightsStyle.circle "Rotierender Kreisring">

@@ -1,4 +1,4 @@
-var defaultsVersion = '1.0.13';
+var defaultsVersion = '1.0.14';
 var objName = 'findbartweak';
 var objPathString = 'findbartweak';
 var prefList = {
@@ -21,7 +21,10 @@ var prefList = {
 	sightsHighlights: false,
 	sightsStyle: 'focus',
 	sightsColor: '#EF0FFF',
-	sightsSameColor: true,
+	sightsSameColor: false,
+	sightsSameColorAll: true,
+	sightsAllColor: '#EF0FFF',
+	sightsAllSameColor: true,
 	
 	blurCloses: false,
 	perTab: false,
@@ -32,6 +35,7 @@ var prefList = {
 	movetoRight: false,
 	hideClose: false,
 	hideLabels: false,
+	selectColor: '#38d878',
 	
 	/* hidden settings for now, mechanism isn't good enough yet */
 	squareLook: false,

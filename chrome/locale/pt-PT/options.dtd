@@ -24,8 +24,8 @@
 <!ENTITY OptadjustGridWidth.labelb "píxeis">
 <!ENTITY Optsights.label "Miras de Localização">
 <!ENTITY OptsightsCurrent.label "Mostra mira na ocorrência atual">
-<!ENTITY OptsightsHighlights.label "Mostra miras em todas as ocorrências (*)">
-<!ENTITY OptsightsHighlights.warning "(*) Atenção: Este modo pode tornar-se um processo muito intensivo, atrasando a velocidade de apresentação e de rolamento da página.">
+<!ENTITY OptsightsHighlights.label "Mostra miras em todas as ocorrências">
+<!ENTITY OptsightsHighlights.warning "Atenção: Este modo pode tornar-se um processo muito intensivo, atrasando a velocidade de apresentação e de rolamento da página.">
 <!ENTITY OptsightsStyle.label "Estilo das Miras (carregar para pre-visualizar)">
 <!ENTITY OptsightsStyle.focus "Mira de Focagem">
 <!ENTITY OptsightsStyle.circle "Circundar a Localização">

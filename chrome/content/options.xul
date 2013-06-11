@@ -12,6 +12,7 @@
 			<preference id="pref-highlightByDefault" name="extensions.findbartweak.highlightByDefault" type="bool"/>
 			<preference id="pref-minNoDelay" name="extensions.findbartweak.minNoDelay" type="int"/>
 			<preference id="pref-highlightColor" name="extensions.findbartweak.highlightColor" type="string"/>
+			<preference id="pref-selectColor" name="extensions.findbartweak.selectColor" type="string"/>
 			<preference id="pref-hideWhenFinderHidden" name="extensions.findbartweak.hideWhenFinderHidden" type="bool"/>
 			<preference id="pref-useCounter" name="extensions.findbartweak.useCounter" type="bool"/>
 			<preference id="pref-findInTabs" name="extensions.findbartweak.findInTabs" type="bool"/>
@@ -24,7 +25,10 @@
 			<preference id="pref-sightsHighlights" name="extensions.findbartweak.sightsHighlights" type="bool"/>
 			<preference id="pref-sightsStyle" name="extensions.findbartweak.sightsStyle" type="string"/>
 			<preference id="pref-sightsSameColor" name="extensions.findbartweak.sightsSameColor" type="bool"/>
+			<preference id="pref-sightsSameColorAll" name="extensions.findbartweak.sightsSameColorAll" type="bool"/>
 			<preference id="pref-sightsColor" name="extensions.findbartweak.sightsColor" type="string"/>
+			<preference id="pref-sightsAllSameColor" name="extensions.findbartweak.sightsAllSameColor" type="bool"/>
+			<preference id="pref-sightsAllColor" name="extensions.findbartweak.sightsAllColor" type="string"/>
 			<preference id="pref-movetoTop" name="extensions.findbartweak.movetoTop" type="bool"/>
 			<preference id="pref-movetoRight" name="extensions.findbartweak.movetoRight" type="bool"/>
 			<preference id="pref-hideClose" name="extensions.findbartweak.hideClose" type="bool"/>
@@ -63,7 +67,7 @@
 						</caption>
 						<radiogroup preference="pref-FAYTmode">
 							<radio dependson="pref-typeaheadfind" label="&OptFAYTmode.quickFind;" value="quick"/>
-							<vbox style="margin-left: 30px;">
+							<vbox style="-moz-margin-start: 30px;">
 								<checkbox dependson="pref-typeaheadfind,pref-FAYTmode:quick" label="&OptkeepButtons.label;" preference="pref-keepButtons"/>
 								<hbox>
 									<label dependson="pref-typeaheadfind,pref-FAYTmode:quick" value="&OptFAYTTimeout.beforeLabel;"/>
@@ -99,6 +103,16 @@
 						<checkbox label="&OptuseCounter.label;" preference="pref-useCounter"/>
 						<checkbox label="&OpthideClose.label;" preference="pref-hideClose"/>
 						<checkbox label="&OpthideLabels.label;" preference="pref-hideLabels"/>
+					</groupbox>
+					<groupbox align="center">
+						<caption align="center">
+							<label value="&OptselectColor.label;"/>
+							<label class="text-link"
+								href="#"
+								onclick="document.getElementById('pref-selectColor').reset(); return false;"
+								value="&OptcolorReset.label;"/>
+						</caption>
+						<colorpicker id="selectColor" type="button" preference="pref-selectColor" style="width: 50px;"/>
 					</groupbox>
 				</tabpanel>
 				
@@ -153,23 +167,61 @@
 				        </hbox>
 					</groupbox>
 					<groupbox align="center">
-						<caption>
+						<caption align="center">
 							<label value="&Optcolor.label;"/>
 							<label class="text-link"
 								href="#"
 								onclick="document.getElementById('pref-highlightColor').reset(); return false;"
 								value="&OptcolorReset.label;"/>
 						</caption>
-						<colorpicker id="color" type="button" preference="pref-highlightColor" style="width: 50px;"/>
+						<colorpicker id="highlightsColor" type="button" preference="pref-highlightColor" style="width: 50px;"/>
 					</groupbox>
 				</tabpanel>
 				
 				<tabpanel id="sightsTab" orient="vertical">
 					<groupbox align="start">
-						<caption label="&Optsights.label;"/>
+						<caption label="&OptsightsCurrentHit.label;"/>
 						<checkbox label="&OptsightsCurrent.label;" preference="pref-sightsCurrent"/>
-						<checkbox label="&OptsightsHighlights.label;" preference="pref-sightsHighlights"/>
+						<vbox align="center" style="-moz-margin-start: 30px;">
+							<vbox align="start">
+								<checkbox dependson="pref-sightsCurrent" label="&OptsightsSameColorCurrent.label;" preference="pref-sightsSameColor"/>
+								<checkbox dependson="pref-sightsCurrent,!pref-sightsSameColor" label="&OptsightsSameColor.label;" preference="pref-sightsSameColorAll"/>
+							</vbox>
+							<hbox align="center">
+								<colorpicker id="sightsColor"
+									dependson="pref-sightsCurrent,!pref-sightsSameColor,!pref-sightsSameColorAll"
+									type="button"
+									preference="pref-sightsColor"
+									style="width: 50px;"/>
+								<label class="text-link"
+									href="#"
+									dependson="pref-sightsCurrent,!pref-sightsSameColor,!pref-sightsSameColorAll"
+									onclick="if(!this.getAttribute('disabled')) { document.getElementById('pref-sightsColor').reset(); return false; }"
+									value="&OptcolorReset.label;"/>
+							</hbox>
+						</vbox>
+					</groupbox>
+					<groupbox align="start">
+						<caption label="&OptsightsAllHighlights.label;"/>
 						<description class="justify">&OptsightsHighlights.warning;</description>
+						<checkbox label="&OptsightsHighlights.label;" preference="pref-sightsHighlights"/>
+						<vbox align="center" style="-moz-margin-start: 30px;">
+							<vbox align="start">
+								<checkbox dependson="pref-sightsHighlights" label="&OptsightsSameColor.label;" preference="pref-sightsAllSameColor"/>
+							</vbox>
+							<hbox align="center">
+								<colorpicker id="sightsAllColor"
+									dependson="pref-sightsHighlights,!pref-sightsAllSameColor"
+									type="button"
+									preference="pref-sightsAllColor"
+									style="width: 50px;"/>
+								<label class="text-link"
+									href="#"
+									dependson="pref-sightsHighlights,!pref-sightsAllSameColor"
+									onclick="if(!this.getAttribute('disabled')) { document.getElementById('pref-sightsAllColor').reset(); return false; }"
+									value="&OptcolorReset.label;"/>
+							</hbox>
+						</vbox>
 					</groupbox>
 					<groupbox align="center">
 						<caption label="&OptsightsStyle.label;"/>
@@ -185,22 +237,6 @@
 									oncommand="objName.previewSights(this, 'circle');"/>
 							</hbox>
 						</radiogroup>
-					</groupbox>
-					<groupbox align="center">
-						<caption>
-							<label value="&OptsightsColor.label;"/>
-							<label class="text-link"
-								href="#"
-								dependson="!pref-sightsSameColor,pref-sightsCurrent;pref-sightsHighlights"
-								onclick="if(!this.getAttribute('disabled')) { document.getElementById('pref-sightsColor').reset(); return false; }"
-								value="&OptcolorReset.label;"/>
-						</caption>
-						<checkbox dependson="pref-sightsCurrent;pref-sightsHighlights" label="&OptsightsSameColor.label;" preference="pref-sightsSameColor"/>
-						<colorpicker id="sightsColor"
-							dependson="!pref-sightsSameColor,pref-sightsCurrent;pref-sightsHighlights"
-							type="button"
-							preference="pref-sightsColor"
-							style="width: 50px;"/>
 					</groupbox>
 				</tabpanel>
 				

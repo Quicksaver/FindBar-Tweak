@@ -24,8 +24,8 @@
 <!ENTITY OptadjustGridWidth.labelb "px">
 <!ENTITY Optsights.label "Fokuseringssikten">
 <!ENTITY OptsightsCurrent.label "Visa fokuseringssikte för den aktuella sökträffen">
-<!ENTITY OptsightsHighlights.label "Visa fokuseringssikten för alla färgmarkerade sökträffar (*)">
-<!ENTITY OptsightsHighlights.warning "(*) Varning: Detta kan vara mycket resurskrävande! Rendering och sidrullning kan bli långsam!">
+<!ENTITY OptsightsHighlights.label "Visa fokuseringssikten för alla färgmarkerade sökträffar">
+<!ENTITY OptsightsHighlights.warning "Varning: Detta kan vara mycket resurskrävande! Rendering och sidrullning kan bli långsam!">
 <!ENTITY OptsightsStyle.label "Format för sikten (klicka för förhandsvisning):">
 <!ENTITY OptsightsStyle.focus "Fokuseringens plats">
 <!ENTITY OptsightsStyle.circle "Cirkelns plats">

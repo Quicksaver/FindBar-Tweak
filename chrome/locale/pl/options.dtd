@@ -24,8 +24,8 @@
 <!ENTITY OptadjustGridWidth.labelb "pikseli">
 <!ENTITY Optsights.label "Sygnalizuj wyniki">
 <!ENTITY OptsightsCurrent.label "Wskazuj efektem graficznym lokalizację aktualnego wystąpienia">
-<!ENTITY OptsightsHighlights.label "Sygnalizuj wszystkie znalezione frazy (*)">
-<!ENTITY OptsightsHighlights.warning "(*) Uwaga: To może znacznie zużywać zasoby komputera! Renderowanie i przewijanie stron może stać się powolne!">
+<!ENTITY OptsightsHighlights.label "Sygnalizuj wszystkie znalezione frazy">
+<!ENTITY OptsightsHighlights.warning "Uwaga: To może znacznie zużywać zasoby komputera! Renderowanie i przewijanie stron może stać się powolne!">
 <!ENTITY OptsightsStyle.label "Styl sygnalizowania (kliknij, aby zobaczyć):">
 <!ENTITY OptsightsStyle.focus "Skupianie">
 <!ENTITY OptsightsStyle.circle "Okrąg">

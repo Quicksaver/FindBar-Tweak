@@ -17,6 +17,7 @@
 <!ENTITY OptfindInTabs.label "Enable 'Find in All Tabs'">
 <!ENTITY OptalwaysOpenFIT.label "Open 'Find in All Tabs' with the Findbar">
 <!ENTITY Optcolor.label "Highlights Color">
+<!ENTITY OptselectColor.label "Current Hit Color">
 <!ENTITY OptcolorReset.label "(reset)">
 <!ENTITY OptgridLimit.labela "Don't use the grid if it exceeds">
 <!ENTITY OptgridLimit.labelb "highlights">
@@ -28,14 +29,17 @@
 <!ENTITY OptadjustGridWidth.labelb "pixels">
 
 <!ENTITY Optsights.label "Focus Sights">
+<!ENTITY OptsightsCurrentHit.label "Current Hit">
+<!ENTITY OptsightsAllHighlights.label "All Highlights">
 <!ENTITY OptsightsCurrent.label "Show sights on the current search hit">
-<!ENTITY OptsightsHighlights.label "Show sights on all the highlighted hits (*)">
-<!ENTITY OptsightsHighlights.warning "(*) Warning: This can be very resource intensive! Rendering and page scrolling may become slow!">
+<!ENTITY OptsightsHighlights.label "Show sights on all the highlighted hits">
+<!ENTITY OptsightsHighlights.warning "Warning: This can be very resource intensive! Rendering and page scrolling may become slow!">
 <!ENTITY OptsightsStyle.label "Sights Style (click to preview):">
 <!ENTITY OptsightsStyle.focus "Focus Location">
 <!ENTITY OptsightsStyle.circle "Circle Location">
 <!ENTITY OptsightsColor.label "Sights Color">
 <!ENTITY OptsightsSameColor.label "Use the same color from highlights">
+<!ENTITY OptsightsSameColorCurrent.label "Use the same color from the current hit">
 
 <!ENTITY OpthideLabels.label "Hide button labels">
 <!ENTITY OpthideClose.label "Hide the Findbar close button">

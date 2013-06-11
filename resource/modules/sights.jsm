@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.3.2';
+moduleAid.VERSION = '1.4.0';
 
 this.__defineGetter__('preferencesDialog', function() { return (typeof(inPreferences) != 'undefined' && inPreferences); });
 
@@ -143,6 +143,7 @@ this.buildSights = function(x, y, scrollLeft, scrollTop, current, style) {
 		phase: 0,
 		timer: null
 	};
+	toggleAttribute(box, 'current', box._sights.current);
 	
 	if(style == 'circle') {
 		var innerContainer = document.createElement('box');
@@ -486,27 +487,7 @@ this.allSightsOnPDFStatus = function() {
 };
 
 this.sightsColor = function(forceSheet) {
-	if(!forceSheet && !prefAid.sightsCurrent && !prefAid.sightsHighlights) { return; }
-	
-	var color = forceSheet || (!prefAid.sightsSameColor ? prefAid.sightsColor : prefAid.highlightColor);
-	var m = color.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
-	if(!m) { return; }
-	if(m[1].length === 6) { // 6-char notation
-		var rgb = {
-			r: parseInt(m[1].substr(0,2),16),
-			g: parseInt(m[1].substr(2,2),16),
-			b: parseInt(m[1].substr(4,2),16)
-		};
-	} else { // 3-char notation
-		var rgb = {
-			r: parseInt(m[1].charAt(0)+m[1].charAt(0),16),
-			g: parseInt(m[1].charAt(1)+m[1].charAt(1),16),
-			b: parseInt(m[1].charAt(2)+m[1].charAt(2),16)
-		};
-	}
-	
-	var c = rgb.r+','+rgb.g+','+rgb.b;
-	var o = (0.213 * (rgb.r /255) + 0.715 * (rgb.g /255) + 0.072 * (rgb.b /255) < 0.5) ? '255,255,255' : '0,0,0';
+	if(!forceSheet && ((!prefAid.sightsCurrent && !prefAid.sightsHighlights) || preferencesDialog)) { return; }
 	
 	var sheetName = (forceSheet) ? 'sightsColorPref' : 'sightsColor';
 	styleAid.unload(sheetName);
@@ -521,8 +502,39 @@ this.sightsColor = function(forceSheet) {
 		sscode += '	url("chrome://global/content/viewSource.xul"),\n';
 		sscode += '	url("chrome://global/content/viewPartialSource.xul") {\n';
 	}
-	sscode += ' box[anonid="highlightSights"][sightsStyle="focus"],\n';
-	sscode += ' box[anonid="highlightSights"][sightsStyle="circle"] box[innerContainer] box {\n';
+	
+	var color = forceSheet || (prefAid.sightsSameColor ? prefAid.selectColor : prefAid.sightsSameColorAll ? prefAid.highlightColor : prefAid.sightsColor);
+	var m = color.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
+	if(!m) { return; }
+	var rgb = getRGBfromString(m);
+	
+	var c = rgb.r+','+rgb.g+','+rgb.b;
+	var o = (darkBackgroundRGB(rgb)) ? '255,255,255' : '0,0,0';
+	
+	sscode += ' box[anonid="highlightSights"][sightsStyle="focus"][current],\n';
+	sscode += ' box[anonid="highlightSights"][sightsStyle="circle"][current] box[innerContainer] box {\n';
+	sscode += '  -moz-border-top-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+', 0.85) rgba('+o+', 0.5) rgba('+c+', 0.4) rgba('+c+', 0.15) !important;\n';
+	sscode += '  -moz-border-bottom-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+', 0.85) rgba('+o+', 0.5) rgba('+c+', 0.4) rgba('+c+', 0.15) !important;\n';
+	sscode += '  -moz-border-left-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+', 0.85) rgba('+o+', 0.5) rgba('+c+', 0.4) rgba('+c+', 0.15) !important;\n';
+	sscode += '  -moz-border-right-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+', 0.85) rgba('+o+', 0.5) rgba('+c+', 0.4) rgba('+c+', 0.15) !important;\n';
+	sscode += ' }\n';
+	sscode += '}';
+	
+	if(forceSheet) {
+		styleAid.load(sheetName, sscode, true);
+		return;
+	}
+	
+	var color = prefAid.sightsAllSameColor ? prefAid.highlightColor : prefAid.sightsAllColor;
+	var m = color.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
+	if(!m) { return; }
+	var rgb = getRGBfromString(m);
+	
+	var c = rgb.r+','+rgb.g+','+rgb.b;
+	var o = (darkBackgroundRGB(rgb)) ? '255,255,255' : '0,0,0';
+	
+	sscode += ' box[anonid="highlightSights"][sightsStyle="focus"]:not([current]),\n';
+	sscode += ' box[anonid="highlightSights"][sightsStyle="circle"]:not([current]) box[innerContainer] box {\n';
 	sscode += '  -moz-border-top-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+', 0.85) rgba('+o+', 0.5) rgba('+c+', 0.4) rgba('+c+', 0.15) !important;\n';
 	sscode += '  -moz-border-bottom-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+', 0.85) rgba('+o+', 0.5) rgba('+c+', 0.4) rgba('+c+', 0.15) !important;\n';
 	sscode += '  -moz-border-left-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+', 0.85) rgba('+o+', 0.5) rgba('+c+', 0.4) rgba('+c+', 0.15) !important;\n';
@@ -548,7 +560,7 @@ this.sightsResizeViewSource = function() {
 };
 
 this.preferencesColorListener = function() {
-	sightsColor($(!$('pref-sightsSameColor').value ? 'sightsColor' : 'color').getAttribute('color'));
+	sightsColor($($('pref-sightsSameColor').value ? 'selectColor' : $('pref-sightsSameColorAll').value ? 'highlightsColor' : 'sightsColor').getAttribute('color'));
 };
 
 this.toggleSightsCurrent = function() {
@@ -584,15 +596,21 @@ this.toggleSightsHighlights = function() {
 moduleAid.LOADMODULE = function() {
 	if(preferencesDialog) {
 		listenerAid.add($('pref-sightsSameColor'), 'change', preferencesColorListener);
-		objectWatcher.addAttributeWatcher($('color'), 'color', preferencesColorListener);
+		listenerAid.add($('pref-sightsSameColorAll'), 'change', preferencesColorListener);
+		objectWatcher.addAttributeWatcher($('selectColor'), 'color', preferencesColorListener);
+		objectWatcher.addAttributeWatcher($('highlightsColor'), 'color', preferencesColorListener);
 		objectWatcher.addAttributeWatcher($('sightsColor'), 'color', preferencesColorListener);
 		preferencesColorListener();
 		return;
 	}
 	
+	prefAid.listen('selectColor', sightsColor);
 	prefAid.listen('highlightColor', sightsColor);
 	prefAid.listen('sightsColor', sightsColor);
 	prefAid.listen('sightsSameColor', sightsColor);
+	prefAid.listen('sightsSameColorAll', sightsColor);
+	prefAid.listen('sightsAllColor', sightsColor);
+	prefAid.listen('sightsAllSameColor', sightsColor);
 	prefAid.listen('sightsCurrent', toggleSightsCurrent);
 	prefAid.listen('sightsHighlights', toggleSightsHighlights);
 	
@@ -605,7 +623,9 @@ moduleAid.UNLOADMODULE = function() {
 	if(preferencesDialog) {
 		styleAid.unload('sightsColorPref');
 		listenerAid.remove($('pref-sightsSameColor'), 'change', preferencesColorListener);
-		objectWatcher.removeAttributeWatcher($('color'), 'color', preferencesColorListener);
+		listenerAid.remove($('pref-sightsSameColorAll'), 'change', preferencesColorListener);
+		objectWatcher.removeAttributeWatcher($('selectColor'), 'color', preferencesColorListener);
+		objectWatcher.removeAttributeWatcher($('highlightsColor'), 'color', preferencesColorListener);
 		objectWatcher.removeAttributeWatcher($('sightsColor'), 'color', preferencesColorListener);
 		return;
 	}
@@ -635,9 +655,13 @@ moduleAid.UNLOADMODULE = function() {
 		listenerAid.remove(viewSource, 'resize', delaySightsResizeViewSource);
 	}
 	
+	prefAid.unlisten('selectColor', sightsColor);
 	prefAid.unlisten('highlightColor', sightsColor);
 	prefAid.unlisten('sightsColor', sightsColor);
 	prefAid.unlisten('sightsSameColor', sightsColor);
+	prefAid.unlisten('sightsSameColorAll', sightsColor);
+	prefAid.unlisten('sightsAllColor', sightsColor);
+	prefAid.unlisten('sightsAllSameColor', sightsColor);
 	prefAid.unlisten('sightsCurrent', toggleSightsCurrent);
 	prefAid.unlisten('sightsHighlights', toggleSightsHighlights);
 	

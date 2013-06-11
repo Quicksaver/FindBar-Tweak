@@ -24,8 +24,8 @@
 <!ENTITY OptadjustGridWidth.labelb "像素">
 <!ENTITY Optsights.label "聚焦视点">
 <!ENTITY OptsightsCurrent.label "在当前搜索项上显示聚焦视点">
-<!ENTITY OptsightsHighlights.label "在所有高亮项上显示聚焦视点 (*)">
-<!ENTITY OptsightsHighlights.warning "(*) 警告：此功能较耗费资源，可能导致渲染和页面滚动缓慢！">
+<!ENTITY OptsightsHighlights.label "在所有高亮项上显示聚焦视点">
+<!ENTITY OptsightsHighlights.warning "警告：此功能较耗费资源，可能导致渲染和页面滚动缓慢！">
 <!ENTITY OptsightsStyle.label "聚焦视点样式（点击可预览）">
 <!ENTITY OptsightsStyle.focus "位置聚焦">
 <!ENTITY OptsightsStyle.circle "位置画环">

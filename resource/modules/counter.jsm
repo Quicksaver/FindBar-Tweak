@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.0';
+moduleAid.VERSION = '1.1.1';
 
 this.__defineGetter__('findbarContainer', function() { return gFindBar.getElement('findbar-container'); });
 
@@ -123,6 +123,8 @@ moduleAid.LOADMODULE = function() {
 	listenerAid.add(gFindBar, 'SelectedFIThit', fillHighlightCounter);
 	listenerAid.add(gFindBar, 'UpdatedStatusFindBar', fillHighlightCounter);
 	listenerAid.add(gFindBar, 'UpdatedPDFMatches', fillHighlightCounter);
+	
+	observerAid.notify('ReHighlightAll');
 };
 
 moduleAid.UNLOADMODULE = function() {

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.11';
+moduleAid.VERSION = '1.1.12';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -159,7 +159,7 @@ this.reHighlightAll = function() {
 		}
 		
 		reHighlight(documentHighlighted);
-	}, 0);
+	}, 100);
 };
 
 this.toggleHighlightByDefault = function() {

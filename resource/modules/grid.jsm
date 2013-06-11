@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.1';
+moduleAid.VERSION = '1.1.2';
 
 this.ROWS_MINIMUM = 150; // number of rows in the highlight grid - kind of the "highlight granularity"
 this.ROWS_MULTIPLIER = 2; // Add extra rows if their height exceeds this value
@@ -402,6 +402,8 @@ moduleAid.LOADMODULE = function() {
 	prefAid.listen('gridAdjustPadding', adjustGrid);
 	prefAid.listen('gridAdjustWidth', adjustGrid);
 	adjustGrid();
+	
+	observerAid.notify('ReHighlightAll');
 };
 
 moduleAid.UNLOADMODULE = function() {

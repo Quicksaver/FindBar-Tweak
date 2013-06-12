@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.1';
+moduleAid.VERSION = '1.1.2';
 
 this.__defineGetter__('findbarContainer', function() { return gFindBar.getElement('findbar-container'); });
 
@@ -68,6 +68,8 @@ this.fillHighlightCounter = function(e) {
 	
 	var h = 0;
 	if(sel.rangeCount == 1) {
+		var cRange = sel.getRangeAt(0);
+		
 		// Most times we don't need to start from the beginning of the array, it's faster to resume from a previous point
 		var start = linkedPanel._currentHighlight || 0;
 		if(start >= linkedPanel._counterHighlights.length) {
@@ -76,7 +78,7 @@ this.fillHighlightCounter = function(e) {
 		linkedPanel._currentHighlight = 0;
 		
 		for(var i=start; i<linkedPanel._counterHighlights.length; i++) {
-			if(checkCurrentHighlight(sel.getRangeAt(0), linkedPanel._counterHighlights[i])) {
+			if(compareRanges(cRange, linkedPanel._counterHighlights[i])) {
 				h = i+1;
 				linkedPanel._currentHighlight = i;
 				break;
@@ -85,7 +87,7 @@ this.fillHighlightCounter = function(e) {
 		
 		if(h == 0 && start > 0) {
 			for(var i=0; i<start; i++) {
-				if(checkCurrentHighlight(sel.getRangeAt(0), linkedPanel._counterHighlights[i])) {
+				if(compareRanges(cRange, linkedPanel._counterHighlights[i])) {
 					h = i+1;
 					linkedPanel._currentHighlight = i;
 					break;
@@ -106,17 +108,6 @@ this.fillHighlightCounter = function(e) {
 	gFindBar._findStatusIcon.hidden = false;
 	
 	dispatch(gFindBar, { type: 'HighlightCounterUpdated', cancelable: false });
-};
-
-this.checkCurrentHighlight = function(current, highlight) {
-	if(highlight.contentWindow == contentWindow
-	&& highlight.startContainer == current.startContainer
-	&& highlight.startOffset == current.startOffset
-	&& highlight.endContainer == current.endContainer
-	&& highlight.endOffset == current.endOffset) {
-		return true;
-	}
-	return false;
 };
 
 moduleAid.LOADMODULE = function() {

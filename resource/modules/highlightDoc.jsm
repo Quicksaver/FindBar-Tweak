@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.3.2';
+moduleAid.VERSION = '1.3.3';
 
 this.alwaysUpdateStatusUI = function(e) {
 	// toggleHighlight() doesn't update the UI in these conditions, we need it to, to update the counter (basically hide it)
@@ -14,27 +14,35 @@ this.alwaysToggleHighlight = function() {
 	}
 };
 
-this.trackPDFMatches = function() {
+this.trackPDFMatches = function(e) {
+	if(e && e.detail && e.detail.res == gFindBar.nsITypeAheadFind.FIND_PENDING) { return; }
+	
 	if(!isPDFJS) { return; }
 	
 	// Cancel another possible timer if it was scheduled before
 	timerAid.cancel('trackPDFMatches');
 	
+	if(typeof(linkedPanel._matchesPDFtotal) == 'undefined') {
+		linkedPanel._matchesPDFtotal = 0;
+	}
+	
 	// We need this to access protected properties, hidden from privileged code
 	var unWrap = XPCNativeWrapper.unwrap(contentWindow);
-	
-	// No matches
-	if(!unWrap.PDFFindController.hadMatch) {
-		linkedPanel._matchesPDFtotal = 0;
-		dispatch(gFindBar, { type: 'UpdatedPDFMatches', cancelable: false }); // We should still dispatch this
-		return;
-	}
 	
 	// This usually means the matches are still being retrieved, however if this isn't true it still doesn't mean it's fully finished.
 	// So later we set a timer to update itself after a while.
 	if(!unWrap.PDFFindController.active || unWrap.PDFFindController.resumeCallback) {
 		timerAid.init('trackPDFMatches', trackPDFMatches, 0);
 		return;
+	}
+	
+	// No matches
+	if(!unWrap.PDFFindController.hadMatch) {
+		if(linkedPanel._matchesPDFtotal > 0) {
+			linkedPanel._matchesPDFtotal = 0;
+			dispatch(gFindBar, { type: 'UpdatedPDFMatches', cancelable: false }); // We should still dispatch this
+			return;
+		}
 	}
 	
 	var matches = unWrap.PDFFindController.pageMatches;
@@ -44,17 +52,28 @@ this.trackPDFMatches = function() {
 	}
 	
 	if(linkedPanel._matchesPDFtotal != total) {
+		linkedPanel._matchesPDFtotal = total;
+		dispatch(gFindBar, { type: 'UpdatedPDFMatches', cancelable: false });
+		
 		// Because it might still not be finished, we should update later
 		timerAid.init('trackPDFMatches', trackPDFMatches, 250);
 	}
-	linkedPanel._matchesPDFtotal = total;
-	
-	dispatch(gFindBar, { type: 'UpdatedPDFMatches', cancelable: false });
+};
+
+this.compareRanges = function(aRange, bRange) {
+	if(aRange.nodeType || bRange.nodeType) { return false; } // Don't know if this could get here
+	if(aRange.startContainer == bRange.startContainer
+	&& aRange.endContainer == bRange.endContainer
+	&& aRange.startOffset == bRange.startOffset
+	&& aRange.endOffset == bRange.endOffset) {
+		return true;
+	}
+	return false;
 };
 
 this.toggleCounter = function() {
 	moduleAid.loadIf('counter', prefAid.useCounter);
-}
+};
 
 this.toggleGrid = function() {
 	moduleAid.loadIf('grid', prefAid.useGrid);
@@ -71,7 +90,7 @@ moduleAid.LOADMODULE = function() {
 	
 	// Add found words to counter and grid arrays if needed,
 	// Modified to more accurately handle frames
-	gFindBar._highlightDoc = function _highlightDoc(aHighlight, aWord, aWindow, aLevel, aSights) {
+	gFindBar._highlightDoc = function _highlightDoc(aHighlight, aWord, aWindow, aLevel, aSights, innerRanges) {
 		if(!aWindow) {
 			// Using the counter?
 			linkedPanel._counterHighlights = null;
@@ -82,6 +101,7 @@ moduleAid.LOADMODULE = function() {
 			
 			// Using the grid?
 			var fillGrid = false;
+			innerRanges = null;
 			if(prefAid.useGrid) {
 				var toAddtoGrid = [];
 				fillGrid = resetHighlightGrid();
@@ -104,14 +124,20 @@ moduleAid.LOADMODULE = function() {
 		for(var i = 0; win.frames && i < win.frames.length; i++) {
 			var nextLevel = null;
 			if(aLevel) { nextLevel = aLevel[thisLevel].levels; }
+			if(!aWindow && fillGrid) { innerRanges = new Array(); }
 			
-			if(this._highlightDoc(aHighlight, aWord, win.frames[i], nextLevel, aSights)) {
+			if(this._highlightDoc(aHighlight, aWord, win.frames[i], nextLevel, aSights, innerRanges)) {
 				textFound = true;
 				
 				// Frames get a pattern in the grid, with the whole extesion of the frame instead of just the highlight,
 				// frames can be scrolled so the highlights position may not reflect their actual page position, they may not even be visible at the moment.
-				if(aHighlight && fillGrid && !aWindow) {
-					fillGrid = (toAddtoGrid.push({ node: win.frames[i].frameElement, pattern: true }) <= prefAid.gridLimit);
+				if(aHighlight && !aWindow && fillGrid) {
+					// Arrays are always live objects
+					var frameRanges = new Array();
+					for(var r=0; r<innerRanges.length; r++) {
+						frameRanges.push(innerRanges[r]);
+					}
+					fillGrid = (toAddtoGrid.push({ node: win.frames[i].frameElement, pattern: true, ranges: frameRanges }) <= prefAid.gridLimit);
 				}
 			}
 			
@@ -158,13 +184,16 @@ moduleAid.LOADMODULE = function() {
 				if(aHighlight) {
 					this._highlight(retRange, controller);
 				
-					if(fillGrid && !aWindow) {
+					if(!aWindow && fillGrid) {
 						var editableNode = this._getEditableNode(retRange.startContainer);
 						if(editableNode) {
-							fillGrid = (toAddtoGrid.push({ node: editableNode, pattern: true }) <= prefAid.gridLimit);
+							fillGrid = (toAddtoGrid.push({ node: editableNode, pattern: true, ranges: new Array(retRange) }) <= prefAid.gridLimit);
 						} else {
 							fillGrid = (toAddtoGrid.push({ node: retRange, pattern: false }) <= prefAid.gridLimit);
 						}
+					}
+					else if(innerRanges) {
+						innerRanges.push(retRange);
 					}
 					
 					if(aSights) {
@@ -174,13 +203,7 @@ moduleAid.LOADMODULE = function() {
 				
 				// Always add to counter, whether we are highlighting or not
 				if(aLevel) {
-					aLevel[thisLevel].highlights.push({
-						contentWindow: win,
-						startContainer: retRange.startContainer,
-						startOffset: retRange.startOffset,
-						endContainer: retRange.endContainer,
-						endOffset: retRange.endOffset
-					});
+					aLevel[thisLevel].highlights.push(retRange);
 				}
 			}
 		}

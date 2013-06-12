@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.0';
+moduleAid.VERSION = '1.1.1';
 
 this.uiBackup = {};
 
@@ -73,6 +73,9 @@ this.setHighlightColorStyleSheet = function(rgb) {
 	sscode += '		background-color: '+prefAid.highlightColor+';\n';
 	sscode += '		color: '+((darkBackgroundRGB(rgb)) ? '#FFFFFF' : '#000000')+';\n';
 	sscode += '	}\n';
+	sscode += '	grid[anonid="findGrid"] row[highlight]:not([current]) {\n';
+	sscode += '		background-color: '+prefAid.highlightColor+';\n';
+	sscode += '	}\n';
 	sscode += '}';
 	
 	styleAid.load('highlightColorStyleSheet', sscode, true);
@@ -117,6 +120,9 @@ this.setSelectColorStyleSheet = function(rgb) {
 	sscode += '	.findInTabs-list label[highlight]:hover {\n';
 	sscode += '		background-color: '+prefAid.selectColor+';\n';
 	sscode += '		color: '+((darkBackgroundRGB(rgb)) ? '#FFFFFF' : '#000000')+';\n';
+	sscode += '	}\n';
+	sscode += '	grid[anonid="findGrid"] row[highlight][current] {\n';
+	sscode += '		background-color: '+prefAid.selectColor+';\n';
 	sscode += '	}\n';
 	sscode += '}';
 	

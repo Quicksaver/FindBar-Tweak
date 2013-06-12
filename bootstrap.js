@@ -28,7 +28,7 @@
 // disable() - disables the add-on, in general the add-on disabling itself is a bad idea so I shouldn't use it
 // Note: Firefox 8 is the minimum version supported as the bootstrap requires the chrome.manifest file to be loaded, which was implemented in Firefox 8.
 
-let bootstrapVersion = '1.2.12';
+let bootstrapVersion = '1.2.13';
 let UNLOADED = false;
 let STARTED = false;
 let Addon = {};
@@ -36,6 +36,7 @@ let AddonData = null;
 let UserAgentLocale = 'en-US';
 let observerLOADED = false;
 let onceListeners = [];
+let alwaysRunOnShutdown = [];
 
 // Globals - lets me use objects that I can share through all the windows
 let Globals = {};
@@ -241,6 +242,11 @@ function shutdown(aData, aReason) {
 	UNLOADED = aReason;
 	
 	if(aReason == APP_SHUTDOWN) {
+		// List of methods that must always be run on shutdown, such as restoring some native prefs
+		for(var i=0; i<alwaysRunOnShutdown.length; i++) {
+			alwaysRunOnShutdown[i]();
+		}
+		
 		if(observerLOADED) { observerAid.callQuits(); }
 		removeOnceListener();
 		return;

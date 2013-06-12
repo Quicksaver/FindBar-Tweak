@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.1';
+moduleAid.VERSION = '1.1.2';
 
 this.uiBackup = {};
 
@@ -138,6 +138,23 @@ this.setSelectColorStyleSheet = function(rgb) {
 	styleAid.load('otherSelectColorStyleSheet', sscode, true);
 };
 
+this.resetColorPrefs = function() {
+	prefAid.unlisten('textHighlightBackground', handleUIHighlightBackground);
+	prefAid.unlisten('textHighlightForeground', handleUIHighlightForeground);
+	prefAid.unlisten('textSelectBackgroundAttention', handleUISelectBackground);
+	prefAid.unlisten('textSelectForeground', handleUISelectForeground);
+	
+	if(uiBackup.textHighlightBackground) { prefAid.textHighlightBackground = uiBackup.textHighlightBackground; }
+	else { prefAid.reset('textHighlightBackground'); }
+	if(uiBackup.textHighlightForeground) { prefAid.textHighlightForeground = uiBackup.textHighlightForeground; }
+	else { prefAid.reset('textHighlightForeground'); }
+	
+	if(uiBackup.textSelectBackgroundAttention) { prefAid.textSelectBackgroundAttention = uiBackup.textSelectBackgroundAttention; }
+	else { prefAid.reset('textSelectBackgroundAttention'); }
+	if(uiBackup.textSelectForeground) { prefAid.textSelectForeground = uiBackup.textSelectForeground; }
+	else { prefAid.reset('textSelectForeground'); }
+};
+
 moduleAid.LOADMODULE = function() {
 	prefAid.setDefaults({
 		textHighlightBackground: '',
@@ -148,6 +165,8 @@ moduleAid.LOADMODULE = function() {
 	
 	prefAid.listen('highlightColor', changeHighlightColor);
 	prefAid.listen('selectColor', changeSelectColor);
+	
+	alwaysRunOnShutdown.push(resetColorPrefs);
 	
 	handleUIHighlightBackground(true);
 	handleUIHighlightForeground(true);
@@ -165,18 +184,5 @@ moduleAid.UNLOADMODULE = function() {
 	prefAid.unlisten('highlightColor', changeHighlightColor);
 	prefAid.unlisten('selectColor', changeSelectColor);
 	
-	prefAid.unlisten('textHighlightBackground', handleUIHighlightBackground);
-	prefAid.unlisten('textHighlightForeground', handleUIHighlightForeground);
-	prefAid.unlisten('textSelectBackgroundAttention', handleUISelectBackground);
-	prefAid.unlisten('textSelectForeground', handleUISelectForeground);
-	
-	if(uiBackup.textHighlightBackground) { prefAid.textHighlightBackground = uiBackup.textHighlightBackground; }
-	else { prefAid.reset('textHighlightBackground'); }
-	if(uiBackup.textHighlightForeground) { prefAid.textHighlightForeground = uiBackup.textHighlightForeground; }
-	else { prefAid.reset('textHighlightForeground'); }
-	
-	if(uiBackup.textSelectBackgroundAttention) { prefAid.textSelectBackgroundAttention = uiBackup.textSelectBackgroundAttention; }
-	else { prefAid.reset('textSelectBackgroundAttention'); }
-	if(uiBackup.textSelectForeground) { prefAid.textSelectForeground = uiBackup.textSelectForeground; }
-	else { prefAid.reset('textSelectForeground'); }
+	resetColorPrefs();
 };

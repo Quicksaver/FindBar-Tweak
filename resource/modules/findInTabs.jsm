@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.3.0';
+moduleAid.VERSION = '1.3.1';
 
 this.__defineGetter__('FITresizer', function() { return $(objName+'-findInTabs-resizer'); });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -1363,7 +1363,7 @@ this.autoSelectOnUpdateStatus = function() {
 
 this.FITobserver = function(aSubject, aTopic, aData) {
 	// Don't do anything if it's not needed
-	if(!gFindBar._findField.value || FITbox.hidden) { return; }
+	if(!gFindBar || !gFindBar._findField.value || FITbox.hidden) { return; }
 	
 	var doc = null;
 	var item = null;

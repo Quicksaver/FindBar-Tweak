@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.0';
+moduleAid.VERSION = '1.4.1';
 
 this.__defineGetter__('preferencesDialog', function() { return (typeof(inPreferences) != 'undefined' && inPreferences); });
 
@@ -249,6 +249,10 @@ this.cancelCurrentSights = function() {
 			sights.childNodes[i].hidden = true;
 		}
 	}
+};
+
+this.delayCurrentSights = function(e) {
+	timerAid.init('delayCurrentSights', function() { currentSights(e); }, 10);
 };
 
 this.currentSights = function(e) {
@@ -568,12 +572,12 @@ this.toggleSightsCurrent = function() {
 		listenerAid.add(gFindBar, 'FoundFindBar', currentSights);
 		listenerAid.add(gFindBar, 'FoundAgain', currentSights);
 		listenerAid.add(gFindBar, 'UpdatedStatusFindBar', currentSightsOnUpdateStatus);
-		listenerAid.add(gFindBar, 'SelectedFIThit', currentSights);
+		listenerAid.add(gFindBar, 'SelectedFIThit', delayCurrentSights);
 	} else {
 		listenerAid.remove(gFindBar, 'FoundFindBar', currentSights);
 		listenerAid.remove(gFindBar, 'FoundAgain', currentSights);
 		listenerAid.remove(gFindBar, 'UpdatedStatusFindBar', currentSightsOnUpdateStatus);
-		listenerAid.remove(gFindBar, 'SelectedFIThit', currentSights);
+		listenerAid.remove(gFindBar, 'SelectedFIThit', delayCurrentSights);
 	}
 	
 	observerAid.notify('ReHighlightAll');

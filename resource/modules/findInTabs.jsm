@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.3.1';
+moduleAid.VERSION = '1.4.0';
 
 this.__defineGetter__('FITresizer', function() { return $(objName+'-findInTabs-resizer'); });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -154,6 +154,7 @@ this.selectFITtab = function() {
 this.selectFIThit = function() {
 	// Adding these checks prevents various error messages from showing in the console (even though they actually made no difference)
 	if(!FITtabsList.currentItem || !FITtabsList.currentItem.linkedHits.currentItem) { return; }
+	
 	// Multiple clicks on the same item shouldn't re-trigger tab load
 	if(FITtabsList.currentItem.linkedHits.currentItem.loadingTab) {
 		FITtabsList.currentItem.linkedHits.onselect = null;
@@ -191,18 +192,26 @@ this.selectFIThit = function() {
 	
 	var inFindBar = inWindow.document.getElementById('FindToolbar');
 	var ranges = FITtabsList.currentItem.linkedHits.currentItem.linkedRanges;
+	var rangeIdx = FITtabsList.currentItem.linkedHits.currentItem.rangeIdx;
+	if(rangeIdx > -1) {
+		var selectRange = ranges[FITtabsList.currentItem.linkedHits.currentItem.rangeIdx];
+		FITtabsList.currentItem.linkedHits.currentItem.rangeIdx = -1;
+	} else {
+		var selectRange = ranges[0];
+	}
 	
 	if(inPDFJS(FITtabsList.currentItem.linkedDocument)) {
 		// We need this to access protected properties, hidden from privileged code
 		var unWrap = XPCNativeWrapper.unwrap(FITtabsList.currentItem.linkedDocument.defaultView);
 		if(!unWrap.PDFFindController) { return; } // Don't know if this is possible but I need this so better make sure
 		
-		for(var r=0; r<ranges.length; r++) {
-			// Don't do anything when the current selection is contained within the ranges of this item.
-			// We don't want to keep re-selecting it.
-			if(unWrap.PDFFindController.selected.pageIdx == ranges[r].p
-			&& unWrap.PDFFindController.selected.matchIdx == ranges[r].m) {
-				return;
+		// Don't do anything when the current selection is contained within the ranges of this item.
+		// We don't want to keep re-selecting it.
+		if(rangeIdx > -1) {
+			if(selectRange.p == unWrap.PDFFindController.selected.pageIdx && selectRange.m == unWrap.PDFFindController.selected.matchIdx) { return; }
+		} else {
+			for(var r=0; r<ranges.length; r++) {
+				if(unWrap.PDFFindController.selected.pageIdx == ranges[r].p && unWrap.PDFFindController.selected.matchIdx == ranges[r].m) { return; }
 			}
 		}
 		
@@ -219,13 +228,11 @@ this.selectFIThit = function() {
 			inWindow.gFindBar._setCaseSensitivity(caseSensitive); // This should be enough to trigger the find
 			
 			aSync(function() {
-				// Select the first one when the richlistitem contains more than one
-				finishSelectingPDFhit(unWrap, inFindBar, ranges[0]);
+				finishSelectingPDFhit(unWrap, inFindBar, selectRange);
 			});
 		}
 		
-		// Select the first one when the richlistitem contains more than one
-		finishSelectingPDFhit(unWrap, inFindBar, ranges[0]);
+		finishSelectingPDFhit(unWrap, inFindBar, selectRange);
 		return;
 	}
 	
@@ -237,27 +244,59 @@ this.selectFIThit = function() {
 	var sel = controller.getSelection(gFindBar.nsISelectionController.SELECTION_NORMAL);
 	
 	if(sel.rangeCount == 1) {
-		for(var r=0; r<ranges.length; r++) {
-			// Don't do anything when the current selection is contained within the ranges of this item.
-			// We don't want to keep re-selecting it.
-			if(sel.getRangeAt(0).startContainer == ranges[r].startContainer
-			&& sel.getRangeAt(0).startOffset == ranges[r].startOffset
-			&& sel.getRangeAt(0).endContainer == ranges[r].endContainer
-			&& sel.getRangeAt(0).endOffset == ranges[r].endOffset) {
-				return;
+		var selRange = sel.getRangeAt(0);
+		// Don't do anything when the current selection is contained within the ranges of this item.
+		// We don't want to keep re-selecting it.
+		if(rangeIdx > -1) {
+			if(compareRanges(selectRange, selRange)) { return; }
+		} else {
+			for(var r=0; r<ranges.length; r++) {
+				if(compareRanges(ranges[r], selRange)) { return; }
 			}
 		}
 	}
 	
+	// This next double-controller hack, although ugly, is the only way I managed to get both the active selected element and the "green" background for the selected hit
+	// to go into the same place, when alternating between editable nodes and normal nodes.
+	// This method is still not perfect, a sometimes a green selection will linger when alternating between these types of nodes.
+	// However, this only happens sometimes and should be fine for most uses, it is also better than the alternative, which is how it was before where you wouldn't get
+	// a green background anywhere when alternating between these types of nodes.
+	
 	sel.removeAllRanges();
-	sel.addRange(ranges[0]); // Select the first one when the richlistitem contains more than one
+	sel.addRange(selectRange);
+	controller.scrollSelectionIntoView(gFindBar.nsISelectionController.SELECTION_NORMAL, gFindBar.nsISelectionController.SELECTION_WHOLE_SELECTION, gFindBar.nsISelectionController.SCROLL_CENTER_VERTICALLY);
+	
+	if(editableNode) {
+		inFindBar.browser._fastFind.foundEditable = null;
+		inFindBar._foundEditable = null;
+	}
+	
+	editableNode = inFindBar._getEditableNode(selectRange.startContainer);
+	if(editableNode) {
+		inFindBar.browser._fastFind.foundEditable = editableNode;
+		inFindBar._foundEditable = editableNode;
+		var controller = editableNode.editor.selectionController;
+	} else {
+		var controller = inFindBar._getSelectionController(selectRange.startContainer.ownerDocument.defaultView);
+	}
+	sel = controller.getSelection(gFindBar.nsISelectionController.SELECTION_NORMAL);
+	
+	sel.removeAllRanges();
+	sel.addRange(selectRange);
+	controller.scrollSelectionIntoView(gFindBar.nsISelectionController.SELECTION_NORMAL, gFindBar.nsISelectionController.SELECTION_WHOLE_SELECTION, gFindBar.nsISelectionController.SCROLL_CENTER_VERTICALLY);
+	controller.setDisplaySelection(controller.SELECTION_ATTENTION);
+	
 	inWindow.focus();
 	if(inWindow.gBrowser.selectedTab) { // view-source doesn't have or need this
 		inWindow.gBrowser.selectedTab = inWindow.gBrowser._getTabForContentWindow(FITtabsList.currentItem.linkedDocument.defaultView);
 	}
-	controller.scrollSelectionIntoView(gFindBar.nsISelectionController.SELECTION_NORMAL, gFindBar.nsISelectionController.SELECTION_WHOLE_SELECTION, gFindBar.nsISelectionController.SCROLL_CENTER_VERTICALLY);
 	
 	dispatch(inFindBar, { type: 'SelectedFIThit', cancelable: false });
+};
+
+this.selectHighlightInItem = function(label) {
+	label.parentNode.parentNode.rangeIdx = label.rangeIdx;
+	selectFIThit();
 };
 
 this.finishSelectingPDFhit = function(unWrap, inFindBar, range) {
@@ -503,8 +542,16 @@ this.countFITinTab = function(aWindow, item) {
 	if(levels === null) {
 		setAttribute(item.linkedCount, 'value', prefAid.maxFIT+'+');
 	} else {
-		var hits = countFITinLevels(levels, item.linkedHits, aWindow);
-		setAttribute(item.linkedCount, 'value', hits);
+		var list = [];
+		orderHits(levels, list);
+		// The browser gets useless past a point
+		if(list.length > prefAid.maxFIT) {
+			setAttribute(item.linkedCount, 'value', prefAid.maxFIT+'+');
+			levels = null;
+		} else {
+			var hits = countFITinLevels(list, item.linkedHits, aWindow);
+			setAttribute(item.linkedCount, 'value', hits);
+		}
 	}
 	
 	// Resize the header so it fits nicely into the results
@@ -528,7 +575,7 @@ this.autoSelectFITtab = function() {
 	if(!contentWindow || !FITtabsList) { return; } // Usually triggered when a selection is on a frame and the frame closes
 	
 	for(var i=1; i<FITtabsList.childNodes.length; i++) {
-		if(contentWindow.document == FITtabsList.childNodes[i].linkedDocument) {
+		if(contentDocument == FITtabsList.childNodes[i].linkedDocument) {
 			FITtabsList.selectItem(FITtabsList.childNodes[i]);
 			FITtabsList.ensureSelectedElementIsVisible();
 			
@@ -564,13 +611,11 @@ this.autoSelectFIThit = function(aList) {
 			var sel = gFindBar._getSelectionController(contentWindow).getSelection(gFindBar.nsISelectionController.SELECTION_NORMAL);
 		}
 		if(sel.rangeCount != 1) { return; }
+		var selRange = sel.getRangeAt(0);
 		
 		for(var i=0; i<aList.childNodes.length; i++) {
 			for(var r=0; r<aList.childNodes[i].linkedRanges.length; r++) {
-				if(sel.getRangeAt(0).startContainer == aList.childNodes[i].linkedRanges[r].startContainer
-				&& sel.getRangeAt(0).startOffset == aList.childNodes[i].linkedRanges[r].startOffset
-				&& sel.getRangeAt(0).endContainer == aList.childNodes[i].linkedRanges[r].endContainer
-				&& sel.getRangeAt(0).endOffset == aList.childNodes[i].linkedRanges[r].endOffset) {
+				if(compareRanges(selRange, aList.childNodes[i].linkedRanges[r])) {
 					aList.selectItem(aList.childNodes[i]);
 					aList.ensureSelectedElementIsVisible();
 					return;
@@ -658,12 +703,9 @@ this.orderHits = function(level, ordered) {
 };
 
 // This constructs the richlistitems for the hits list
-this.countFITinLevels = function(level, hitsList, aWindow) {
+this.countFITinLevels = function(list, hitsList, aWindow) {
 	var isPDF = (inPDFJS(aWindow.document));
 	var aWord = gFindBar._findField.value;
-	
-	var list = [];
-	orderHits(level, list);
 	
 	var lastEndContainer = null;
 	var lastEndOffset = null;
@@ -709,7 +751,7 @@ this.countFITinLevels = function(level, hitsList, aWindow) {
 		var completeString = appendStringToList(
 			itemStrings,
 			partialString,
-			true,
+			range,
 			'',
 			false,
 			startContainerText.substr(0, doFirstLength),
@@ -824,7 +866,7 @@ this.countFITinLevels = function(level, hitsList, aWindow) {
 					completeString = appendStringToList(
 						itemStrings,
 						inBetween,
-						false,
+						null,
 						completeString,
 						false,
 						startContainerText.substr(0, doFirstLength),
@@ -834,7 +876,7 @@ this.countFITinLevels = function(level, hitsList, aWindow) {
 					completeString = appendStringToList(
 						itemStrings,
 						nextString,
-						true,
+						lastRange,
 						completeString,
 						false,
 						startContainerText.substr(0, doFirstLength),
@@ -844,7 +886,7 @@ this.countFITinLevels = function(level, hitsList, aWindow) {
 					completeString = appendStringToList(
 						itemStrings,
 						fillNext,
-						false,
+						null,
 						completeString,
 						false,
 						startContainerText.substr(0, doFirstLength),
@@ -914,7 +956,7 @@ this.countFITinLevels = function(level, hitsList, aWindow) {
 						completeString = appendStringToList(
 							itemStrings,
 							fillString,
-							false,
+							null,
 							completeString,
 							false,
 							startContainerText.substr(0, doFirstLength),
@@ -933,7 +975,7 @@ this.countFITinLevels = function(level, hitsList, aWindow) {
 						completeString = appendStringToList(
 							itemStrings,
 							fillString,
-							false,
+							null,
 							completeString,
 							true,
 							startContainerText.substr(0, doFirstLength),
@@ -958,7 +1000,7 @@ this.countFITinLevels = function(level, hitsList, aWindow) {
 			appendStringToList(
 				itemStrings,
 				'... ',
-				false,
+				null,
 				completeString,
 				true,
 				startContainerText.substr(0, doFirstLength),
@@ -970,7 +1012,7 @@ this.countFITinLevels = function(level, hitsList, aWindow) {
 			appendStringToList(
 				itemStrings,
 				' ...',
-				false,
+				null,
 				completeString,
 				false,
 				startContainerText.substr(0, doFirstLength),
@@ -981,21 +1023,25 @@ this.countFITinLevels = function(level, hitsList, aWindow) {
 		
 		var hit = document.createElement('richlistitem');
 		hit.linkedRanges = [];
-		// Don't just copy the array, they are live so we'd keep this scope open unnecessarily until the lists were deleted
-		for(var r=0; r<ranges.length; r++) {
-			hit.linkedRanges.push(ranges[r]);
-		}
+		hit.rangeIdx = -1;
 		
 		// Place the text inside a hbox so we can change it's direction without affecting the rest of the layout
 		var labelBox = document.createElement('hbox');
 		labelBox.style.direction = (directionRTL) ? 'rtl' : 'ltr';
 		for(var s=0; s<itemStrings.length; s++) {
 			var label = document.createElement('label');
-			toggleAttribute(label, 'highlight', itemStrings[s].highlight);
 			if(itemStrings[s].opposite) {
 				label.style.direction = (directionRTL) ? 'ltr' : 'rtl';
 			}
 			setAttribute(label, 'value', itemStrings[s].text);
+			
+			if(itemStrings[s].highlight) {
+				setAttribute(label, 'highlight', 'true');
+				setAttribute(label, 'onmousedown', objName+'.selectHighlightInItem(this);');
+				label.rangeIdx = hit.linkedRanges.length;
+				hit.linkedRanges.push(itemStrings[s].highlight);
+			}
+			
 			labelBox.appendChild(label);
 		}
 		hit.appendChild(labelBox);

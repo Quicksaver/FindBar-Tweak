@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.3.3';
+moduleAid.VERSION = '1.3.4';
 
 this.alwaysUpdateStatusUI = function(e) {
 	// toggleHighlight() doesn't update the UI in these conditions, we need it to, to update the counter (basically hide it)
@@ -222,6 +222,14 @@ moduleAid.LOADMODULE = function() {
 			if(aSights) {
 				sightsOnVisibleHighlights(aSights);
 			}
+			
+			if(textFound) {
+				// Never take attention from current hit
+				var curSel = controller.getSelection(gFindBar.nsISelectionController.SELECTION_NORMAL);
+				if(curSel.rangeCount == 1) {
+					controller.setDisplaySelection(controller.SELECTION_ATTENTION);
+				}
+			}
 		}
 		
 		if(!aHighlight) {
@@ -242,6 +250,7 @@ moduleAid.LOADMODULE = function() {
 				}
 			}
 		}
+		
 		return textFound;
 	};
 	

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.0';
+moduleAid.VERSION = '1.4.1';
 
 this.__defineGetter__('FITresizer', function() { return $(objName+'-findInTabs-resizer'); });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -267,8 +267,8 @@ this.selectFIThit = function() {
 	controller.scrollSelectionIntoView(gFindBar.nsISelectionController.SELECTION_NORMAL, gFindBar.nsISelectionController.SELECTION_WHOLE_SELECTION, gFindBar.nsISelectionController.SCROLL_CENTER_VERTICALLY);
 	
 	if(editableNode) {
-		inFindBar.browser._fastFind.foundEditable = null;
-		inFindBar._foundEditable = null;
+		try { inFindBar.browser._fastFind.foundEditable = null; } catch(ex) {}
+		try { inFindBar._foundEditable = null; } catch(ex) {}
 	}
 	
 	editableNode = inFindBar._getEditableNode(selectRange.startContainer);
@@ -388,7 +388,7 @@ this.createTabItem = function(aWindow) {
 
 this.resetTabHits = function(item) {
 	if(item.linkedHits) {
-		FIThits.removeChild(item.linkedHits);
+		try { FIThits.removeChild(item.linkedHits); } catch(ex) { return; } // error means it's a mix up between aSync's
 	}
 	
 	var newHits = document.createElement('richlistbox');

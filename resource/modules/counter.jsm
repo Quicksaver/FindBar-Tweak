@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.2';
+moduleAid.VERSION = '1.1.3';
 
 this.__defineGetter__('findbarContainer', function() { return gFindBar.getElement('findbar-container'); });
 
@@ -60,11 +60,10 @@ this.fillHighlightCounter = function(e) {
 		
 	var editableNode = gFindBar.browser._fastFind.foundEditable;
 	var controller = (editableNode && editableNode.editor) ? editableNode.editor.selectionController : null;
-	if(controller) {
-		var sel = controller.getSelection(gFindBar.nsISelectionController.SELECTION_NORMAL);
-	} else {
-		var sel = gFindBar._getSelectionController(contentWindow).getSelection(gFindBar.nsISelectionController.SELECTION_NORMAL);
+	if(!controller) {
+		controller = gFindBar._getSelectionController(contentWindow);
 	}
+	var sel = controller.getSelection(gFindBar.nsISelectionController.SELECTION_NORMAL);
 	
 	var h = 0;
 	if(sel.rangeCount == 1) {

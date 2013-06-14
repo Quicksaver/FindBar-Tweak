@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.0';
+moduleAid.VERSION = '1.2.1';
 
 this.ROWS_MINIMUM = 150; // number of rows in the highlight grid - kind of the "highlight granularity"
 this.ROWS_MULTIPLIER = 2; // Add extra rows if their height exceeds this value
@@ -20,6 +20,7 @@ this.__defineGetter__('grid', function() {
 	gridNode.setAttribute('anonid', 'findGrid');
 	gridNode._allHits = new Array();
 	gridNode._currentRows = new Array();
+	gridNode._hoverRows = new Array();
 	
 	// Then columns
 	var columns = document.createElement('columns');
@@ -99,6 +100,7 @@ this.resetHighlightGrid = function() {
 		removeAttribute(rows.childNodes[i], 'highlight');
 		removeAttribute(rows.childNodes[i], 'pattern');
 		removeAttribute(rows.childNodes[i], 'current');
+		removeAttribute(rows.childNodes[i], 'hover');
 		delete rows.childNodes[i]._pdfPages;
 		delete rows.childNodes[i]._hasMatches;
 	}
@@ -118,6 +120,7 @@ this.resetHighlightGrid = function() {
 	
 	grid._allHits = new Array();
 	grid._currentRows = new Array();
+	grid._hoverRows = new Array();
 	
 	// Somm grid appearance updates
 	positionGrid();
@@ -371,6 +374,8 @@ this.updatePDFGrid = function() {
 	
 	if(updatePages.length == 0) { return; }
 	
+	clearHoverRows();
+	
 	var updatedPages = {};
 	for(var p=0; p<updatePages.length; p++) {
 		if(!updatedPages[p]) {
@@ -499,6 +504,13 @@ this.gridFollowCurrentHit = function(e) {
 				}
 			}
 		}
+	}
+};
+
+this.clearHoverRows = function() {
+	var rows = grid._hoverRows;
+	while(rows.length > 0) {
+		removeAttribute(rows.shift(), 'hover');
 	}
 };
 

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.1';
+moduleAid.VERSION = '1.4.2';
 
 this.__defineGetter__('FITresizer', function() { return $(objName+'-findInTabs-resizer'); });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -295,8 +295,88 @@ this.selectFIThit = function() {
 };
 
 this.selectHighlightInItem = function(label) {
-	label.parentNode.parentNode.rangeIdx = label.rangeIdx;
-	selectFIThit();
+	var item = label.parentNode.parentNode;
+	item.rangeIdx = label.rangeIdx;
+	delayHighlightFITinGrid(item);
+};
+
+this.delayHighlightFITinGrid = function(item) {
+	timerAid.init('delayHighlightFITinGrid', function() { highlightFITinGrid(item); }, 25);
+};
+
+this.highlightFITinGrid = function(item) {
+	// We can't do this unless we're in the same tab using the grid highlighting the same word
+	if(!shouldUseFITWithGrid()) { return; }
+	
+	clearHoverRows();
+	
+	if(item.rangeIdx > -1) {
+		var selectRange = item.linkedRanges[item.rangeIdx];
+	} else {
+		var selectRange = item.linkedRanges[0];
+	}
+	
+	var hoverRows = grid._hoverRows;
+	var ranges = grid._allHits;
+	
+	if(isPDFJS) {
+		// Try the rendered matches first
+		for(var i=0; i<ranges.length; i++) {
+			if(selectRange.p == ranges[i].p && selectRange.m == ranges[i].m) {
+				for(var r=0; r<ranges[i].rows.length; r++) {
+					setAttribute(ranges[i].rows[r], 'hover', 'true');
+					hoverRows.push(ranges[i].rows[r]);
+				}
+				return;
+			}
+		}
+		
+		// If it gets here it's probably a page that hasn't been rendered yet
+		var patternRows = grid.querySelectorAll('[pattern]');
+		for(var i=0; i<patternRows.length; i++) {
+			if(!patternRows[i]._pdfPages) { continue; }
+			for(var p=0; p<patternRows[i]._pdfPages.length; p++) {
+				if(patternRows[i]._pdfPages[p] == selectRange.p) {
+					setAttribute(patternRows[i], 'hover', 'true');
+					hoverRows.push(patternRows[i]);
+				}
+			}
+		}
+	}
+	else {
+		// This is actually very direct
+		for(var i=0; i<ranges.length; i++) {
+			if(compareRanges(selectRange, ranges[i].range)) {
+				for(var r=0; r<ranges[i].rows.length; r++) {
+					setAttribute(ranges[i].rows[r], 'hover', 'true');
+					hoverRows.push(ranges[i].rows[r]);
+				}
+				return;
+			}
+		}
+	}
+};
+
+this.removeFITHighlightFromGrid = function() {
+	// We can't do this unless we're in the same tab using the grid highlighting the same word
+	if(!shouldUseFITWithGrid()) { return; }
+	
+	timerAid.cancel('delayHighlightFITinGrid');
+	clearHoverRows();
+};
+
+this.shouldUseFITWithGrid = function() {
+	// We can't do this unless we're in the same tab using the grid highlighting the same word
+	if(!prefAid.useGrid || FITtabsList.currentItem.linkedDocument != contentDocument) { return false; }
+	
+	if(!isPDFJS) {
+		if(!documentHighlighted || documentReHighlight || linkedPanel._findWord != gFindBar._findField.value) { return false; }
+	} else {
+		var unWrap = XPCNativeWrapper.unwrap(contentWindow);
+		if(unWrap.PDFFindController.state.query != gFindBar._findField.value) { return false; }
+	}
+	
+	return true;
 };
 
 this.finishSelectingPDFhit = function(unWrap, inFindBar, range) {
@@ -1025,6 +1105,10 @@ this.countFITinLevels = function(list, hitsList, aWindow) {
 		hit.linkedRanges = [];
 		hit.rangeIdx = -1;
 		
+		// Show the position of this seach hit in the grid
+		setAttribute(hit, 'onmouseover', objName+'.delayHighlightFITinGrid(this);');
+		setAttribute(hit, 'onmouseout', objName+'.removeFITHighlightFromGrid();');
+		
 		// Place the text inside a hbox so we can change it's direction without affecting the rest of the layout
 		var labelBox = document.createElement('hbox');
 		labelBox.style.direction = (directionRTL) ? 'rtl' : 'ltr';
@@ -1037,7 +1121,8 @@ this.countFITinLevels = function(list, hitsList, aWindow) {
 			
 			if(itemStrings[s].highlight) {
 				setAttribute(label, 'highlight', 'true');
-				setAttribute(label, 'onmousedown', objName+'.selectHighlightInItem(this);');
+				setAttribute(label, 'onmouseover', objName+'.selectHighlightInItem(this);');
+				setAttribute(label, 'onclick', objName+'.selectFIThit();');
 				label.rangeIdx = hit.linkedRanges.length;
 				hit.linkedRanges.push(itemStrings[s].highlight);
 			}

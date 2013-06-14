@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.2';
+moduleAid.VERSION = '1.1.3';
 
 this.uiBackup = {};
 
@@ -73,7 +73,7 @@ this.setHighlightColorStyleSheet = function(rgb) {
 	sscode += '		background-color: '+prefAid.highlightColor+';\n';
 	sscode += '		color: '+((darkBackgroundRGB(rgb)) ? '#FFFFFF' : '#000000')+';\n';
 	sscode += '	}\n';
-	sscode += '	grid[anonid="findGrid"] row[highlight]:not([current]) {\n';
+	sscode += '	grid[anonid="findGrid"] row[highlight]:not([current]):not([hover]) {\n';
 	sscode += '		background-color: '+prefAid.highlightColor+';\n';
 	sscode += '	}\n';
 	sscode += '}';
@@ -121,7 +121,8 @@ this.setSelectColorStyleSheet = function(rgb) {
 	sscode += '		background-color: '+prefAid.selectColor+';\n';
 	sscode += '		color: '+((darkBackgroundRGB(rgb)) ? '#FFFFFF' : '#000000')+';\n';
 	sscode += '	}\n';
-	sscode += '	grid[anonid="findGrid"] row[highlight][current] {\n';
+	sscode += '	grid[anonid="findGrid"] row[highlight][current],\n';
+	sscode += '	grid[anonid="findGrid"] row[highlight][hover] {\n';
 	sscode += '		background-color: '+prefAid.selectColor+';\n';
 	sscode += '	}\n';
 	sscode += '}';

@@ -92,8 +92,9 @@
 						<caption><checkbox label="&OptfindInTabs.label;" preference="pref-findInTabs"/></caption>
 						<checkbox label="&OptalwaysOpenFIT.label;" dependson="pref-findInTabs" preference="pref-alwaysOpenFIT"/>
 						<hbox align="center">
-							<label value="&OptmaxFIT.label;"/>
+							<label dependson="pref-findInTabs" value="&OptmaxFIT.label;"/>
 							<textbox type="number"
+								dependson="pref-findInTabs"
 								size="4"
 								min="0"
 								max="99999"

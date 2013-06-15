@@ -16,6 +16,8 @@
 <!ENTITY OptuseCounter.label "Show hits counter in the Findbar">
 <!ENTITY OptfindInTabs.label "Enable 'Find in All Tabs'">
 <!ENTITY OptalwaysOpenFIT.label "Open 'Find in All Tabs' with the Findbar">
+<!ENTITY OptmaxFIT.label "Don't process a tab if the number of hits exceeds:">
+
 <!ENTITY Optcolor.label "Highlights Color">
 <!ENTITY OptselectColor.label "Current Hit Color">
 <!ENTITY OptcolorReset.label "(reset)">

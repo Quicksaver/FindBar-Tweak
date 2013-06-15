@@ -17,6 +17,7 @@
 			<preference id="pref-useCounter" name="extensions.findbartweak.useCounter" type="bool"/>
 			<preference id="pref-findInTabs" name="extensions.findbartweak.findInTabs" type="bool"/>
 			<preference id="pref-alwaysOpenFIT" name="extensions.findbartweak.alwaysOpenFIT" type="bool"/>
+			<preference id="pref-maxFIT" name="extensions.findbartweak.maxFIT" type="int"/>
 			<preference id="pref-useGrid" name="extensions.findbartweak.useGrid" type="bool"/>
 			<preference id="pref-gridLimit" name="extensions.findbartweak.gridLimit" type="int"/>
 			<preference id="pref-gridAdjustPadding" name="extensions.findbartweak.gridAdjustPadding" type="int"/>
@@ -89,6 +90,15 @@
 					<groupbox align="start">
 						<caption><checkbox label="&OptfindInTabs.label;" preference="pref-findInTabs"/></caption>
 						<checkbox label="&OptalwaysOpenFIT.label;" dependson="pref-findInTabs" preference="pref-alwaysOpenFIT"/>
+						<hbox>
+							<label value="&OptmaxFIT.label;"/>
+							<textbox type="number"
+								size="4"
+								min="0"
+								max="99999"
+								style="text-align: center;"
+								preference="pref-maxFIT"/>
+						</hbox>
 					</groupbox>
 				</tabpanel>
 				
@@ -129,8 +139,8 @@
 								max="50"
 								style="text-align: center;"
 								preference="pref-minNoDelay"/>
-				            <label value="&OptminNoDelay.labelb;"/>
-				        </hbox>
+							<label value="&OptminNoDelay.labelb;"/>
+						</hbox>
 					</groupbox>
 					<groupbox align="start">
 						<caption label="&Optgrid.label;"/>
@@ -143,8 +153,8 @@
 								min="1"
 								max="10000"
 								preference="pref-gridLimit"/>
-				            <label dependson="pref-useGrid" value="&OptgridLimit.labelb;"/>
-				        </hbox>
+							<label dependson="pref-useGrid" value="&OptgridLimit.labelb;"/>
+						</hbox>
 						<hbox>
 							<label dependson="pref-useGrid" value="&OptadjustGridPadding.labela;"/>
 							<textbox dependson="pref-useGrid"
@@ -153,8 +163,8 @@
 								min="-50"
 								max="50"
 								preference="pref-gridAdjustPadding"/>
-				            <label dependson="pref-useGrid" value="&OptadjustGridPadding.labelb;"/>
-				        </hbox>
+							<label dependson="pref-useGrid" value="&OptadjustGridPadding.labelb;"/>
+						</hbox>
 						<hbox>
 							<label dependson="pref-useGrid" value="&OptadjustGridWidth.labela;"/>
 							<textbox dependson="pref-useGrid"
@@ -163,8 +173,8 @@
 								min="-50"
 								max="50"
 								preference="pref-gridAdjustWidth"/>
-				            <label dependson="pref-useGrid" value="&OptadjustGridWidth.labelb;"/>
-				        </hbox>
+							<label dependson="pref-useGrid" value="&OptadjustGridWidth.labelb;"/>
+						</hbox>
 					</groupbox>
 					<groupbox align="center">
 						<caption align="center">

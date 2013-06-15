@@ -60,6 +60,13 @@
 		-moz-border-left-colors: rgba(0,0,0,0.32);
 	}
 	
+	/* For the toolbar button */
+	#findbartweak-button image {
+		margin: 2px 0;
+		padding: 0;
+		height: 18px;
+	}
+	
 	/* Grid stuff */
 	grid[anonid="findGrid"]:not([gridSpacers="none"]) row.topSpacer[flex="0"],
 	grid[anonid="findGrid"][gridSpacers="single"] row.bottomSpacer[flex="0"] {

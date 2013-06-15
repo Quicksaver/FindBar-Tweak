@@ -153,15 +153,7 @@
 		list-style-image: url("chrome://findbartweak/skin/button.png");
 	}
 	
-	#navigator-toolbox[iconsize="small"] :not(#TabsToolbar) #findbartweak-button .toolbarbutton-icon,
-	#navigator-toolbox[mode="full"] :not(#TabsToolbar) #findbartweak-button .toolbarbutton-icon {
-		height: 18px;
-	}
-	#navigator-toolbox:not([mode="full"])[iconsize="large"] :not(#TabsToolbar) #findbartweak-button .toolbarbutton-icon { height: 24px; }
-	
 	#TabsToolbar #findbartweak-button .toolbarbutton-icon { height: 20px; }
-	
-	#navigator-toolbox[iconsize=large][mode=icons] > :not(#TabsToolbar) > #findbartweak-button > .toolbarbutton-icon { padding: 2px 6px; }
 	
 	/* Find In Tabs */
 	#browser-bottombox[lwthemefooter="true"] {

@@ -41,6 +41,12 @@
 		max-height: 28px;
 	}
 	
+	/* For the toolbar button */
+	#findbartweak-button image { padding: 0; }
+	#navigator-toolbox[iconsize="large"] :not(#TabsToolbar) #findbartweak-button .toolbarbutton-icon { height: 24px; }
+	#navigator-toolbox[iconsize="small"] :not(#TabsToolbar) #findbartweak-button .toolbarbutton-icon { height: 16px; }
+	#addon-bar #findbartweak-button image { height: 16px; }
+	
 	/* Grid stuff */
 	grid[anonid="findGrid"]:not([gridSpacers="none"]) row.topSpacer[flex="0"],
 	grid[anonid="findGrid"][gridSpacers="single"] row.bottomSpacer[flex="0"] {

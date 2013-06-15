@@ -70,6 +70,20 @@
 		max-height: 21px;
 	}
 	
+	/* For the toolbar button */
+	#navigator-toolbox[iconsize="small"] :not(#TabsToolbar) #findbartweak-button .toolbarbutton-icon,
+	#navigator-toolbox[mode="full"] :not(#TabsToolbar) #findbartweak-button .toolbarbutton-icon {
+		height: 18px;
+	}
+	
+	#navigator-toolbox:not([mode="full"])[iconsize="large"] :not(#TabsToolbar) #findbartweak-button .toolbarbutton-icon { height: 24px; }
+	#navigator-toolbox[iconsize=large][mode=icons] > :not(#TabsToolbar) > #findbartweak-button > .toolbarbutton-icon { padding: 2px 6px; }
+	
+	window[findbartweak-oscpu="Windows NT 5.1"] #addon-bar #findbartweak-button { padding: 3px; }
+	window[findbartweak-oscpu="Windows NT 5.1"] #addon-bar #findbartweak-button image { height: 17px; }
+	
+	window[findbartweak-oscpu="Windows NT 6.2"] #addon-bar #findbartweak-button image { height: 18px; }
+	
 	/* For the View Source window */
 	#viewSource #FindToolbar[movetotop] {
 		background-color: -moz-dialog;

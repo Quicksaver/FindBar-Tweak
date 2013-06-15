@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.3';
+moduleAid.VERSION = '1.1.4';
 
 this.uiBackup = {};
 
@@ -120,6 +120,10 @@ this.setSelectColorStyleSheet = function(rgb) {
 	sscode += '	.findInTabs-list label[highlight]:hover {\n';
 	sscode += '		background-color: '+prefAid.selectColor+';\n';
 	sscode += '		color: '+((darkBackgroundRGB(rgb)) ? '#FFFFFF' : '#000000')+';\n';
+	sscode += '	}\n';
+	sscode += '	.findInTabs-list richlistitem:hover {\n';
+	sscode += '		background-color: rgba('+rgb.r+','+rgb.g+','+rgb.b+',0.03);\n';
+	sscode += '		box-shadow: inset 0 0 2px 1px rgba('+rgb.r+','+rgb.g+','+rgb.b+',0.2);\n';
 	sscode += '	}\n';
 	sscode += '	grid[anonid="findGrid"] row[highlight][current],\n';
 	sscode += '	grid[anonid="findGrid"] row[highlight][hover] {\n';

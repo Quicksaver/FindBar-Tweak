@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.2';
+moduleAid.VERSION = '1.4.3';
 
 this.__defineGetter__('FITresizer', function() { return $(objName+'-findInTabs-resizer'); });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -194,10 +194,10 @@ this.selectFIThit = function() {
 	var ranges = FITtabsList.currentItem.linkedHits.currentItem.linkedRanges;
 	var rangeIdx = FITtabsList.currentItem.linkedHits.currentItem.rangeIdx;
 	if(rangeIdx > -1) {
-		var selectRange = ranges[FITtabsList.currentItem.linkedHits.currentItem.rangeIdx];
+		var selectRange = ranges[FITtabsList.currentItem.linkedHits.currentItem.rangeIdx].range;
 		FITtabsList.currentItem.linkedHits.currentItem.rangeIdx = -1;
 	} else {
-		var selectRange = ranges[0];
+		var selectRange = ranges[0].range;
 	}
 	
 	if(inPDFJS(FITtabsList.currentItem.linkedDocument)) {
@@ -211,7 +211,7 @@ this.selectFIThit = function() {
 			if(selectRange.p == unWrap.PDFFindController.selected.pageIdx && selectRange.m == unWrap.PDFFindController.selected.matchIdx) { return; }
 		} else {
 			for(var r=0; r<ranges.length; r++) {
-				if(unWrap.PDFFindController.selected.pageIdx == ranges[r].p && unWrap.PDFFindController.selected.matchIdx == ranges[r].m) { return; }
+				if(unWrap.PDFFindController.selected.pageIdx == ranges[r].range.p && unWrap.PDFFindController.selected.matchIdx == ranges[r].range.m) { return; }
 			}
 		}
 		
@@ -251,7 +251,7 @@ this.selectFIThit = function() {
 			if(compareRanges(selectRange, selRange)) { return; }
 		} else {
 			for(var r=0; r<ranges.length; r++) {
-				if(compareRanges(ranges[r], selRange)) { return; }
+				if(compareRanges(ranges[r].range, selRange)) { return; }
 			}
 		}
 	}
@@ -311,9 +311,9 @@ this.highlightFITinGrid = function(item) {
 	clearHoverRows();
 	
 	if(item.rangeIdx > -1) {
-		var selectRange = item.linkedRanges[item.rangeIdx];
+		var selectRange = item.linkedRanges[item.rangeIdx].range;
 	} else {
-		var selectRange = item.linkedRanges[0];
+		var selectRange = item.linkedRanges[0].range;
 	}
 	
 	var hoverRows = grid._hoverRows;
@@ -475,6 +475,7 @@ this.resetTabHits = function(item) {
 	newHits.setAttribute('flex', '1');
 	newHits.onselect = selectFIThit;
 	newHits.hidden = (item != FITtabsList.currentItem); // Keep the hits list visible
+	newHits._currentLabel = null;
 	item.linkedHits = FIThits.appendChild(newHits);
 };
 
@@ -667,6 +668,9 @@ this.autoSelectFITtab = function() {
 
 // When the user finds for text or uses the find again button, select the corresponding item in the hits list
 this.autoSelectFIThit = function(aList) {
+	removeAttribute(aList._currentLabel, 'current');
+	aList._currentLabel = null;
+	
 	if(isPDFJS) {
 		// We need this to access protected properties, hidden from privileged code
 		var unWrap = XPCNativeWrapper.unwrap(contentWindow);
@@ -674,10 +678,13 @@ this.autoSelectFIThit = function(aList) {
 		
 		for(var i=0; i<aList.childNodes.length; i++) {
 			for(var r=0; r<aList.childNodes[i].linkedRanges.length; r++) {
-				if(aList.childNodes[i].linkedRanges[r].p == unWrap.PDFFindController.selected.pageIdx
-				&& aList.childNodes[i].linkedRanges[r].m == unWrap.PDFFindController.selected.matchIdx) {
+				if(aList.childNodes[i].linkedRanges[r].range.p == unWrap.PDFFindController.selected.pageIdx
+				&& aList.childNodes[i].linkedRanges[r].range.m == unWrap.PDFFindController.selected.matchIdx) {
 					aList.selectItem(aList.childNodes[i]);
 					aList.ensureSelectedElementIsVisible();
+					
+					aList._currentLabel = aList.childNodes[i].linkedRanges[r].label;
+					setAttribute(aList._currentLabel, 'current', 'true');
 					return;
 				}
 			}
@@ -695,9 +702,12 @@ this.autoSelectFIThit = function(aList) {
 		
 		for(var i=0; i<aList.childNodes.length; i++) {
 			for(var r=0; r<aList.childNodes[i].linkedRanges.length; r++) {
-				if(compareRanges(selRange, aList.childNodes[i].linkedRanges[r])) {
+				if(compareRanges(selRange, aList.childNodes[i].linkedRanges[r].range)) {
 					aList.selectItem(aList.childNodes[i]);
 					aList.ensureSelectedElementIsVisible();
+					
+					aList._currentLabel = aList.childNodes[i].linkedRanges[r].label;
+					setAttribute(aList._currentLabel, 'current', 'true');
 					return;
 				}
 			}
@@ -1118,16 +1128,15 @@ this.countFITinLevels = function(list, hitsList, aWindow) {
 				label.style.direction = (directionRTL) ? 'ltr' : 'rtl';
 			}
 			setAttribute(label, 'value', itemStrings[s].text);
+			label = labelBox.appendChild(label);
 			
 			if(itemStrings[s].highlight) {
 				setAttribute(label, 'highlight', 'true');
 				setAttribute(label, 'onmouseover', objName+'.selectHighlightInItem(this);');
 				setAttribute(label, 'onclick', objName+'.selectFIThit();');
 				label.rangeIdx = hit.linkedRanges.length;
-				hit.linkedRanges.push(itemStrings[s].highlight);
+				hit.linkedRanges.push({ range: itemStrings[s].highlight, label: label });
 			}
-			
-			labelBox.appendChild(label);
 		}
 		hit.appendChild(labelBox);
 		

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.8';
+moduleAid.VERSION = '1.1.9';
 
 this.__defineGetter__('findCSButton', function() { return gFindBar.getElement(objName+'-find-cs-button'); });
 this.__defineGetter__('findCSCheckbox', function() { return gFindBar.getElement('find-case-sensitive'); });
@@ -106,6 +106,10 @@ this.toggleLabels = function() {
 	triggerUIChange();
 };
 
+this.toggleFindLabel = function() {
+	toggleAttribute(gFindBar, 'hideFindLabel', prefAid.hideFindLabel);
+};
+
 this.toggleMoveToTop = function() {
 	moduleAid.loadIf('moveToTop', prefAid.movetoTop);
 };
@@ -140,6 +144,7 @@ moduleAid.LOADMODULE = function() {
 	
 	prefAid.listen('hideClose', toggleClose);
 	prefAid.listen('hideLabels', toggleLabels);
+	prefAid.listen('hideFindLabel', toggleFindLabel);
 	prefAid.listen('movetoTop', toggleMoveToTop);
 	prefAid.listen('movetoRight', toggleMoveToRight);
 	
@@ -147,6 +152,7 @@ moduleAid.LOADMODULE = function() {
 	
 	toggleClose();
 	toggleLabels();
+	toggleFindLabel();
 	toggleMoveToTop();
 	toggleMoveToRight();
 };
@@ -154,6 +160,7 @@ moduleAid.LOADMODULE = function() {
 moduleAid.UNLOADMODULE = function() {
 	prefAid.unlisten('hideClose', toggleClose);
 	prefAid.unlisten('hideLabels', toggleLabels);
+	prefAid.unlisten('hideFindLabel', toggleFindLabel);
 	prefAid.unlisten('movetoTop', toggleMoveToTop);
 	prefAid.unlisten('movetoRight', toggleMoveToRight);
 	
@@ -162,6 +169,7 @@ moduleAid.UNLOADMODULE = function() {
 	
 	removeAttribute(gFindBar, 'noClose');
 	removeAttribute(gFindBar, 'hideLabels');
+	removeAttribute(gFindBar, 'hideFindLabel');
 	removeAttribute(gFindBar, 'movetoright');
 	
 	if(findCSButton) {

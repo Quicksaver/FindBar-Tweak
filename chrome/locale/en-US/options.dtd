@@ -47,6 +47,7 @@
 <!ENTITY OptsightsSameColorCurrent.label "Use the same color from the current hit">
 
 <!ENTITY OpthideLabels.label "Hide button labels">
+<!ENTITY OpthideFindLabel.label "Hide 'Find:' label">
 <!ENTITY OpthideClose.label "Hide the Findbar close button">
 <!ENTITY OptmovetoTop.label "Move the Findbar to the top of the browser">
 <!ENTITY OptmovetoRight.label "Place on the right">

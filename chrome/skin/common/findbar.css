@@ -9,6 +9,7 @@
 	#FindToolbar[hideLabels] toolbarbutton label,
 	#FindToolbar[hideLabels] checkbox label,
 	#FindToolbar[hideLabels] checkbox[anonid="find-case-sensitive"],
+	#FindToolbar[hideFindLabel] label[anonid="find-label"],
 	#FindToolbar[noClose] .findbar-closebutton {
 		display: none;
 	}

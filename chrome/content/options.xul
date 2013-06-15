@@ -36,6 +36,7 @@
 			<preference id="pref-movetoRight" name="extensions.findbartweak.movetoRight" type="bool"/>
 			<preference id="pref-hideClose" name="extensions.findbartweak.hideClose" type="bool"/>
 			<preference id="pref-hideLabels" name="extensions.findbartweak.hideLabels" type="bool"/>
+			<preference id="pref-hideFindLabel" name="extensions.findbartweak.hideFindLabel" type="bool"/>
 			<preference id="pref-blurCloses" name="extensions.findbartweak.blurCloses" type="bool"/>
 			<preference id="pref-perTab" name="extensions.findbartweak.perTab" type="bool"/>
 			<preference id="pref-onStartup" name="extensions.findbartweak.onStartup" type="bool"/>
@@ -116,6 +117,7 @@
 						<checkbox label="&OptuseCounter.label;" preference="pref-useCounter"/>
 						<checkbox label="&OpthideClose.label;" preference="pref-hideClose"/>
 						<checkbox label="&OpthideLabels.label;" preference="pref-hideLabels"/>
+						<checkbox label="&OpthideFindLabel.label;" preference="pref-hideFindLabel"/>
 					</groupbox>
 					<groupbox align="center">
 						<caption align="center">

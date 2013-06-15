@@ -41,6 +41,7 @@
 <!ENTITY OptsightsStyle.label "Sights Style (click to preview):">
 <!ENTITY OptsightsStyle.focus "Focus Location">
 <!ENTITY OptsightsStyle.circle "Circle Location">
+<!ENTITY OptsightsRepeat.label "Animation repetitions">
 <!ENTITY OptsightsColor.label "Sights Color">
 <!ENTITY OptsightsSameColor.label "Use the same color from highlights">
 <!ENTITY OptsightsSameColorCurrent.label "Use the same color from the current hit">

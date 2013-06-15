@@ -26,6 +26,7 @@
 			<preference id="pref-sightsCurrent" name="extensions.findbartweak.sightsCurrent" type="bool"/>
 			<preference id="pref-sightsHighlights" name="extensions.findbartweak.sightsHighlights" type="bool"/>
 			<preference id="pref-sightsStyle" name="extensions.findbartweak.sightsStyle" type="string"/>
+			<preference id="pref-sightsRepeat" name="extensions.findbartweak.sightsRepeat" type="int"/>
 			<preference id="pref-sightsSameColor" name="extensions.findbartweak.sightsSameColor" type="bool"/>
 			<preference id="pref-sightsSameColorAll" name="extensions.findbartweak.sightsSameColorAll" type="bool"/>
 			<preference id="pref-sightsColor" name="extensions.findbartweak.sightsColor" type="string"/>
@@ -250,6 +251,14 @@
 									oncommand="objName.previewSights(this, 'circle');"/>
 							</hbox>
 						</radiogroup>
+						<hbox align="center">
+							<label value="&OptsightsRepeat.label;"/>
+							<textbox type="number"
+								size="1"
+								min="1"
+								max="9"
+								preference="pref-sightsRepeat"/>
+						</hbox>
 					</groupbox>
 				</tabpanel>
 				

@@ -1,4 +1,4 @@
-var defaultsVersion = '1.0.15';
+var defaultsVersion = '1.0.16';
 var objName = 'findbartweak';
 var objPathString = 'findbartweak';
 var prefList = {
@@ -20,6 +20,7 @@ var prefList = {
 	sightsCurrent: true,
 	sightsHighlights: false,
 	sightsStyle: 'focus',
+	sightsRepeat: 1,
 	sightsColor: '#EF0FFF',
 	sightsSameColor: false,
 	sightsSameColorAll: true,

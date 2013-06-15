@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.1';
+moduleAid.VERSION = '1.4.2';
 
 this.__defineGetter__('preferencesDialog', function() { return (typeof(inPreferences) != 'undefined' && inPreferences); });
 
@@ -141,6 +141,8 @@ this.buildSights = function(x, y, scrollLeft, scrollTop, current, style) {
 		preferences: preferencesDialog,
 		style: style,
 		phase: 0,
+		fullCycles: 0,
+		maxRepeat: prefAid.sightsRepeat,
 		timer: null
 	};
 	toggleAttribute(box, 'current', box._sights.current);
@@ -174,9 +176,15 @@ this.buildSights = function(x, y, scrollLeft, scrollTop, current, style) {
 			
 			// Remove the sight when it gets too small
 			if(newSize < 40) {
-				if(this._sights.timer) { this._sights.timer.cancel(); }
-				this.parentNode.removeChild(this);
-				return;
+				this._sights.fullCycles++;
+				if(this._sights.fullCycles == this._sights.maxRepeat) {
+					if(this._sights.timer) { this._sights.timer.cancel(); }
+					this.parentNode.removeChild(this);
+					return;
+				}
+				else {
+					newSize = 400 /1.5;
+				}
 			}
 		}
 		else if(this._sights.style == 'circle') {
@@ -191,9 +199,15 @@ this.buildSights = function(x, y, scrollLeft, scrollTop, current, style) {
 				
 				// Remove when we finish animating
 				if(this._sights.phase > 720) {
-					if(this._sights.timer) { this._sights.timer.cancel(); }
-					this.parentNode.removeChild(this);
-					return;
+					this._sights.fullCycles++;
+					if(this._sights.fullCycles == this._sights.maxRepeat) {
+						if(this._sights.timer) { this._sights.timer.cancel(); }
+						this.parentNode.removeChild(this);
+						return;
+					}
+					else {
+						this._sights.phase = 45;
+					}
 				}
 				
 				toggleAttribute(this, 'gt0', (this._sights.phase <= 180));

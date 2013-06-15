@@ -118,6 +118,9 @@
 	
 	window[findbartweak-oscpu="Windows NT 5.1"] #FindToolbar:not([hideLabels]) .findbar-tabs image,
 	window[findbartweak-oscpu="Windows NT 5.1"] #FindToolbar:not([hideLabels]) .findbar-tabs-update image {
-		margin: 0 5px 0 0;
+		margin-top: 0;
+		margin-bottom: 0;
+		-moz-margin-start: 0;
+		-moz-margin-end: 5px;
 	}
 }

@@ -120,6 +120,9 @@
 	
 	#FindToolbar:not([hideLabels]) toolbarbutton image,
 	#FindToolbar:not([hideLabels]) toolbarbutton image {
-		margin: 0 0 0 4px;
+		margin-top: 0;
+		margin-bottom: 0;
+		-moz-margin-end: 0;
+		-moz-margin-start: 4px;
 	}
 }

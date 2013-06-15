@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.3';
+moduleAid.VERSION = '1.4.4';
 
 this.__defineGetter__('FITresizer', function() { return $(objName+'-findInTabs-resizer'); });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -11,6 +11,8 @@ this.__defineGetter__('FITbutton', function() { return gFindBar.getElement(objNa
 this.__defineGetter__('FITupdate', function() { return gFindBar.getElement(objName+'-find-tabs-update'); });
 
 this.HITS_LENGTH = 150; // Length of preview text from preview items in find in tabs box
+
+this.processingFITTab = false; // true means we are processing a tab currently, to ensure we only do one at a time to boost performance
 
 this.toggleFIT = function() {
 	var toggle = FITbox.hidden;
@@ -543,15 +545,15 @@ this.getFITTabs = function(aWindow) {
 	
 	var newItem = createTabItem(aWindow);
 	
-	aSyncSetTab(aWindow, newItem);
+	aSyncSetTab(aWindow, newItem, gFindBar._findField.value);
 };
 
-this.aSyncSetTab = function(aWindow, item) {
+this.aSyncSetTab = function(aWindow, item, word) {
 	aSync(function() { updateTabItem(item); });
-	aSync(function() { countFITinTab(aWindow, item); });
+	aSync(function() { processFITTab(aWindow, item, word); });
 };
 
-this.countFITinTab = function(aWindow, item) {
+this.processFITTab = function(aWindow, item, word) {
 	// Let's not process the same item multiple times
 	if(item.reScheduled) {
 		item.reScheduled.cancel();
@@ -559,22 +561,38 @@ this.countFITinTab = function(aWindow, item) {
 	}
 	
 	// Because this method can be called with a delay, we should make sure the findword still exists
-	if(!gFindBar._findField.value) { return; }
+	if(!gFindBar._findField.value || gFindBar._findField.value != word) { doLog('huh'); return; }
 	
+	// We try to process one tab at a time, to boost performance when searching with multiple tabs open
+	if(processingFITTab) {
+		aSync(function() { processFITTab(aWindow, item, word); }, 10);
+		return;
+	}
+	
+	processingFITTab = true;
+	try { countFITinTab(aWindow, item, word); }
+	catch(ex) {
+		Cu.reportError(ex);
+		processingFITTab = false;
+	}
+	processingFITTab = false;
+};
+	
+this.countFITinTab = function(aWindow, item, word) {
 	if(inPDFJS(aWindow.document)) {
 		// We need this to access protected properties, hidden from privileged code
 		if(!aWindow.PDFFindController) { aWindow = XPCNativeWrapper.unwrap(aWindow); }
 		
 		// If the document has just loaded, this might take a while to populate, it would throw an error and stop working altogether
 		if(!aWindow.PDFView || !aWindow.PDFView.pdfDocument) {
-			item.reScheduled = timerAid.create(function() { countFITinTab(aWindow, item); }, 250);
+			item.reScheduled = timerAid.create(function() { processFITTab(aWindow, item, word); }, 250);
 			return;
 		}
 		
 		aWindow.PDFFindController.extractText();
 		// This takes time to build apparently
 		if(aWindow.PDFFindController.pageContents.length != aWindow.PDFView.pages.length) {
-			item.reScheduled = timerAid.create(function() { countFITinTab(aWindow, item); }, 100);
+			item.reScheduled = timerAid.create(function() { processFITTab(aWindow, item, word); }, 100);
 			return;
 		}
 	}
@@ -1563,7 +1581,7 @@ this.FITobserver = function(aSubject, aTopic, aData) {
 			item.linkedDocument = doc;
 		}
 		
-		aSyncSetTab(doc.defaultView, item);
+		aSyncSetTab(doc.defaultView, item, gFindBar._findField.value);
 	}
 	
 	// Something went wrong and it shouldn't

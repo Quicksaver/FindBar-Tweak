@@ -90,7 +90,7 @@
 					<groupbox align="start">
 						<caption><checkbox label="&OptfindInTabs.label;" preference="pref-findInTabs"/></caption>
 						<checkbox label="&OptalwaysOpenFIT.label;" dependson="pref-findInTabs" preference="pref-alwaysOpenFIT"/>
-						<hbox>
+						<hbox align="center">
 							<label value="&OptmaxFIT.label;"/>
 							<textbox type="number"
 								size="4"
@@ -131,7 +131,7 @@
 						<caption label="&OptHighlights.label;"/>
 						<checkbox label="&OpthighlightByDefault.label;" preference="pref-highlightByDefault"/>
 						<checkbox label="&OpthideWhenFinderHidden.label;" preference="pref-hideWhenFinderHidden"/>
-						<hbox>
+						<hbox align="center">
 							<label value="&OptminNoDelay.labela;"/>
 							<textbox type="number"
 								size="1"
@@ -145,7 +145,7 @@
 					<groupbox align="start">
 						<caption label="&Optgrid.label;"/>
 						<checkbox label="&OptgridInScrollbar.label;" preference="pref-useGrid"/>
-						<hbox>
+						<hbox align="center">
 							<label dependson="pref-useGrid" value="&OptgridLimit.labela;"/>
 							<textbox dependson="pref-useGrid"
 								type="number"
@@ -155,7 +155,7 @@
 								preference="pref-gridLimit"/>
 							<label dependson="pref-useGrid" value="&OptgridLimit.labelb;"/>
 						</hbox>
-						<hbox>
+						<hbox align="center">
 							<label dependson="pref-useGrid" value="&OptadjustGridPadding.labela;"/>
 							<textbox dependson="pref-useGrid"
 								type="number"
@@ -165,7 +165,7 @@
 								preference="pref-gridAdjustPadding"/>
 							<label dependson="pref-useGrid" value="&OptadjustGridPadding.labelb;"/>
 						</hbox>
-						<hbox>
+						<hbox align="center">
 							<label dependson="pref-useGrid" value="&OptadjustGridWidth.labela;"/>
 							<textbox dependson="pref-useGrid"
 								type="number"

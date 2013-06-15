@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.4';
+moduleAid.VERSION = '1.1.5';
 
 this.uiBackup = {};
 
@@ -100,7 +100,10 @@ this.changeSelectColor = function() {
 	prefAid.unlisten('textSelectForeground', handleUISelectForeground);
 	
 	prefAid.textSelectBackgroundAttention = prefAid.selectColor;
-	prefAid.textSelectForeground = (darkBackgroundRGB(rgb)) ? '#FFFFFF' : '#000000';
+	
+	if(!prefAid.keepSelectContrast) { prefAid.textSelectForeground = (darkBackgroundRGB(rgb)) ? '#FFFFFF' : '#000000'; }
+	else if(uiBackup.textSelectForeground) { prefAid.textSelectForeground = uiBackup.textSelectForeground; }
+	else { prefAid.reset('textSelectForeground'); }
 	
 	prefAid.listen('textSelectBackgroundAttention', handleUISelectBackground);
 	prefAid.listen('textSelectForeground', handleUISelectForeground);
@@ -170,6 +173,7 @@ moduleAid.LOADMODULE = function() {
 	
 	prefAid.listen('highlightColor', changeHighlightColor);
 	prefAid.listen('selectColor', changeSelectColor);
+	prefAid.listen('keepSelectContrast', changeSelectColor);
 	
 	alwaysRunOnShutdown.push(resetColorPrefs);
 	
@@ -188,6 +192,7 @@ moduleAid.UNLOADMODULE = function() {
 	
 	prefAid.unlisten('highlightColor', changeHighlightColor);
 	prefAid.unlisten('selectColor', changeSelectColor);
+	prefAid.unlisten('keepSelectContrast', changeSelectColor);
 	
 	resetColorPrefs();
 };

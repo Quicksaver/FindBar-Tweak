@@ -21,6 +21,8 @@
 <!ENTITY Optcolor.label "Highlights Color">
 <!ENTITY OptselectColor.label "Current Hit Color">
 <!ENTITY OptcolorReset.label "(reset)">
+<!ENTITY OptcolorKeepOSdefault.label "Keep default contrast color (recommended)">
+
 <!ENTITY OptgridLimit.labela "Don't use the grid if it exceeds">
 <!ENTITY OptgridLimit.labelb "highlights">
 <!ENTITY OptminNoDelay.labela "Delay highlights if search term is shorter than">

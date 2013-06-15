@@ -1,6 +1,17 @@
-var defaultsVersion = '1.0.16';
+var defaultsVersion = '1.0.17';
 var objName = 'findbartweak';
 var objPathString = 'findbartweak';
+
+// We define this here so we can use it also as the default value for the preference
+this.__defineGetter__('minTextboxWidth', function() {
+	if(Services.appinfo.OS == 'Darwin') { return 176; }
+	else if(Services.appinfo.OS == 'WINNT') {
+		if(Services.navigator.oscpu && Services.navigator.oscpu.indexOf('Windows NT 5.1') == 0) { return 127; }
+		else { return 120; }
+	}
+	else { return 180; }
+});
+
 var prefList = {
 	highlightByDefault: true,
 	hideWhenFinderHidden: false,
@@ -36,6 +47,7 @@ var prefList = {
 	movetoRight: false,
 	hideClose: false,
 	hideLabels: false,
+	findFieldWidth: (Services.appinfo.OS != 'Darwin' && Services.appinfo.OS != 'WINNT') ? 240 : minTextboxWidth,
 	selectColor: '#38d878',
 	keepSelectContrast: true,
 	

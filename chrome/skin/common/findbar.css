@@ -98,6 +98,20 @@
 		color: rgb(216,216,216);
 	}
 	
+	/* Textbox resizers */
+	#FindToolbar:not([hideLabels]) #findbartweak-find-textbox {
+		max-width: 680px;
+	}
+	#FindToolbar[hideLabels] #findbartweak-find-textbox {
+		max-width: 1000px;
+	}
+	
+	#FindToolbar .find-textbox-resizer {
+		-moz-appearance: none !important;
+		height: 20px;
+		opacity: 0.001;
+	}
+	
 	/* Grid stuff */
 	hbox[anonid="gridBox"] {
 		pointer-events: none;
@@ -209,8 +223,6 @@
 	.findbar-tabs image,
 	.findbar-tabs-update image,
 	.findbar-cs-button image {
-		min-height: 16px;
-		max-height: 16px;
 		background: none;
 		border: none;
 	}

@@ -32,9 +32,9 @@
 		-moz-border-left-colors: rgb(178,174,170);
 	}
 	
-	#FindToolbar:not([movetotop])[movetoright]:-moz-locale-dir(ltr) textbox[anonid="findbar-textbox"],
-	#FindToolbar:not([movetotop]):not([movetoright]):-moz-locale-dir(rtl) textbox[anonid="findbar-textbox"] {
-		max-height: 24px;
+	#FindToolbar textbox[anonid="findbar-textbox"] {
+		min-height: 28px;
+		max-height: 28px;
 	}
 	#FindToolbar:not([movetotop])[movetoright]:-moz-locale-dir(ltr) toolbarbutton
 	#FindToolbar:not([movetotop]):not([movetoright]):-moz-locale-dir(rtl) toolbarbutton {
@@ -46,6 +46,24 @@
 	#navigator-toolbox[iconsize="large"] :not(#TabsToolbar) #findbartweak-button .toolbarbutton-icon { height: 24px; }
 	#navigator-toolbox[iconsize="small"] :not(#TabsToolbar) #findbartweak-button .toolbarbutton-icon { height: 16px; }
 	#addon-bar #findbartweak-button image { height: 16px; }
+	
+	/* Textbox resizers */
+	#FindToolbar #findbartweak-find-textbox {
+		min-width: 180px;
+	}
+	
+	#FindToolbar .find-textbox-resizer {
+		width: 4px;
+	}
+	
+	#FindToolbar resizer[anonid="find-left-resizer"] {
+		-moz-margin-end: -7px;
+		-moz-margin-start: 3px;
+	}
+	#FindToolbar resizer[anonid="find-right-resizer"] {
+		-moz-margin-start: -7px;
+		-moz-margin-end: 3px;
+	}
 	
 	/* Grid stuff */
 	grid[anonid="findGrid"]:not([gridSpacers="none"]) row.topSpacer[flex="0"],
@@ -61,5 +79,12 @@
 		background-color: -moz-dialog;
 		border-bottom: 1px solid rgb(0,0,0);
 		-moz-border-bottom-colors: rgb(178,174,170);
+	}
+	
+	.findbar-tabs image,
+	.findbar-tabs-update image,
+	.findbar-cs-button image {
+		min-height: 16px;
+		max-height: 16px;
 	}
 }

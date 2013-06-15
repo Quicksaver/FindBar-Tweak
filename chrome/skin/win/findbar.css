@@ -54,20 +54,13 @@
 		background-color: rgb(219,234,249);
 	}
 	
-	window[findbartweak-oscpu="Windows NT 5.1"] #FindToolbar:not([movetotop])[movetoright]:-moz-locale-dir(ltr) textbox[anonid="findbar-textbox"],
-	window[findbartweak-oscpu="Windows NT 5.1"] #FindToolbar:not([movetotop]):not([movetoright]):-moz-locale-dir(rtl) textbox[anonid="findbar-textbox"] {
-		max-height: 19px;
+	#FindToolbar textbox[anonid="findbar-textbox"] {
+		min-height: 22px;
+		max-height: 22px;
 	}
 	
-	window[findbartweak-oscpu="Windows NT 6.2"] #FindToolbar[hideLabels] toolbarbutton {
+	window[findbartweak-oscpu="Windows NT 6.2"] #FindToolbar[hideLabels] toolbarbutton:not(.findbar-closebutton) {
 		min-height: 23px;
-	}
-	window[findbartweak-oscpu="Windows NT 6.2"] #FindToolbar[hideLabels] textbox[anonid="findbar-textbox"] {
-		min-height: 21px;
-	}
-	window[findbartweak-oscpu="Windows NT 6.2"] #FindToolbar:not([movetotop])[movetoright]:-moz-locale-dir(ltr) textbox[anonid="findbar-textbox"],
-	window[findbartweak-oscpu="Windows NT 6.2"] #FindToolbar:not([movetotop]):not([movetoright]):-moz-locale-dir(rtl) textbox[anonid="findbar-textbox"] {
-		max-height: 21px;
 	}
 	
 	/* For the toolbar button */
@@ -97,6 +90,27 @@
 		box-shadow: 	-2px -2px 0 -2px rgb(160,160,160),
 		                -7px -4px 0px -4px -moz-dialog,
 		                -6px -4px 0px -4px -moz-dialog;
+	}
+	
+	/* Textbox resizers */
+	window:not([findbartweak-oscpu="Windows NT 5.1"]) #FindToolbar #findbartweak-find-textbox {
+		min-width: 120px;
+	}
+	window[findbartweak-oscpu="Windows NT 5.1"] #FindToolbar #findbartweak-find-textbox {
+		min-width: 127px;
+	}
+	
+	#FindToolbar .find-textbox-resizer {
+		width: 4px;
+	}
+	
+	#FindToolbar resizer[anonid="find-left-resizer"] {
+		-moz-margin-end: -7px;
+		-moz-margin-start: 3px;
+	}
+	#FindToolbar resizer[anonid="find-right-resizer"] {
+		-moz-margin-start: -7px;
+		-moz-margin-end: 3px;
 	}
 	
 	/* Grid stuff */
@@ -136,5 +150,12 @@
 		margin-bottom: 0;
 		-moz-margin-start: 0;
 		-moz-margin-end: 5px;
+	}
+	
+	.findbar-tabs image,
+	.findbar-tabs-update image,
+	.findbar-cs-button image {
+		min-height: 16px;
+		max-height: 16px;
 	}
 }

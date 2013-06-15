@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.7';
+moduleAid.VERSION = '1.1.8';
 
 this.__defineGetter__('findCSButton', function() { return gFindBar.getElement(objName+'-find-cs-button'); });
 this.__defineGetter__('findCSCheckbox', function() { return gFindBar.getElement('find-case-sensitive'); });
@@ -143,6 +143,8 @@ moduleAid.LOADMODULE = function() {
 	prefAid.listen('movetoTop', toggleMoveToTop);
 	prefAid.listen('movetoRight', toggleMoveToRight);
 	
+	moduleAid.load('resizeTextbox');
+	
 	toggleClose();
 	toggleLabels();
 	toggleMoveToTop();
@@ -156,6 +158,7 @@ moduleAid.UNLOADMODULE = function() {
 	prefAid.unlisten('movetoRight', toggleMoveToRight);
 	
 	moduleAid.unload('moveToTop');
+	moduleAid.unload('resizeTextbox');
 	
 	removeAttribute(gFindBar, 'noClose');
 	removeAttribute(gFindBar, 'hideLabels');

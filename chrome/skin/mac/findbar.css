@@ -67,6 +67,24 @@
 		height: 18px;
 	}
 	
+	/* Textbox resizers */
+	#FindToolbar #findbartweak-find-textbox {
+		min-width: 176px;
+	}
+	
+	#FindToolbar .find-textbox-resizer {
+		width: 6px;
+	}
+	
+	#FindToolbar resizer[anonid="find-left-resizer"] {
+		-moz-margin-end: -9px;
+		-moz-margin-start: 3px;
+	}
+	#FindToolbar resizer[anonid="find-right-resizer"] {
+		-moz-margin-start: -9px;
+		-moz-margin-end: 3px;
+	}
+	
 	/* Grid stuff */
 	grid[anonid="findGrid"]:not([gridSpacers="none"]) row.topSpacer[flex="0"],
 	grid[anonid="findGrid"][gridSpacers="single"] row.bottomSpacer[flex="0"] {
@@ -125,11 +143,17 @@
 		-moz-border-bottom-colors: rgba(0,0,0,0.32);
 	}
 	
-	#FindToolbar:not([hideLabels]) toolbarbutton image,
-	#FindToolbar:not([hideLabels]) toolbarbutton image {
+	#FindToolbar:not([hideLabels]) toolbarbutton:not(.findbar-closebutton) image {
 		margin-top: 0;
 		margin-bottom: 0;
 		-moz-margin-end: 0;
 		-moz-margin-start: 4px;
+	}
+	
+	.findbar-tabs image,
+	.findbar-tabs-update image,
+	.findbar-cs-button image {
+		min-height: 14px;
+		max-height: 14px;
 	}
 }

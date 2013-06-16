@@ -5,7 +5,6 @@
 		<em:version>1.1</em:version>
 		<em:type>2</em:type>
 		<em:creator>Quicksaver</em:creator>
-		<em:homepageURL>https://addons.mozilla.org/en-US/firefox/addon/findbar-tweak/</em:homepageURL>
 		<em:iconURL>chrome://findbartweak/skin/icon.png</em:iconURL>
 		<em:optionsURL>chrome://findbartweak/content/options.xul</em:optionsURL>
 		<em:name>FindBar Tweak</em:name>
@@ -23,7 +22,8 @@
 			<Description>
 				<em:locale>en-US</em:locale>
 				<em:name>FindBar Tweak</em:name>
-				<em:description>Tweak your FindBar the way you like it!</em:description>
+				<em:description>Anywhere between simple tweaks such as placing the findbar in the top corner, to the powerful "Find in All Tabs" tool, FindBar Tweak will make your firefox find toolbar "just right"!</em:description>
+				<em:homepageURL>https://addons.mozilla.org/en-US/firefox/addon/findbar-tweak/</em:homepageURL>
 			</Description>
 		</em:localized>
 		<em:localized>
@@ -31,6 +31,7 @@
 				<em:locale>de</em:locale>
 				<em:name>FindBar Tweak</em:name>
 				<em:description>Optimieren Sie Ihre Suchleiste, so wie Sie es brauchen!</em:description>
+				<em:homepageURL>https://addons.mozilla.org/de/firefox/addon/findbar-tweak/</em:homepageURL>
 				<em:translator>Michael Köhler, Wawuschel @ babelzilla</em:translator>
 			</Description>
 		</em:localized>
@@ -39,6 +40,7 @@
 				<em:locale>pl</em:locale>
 				<em:name>FindBar Tweak</em:name>
 				<em:description>Ulepsz swój pasek wyszukiwania według własnego uznania!</em:description>
+				<em:homepageURL>https://addons.mozilla.org/pl/firefox/addon/findbar-tweak/</em:homepageURL>
 				<em:translator>http://github.com/piotrex</em:translator>
 			</Description>
 		</em:localized>
@@ -47,6 +49,7 @@
 				<em:locale>pt-PT</em:locale>
 				<em:name>Barra de Procura Refinada</em:name>
 				<em:description>Refine a sua barra de procura como realmente gosta!</em:description>
+				<em:homepageURL>https://addons.mozilla.org/pt-PT/firefox/addon/findbar-tweak/</em:homepageURL>
 				<em:translator>Quicksaver</em:translator>
 			</Description>
 		</em:localized>
@@ -55,6 +58,7 @@
 				<em:locale>sv-SE</em:locale>
 				<em:name>FindBar Tweak</em:name>
 				<em:description>Ställ in din söklist som du vill ha den!</em:description>
+				<em:homepageURL>https://addons.mozilla.org/sv-SE/firefox/addon/findbar-tweak/</em:homepageURL>
 				<em:translator>Mikael Hiort af Ornäs</em:translator>
 			</Description>
 		</em:localized>
@@ -63,6 +67,7 @@
 				<em:locale>zh-CN</em:locale>
 				<em:name>FindBar Tweak</em:name>
 				<em:description>随你所好调整查找栏！</em:description>
+				<em:homepageURL>https://addons.mozilla.org/zh-CN/firefox/addon/findbar-tweak/</em:homepageURL>
 				<em:translator>http://t.qq.com/HeartBlade</em:translator>
 			</Description>
 		</em:localized>
@@ -71,6 +76,7 @@
 				<em:locale>zh-TW</em:locale>
 				<em:name>FindBar Tweak</em:name>
 				<em:description>依照您喜歡的方式調整搜尋列</em:description>
+				<em:homepageURL>https://addons.mozilla.org/zh-TW/firefox/addon/findbar-tweak/</em:homepageURL>
 				<em:translator>http://t.qq.com/HeartBlade, YFdyh000</em:translator>
 			</Description>
 		</em:localized>

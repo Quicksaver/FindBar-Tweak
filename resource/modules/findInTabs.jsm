@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.4';
+moduleAid.VERSION = '1.4.5';
 
 this.__defineGetter__('FITresizer', function() { return $(objName+'-findInTabs-resizer'); });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -561,7 +561,7 @@ this.processFITTab = function(aWindow, item, word) {
 	}
 	
 	// Because this method can be called with a delay, we should make sure the findword still exists
-	if(!gFindBar._findField.value || gFindBar._findField.value != word) { doLog('huh'); return; }
+	if(!gFindBar._findField.value || gFindBar._findField.value != word) { return; }
 	
 	// We try to process one tab at a time, to boost performance when searching with multiple tabs open
 	if(processingFITTab) {

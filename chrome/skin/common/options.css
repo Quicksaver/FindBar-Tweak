@@ -10,8 +10,6 @@ textbox[type="number"] input {
 
 #logo {
 	list-style-image: url("chrome://findbartweak/skin/icon.png");
-	max-width: 200px;
-	max-height: 200px;
 	margin: 20px 0;
 }
 
@@ -26,4 +24,8 @@ textbox[type="number"] input {
 
 tabpanel#aboutTab {
 	min-height: 410px;
+}
+
+#fullDesc {
+	max-width: 400px;
 }

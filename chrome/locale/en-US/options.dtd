@@ -70,7 +70,8 @@
 <!ENTITY OptkeyboardShortcut.label "Keyboard Shortcut">
 <!ENTITY OptctrlFCloses.win "Ctrl+F also closes the Findbar">
 <!ENTITY OptctrlFCloses.mac "Command+F also closes the Findbar">
-<!ENTITY OptctrlFOnValue.label "Only close if the search text is the same as the selected text">
+<!ENTITY OptctrlFprefill.label "Shortcut fills the Findbar with the selected text">
+<!ENTITY OptctrlFOnValue.label "Only close when search is the same as the selected text">
 
 <!ENTITY findbartweakabout.name "FindBar Tweak">
 <!ENTITY findbartweakabout.by "by Quicksaver">

@@ -1,8 +1,8 @@
-moduleAid.VERSION = '1.3.0';
+moduleAid.VERSION = '1.3.1';
 
 this.ctrlF = function(event) {
 	// See if there is text selection and if it's the same as the findbar's value
-	if(prefAid.ctrlFClosesOnValue && !gFindBar.hidden) {
+	if(prefAid.ctrlFClosesOnValue && prefAid.FAYTprefill && !gFindBar.hidden) {
 		var editableNode = gFindBar.browser._fastFind.foundEditable;
 		var controller = (editableNode && editableNode.editor) ? editableNode.editor.selectionController : null;
 		if(!controller) {

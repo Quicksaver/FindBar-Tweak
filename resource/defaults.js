@@ -1,4 +1,4 @@
-var defaultsVersion = '1.0.19';
+var defaultsVersion = '1.0.20';
 var objName = 'findbartweak';
 var objPathString = 'findbartweak';
 
@@ -65,6 +65,7 @@ var prefList = {
 	FAYTtimeout: 5000,
 	FAYTenabled: false,
 	FAYToriginal: false,
+	FAYTprefill: true,
 	
 	lwthemebgImage: '',
 	lwthemebgWidth: 0,

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.1';
+moduleAid.VERSION = '1.0.2';
 
 this.changedFAYTTimeout = function() {
 	prefAid.unlisten('timeout', changedNativeFAYTTimeout);
@@ -8,6 +8,16 @@ this.changedFAYTTimeout = function() {
 
 this.changedNativeFAYTTimeout = function() {
 	prefAid.timeout = prefAid.FAYTtimeout;
+};
+
+this.changedFAYTPrefill = function() {
+	prefAid.unlisten('timeout', changedNativeFAYTPrefill);
+	prefAid.prefillwithselection = prefAid.FAYTprefill;
+	prefAid.listen('timeout', changedNativeFAYTPrefill);
+};
+
+this.changedNativeFAYTPrefill = function() {
+	prefAid.prefillwithselection = prefAid.FAYTprefill;
 };
 
 this.changedFAYTEnabled = function() {
@@ -24,19 +34,23 @@ this.changedTypeAheadFind = function() {
 this.resetFAYT = function() {
 	prefAid.unlisten('typeaheadfind', changedTypeAheadFind);
 	prefAid.unlisten('timeout', changedNativeFAYTTimeout);
+	prefAid.unlisten('prefillwithselection', changedNativeFAYTPrefill);
 	
 	prefAid.reset('timeout');
+	prefAid.reset('prefillwithselection');
 	prefAid.typeaheadfind = prefAid.FAYToriginal;
 };
 
 moduleAid.LOADMODULE = function() {
-	prefAid.setDefaults({ timeout: 5000 }, 'typeaheadfind', 'accessibility');
+	prefAid.setDefaults({ timeout: 5000, prefillwithselection: true }, 'typeaheadfind', 'accessibility');
 	prefAid.setDefaults({ typeaheadfind: false }, 'accessibility', '');
 	
 	prefAid.listen('FAYTtimeout', changedFAYTTimeout);
 	prefAid.listen('FAYTenabled', changedFAYTEnabled);
+	prefAid.listen('FAYTprefill', changedFAYTPrefill);
 	
 	changedFAYTTimeout();
+	changedFAYTPrefill();
 	
 	prefAid.FAYToriginal = prefAid.typeaheadfind;
 	prefAid.typeaheadfind = prefAid.FAYTenabled || prefAid.typeaheadfind;
@@ -49,6 +63,7 @@ moduleAid.LOADMODULE = function() {
 moduleAid.UNLOADMODULE = function() {
 	prefAid.unlisten('FAYTtimeout', changedFAYTTimeout);
 	prefAid.unlisten('FAYTenabled', changedFAYTEnabled);
+	prefAid.unlisten('FAYTprefill', changedFAYTPrefill);
 	
 	resetFAYT();
 };

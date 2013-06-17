@@ -66,29 +66,30 @@
 						<checkbox id="ctrlFClosesCheckbox" label="&OptctrlFCloses.win;" preference="pref-ctrlFCloses"/>
 					</groupbox>
 					<groupbox align="start">
-						<caption>
-							<checkbox label="&OptFAYT.label;" preference="pref-typeaheadfind"/>
-						</caption>
+						<caption label="&OptFAYTmode.caption;"/>
 						<radiogroup preference="pref-FAYTmode">
 							<radio dependson="pref-typeaheadfind" label="&OptFAYTmode.quickFind;" value="quick"/>
-							<vbox style="-moz-margin-start: 30px;">
-								<checkbox dependson="pref-typeaheadfind,pref-FAYTmode:quick" label="&OptkeepButtons.label;" preference="pref-keepButtons"/>
-								<hbox>
-									<label dependson="pref-typeaheadfind,pref-FAYTmode:quick" value="&OptFAYTTimeout.beforeLabel;"/>
-									<textbox id="timeoutTextbox"
-										type="number"
-										dependson="pref-typeaheadfind,pref-FAYTmode:quick"
-										size="3"
-										min="1"
-										max="999"
-										preference="pref-timeout"
-										onsyncfrompreference="return document.getElementById('pref-timeout').value / 1000;" 
-										onsynctopreference="return parseInt(document.getElementById('timeoutTextbox').value || 0) * 1000;"/>
-						            <label dependson="pref-typeaheadfind,pref-FAYTmode:quick" value="&OptFAYTTimeout.afterLabel;"/>
-						        </hbox>
-					        </vbox>
-							<radio dependson="pref-typeaheadfind" label="&OptFAYTmode.normalFind;" value="normal"/>
+							<radio label="&OptFAYTmode.alwaysQuick;" value="alwaysquick"/>
+							<radio label="&OptFAYTmode.normalFind;" value="normal"/>
 						</radiogroup>
+			        </groupbox>
+					<groupbox align="start">
+						<caption label="&OptquickFindOptions.label;"/>
+						<checkbox label="&OptFAYT.label;" preference="pref-typeaheadfind"/>
+						<checkbox dependson="pref-FAYTmode:alwaysquick;!pref-FAYTmode:normal,pref-typeaheadfind" label="&OptkeepButtons.label;" preference="pref-keepButtons"/>
+						<hbox>
+							<label dependson="pref-FAYTmode:alwaysquick;!pref-FAYTmode:normal,pref-typeaheadfind" value="&OptFAYTTimeout.beforeLabel;"/>
+							<textbox id="timeoutTextbox"
+								dependson="pref-FAYTmode:alwaysquick;!pref-FAYTmode:normal,pref-typeaheadfind" 
+								type="number"
+								size="3"
+								min="1"
+								max="999"
+								preference="pref-timeout"
+								onsyncfrompreference="return document.getElementById('pref-timeout').value / 1000;" 
+								onsynctopreference="return parseInt(document.getElementById('timeoutTextbox').value || 0) * 1000;"/>
+				            <label dependson="pref-FAYTmode:alwaysquick;!pref-FAYTmode:normal,pref-typeaheadfind" value="&OptFAYTTimeout.afterLabel;"/>
+				        </hbox>
 			        </groupbox>
 					<groupbox align="start">
 						<caption><checkbox label="&OptfindInTabs.label;" preference="pref-findInTabs"/></caption>

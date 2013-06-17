@@ -55,12 +55,16 @@
 <!ENTITY OptperTab.label "Findbar starts closed in new tabs">
 <!ENTITY OptonStartup.label "Remember Findbar opened/closed state on startup">
 
+<!ENTITY OptopenFindbar.label "When opening the Findbar">
+<!ENTITY OptquickFindOptions.label "Quick Findbar">
 <!ENTITY OptkeepButtons.label "Show buttons in the Quick Findbar">
 <!ENTITY OptFAYT.label "Search for text when I start typing">
 <!ENTITY OptFAYTTimeout.beforeLabel "Autoclose after">
 <!ENTITY OptFAYTTimeout.afterLabel "seconds">
-<!ENTITY OptFAYTmode.quickFind "Use Quick Findbar if it isn't already opened">
-<!ENTITY OptFAYTmode.normalFind "Always use regular Findbar">
+<!ENTITY OptFAYTmode.caption "When I open the Findbar">
+<!ENTITY OptFAYTmode.quickFind "Use Quick Findbar when I start typing to search for text">
+<!ENTITY OptFAYTmode.normalFind "Always use normal Findbar">
+<!ENTITY OptFAYTmode.alwaysQuick "Always use Quick Findbar">
 
 <!ENTITY OptctrlFCloses.win "Ctrl+F also closes the Findbar">
 <!ENTITY OptctrlFCloses.mac "Command+F also closes the Findbar">

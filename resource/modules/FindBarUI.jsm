@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.9';
+moduleAid.VERSION = '1.1.10';
 
 this.__defineGetter__('findCSButton', function() { return gFindBar.getElement(objName+'-find-cs-button'); });
 this.__defineGetter__('findCSCheckbox', function() { return gFindBar.getElement('find-case-sensitive'); });
@@ -24,22 +24,62 @@ this.updateCSUI = function() {
 };
 
 this.alwaysFindNormal = function(e) {
+	// When opening FIT, enforce normal findbar mode
+	if(prefAid.findInTabs && typeof(FITbox) != 'undefined' && FITbox && !FITbox.hidden) {
+		if((!e.detail && gFindBar._findMode != gFindBar.FIND_NORMAL) || e.detail == gFindBar.FIND_TYPEAHEAD) {
+			e.preventDefault();
+			e.stopPropagation();
+			gFindBar._findMode = gFindBar.FIND_NORMAL;
+			gFindBar.open(gFindBar.FIND_NORMAL);
+		}
+		return;
+	}
+	
+	// If opening normal Find bar when quick find is already opened, make sure we trigger the change
+	if(!gFindBar.hidden && e.detail != gFindBar.FIND_TYPEAHEAD && gFindBar._findMode == gFindBar.FIND_TYPEAHEAD && prefAid.FAYTmode != 'alwaysquick') {
+		e.preventDefault();
+		e.stopPropagation();
+		gFindBar._findMode = gFindBar.FIND_NORMAL;
+		gFindBar.open(gFindBar.FIND_NORMAL);
+		return;
+	}
+	
 	// If typing when Find bar is already opened in normal mode, use that instead of "reopening" as quick find mode
-	if(!gFindBar.hidden && e.detail == gFindBar.FIND_TYPEAHEAD && gFindBar._findMode == gFindBar.FIND_NORMAL) {
+	if(!gFindBar.hidden && e.detail == gFindBar.FIND_TYPEAHEAD) {
+		e.preventDefault();
+		e.stopPropagation();
+		return;
+	}
+	
+	// If opening findbar when QuickFind bar is already opened and we're supposed to keep QuickFind
+	if(!gFindBar.hidden && ((!e.detail && gFindBar._findMode != gFindBar.FIND_TYPEAHEAD) || e.detail != gFindBar.FIND_TYPEAHEAD) && prefAid.FAYTmode == 'alwaysquick') {
+		e.preventDefault();
+		e.stopPropagation();
+		gFindBar.open(gFindBar.FIND_TYPEAHEAD);
+		if(gFindBar._quickFindTimeout) { window.clearTimeout(gFindBar._quickFindTimeout); }
+		gFindBar._quickFindTimeout = window.setTimeout(function(aSelf) { if(aSelf._findMode != aSelf.FIND_NORMAL) aSelf.close(); }, gFindBar._quickFindTimeoutLength, gFindBar);
+		return;
+	}
+	
+	// If the FindBar is already open do nothing and keep opening, this prevents the hangup when triggering the QuickFind bar when Find bar is open
+	if(!gFindBar.hidden) { return; }
+	
+	// FAYT: option to force normal mode over quick find mode
+	if(e.detail == gFindBar.FIND_TYPEAHEAD && prefAid.FAYTmode == 'normal') {
 		e.preventDefault();
 		e.stopPropagation();
 		gFindBar.open(gFindBar.FIND_NORMAL);
 		return;
 	}
 	
-	// If the FindBar is already open do nothing, this prevents the hangup when triggering the QuickFind bar when Find bar is open
-	if(!gFindBar.hidden) { return; }
-	
-	// FAYT: option to force normal mode over quick find mode
-	if(e.detail == gFindBar.FIND_TYPEAHEAD && prefAid.FAYTmode != 'quick') {
+	// Option to force quick find mode over normal mode
+	if(e.detail != gFindBar.FIND_TYPEAHEAD && prefAid.FAYTmode == 'alwaysquick') {
 		e.preventDefault();
 		e.stopPropagation();
-		gFindBar.open(gFindBar.FIND_NORMAL);
+		gFindBar.open(gFindBar.FIND_TYPEAHEAD);
+		if(gFindBar._quickFindTimeout) { window.clearTimeout(gFindBar._quickFindTimeout); }
+		gFindBar._quickFindTimeout = window.setTimeout(function(aSelf) { if(aSelf._findMode != aSelf.FIND_NORMAL) aSelf.close(); }, gFindBar._quickFindTimeoutLength, gFindBar);
+		return;
 	}
 };
 
@@ -55,7 +95,6 @@ this.ctrlF = function(event) {
 	else {
 		if(gFindBar.hidden) {
 			gFindBar.onFindCommand();
-			gFindBar.open();
 			if(gFindBar._findField.value) {
 				gFindBar._setHighlightTimeout();
 			}

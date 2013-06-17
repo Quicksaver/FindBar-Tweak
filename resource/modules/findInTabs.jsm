@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.5';
+moduleAid.VERSION = '1.4.6';
 
 this.__defineGetter__('FITresizer', function() { return $(objName+'-findInTabs-resizer'); });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -17,15 +17,18 @@ this.processingFITTab = false; // true means we are processing a tab currently, 
 this.toggleFIT = function() {
 	var toggle = FITbox.hidden;
 	
-	/* Open the findbar if it isn't already when opening FIT */
-	if(toggle && gFindBar.hidden) {
-		ctrlF();
-	}
-	
 	FITbox.hidden = !toggle;
 	FITresizer.hidden = !toggle;
 	FITupdate.hidden = !toggle;
 	toggleAttribute(FITbroadcaster, 'checked', toggle);
+	
+	/* Open the findbar if it isn't already when opening FIT */
+	if(toggle && (gFindBar.hidden || gFindBar._findMode == gFindBar.FIND_TYPEAHEAD)) {
+		gFindBar.onFindCommand();
+		if(gFindBar._findField.value) {
+			gFindBar._setHighlightTimeout();
+		}
+	}
 	
 	gFindBar._keepCurrentValue = toggle;
 	

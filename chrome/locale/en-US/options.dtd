@@ -24,6 +24,7 @@
 <!ENTITY OptcolorReset.label "(reset)">
 <!ENTITY OptcolorKeepOSdefault.label "Keep default contrast color (recommended)">
 
+<!ENTITY OpthighlightOnFindAgain.label "Also highlight on 'Find Again' (F3)">
 <!ENTITY OptgridLimit.labela "Don't use the grid if it exceeds">
 <!ENTITY OptgridLimit.labelb "highlights">
 <!ENTITY OptminNoDelay.labela "Delay highlights if search term is shorter than">

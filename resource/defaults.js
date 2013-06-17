@@ -1,4 +1,4 @@
-var defaultsVersion = '1.0.20';
+var defaultsVersion = '1.0.21';
 var objName = 'findbartweak';
 var objPathString = 'findbartweak';
 
@@ -14,6 +14,7 @@ this.__defineGetter__('minTextboxWidth', function() {
 
 var prefList = {
 	highlightByDefault: true,
+	highlightOnFindAgain: false,
 	hideWhenFinderHidden: false,
 	minNoDelay: 3,
 	highlightColor: "#EF0FFF",

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.12';
+moduleAid.VERSION = '1.1.13';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -162,6 +162,13 @@ this.reHighlightAll = function() {
 	}, 100);
 };
 
+// Trigger highlights when hitting Find Again
+this.highlightOnFindAgain = function(e) {
+	if(!prefAid.highlightOnFindAgain || isPDFJS || (documentHighlighted && linkedPanel._findWord && linkedPanel._findWord == gFindBar._findField.value)) { return; }
+	
+	gFindBar._setHighlightTimeout();
+};
+
 this.toggleHighlightByDefault = function() {
 	moduleAid.loadIf('highlightByDefault', prefAid.highlightByDefault);
 };
@@ -238,6 +245,7 @@ moduleAid.LOADMODULE = function() {
 	listenerAid.add(gFindBar, 'ClosedFindBar', highlightOnClose);
 	listenerAid.add(gFindBar, 'WillToggleHighlight', highlightsOnToggling);
 	listenerAid.add(gFindBar, 'WillFindAgain', highlightsFindAgain);
+	listenerAid.add(gFindBar, 'FoundAgain', highlightOnFindAgain);
 	observerAid.add(reHighlightAll, 'ReHighlightAll');
 	
 	if(!viewSource) {
@@ -297,6 +305,7 @@ moduleAid.UNLOADMODULE = function() {
 	listenerAid.remove(gFindBar, 'ClosedFindBar', highlightOnClose);
 	listenerAid.remove(gFindBar, 'WillToggleHighlight', highlightsOnToggling);
 	listenerAid.remove(gFindBar, 'WillFindAgain', highlightsFindAgain);
+	listenerAid.remove(gFindBar, 'FoundAgain', highlightOnFindAgain);
 	
 	if(this.backups) {
 		gFindBar._setHighlightTimeout = this.backups._setHighlightTimeout;

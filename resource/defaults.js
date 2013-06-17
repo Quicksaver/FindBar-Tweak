@@ -1,4 +1,4 @@
-var defaultsVersion = '1.0.18';
+var defaultsVersion = '1.0.19';
 var objName = 'findbartweak';
 var objPathString = 'findbartweak';
 
@@ -57,6 +57,7 @@ var prefList = {
 	placeAbove: false,
 	
 	ctrlFCloses: true,
+	ctrlFClosesOnValue: true,
 	keepButtons: false,
 	FAYTmode: 'quick',
 	

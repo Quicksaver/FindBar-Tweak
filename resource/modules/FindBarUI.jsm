@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.10';
+moduleAid.VERSION = '1.1.11';
 
 this.__defineGetter__('findCSButton', function() { return gFindBar.getElement(objName+'-find-cs-button'); });
 this.__defineGetter__('findCSCheckbox', function() { return gFindBar.getElement('find-case-sensitive'); });
@@ -88,7 +88,7 @@ this.triggerUIChange = function() {
 };
 
 // Handler for Ctrl+F, it closes the findbar if it is already opened
-this.ctrlF = function(event) {
+this.toggleFindBar = function(event) {
 	if(!viewSource && window.TabView.isVisible()) {
 		window.TabView.enableSearch(event);
 	}

@@ -16,7 +16,7 @@
 			label="&ToolbarButton.label;"
 			tooltiptext="&ToolbarButton.tooltip;"
 			onload="if(document.getElementById('FindToolbar')) { if(!document.getElementById('FindToolbar').hidden) { this.setAttribute('checked', 'true'); } else { this.removeAttribute('checked'); } }"
-			oncommand="objName.ctrlF(event);" />
+			oncommand="objName.toggleFindBar(event);" />
 	</toolbarpalette>
 	
 	<findbar id="FindToolbar" context="objPathString_findbarMenu"/>

@@ -3,6 +3,7 @@
 <!ENTITY OptSightsTab.label "Sights">
 <!ENTITY OptGeneral.label "General">
 <!ENTITY OptAppearance.label "Appearance">
+<!ENTITY Opttweaks.label "Tweaks">
 <!ENTITY Optabout.label "About">
 
 <!ENTITY Optgen.label "Findbar Options">
@@ -66,8 +67,10 @@
 <!ENTITY OptFAYTmode.normalFind "Always use normal Findbar">
 <!ENTITY OptFAYTmode.alwaysQuick "Always use Quick Findbar">
 
+<!ENTITY OptkeyboardShortcut.label "Keyboard Shortcut">
 <!ENTITY OptctrlFCloses.win "Ctrl+F also closes the Findbar">
 <!ENTITY OptctrlFCloses.mac "Command+F also closes the Findbar">
+<!ENTITY OptctrlFOnValue.label "Only close if the search text is the same as the selected text">
 
 <!ENTITY findbartweakabout.name "FindBar Tweak">
 <!ENTITY findbartweakabout.by "by Quicksaver">

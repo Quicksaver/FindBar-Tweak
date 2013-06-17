@@ -41,6 +41,7 @@
 			<preference id="pref-perTab" name="extensions.findbartweak.perTab" type="bool"/>
 			<preference id="pref-onStartup" name="extensions.findbartweak.onStartup" type="bool"/>
 			<preference id="pref-ctrlFCloses" name="extensions.findbartweak.ctrlFCloses" type="bool"/>
+			<preference id="pref-ctrlFClosesOnValue" name="extensions.findbartweak.ctrlFClosesOnValue" type="bool"/>
 			<preference id="pref-FAYTmode" name="extensions.findbartweak.FAYTmode" type="string"/>
 			<preference id="pref-keepButtons" name="extensions.findbartweak.keepButtons" type="bool"/>
 			<preference id="pref-timeout" name="extensions.findbartweak.FAYTtimeout" type="int"/>
@@ -53,6 +54,7 @@
 				<tab id="appearanceTab" label="&OptAppearance.label;"/>
 				<tab id="highlightsTab" label="&OptHighlights.label;"/>
 				<tab id="sightsTab" label="&OptSightsTab.label;"/>
+				<tab id="tweaksTab" label="&Opttweaks.label;"/>
 				<tab id="aboutTab" label="&Optabout.label;"/>
 			</tabs>
 			
@@ -63,7 +65,6 @@
 						<checkbox label="&OptblurCloses.label;" preference="pref-blurCloses"/>
 						<checkbox dependson="!pref-blurCloses" label="&OptperTab.label;" preference="pref-perTab"/>
 						<checkbox dependson="!pref-perTab,!pref-blurCloses" label="&OptonStartup.label;" preference="pref-onStartup"/>
-						<checkbox id="ctrlFClosesCheckbox" label="&OptctrlFCloses.win;" preference="pref-ctrlFCloses"/>
 					</groupbox>
 					<groupbox align="start">
 						<caption label="&OptFAYTmode.caption;"/>
@@ -262,6 +263,14 @@
 								max="9"
 								preference="pref-sightsRepeat"/>
 						</hbox>
+					</groupbox>
+				</tabpanel>
+				
+				<tabpanel id="tweaksTab" orient="vertical">
+					<groupbox align="start">
+						<caption label="&OptkeyboardShortcut.label;"/>
+						<checkbox id="ctrlFClosesCheckbox" label="&OptctrlFCloses.win;" preference="pref-ctrlFCloses"/>
+						<checkbox dependson="pref-ctrlFCloses" label="&OptctrlFOnValue.label;" preference="pref-ctrlFClosesOnValue"/>
 					</groupbox>
 				</tabpanel>
 				

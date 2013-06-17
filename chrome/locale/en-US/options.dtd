@@ -62,7 +62,7 @@
 <!ENTITY OptFAYT.label "Search for text when I start typing">
 <!ENTITY OptFAYTTimeout.beforeLabel "Autoclose after">
 <!ENTITY OptFAYTTimeout.afterLabel "seconds">
-<!ENTITY OptFAYTmode.caption "When I open the Findbar">
+<!ENTITY OptFAYTmode.caption "Findbar Mode">
 <!ENTITY OptFAYTmode.quickFind "Use Quick Findbar when I start typing to search for text">
 <!ENTITY OptFAYTmode.normalFind "Always use normal Findbar">
 <!ENTITY OptFAYTmode.alwaysQuick "Always use Quick Findbar">

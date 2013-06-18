@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.13';
+moduleAid.VERSION = '1.1.14';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -177,6 +177,10 @@ this.toggleHideOnClose = function() {
 	moduleAid.loadIf('hideOnClose', prefAid.hideWhenFinderHidden);
 };
 
+this.toggleFillSelectedText = function() {
+	moduleAid.loadIf('fillSelectedText', prefAid.fillSelectedText);
+};
+
 moduleAid.LOADMODULE = function() {
 	this.backups = {
 		_setHighlightTimeout: gFindBar._setHighlightTimeout
@@ -259,17 +263,21 @@ moduleAid.LOADMODULE = function() {
 	
 	prefAid.listen('highlightByDefault', toggleHighlightByDefault);
 	prefAid.listen('hideWhenFinderHidden', toggleHideOnClose);
+	prefAid.listen('fillSelectedText', toggleFillSelectedText);
 	
 	toggleHighlightByDefault();
 	toggleHideOnClose();
+	toggleFillSelectedText();
 };
 
 moduleAid.UNLOADMODULE = function() {
+	moduleAid.unload('fillSelectedText');
 	moduleAid.unload('toggleHideOnClose');
 	moduleAid.unload('highlightByDefault');
 	
 	prefAid.unlisten('highlightByDefault', toggleHighlightByDefault);
 	prefAid.unlisten('hideWhenFinderHidden', toggleHideOnClose);
+	prefAid.unlisten('fillSelectedText', toggleFillSelectedText);
 	
 	moduleAid.unload('highlightDoc');
 	

@@ -44,6 +44,8 @@
 			<preference id="pref-ctrlFCloses" name="extensions.findbartweak.ctrlFCloses" type="bool"/>
 			<preference id="pref-ctrlFClosesOnValue" name="extensions.findbartweak.ctrlFClosesOnValue" type="bool"/>
 			<preference id="pref-FAYTprefill" name="extensions.findbartweak.FAYTprefill" type="bool"/>
+			<preference id="pref-fillSelectedText" name="extensions.findbartweak.fillSelectedText" type="bool"/>
+			<preference id="pref-fillTextShowFindBar" name="extensions.findbartweak.fillTextShowFindBar" type="bool"/>
 			<preference id="pref-FAYTmode" name="extensions.findbartweak.FAYTmode" type="string"/>
 			<preference id="pref-keepButtons" name="extensions.findbartweak.keepButtons" type="bool"/>
 			<preference id="pref-timeout" name="extensions.findbartweak.FAYTtimeout" type="int"/>
@@ -275,6 +277,11 @@
 						<checkbox id="ctrlFClosesCheckbox" label="&OptctrlFCloses.win;" preference="pref-ctrlFCloses"/>
 						<checkbox label="&OptctrlFprefill.label;" preference="pref-FAYTprefill"/>
 						<checkbox dependson="pref-ctrlFCloses,pref-FAYTprefill" label="&OptctrlFOnValue.label;" preference="pref-ctrlFClosesOnValue"/>
+					</groupbox>
+					<groupbox align="start">
+						<caption label="&OptSelectingText.label;"/>
+						<checkbox label="&OptfillSelectedText.label;" preference="pref-fillSelectedText"/>
+						<checkbox dependson="pref-fillSelectedText" label="&OptfillSelectedOpenFindbar.label;" preference="pref-fillTextShowFindBar"/>
 					</groupbox>
 				</tabpanel>
 				

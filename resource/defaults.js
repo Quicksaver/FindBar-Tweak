@@ -1,4 +1,4 @@
-var defaultsVersion = '1.0.21';
+var defaultsVersion = '1.0.22';
 var objName = 'findbartweak';
 var objPathString = 'findbartweak';
 
@@ -52,6 +52,9 @@ var prefList = {
 	findFieldWidth: (Services.appinfo.OS != 'Darwin' && Services.appinfo.OS != 'WINNT') ? 240 : minTextboxWidth,
 	selectColor: '#38d878',
 	keepSelectContrast: true,
+	
+	fillSelectedText: false,
+	fillTextShowFindBar: true,
 	
 	/* hidden settings for now, mechanism isn't good enough yet */
 	squareLook: false,

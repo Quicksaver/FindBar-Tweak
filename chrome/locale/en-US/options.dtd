@@ -76,6 +76,12 @@
 <!ENTITY OptSelectingText.label "When Selecting Text">
 <!ENTITY OptfillSelectedText.label "Fill the Findbar with the selected text">
 <!ENTITY OptfillSelectedOpenFindbar.label "Show the Quick Findbar when selected text is used">
+<!ENTITY OptdblClickEatSpaces.label "Double-clicking on a word selects also the following space">
+<!ENTITY OptdblClickStopAtPunctuation.label "Double-clicking on a word stops selection at punctuation">
+<!ENTITY OptNativePrefs.label "Firefox Native Preferences">
+<!ENTITY OptNativePrefs.warning "The add-on should handle everything automatically. Only use these if you absolutely need it!">
+<!ENTITY OptResetNativeOnDisabled.label "Reset all changed native preferences when disabling the add-on">
+<!ENTITY OptResetNativeNow.label "Reset all changed native preferences">
 
 <!ENTITY findbartweakabout.name "FindBar Tweak">
 <!ENTITY findbartweakabout.by "by Quicksaver">

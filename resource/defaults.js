@@ -1,4 +1,4 @@
-var defaultsVersion = '1.0.22';
+var defaultsVersion = '1.1.0';
 var objName = 'findbartweak';
 var objPathString = 'findbartweak';
 
@@ -11,6 +11,9 @@ this.__defineGetter__('minTextboxWidth', function() {
 	}
 	else { return 180; }
 });
+
+// Some of our preferences should coincide with firefox defaults that may change with OS
+var defaultBranch = Services.prefs.getDefaultBranch('');
 
 var prefList = {
 	highlightByDefault: true,
@@ -55,6 +58,8 @@ var prefList = {
 	
 	fillSelectedText: false,
 	fillTextShowFindBar: true,
+	layoutEatSpaces: defaultBranch.getBoolPref('layout.word_select.eat_space_to_next_word'),
+	layoutStopAtPunctuation: defaultBranch.getBoolPref('layout.word_select.stop_at_punctuation'),
 	
 	/* hidden settings for now, mechanism isn't good enough yet */
 	squareLook: false,
@@ -66,10 +71,11 @@ var prefList = {
 	FAYTmode: 'quick',
 	
 	/* to revert the builtin preferences */
-	FAYTtimeout: 5000,
-	FAYTenabled: false,
-	FAYToriginal: false,
-	FAYTprefill: true,
+	FAYTtimeout: defaultBranch.getIntPref('accessibility.typeaheadfind.timeout'),
+	FAYTenabled: defaultBranch.getBoolPref('accessibility.typeaheadfind'),
+	FAYToriginal: defaultBranch.getBoolPref('accessibility.typeaheadfind'),
+	FAYTprefill: defaultBranch.getBoolPref('accessibility.typeaheadfind.prefillwithselection'),
+	resetNative: false,
 	
 	lwthemebgImage: '',
 	lwthemebgWidth: 0,

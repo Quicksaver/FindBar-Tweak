@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.5';
+moduleAid.VERSION = '1.1.6';
 
 this.uiBackup = {};
 
@@ -152,14 +152,14 @@ this.resetColorPrefs = function() {
 	prefAid.unlisten('textSelectBackgroundAttention', handleUISelectBackground);
 	prefAid.unlisten('textSelectForeground', handleUISelectForeground);
 	
-	if(uiBackup.textHighlightBackground) { prefAid.textHighlightBackground = uiBackup.textHighlightBackground; }
+	if(!prefAid.resetNative && uiBackup.textHighlightBackground) { prefAid.textHighlightBackground = uiBackup.textHighlightBackground; }
 	else { prefAid.reset('textHighlightBackground'); }
-	if(uiBackup.textHighlightForeground) { prefAid.textHighlightForeground = uiBackup.textHighlightForeground; }
+	if(!prefAid.resetNative && uiBackup.textHighlightForeground) { prefAid.textHighlightForeground = uiBackup.textHighlightForeground; }
 	else { prefAid.reset('textHighlightForeground'); }
 	
-	if(uiBackup.textSelectBackgroundAttention) { prefAid.textSelectBackgroundAttention = uiBackup.textSelectBackgroundAttention; }
+	if(!prefAid.resetNative && uiBackup.textSelectBackgroundAttention) { prefAid.textSelectBackgroundAttention = uiBackup.textSelectBackgroundAttention; }
 	else { prefAid.reset('textSelectBackgroundAttention'); }
-	if(uiBackup.textSelectForeground) { prefAid.textSelectForeground = uiBackup.textSelectForeground; }
+	if(!prefAid.resetNative && uiBackup.textSelectForeground) { prefAid.textSelectForeground = uiBackup.textSelectForeground; }
 	else { prefAid.reset('textSelectForeground'); }
 };
 

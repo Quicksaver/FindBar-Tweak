@@ -10,7 +10,9 @@ textbox[type="number"] input {
 
 #logo {
 	list-style-image: url("chrome://findbartweak/skin/icon.png");
-	margin: 20px 0;
+	margin: 20px 93px;
+	max-width: 200px;
+	max-height: 200px;
 }
 
 .justify {
@@ -22,10 +24,14 @@ textbox[type="number"] input {
 	text-decoration: none;
 }
 
-tabpanel#aboutTab {
-	min-height: 410px;
+prefpane {
+	max-width: 404px;
 }
 
-#fullDesc {
-	max-width: 380px;
+.paneSelector radio[pane] image {
+	display: none;
+}
+
+.paneSelector radio[pane] label {
+	margin: 1px 5px 2px 5px;
 }

@@ -10,7 +10,7 @@ textbox[type="number"] input {
 
 #logo {
 	list-style-image: url("chrome://findbartweak/skin/icon.png");
-	margin: 20px 93px;
+	margin: 20px 92px;
 	max-width: 200px;
 	max-height: 200px;
 }
@@ -25,13 +25,31 @@ textbox[type="number"] input {
 }
 
 prefpane {
-	max-width: 404px;
-}
-
-.paneSelector radio[pane] image {
-	display: none;
+	max-width: 402px;
 }
 
 .paneSelector radio[pane] label {
 	margin: 1px 5px 2px 5px;
+}
+.paneSelector radio[pane] {
+	list-style-image: url("chrome://findbartweak/skin/panes.png");
+	padding: 5px 3px 1px;
+}
+.paneSelector radio[pane="generalPane"] {
+	-moz-image-region: rect(0px 32px 32px 0px);
+}
+.paneSelector radio[pane="appearancePane"] {
+	-moz-image-region: rect(0px 64px 32px 32px);
+}
+.paneSelector radio[pane="highlightsPane"] {
+	-moz-image-region: rect(0px 96px 32px 64px);
+}
+.paneSelector radio[pane="sightsPane"] {
+	-moz-image-region: rect(0px 128px 32px 96px);
+}
+.paneSelector radio[pane="tweaksPane"] {
+	-moz-image-region: rect(0px 160px 32px 128px);
+}
+.paneSelector radio[pane="aboutPane"] {
+	-moz-image-region: rect(0px 192px 32px 160px);
 }

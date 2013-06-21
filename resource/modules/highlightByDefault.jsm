@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.3';
+moduleAid.VERSION = '1.1.4';
 
 this.highlightByDefault = function() {
 	gFindBar.getElement("highlight").checked = true;
@@ -38,6 +38,9 @@ this.highlightByDefaultProgressListener = {
 moduleAid.LOADMODULE = function() {
 	listenerAid.add(gFindBar, 'OpenedFindBar', highlightByDefault);
 	
+	// Always highlight all by default when selecting text and filling the findbar with it
+	listenerAid.add(gFindBar, 'WillFillSelectedText', highlightByDefault);
+	
 	if(!viewSource) {
 		listenerAid.add(gBrowser.tabContainer, "TabSelect", highlightByDefault);
 		listenerAid.add(gBrowser, "DOMContentLoaded", highlightByDefaultOnContentLoaded);
@@ -50,6 +53,7 @@ moduleAid.LOADMODULE = function() {
 
 moduleAid.UNLOADMODULE = function() {
 	listenerAid.remove(gFindBar, 'OpenedFindBar', highlightByDefault);
+	listenerAid.remove(gFindBar, 'WillFillSelectedText', highlightByDefault);
 	
 	if(!viewSource) {
 		listenerAid.remove(gBrowser.tabContainer, "TabSelect", highlightByDefault);

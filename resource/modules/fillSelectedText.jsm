@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.0';
+moduleAid.VERSION = '1.0.1';
 
 this.doFastFind = true;
 
@@ -37,7 +37,7 @@ this.workAroundFastFind = function(aWord, aWindow) {
 
 this.fillSelectedText = function() {
 	var selText = gFindBar._getInitialSelection();
-	if(selText && gFindBar._findField.value != selText) {
+	if(selText && gFindBar._findField.value != selText && dispatch(gFindBar, { type: 'WillFillSelectedText' })) {
 		gFindBar._findField.value = selText;
 		doFastFind = false;
 		timerAid.init('fillSelectedText', function() {

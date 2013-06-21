@@ -7,7 +7,7 @@
 			id="findbartweak-options-window"
 			title="&Options.title;">
 			
-	<prefpane id="generalPane" label="&OptGeneral.label;">
+	<prefpane id="generalPane" label="&OptGeneral.label;" style="&Optwindow.style;">
 		<preferences>
 			<preference id="pref-hideWhenFinderHidden" name="extensions.findbartweak.hideWhenFinderHidden" type="bool"/>
 			<preference id="pref-findInTabs" name="extensions.findbartweak.findInTabs" type="bool"/>
@@ -70,7 +70,7 @@
 		</groupbox>
 	</prefpane>
 	
-	<prefpane id="appearancePane" label="&OptAppearance.label;">
+	<prefpane id="appearancePane" label="&OptAppearance.label;" style="&Optwindow.style;">
 		<preferences>
 			<preference id="pref-selectColor" name="extensions.findbartweak.selectColor" type="string"/>
 			<preference id="pref-keepSelectContrast" name="extensions.findbartweak.keepSelectContrast" type="bool"/>
@@ -107,7 +107,7 @@
 		</groupbox>
 	</prefpane>
 	
-	<prefpane id="highlightsPane" label="&OptHighlights.label;">
+	<prefpane id="highlightsPane" label="&OptHighlights.label;" style="&Optwindow.style;">
 		<preferences>
 			<preference id="pref-highlightByDefault" name="extensions.findbartweak.highlightByDefault" type="bool"/>
 			<preference id="pref-highlightOnFindAgain" name="extensions.findbartweak.highlightOnFindAgain" type="bool"/>
@@ -182,7 +182,7 @@
 		</groupbox>
 	</prefpane>
 	
-	<prefpane id="sightsPane" label="&OptSightsTab.label;">
+	<prefpane id="sightsPane" label="&OptSightsTab.label;" style="&Optwindow.style;">
 		<preferences>
 			<preference id="pref-sightsCurrent" name="extensions.findbartweak.sightsCurrent" type="bool"/>
 			<preference id="pref-sightsHighlights" name="extensions.findbartweak.sightsHighlights" type="bool"/>
@@ -266,7 +266,7 @@
 		<hbox anonid="findSights" />
 	</prefpane>
 	
-	<prefpane id="tweaksPane" label="&Opttweaks.label;">
+	<prefpane id="tweaksPane" label="&Opttweaks.label;" style="&Optwindow.style;">
 		<preferences>
 			<preference id="pref-ctrlFCloses" name="extensions.findbartweak.ctrlFCloses" type="bool"/>
 			<preference id="pref-ctrlFClosesOnValue" name="extensions.findbartweak.ctrlFClosesOnValue" type="bool"/>
@@ -299,12 +299,16 @@
 		</groupbox>
 	</prefpane>
 	
-	<prefpane id="aboutPane" label="&Optabout.label;" align="center">
-		<image id="logo"/>
+	<prefpane id="aboutPane" label="&Optabout.label;" align="center" style="&Optwindow.style;">
+		<hbox align="center">
+			<label flex="1" value=" "/>
+			<image id="logo"/>
+			<label flex="1" value=" "/>
+		</hbox>
 		
 		<vbox align="end">
 			<description class="closer">&findbartweakabout.name;</description>
-			<description id="fullDesc">&findbartweakabout.by;</description>
+			<description>&findbartweakabout.by;</description>
 			<description class="justify">&findbartweakabout.desc;</description>
 			<label class="text-link closer" href="https://addons.mozilla.org/UserAgentLocale/firefox/addon/findbar-tweak/" value="&findbartweakabout.home;"/>
 			<label class="text-link closer" href="https://github.com/Quicksaver/FindBar-Tweak/issues" value="&findbartweakabout.tech;"/>

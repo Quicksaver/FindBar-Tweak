@@ -1,3 +1,5 @@
+<!ENTITY Optwindow.style "width: 33.5em;">
+
 <!ENTITY Options.title "FindBar Tweak">
 <!ENTITY OptHighlights.label "Highlights">
 <!ENTITY OptSightsTab.label "Sights">

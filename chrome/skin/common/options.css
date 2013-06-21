@@ -10,22 +10,22 @@ textbox[type="number"] input {
 
 #logo {
 	list-style-image: url("chrome://findbartweak/skin/icon.png");
-	margin: 20px 92px;
-	max-width: 200px;
-	max-height: 200px;
+	margin-top: 20px;
+	margin-bottom: 20px;
 }
 
 .justify {
 	text-align: justify;
 }
 
+/* Bugfix: cropped prefpanes with animateFadeIn, found at https://bugzilla.mozilla.org/show_bug.cgi?id=394793 comment #1 */
+prefpane > .content-box {
+	overflow: -moz-hidden-unscrollable;
+}
+
 .text-link[disabled="true"] {
 	cursor: default;
 	text-decoration: none;
-}
-
-prefpane {
-	max-width: 402px;
 }
 
 .paneSelector radio[pane] label {

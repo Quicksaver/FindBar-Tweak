@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.14';
+moduleAid.VERSION = '1.1.15';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -114,11 +114,23 @@ this.highlightsContentLoaded = function(e) {
 this.highlightsProgressListener = {
 	// Commands a reHighlight if needed, triggered from history navigation as well
 	onLocationChange: function(browser, webProgress, request, location) {
+		// Bugfix: because of the change in bug 253793, the state of the highlight all button will be also be reset when new content through ajax is also loaded.
+		// This isn't a problem in firefox, and it is probably better because new content also doesn't trigger a re-highlight,
+		// but since we do trigger a re-highlight in that case, it's better if we try to keep the button state as well.
+		// I'm using the same conditioning as in the original browser's onLocationChange handler.
+		if(webProgress.isTopLevel) {
+			gFindBar.getElement("highlight").checked = documentHighlighted;
+		}
+		
 		// Frames don't need to trigger this
 		if(webProgress.DOMWindow == browser.contentWindow) {
 			// No need to call if there is nothing to find
 			if(browser == gBrowser.mCurrentBrowser) {
-				if(request && !request.isPending()) {
+				// Bugfix: This used to be (request && !request.isPending()),
+				// I'm not sure why I made it that way before, maybe I saw it in an example somewhere?
+				// But by also reHighlighting when !request, we successfully reHighlight when there is dynamic content loaded (e.g. AJAX)
+				// e.g. "Show more" button in deviantart
+				if(!request || !request.isPending()) {
 					reHighlight(documentHighlighted);
 				}
 			}

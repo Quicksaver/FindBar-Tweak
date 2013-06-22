@@ -42,10 +42,10 @@
 <!ENTITY OptsightsCurrent.label "Show sights on the current search hit">
 <!ENTITY OptsightsHighlights.label "Show sights on all the highlighted hits">
 <!ENTITY OptsightsHighlights.warning "Warning: This can be very resource intensive! Rendering and page scrolling may become slow!">
-<!ENTITY OptsightsStyle.label "Sights Style (click to preview):">
+<!ENTITY OptsightsStyle.label "Sights Style (click to preview)">
 <!ENTITY OptsightsStyle.focus "Focus Location">
 <!ENTITY OptsightsStyle.circle "Circle Location">
-<!ENTITY OptsightsRepeat.label "Animation repetitions">
+<!ENTITY OptsightsRepeat.label "Animation repetitions:">
 <!ENTITY OptsightsColor.label "Sights Color">
 <!ENTITY OptsightsSameColor.label "Use the same color from highlights">
 <!ENTITY OptsightsSameColorCurrent.label "Use the same color from the current hit">

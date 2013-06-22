@@ -1,3 +1,4 @@
+<!ENTITY Optwindow.style "width: 33.5em;">
 <!ENTITY Options.title "FindBar Tweak">
 <!ENTITY OptHighlights.label "強調">
 <!ENTITY OptGeneral.label "一般">
@@ -19,7 +20,7 @@
 <!ENTITY OptsightsCurrent.label "在目前項目上顯示聚焦視點">
 <!ENTITY OptsightsHighlights.label "在所有項目上顯示聚焦視點">
 <!ENTITY OptsightsHighlights.warning "警告: 此功能較耗費資源，可能導致渲染和滾動頁面緩慢！">
-<!ENTITY OptsightsStyle.label "聚焦視點樣式(點擊可預覽):">
+<!ENTITY OptsightsStyle.label "聚焦視點樣式(點擊可預覽)">
 <!ENTITY OptsightsStyle.focus "聚焦位置">
 <!ENTITY OptsightsStyle.circle "圓環位置">
 <!ENTITY OpthideLabels.label "隱藏按鈕文字">
@@ -33,8 +34,6 @@
 <!ENTITY OptFAYT.label "輸入時即時搜尋文字">
 <!ENTITY OptFAYTTimeout.beforeLabel "自動關閉於">
 <!ENTITY OptFAYTTimeout.afterLabel "秒後">
-<!ENTITY OptFAYTmode.quickFind "若未開啟標準搜尋列則使用它">
-<!ENTITY OptFAYTmode.normalFind "總是使用標準搜尋列">
 <!ENTITY OptctrlFCloses.win "Ctrl+F 也用於關閉搜尋列">
 <!ENTITY OptctrlFCloses.mac "Command+F 也用於關閉搜尋列">
 <!ENTITY findbartweakabout.name "FindBar Tweak">

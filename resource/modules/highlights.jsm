@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.15';
+moduleAid.VERSION = '1.1.16';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -103,7 +103,11 @@ this.highlightsContentLoaded = function(e) {
 		}
 		
 		if(doc == contentDocument) {
-			reHighlight(documentHighlighted);
+			// Bugfix: don't do immediately! Pages with lots of frames will trigger this each time a frame is loaded, can slowdown page load
+			timerAid.init('highlightsContentLoaded', function() {
+				if(doc == contentDocument) { reHighlight(documentHighlighted); }
+				else { setAttribute(doc.documentElement, 'reHighlight', 'true'); }
+			}, 1000);
 		} else {
 			setAttribute(doc.documentElement, 'reHighlight', 'true');
 		}

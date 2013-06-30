@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.0';
+moduleAid.VERSION = '1.2.0';
 moduleAid.LAZY = true;
 
 // dependsOn - object that adds a dependson attribute functionality to xul preference elements.
@@ -143,14 +143,63 @@ this.initScales = function() {
 	}
 };
 
+this.sizeProperly = function() {
+	// If there's only one pane, this shouldn't be needed
+	if(document.documentElement.preferencePanes.length <= 1) { return; }
+	
+	if(document.documentElement._shouldAnimate) {
+		// Bugfix: opening preferences with lastSelected as any other than the first would incorrectly set the height of the window to the height of the first pane (general),
+		// leaving extra empty space in the bottom.
+		// Bugfix: if the first pane isn't the biggest, it will incorrectly set its height to be larger than it should as well (for some reason...)
+		var paneDeckContainer = document.getAnonymousElementByAttribute(document.documentElement, 'class', 'paneDeckContainer');
+		var contentBox = document.getAnonymousElementByAttribute(document.documentElement.currentPane, 'class', 'content-box');
+		var paneStyle = window.getComputedStyle(document.documentElement.currentPane);
+		var paneHeight = contentBox.clientHeight + parseInt(paneStyle.getPropertyValue('padding-top')) + parseInt(paneStyle.getPropertyValue('padding-bottom'));
+		if(paneDeckContainer.clientHeight != paneHeight) {
+			window.resizeBy(0, paneHeight - paneDeckContainer.clientHeight);
+		}
+	}
+	else {
+		// Bugfix: I really hate panes sometimes... I think this is because the first pane isn't the biggest as well...
+		// When opening the dialog with a pane other than the first, it would be shorter than it should, taking the height of the first pane.
+		var largestPane = document.documentElement.preferencePanes[0];
+		var contentBox = document.getAnonymousElementByAttribute(document.documentElement.preferencePanes[0], 'class', 'content-box');
+		for(var i=1; i<document.documentElement.preferencePanes.length; i++) {
+			var nextBox = document.getAnonymousElementByAttribute(document.documentElement.preferencePanes[i], 'class', 'content-box');
+			if(nextBox.clientHeight > contentBox.clientHeight) {
+				largestPane = document.documentElement.preferencePanes[i];
+				contentBox = nextBox;
+			}
+		}
+		
+		var paneDeckContainer = document.getAnonymousElementByAttribute(document.documentElement, 'class', 'paneDeckContainer');
+		var paneStyle = window.getComputedStyle(largestPane);
+		var paneHeight = contentBox.clientHeight + parseInt(paneStyle.getPropertyValue('padding-top')) + parseInt(paneStyle.getPropertyValue('padding-bottom'));
+		if(paneDeckContainer.clientHeight != paneHeight) {
+			window.resizeBy(0, paneHeight - paneDeckContainer.clientHeight);
+		}
+	}
+};
+
 moduleAid.LOADMODULE = function() {
 	dependsOn.updateAll();
 	listenerAid.add(window, "change", dependsOn.changed, false);
 	
 	initScales();
+	
+	window._sizeToContent = window.sizeToContent;
+	window.sizeToContent = function() {
+		window._sizeToContent();
+		sizeProperly();
+	};
+	
+	sizeProperly();
 };
 
 moduleAid.UNLOADMODULE = function() {
+	window.sizeToContent = window._sizeToContent;
+	delete window._sizeToContent;
+	
 	listenerAid.remove(window, "change", dependsOn.changed, false);
 	
 	if(UNLOADED) {

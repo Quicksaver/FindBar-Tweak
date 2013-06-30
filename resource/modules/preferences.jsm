@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.1';
+moduleAid.VERSION = '1.2.2';
 
 this.inPreferences = true;
 this.__defineGetter__('linkedPanel', function() { return window.document; });
@@ -42,15 +42,6 @@ this.resetNativePrefs = function() {
 	$('pref-layoutStopAtPunctuation').value = $('pref-layoutStopAtPunctuation').valueFromPreferences;
 	$('pref-highlightColor').value = $('pref-highlightColor').valueFromPreferences;
 	$('pref-selectColor').value = $('pref-selectColor').valueFromPreferences;
-};
-
-moduleAid.LOADMODULE = function() {
-	// Bugfix: opening preferences with lastSelected as any other than the first would incorrectly set the height of the window to the height of the first pane (general),
-	// leaving extra empty space in the bottom.
-	if(document.documentElement._shouldAnimate && document.documentElement.currentPane != document.documentElement.preferencePanes[0]) {
-		document.documentElement.currentPane.style.opacity = 0.0;
-		document.documentElement.animate(document.documentElement.preferencePanes[0], document.documentElement.currentPane);
-	}
 };
 
 moduleAid.UNLOADMODULE = function() {

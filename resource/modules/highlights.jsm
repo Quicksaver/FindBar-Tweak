@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.16';
+moduleAid.VERSION = '1.1.17';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -63,31 +63,50 @@ this.highlightsOnToggling = function(e) {
 	timerAid.cancel('delayHighlight');
 };
 
+// Called on newly opened tabs, for the bugfix in highlightsTabSelected()
+this.highlightsTabOpened = function(e) {
+	if(e.target != gBrowser.mCurrentTab) {
+		$(e.target.linkedPanel)._neverCurrent = true;
+	}
+};
+
 // Handler for when switching tabs
 this.highlightsTabSelected = function() {
-	var originalValue = gFindBar._findField.value;
+	// Bugfix: it would call highlights on new tabs always, because the tab would have a "rehighlight" attribute (all lowercase) which I can't find out where I'm setting!
+	// This could cause a noticeable slowdown when switching to new tabs for the first time.
+	if(linkedPanel._neverCurrent) {
+		delete linkedPanel._neverCurrent;
+		linkedPanel._statusUI = gFindBar.nsITypeAheadFind.FIND_FOUND; // Simulate an empty search, to clear the find bar when switching to the new tab
+		documentReHighlight = false;
+	}
 	
-	if(linkedPanel._findWord && (documentHighlighted || documentReHighlight)) {
-		gFindBar._findField.value = linkedPanel._findWord;
-		gFindBar._enableFindButtons(gFindBar._findField.value);
-		if(linkedPanel._statusUI != undefined) {
+	// The objective was to aSync only the reHighlight() part, but because the findField value could change in the meantime, that would fail,
+	// so I'm aSync'ing this whole bit.
+	timerAid.init('highlightsTabSelected', function() { 
+		var originalValue = gFindBar._findField.value;
+		
+		if(linkedPanel._findWord && (documentHighlighted || documentReHighlight)) {
+			gFindBar._findField.value = linkedPanel._findWord;
+			gFindBar._enableFindButtons(gFindBar._findField.value);
+			if(linkedPanel._statusUI != undefined) {
+				gFindBar._updateStatusUI(linkedPanel._statusUI);
+			}
+			if(findBarHidden) {
+				documentReHighlight = false;
+			}
+		}
+		
+		if(documentReHighlight) {
+			gFindBar.getElement("highlight").checked = documentHighlighted;
+			reHighlight(documentHighlighted);
+		} else if(linkedPanel._statusUI != undefined && (!linkedPanel._findWord || (!documentHighlighted && !documentReHighlight)) ) {
 			gFindBar._updateStatusUI(linkedPanel._statusUI);
 		}
-		if(findBarHidden) {
-			documentReHighlight = false;
+		
+		if(gFindBar._keepCurrentValue) {
+			gFindBar._findField.value = originalValue;
 		}
-	}
-	
-	if(documentReHighlight) {
-		gFindBar.getElement("highlight").checked = documentHighlighted;
-		reHighlight(documentHighlighted);
-	} else if(linkedPanel._statusUI != undefined && (!linkedPanel._findWord || (!documentHighlighted && !documentReHighlight)) ) {
-		gFindBar._updateStatusUI(linkedPanel._statusUI);
-	}
-	
-	if(gFindBar._keepCurrentValue) {
-		gFindBar._findField.value = originalValue;
-	}
+	}, 0);
 };
 
 // Commands a reHighlight if needed on any tab, triggered from frames as well
@@ -271,6 +290,7 @@ moduleAid.LOADMODULE = function() {
 	if(!viewSource) {
 		listenerAid.add(gFindBar, 'UpdatedStatusFindBar', keepStatusUI);
 		listenerAid.add(gBrowser.tabContainer, "TabSelect", highlightsTabSelected);
+		listenerAid.add(gBrowser.tabContainer, "TabOpen", highlightsTabOpened);
 		listenerAid.add(gBrowser, "DOMContentLoaded", highlightsContentLoaded);
 		gBrowser.addTabsProgressListener(highlightsProgressListener);
 	}
@@ -303,6 +323,7 @@ moduleAid.UNLOADMODULE = function() {
 			var panel = $(gBrowser.mTabs[t].linkedPanel);
 			delete panel._findWord;
 			delete panel._statusUI;
+			delete panel._neverCurrent;
 			
 			if(panel.linkedBrowser && panel.linkedBrowser.contentDocument) {
 				listenerAid.remove(panel.linkedBrowser.contentDocument, 'keyup', escHighlights);
@@ -313,6 +334,7 @@ moduleAid.UNLOADMODULE = function() {
 		
 		listenerAid.remove(gFindBar, 'UpdatedStatusFindBar', keepStatusUI);
 		listenerAid.remove(gBrowser.tabContainer, "TabSelect", highlightsTabSelected);
+		listenerAid.remove(gBrowser.tabContainer, "TabOpen", highlightsTabOpened);
 		listenerAid.remove(gBrowser, "DOMContentLoaded", highlightsContentLoaded);
 		gBrowser.removeTabsProgressListener(highlightsProgressListener);
 	}

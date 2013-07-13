@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.0.1';
+moduleAid.VERSION = '2.1.0';
 moduleAid.LAZY = true;
 
 // setAttribute(obj, attr, val) - helper me that saves me the trouble of checking if the obj exists first everywhere in my scripts; yes I'm that lazy
@@ -35,4 +35,12 @@ this.toggleAttribute = function(obj, attr, condition, trueval, falseval) {
 			obj.setAttribute(attr, falseval);
 		}
 	}
+};
+
+// trueAttribute(obj, attr) - checks whether attribute attr in obj has value "true"
+//	see setAttribute()
+this.trueAttribute = function(obj, attr) {
+	if(!obj || !obj.getAttribute) { return false; }
+	
+	return (obj.getAttribute(attr) == 'true');
 };

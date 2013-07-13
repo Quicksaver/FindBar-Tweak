@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.2.9';
+moduleAid.VERSION = '2.2.11';
 moduleAid.LAZY = true;
 
 // overlayAid - to use overlays in my bootstraped add-ons. The behavior is as similar to what is described in https://developer.mozilla.org/en/XUL_Tutorial/Overlays as I could manage.
@@ -318,7 +318,7 @@ this.overlayAid = {
 						&& allRes[uri][id][attr]
 						&& allRes[uri][id][attr] != '__empty'
 						&& node.nodeName == 'toolbar'
-						&& node.getAttribute('customizable') == 'true'
+						&& trueAttribute(node, 'customizable')
 						&& node.getAttribute('toolboxid')
 						&& aWindow.document.getElementById(node.getAttribute('toolboxid'))
 						&& (this.tracedAction(aWindow, 'appendChild', node) || this.tracedAction(aWindow, 'insertBefore', node))) {
@@ -371,6 +371,11 @@ this.overlayAid = {
 									else { addButton = node.appendChild(addButton); }
 									this.updateOverlayedNodes(aWindow, addButton, updateListButton);
 									continue currentset_loop;
+								}
+								
+								// Bugfix: some buttons, like LastPass toolbar button, force themselves into the default toolbar on startup.
+								if(button) {
+									this.moveAround(aWindow, button, null, node);
 								}
 							}
 						}
@@ -629,6 +634,9 @@ this.overlayAid = {
 									var sibling = action.originalParent.firstChild;
 								}
 								action.node = action.originalParent.insertBefore(action.node, sibling);
+								if(action.originalParent.nodeName == 'toolbar') {
+									setAttribute(action.originalParent, 'currentset', action.originalParent.currentSet);
+								}
 							} else if(action.node.parentNode) {
 								action.node = action.node.parentNode.removeChild(action.node);
 							}
@@ -651,6 +659,9 @@ this.overlayAid = {
 								action.node = action.originalParent.insertBefore(action.node, action.originalParent.childNodes[action.originalPos]);
 							} else {
 								action.node = action.originalParent.appendChild(action.node);
+							}
+							if(action.originalParent.nodeName == 'toolbar') {
+								setAttribute(action.originalParent, 'currentset', action.originalParent.currentSet);
 							}
 						}
 						break;
@@ -982,7 +993,7 @@ this.overlayAid = {
 								// change or remove the button on the toolbar if it is found in the document
 								var existButton = aWindow.document.getElementById(button.id);
 								if(existButton) {
-									if(button.getAttribute('removeelement') == 'true') {
+									if(trueAttribute(button, 'removeelement')) {
 										this.removeButton(aWindow, toolbox[a].palette, existButton);
 										continue buttons_loop;
 									}
@@ -999,7 +1010,7 @@ this.overlayAid = {
 								// change or remove in the palette if it exists there
 								for(var b=0; b<toolbox[a].palette.childNodes.length; b++) {
 									if(toolbox[a].palette.childNodes[b].id == button.id) {
-										if(button.getAttribute('removeelement') == 'true') {
+										if(trueAttribute(button, 'removeelement')) {
 											this.removeButton(aWindow, toolbox[a].palette, toolbox[a].palette.childNodes[b]);
 											continue buttons_loop;
 										}
@@ -1033,7 +1044,7 @@ this.overlayAid = {
 				if(overlayNode.parentNode.nodeName != 'overlay' && node.parentNode.id != overlayNode.parentNode.id) { continue; }
 				
 				// If removeelement attribute is true, remove the element and do nothing else
-				if(overlayNode.getAttribute('removeelement') == 'true') {
+				if(trueAttribute(overlayNode, 'removeelement')) {
 					// Check if we are removing any sidebars so we also remove it from the toolbox
 					this.removeToolbars(aWindow, node);
 					
@@ -1147,6 +1158,8 @@ this.overlayAid = {
 	
 	moveAround: function(aWindow, node, overlayNode, parent) {
 		if(parent.nodeName == 'toolbar' && parent.getAttribute('currentset')) {
+			var ret = null;
+			var originalParent = node.parentNode;
 			var currentset = parent.getAttribute('currentset').split(',');
 			for(var c = 0; c < currentset.length; c++) {
 				if(currentset[c] == node.id) {
@@ -1178,13 +1191,15 @@ this.overlayAid = {
 						}
 					}
 					
-					if(beforeEl) {
-						return this.insertBefore(aWindow, node, parent, beforeEl);
-					} else {
-						return this.appendChild(aWindow, node, parent);
-					}
+					ret = this.insertBefore(aWindow, node, parent, beforeEl);
+					break;
 				}
 			}
+			
+			if(ret && originalParent.nodeName == 'toolbar') {
+				setAttribute(originalParent, 'currentset', originalParent.currentSet);
+			}
+			return ret;
 		}
 		
 		var newParent = null;

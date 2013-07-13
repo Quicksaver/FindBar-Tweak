@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.2';
+moduleAid.VERSION = '1.0.3';
 moduleAid.LAZY = true;
 
 // keysetAid - handles editable keysets for the add-on
@@ -159,7 +159,7 @@ this.keysetAid = {
 		// Grab all key elements in the document
 		var keys = aWindow.document.querySelectorAll('key');
 		for(var k=0; k<keys.length; k++) {
-			if(!keys[k].id || !keys[k].parentNode || keys[k].parentNode.nodeName != 'keyset' || keys[k].getAttribute('disabled') == 'true') { continue; }
+			if(!keys[k].id || !keys[k].parentNode || keys[k].parentNode.nodeName != 'keyset' || trueAttribute(keys[k], 'disabled')) { continue; }
 			
 			var key = {
 				id: keys[k].id,

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.2';
+moduleAid.VERSION = '1.4.3';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -204,7 +204,7 @@ this.forceCornerRedraw = function() {
 };
 
 this.findPersonaPosition = function() {
-	if(mainWindow.getAttribute('lwtheme') != 'true') {
+	if(!trueAttribute(mainWindow, 'lwtheme')) {
 		prefAid.lwthemebgImage = '';
 		prefAid.lwthemebgWidth = 0;
 		prefAid.lwthemecolor = '';
@@ -293,7 +293,7 @@ this.stylePersonaFindBar = function() {
 this.changeLook = function() {
 	// Apply the special style for the findbar in pdf documents
 	if((isPDFJS && !gFindBar.getAttribute('inPDFJS'))
-	|| (!isPDFJS && gFindBar.getAttribute('inPDFJS') == 'true')) {
+	|| (!isPDFJS && trueAttribute(gFindBar, 'inPDFJS'))) {
 		delayMoveTop();
 	}
 };
@@ -305,7 +305,7 @@ this.hideOnChrome = function() {
 	timerAid.init('hideOnChrome', function() {
 		var beforeState = gFindBar.collapsed;
 		hideIt(gFindBar, 
-			$('cmd_find').getAttribute('disabled') != 'true'
+			!trueAttribute($('cmd_find'), 'disabled')
 			// Need to set this separately apparently, the find bar would only hide when switching to this tab after having been loaded, not upon loading the tab
 			&& gBrowser.mCurrentBrowser.currentURI.spec != 'about:config'
 			// No need to show the findbar in Speed Dial's window, it already had a display bug at startup which I already fixed, I'm preventing more bugs this way

@@ -1,16 +1,16 @@
-moduleAid.VERSION = '1.1.17';
+moduleAid.VERSION = '1.1.18';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
 
 this.__defineGetter__('documentHighlighted', function() {
-	return (contentDocument && contentDocument.documentElement && contentDocument.documentElement.getAttribute('highlighted') == 'true');
+	return (contentDocument && trueAttribute(contentDocument.documentElement, 'highlighted'));
 });
 this.__defineSetter__('documentHighlighted', function(v) {
 	if(contentDocument) { toggleAttribute(contentDocument.documentElement, 'highlighted', v); }
 });
 this.__defineGetter__('documentReHighlight', function() {
-	return (contentDocument && contentDocument.documentElement && contentDocument.documentElement.getAttribute('reHighlight') == 'true');
+	return (contentDocument && trueAttribute(contentDocument.documentElement, 'reHighlight'));
 });
 this.__defineSetter__('documentReHighlight', function(v) {
 	if(contentDocument) { toggleAttribute(contentDocument.documentElement, 'reHighlight', v); }

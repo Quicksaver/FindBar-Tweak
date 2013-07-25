@@ -29,6 +29,14 @@
 		-moz-image-region: rect(16px 32px 32px 16px);
 	}
 	
+	findbar[keepButtons] toolbarbutton[hidden].tabbable:not(.findbar-no-find-fast):not(.findbar-find-fast),
+	findbar[keepButtons] spacer {
+		display: -moz-box;
+	}
+	findbar[keepButtons] label[anonid="match-case-status"] {
+		display: none;
+	}
+	
 	findbar[movetotop] {
 		position: fixed;
 		overflow: hidden;

@@ -1,26 +1,10 @@
-moduleAid.VERSION = '1.2.0';
+moduleAid.VERSION = '1.3.0';
 
 this.__defineGetter__('findCSButton', function() { return gFindBar.getElement(objName+'-find-cs-button'); });
 this.__defineGetter__('findCSCheckbox', function() { return gFindBar.getElement('find-case-sensitive'); });
 
 this.doOpenOptions = function() {
 	openOptions();
-};
-
-this.updateButtonsUI = function() {
-	if(prefAid.keepButtons && gFindBar._findMode != gFindBar.FIND_NORMAL) {
-		var nodes = gFindBar.getElement("findbar-container").childNodes;
-		for(var i = 0; i < nodes.length; i++) {
-			if(nodes[i].className.indexOf("findbar-find-fast") != -1 || nodes[i].className.indexOf('findbar-no-find-fast') > -1) { continue; }
-			nodes[i].hidden = false;
-		}
-	}
-};
-
-this.updateCSUI = function() {
-	if(prefAid.keepButtons && gFindBar._findMode != gFindBar.FIND_NORMAL) {
-		gFindBar.getElement("find-case-sensitive").hidden = (gFindBar._typeAheadCaseSensitive != 0 && gFindBar._typeAheadCaseSensitive != 1);
-	}
 };
 
 this.alwaysFindNormal = function(e) {
@@ -196,6 +180,18 @@ this.toggleMoveToRight = function(startup) {
 		true
 	);
 };
+
+this.toggleKeepButtons = function(startup) {
+	initFindBar('toggleKeepButtons',
+		function(bar) {
+			toggleAttribute(bar, 'keepButtons', prefAid.keepButtons);
+		},
+		function(bar) {
+			removeAttribute(bar, 'keepButtons');
+		},
+		true
+	);
+};
 	
 moduleAid.LOADMODULE = function() {
 	// For the case-sensitive button
@@ -222,9 +218,6 @@ moduleAid.LOADMODULE = function() {
 		toggleFindLabel();
 	}
 	
-	listenerAid.add(window, 'UpdatedUIFindBar', updateButtonsUI, false);
-	listenerAid.add(window, 'UpdatedUIFindBar', updateCSUI, false);
-	listenerAid.add(window, 'FoundFindBar', updateCSUI, false);
 	listenerAid.add(window, 'WillOpenFindBar', alwaysFindNormal, true);
 	listenerAid.add(window, 'OpenedFindBar', toggleButtonState);
 	listenerAid.add(window, 'ClosedFindBar', toggleButtonState);
@@ -237,6 +230,7 @@ moduleAid.LOADMODULE = function() {
 	prefAid.listen('hideLabels', toggleLabels);
 	prefAid.listen('movetoTop', toggleMoveToTop);
 	prefAid.listen('movetoRight', toggleMoveToRight);
+	prefAid.listen('keepButtons', toggleKeepButtons);
 	
 	moduleAid.load('resizeTextbox');
 	
@@ -244,6 +238,7 @@ moduleAid.LOADMODULE = function() {
 	toggleLabels();
 	toggleMoveToTop();
 	toggleMoveToRight();
+	toggleKeepButtons();
 };
 
 moduleAid.UNLOADMODULE = function() {
@@ -251,6 +246,7 @@ moduleAid.UNLOADMODULE = function() {
 	prefAid.unlisten('hideLabels', toggleLabels);
 	prefAid.unlisten('movetoTop', toggleMoveToTop);
 	prefAid.unlisten('movetoRight', toggleMoveToRight);
+	prefAid.unlisten('keepButtons', toggleKeepButtons);
 	
 	moduleAid.unload('moveToTop');
 	moduleAid.unload('resizeTextbox');
@@ -258,10 +254,8 @@ moduleAid.UNLOADMODULE = function() {
 	deinitFindBar('toggleClose');
 	deinitFindBar('toggleLabels');
 	deinitFindBar('toggleMoveToRight');
+	deinitFindBar('toggleKeepButtons');
 	
-	listenerAid.remove(window, 'UpdatedUIFindBar', updateButtonsUI, false);
-	listenerAid.remove(window, 'UpdatedUIFindBar', updateCSUI, false);
-	listenerAid.remove(window, 'FoundFindBar', updateCSUI, false);
 	listenerAid.remove(window, 'WillOpenFindBar', alwaysFindNormal, true);
 	listenerAid.remove(window, 'OpenedFindBar', toggleButtonState);
 	listenerAid.remove(window, 'ClosedFindBar', toggleButtonState);

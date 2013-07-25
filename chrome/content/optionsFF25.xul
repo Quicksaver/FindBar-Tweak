@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<!DOCTYPE overlay SYSTEM "chrome://findbartweak/locale/options.dtd">
+<overlay id="ff25_options_overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	<checkbox id="hideFindLabelCheckbox" hidden="true"/>
+	<checkbox id="hideLabels" label="&OpthideLabels.labelFF25;"/>
+	<checkbox id="movetoTopCheckbox" label="&OptmovetoTop.labelFF25;"/>
+</overlay>

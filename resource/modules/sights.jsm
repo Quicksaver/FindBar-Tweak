@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.3';
+moduleAid.VERSION = '1.4.4';
 
 this.__defineGetter__('preferencesDialog', function() { return (typeof(inPreferences) != 'undefined' && inPreferences); });
 
@@ -279,9 +279,6 @@ this.currentSights = function(e) {
 	
 	if(!contentWindow) { return; } // Usually triggered when a selection is on a frame and the frame closes
 	
-	// Make sure the box updates its position and size when closing the find bar
-	if(prefAid.squareLook && prefAid.placeAbove) { sightsResizeViewSource(); }
-	
 	// For pdf in PDF.JS
 	if(isPDFJS) {
 		try {
@@ -417,9 +414,6 @@ this.sightsOnVisibleHighlights = function(aHighlights) {
 		sights._findWord = gFindBar._findField.value;
 	}
 	else if(!sights._highlights || !documentHighlighted || gFindBar._findField.value != sights._findWord) { return; }
-	
-	// Make sure the box updates its position and size when closing the find bar
-	if(prefAid.squareLook && prefAid.placeAbove) { sightsResizeViewSource(); }
 	
 	// Let's make sure the document actually exists
 	try {
@@ -583,15 +577,15 @@ this.preferencesColorListener = function() {
 
 this.toggleSightsCurrent = function() {
 	if(prefAid.sightsCurrent) {
-		listenerAid.add(gFindBar, 'FoundFindBar', currentSights);
-		listenerAid.add(gFindBar, 'FoundAgain', currentSights);
-		listenerAid.add(gFindBar, 'UpdatedStatusFindBar', currentSightsOnUpdateStatus);
-		listenerAid.add(gFindBar, 'SelectedFIThit', delayCurrentSights);
+		listenerAid.add(window, 'FoundFindBar', currentSights);
+		listenerAid.add(window, 'FoundAgain', currentSights);
+		listenerAid.add(window, 'UpdatedStatusFindBar', currentSightsOnUpdateStatus);
+		listenerAid.add(window, 'SelectedFIThit', delayCurrentSights);
 	} else {
-		listenerAid.remove(gFindBar, 'FoundFindBar', currentSights);
-		listenerAid.remove(gFindBar, 'FoundAgain', currentSights);
-		listenerAid.remove(gFindBar, 'UpdatedStatusFindBar', currentSightsOnUpdateStatus);
-		listenerAid.remove(gFindBar, 'SelectedFIThit', delayCurrentSights);
+		listenerAid.remove(window, 'FoundFindBar', currentSights);
+		listenerAid.remove(window, 'FoundAgain', currentSights);
+		listenerAid.remove(window, 'UpdatedStatusFindBar', currentSightsOnUpdateStatus);
+		listenerAid.remove(window, 'SelectedFIThit', delayCurrentSights);
 	}
 	
 	observerAid.notify('ReHighlightAll');
@@ -600,12 +594,12 @@ this.toggleSightsCurrent = function() {
 this.toggleSightsHighlights = function() {
 	if(prefAid.sightsHighlights) {
 		listenerAid.add(browserPanel, 'scroll', sightsOnScroll, true);
-		listenerAid.add(gFindBar, 'UpdatedStatusFindBar', allSightsOnUpdateStatus);
-		listenerAid.add(gFindBar, 'UpdatedPDFMatches', allSightsOnUpdateStatus);
+		listenerAid.add(window, 'UpdatedStatusFindBar', allSightsOnUpdateStatus);
+		listenerAid.add(window, 'UpdatedPDFMatches', allSightsOnUpdateStatus);
 	} else {
 		listenerAid.remove(browserPanel, 'scroll', sightsOnScroll, true);
-		listenerAid.remove(gFindBar, 'UpdatedStatusFindBar', allSightsOnUpdateStatus);
-		listenerAid.remove(gFindBar, 'UpdatedPDFMatches', allSightsOnUpdateStatus);
+		listenerAid.remove(window, 'UpdatedStatusFindBar', allSightsOnUpdateStatus);
+		listenerAid.remove(window, 'UpdatedPDFMatches', allSightsOnUpdateStatus);
 	}
 	
 	observerAid.notify('ReHighlightAll');
@@ -648,12 +642,11 @@ moduleAid.UNLOADMODULE = function() {
 		return;
 	}
 	
-	listenerAid.remove(gFindBar, 'FoundFindBar', currentSights);
-	listenerAid.remove(gFindBar, 'FoundAgain', currentSights);
-	listenerAid.remove(gFindBar, 'UpdatedStatusFindBar', currentSightsOnUpdateStatus);
-	listenerAid.remove(gFindBar, 'UpdatedStatusFindBar', allSightsOnUpdateStatus);
-	listenerAid.remove(gFindBar, 'UpdatedPDFMatches', allSightsOnUpdateStatus);
-	listenerAid.remove(gFindBar, 'SelectedFIThit', currentSights);
+	listenerAid.remove(window, 'FoundFindBar', currentSights);
+	listenerAid.remove(window, 'FoundAgain', currentSights);
+	listenerAid.remove(window, 'UpdatedStatusFindBar', currentSightsOnUpdateStatus);
+	listenerAid.remove(window, 'UpdatedStatusFindBar', allSightsOnUpdateStatus);
+	listenerAid.remove(window, 'UpdatedPDFMatches', allSightsOnUpdateStatus);
 	listenerAid.remove(browserPanel, 'scroll', sightsOnScroll);
 	
 	if(!viewSource) {

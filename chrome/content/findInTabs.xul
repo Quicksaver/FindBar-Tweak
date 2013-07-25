@@ -22,11 +22,6 @@
 	</window>
 	
 	<vbox id="browser-bottombox">
-		<resizer id="objName-findInTabs-resizer"
-			insertbefore="FindToolbar"
-			hidden="true"
-			dir="top"
-			element="objName-findInTabs-box"/>
 		<hbox id="objName-findInTabs-box"
 			insertafter="FindToolbar"
 			hidden="true"

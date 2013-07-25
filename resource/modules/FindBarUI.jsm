@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.11';
+moduleAid.VERSION = '1.2.0';
 
 this.__defineGetter__('findCSButton', function() { return gFindBar.getElement(objName+'-find-cs-button'); });
 this.__defineGetter__('findCSCheckbox', function() { return gFindBar.getElement('find-case-sensitive'); });
@@ -83,8 +83,8 @@ this.alwaysFindNormal = function(e) {
 	}
 };
 
-this.triggerUIChange = function() {
-	dispatch(gFindBar, { type: 'FindBarUIChanged', cancelable: false });
+this.triggerUIChange = function(bar) {
+	dispatch(bar, { type: 'FindBarUIChanged', cancelable: false });
 };
 
 // Handler for Ctrl+F, it closes the findbar if it is already opened
@@ -122,27 +122,59 @@ this.toggleButtonState = function(e) {
 	toggleAttribute($(objName+'-button'), 'checked', (e.type == 'OpenedFindBar'));
 };
 
+// Only used in FF25
+this.tabSelectToggleButtonState = function() {
+	toggleAttribute($(objName+'-button'), 'checked', (gFindBarInitialized && !findBarHidden));
+};
+
 this.toggleClose = function() {
-	toggleAttribute(gFindBar, 'noClose', prefAid.hideClose);
-	triggerUIChange();
+	initFindBar('toggleClose',
+		function(bar) {
+			toggleAttribute(bar, 'noClose', prefAid.hideClose);
+			triggerUIChange(bar);
+		},
+		function(bar) {
+			removeAttribute(bar, 'noClose');
+		},
+		true
+	);
 };
 
 this.toggleLabels = function() {
-	if(prefAid.hideLabels && !findCSButton) {
-		var button = document.createElement('toolbarbutton');
-		button.setAttribute('anonid', objName+'-find-cs-button');
-		button.setAttribute('class', 'findbar-highlight findbar-cs-button tabbable');
-		button.setAttribute('tooltiptext', findCSCheckbox.getAttribute('label'));
-		toggleAttribute(button, 'checked', prefAid.casesensitive);
-		gFindBar.getElement("findbar-container").insertBefore(button, findCSCheckbox);
-		listenerAid.add(findCSButton, 'command', csButtonCommand, true);
-	} else if(!prefAid.hideLabels && findCSButton) {
-		listenerAid.remove(findCSButton, 'command', csButtonCommand, true);
-		findCSButton.parentNode.removeChild(findCSButton);
-	}
-	
-	toggleAttribute(gFindBar, 'hideLabels', prefAid.hideLabels);
-	triggerUIChange();
+	initFindBar('toggleLabels',
+		function(bar) {
+			if(!perTabFB) {
+				var csButton = bar.getElement(objName+'-find-cs-button');
+				if(prefAid.hideLabels && !csButton) {
+					var button = document.createElement('toolbarbutton');
+					button.setAttribute('anonid', objName+'-find-cs-button');
+					button.setAttribute('class', 'findbar-highlight findbar-cs-button tabbable');
+					button.setAttribute('tooltiptext', bar.getElement('find-case-sensitive').getAttribute('label'));
+					toggleAttribute(button, 'checked', prefAid.casesensitive);
+					csButton = bar.getElement("findbar-container").insertBefore(button, bar.getElement('find-case-sensitive'));
+					listenerAid.add(csButton, 'command', csButtonCommand, true);
+				} else if(!prefAid.hideLabels && csButton) {
+					listenerAid.remove(csButton, 'command', csButtonCommand, true);
+					csButton.parentNode.removeChild(csButton);
+				}
+			}
+			
+			toggleAttribute(bar, 'hideLabels', prefAid.hideLabels);
+			triggerUIChange(bar);
+		},
+		function(bar) {
+			if(!perTabFB) {
+				var csButton = bar.getElement(objName+'-find-cs-button');
+				if(csButton) {
+					listenerAid.remove(csButton, 'command', csButtonCommand, true);
+					csButton.parentNode.removeChild(csButton);
+				}
+			}
+			
+			removeAttribute(bar, 'hideLabels');
+		},
+		true
+	);
 };
 
 this.toggleFindLabel = function() {
@@ -154,7 +186,15 @@ this.toggleMoveToTop = function() {
 };
 
 this.toggleMoveToRight = function(startup) {
-	toggleAttribute(gFindBar, 'movetoright', prefAid.movetoRight);
+	initFindBar('toggleMoveToRight',
+		function(bar) {
+			toggleAttribute(bar, 'movetoright', prefAid.movetoRight);
+		},
+		function(bar) {
+			removeAttribute(bar, 'movetoright');
+		},
+		true
+	);
 };
 	
 moduleAid.LOADMODULE = function() {
@@ -170,20 +210,31 @@ moduleAid.LOADMODULE = function() {
 	}
 	
 	// The dummy function in this call prevents a weird bug where the overlay wouldn't be properly applied when opening a second window... for some reason...
-	overlayAid.overlayURI('chrome://browser/content/browser.xul', 'findbar', function(window) { window.gFindBar; });
+	overlayAid.overlayURI('chrome://browser/content/browser.xul', 'findbar', function(window) { if(!perTabFB) { window.gFindBar; } });
 	overlayAid.overlayURI('chrome://global/content/viewSource.xul', 'findbar');
 	overlayAid.overlayURI('chrome://global/content/viewPartialSource.xul', 'findbar');
 	
-	listenerAid.add(gFindBar, 'UpdatedUIFindBar', updateButtonsUI, false);
-	listenerAid.add(gFindBar, 'UpdatedUIFindBar', updateCSUI, false);
-	listenerAid.add(gFindBar, 'FoundFindBar', updateCSUI, false);
-	listenerAid.add(gFindBar, 'WillOpenFindBar', alwaysFindNormal, true);
-	listenerAid.add(gFindBar, 'OpenedFindBar', toggleButtonState);
-	listenerAid.add(gFindBar, 'ClosedFindBar', toggleButtonState);
+	if(perTabFB) {
+		initFindBar('contextMenu', function(bar) { setAttribute(bar, 'context', objPathString+'_findbarMenu'); }, function(bar) { removeAttribute(bar, 'context'); });
+	}
+	else {
+		prefAid.listen('hideFindLabel', toggleFindLabel);
+		toggleFindLabel();
+	}
+	
+	listenerAid.add(window, 'UpdatedUIFindBar', updateButtonsUI, false);
+	listenerAid.add(window, 'UpdatedUIFindBar', updateCSUI, false);
+	listenerAid.add(window, 'FoundFindBar', updateCSUI, false);
+	listenerAid.add(window, 'WillOpenFindBar', alwaysFindNormal, true);
+	listenerAid.add(window, 'OpenedFindBar', toggleButtonState);
+	listenerAid.add(window, 'ClosedFindBar', toggleButtonState);
+	
+	if(!viewSource && perTabFB) {
+		listenerAid.add(gBrowser.tabContainer, "TabSelect", tabSelectToggleButtonState);
+	}
 	
 	prefAid.listen('hideClose', toggleClose);
 	prefAid.listen('hideLabels', toggleLabels);
-	prefAid.listen('hideFindLabel', toggleFindLabel);
 	prefAid.listen('movetoTop', toggleMoveToTop);
 	prefAid.listen('movetoRight', toggleMoveToRight);
 	
@@ -191,7 +242,6 @@ moduleAid.LOADMODULE = function() {
 	
 	toggleClose();
 	toggleLabels();
-	toggleFindLabel();
 	toggleMoveToTop();
 	toggleMoveToRight();
 };
@@ -199,29 +249,33 @@ moduleAid.LOADMODULE = function() {
 moduleAid.UNLOADMODULE = function() {
 	prefAid.unlisten('hideClose', toggleClose);
 	prefAid.unlisten('hideLabels', toggleLabels);
-	prefAid.unlisten('hideFindLabel', toggleFindLabel);
 	prefAid.unlisten('movetoTop', toggleMoveToTop);
 	prefAid.unlisten('movetoRight', toggleMoveToRight);
 	
 	moduleAid.unload('moveToTop');
 	moduleAid.unload('resizeTextbox');
 	
-	removeAttribute(gFindBar, 'noClose');
-	removeAttribute(gFindBar, 'hideLabels');
-	removeAttribute(gFindBar, 'hideFindLabel');
-	removeAttribute(gFindBar, 'movetoright');
+	deinitFindBar('toggleClose');
+	deinitFindBar('toggleLabels');
+	deinitFindBar('toggleMoveToRight');
 	
-	if(findCSButton) {
-		listenerAid.remove(findCSButton, 'command', csButtonCommand, true);
-		findCSButton.parentNode.removeChild(findCSButton);
+	listenerAid.remove(window, 'UpdatedUIFindBar', updateButtonsUI, false);
+	listenerAid.remove(window, 'UpdatedUIFindBar', updateCSUI, false);
+	listenerAid.remove(window, 'FoundFindBar', updateCSUI, false);
+	listenerAid.remove(window, 'WillOpenFindBar', alwaysFindNormal, true);
+	listenerAid.remove(window, 'OpenedFindBar', toggleButtonState);
+	listenerAid.remove(window, 'ClosedFindBar', toggleButtonState);
+	
+	if(perTabFB) {
+		if(!viewSource) {
+			listenerAid.remove(gBrowser.tabContainer, "TabSelect", tabSelectToggleButtonState);
+		}
+		deinitFindBar('contextMenu');
 	}
-	
-	listenerAid.remove(gFindBar, 'UpdatedUIFindBar', updateButtonsUI, false);
-	listenerAid.remove(gFindBar, 'UpdatedUIFindBar', updateCSUI, false);
-	listenerAid.remove(gFindBar, 'FoundFindBar', updateCSUI, false);
-	listenerAid.remove(gFindBar, 'WillOpenFindBar', alwaysFindNormal, true);
-	listenerAid.remove(gFindBar, 'OpenedFindBar', toggleButtonState);
-	listenerAid.remove(gFindBar, 'ClosedFindBar', toggleButtonState);
+	else {
+		prefAid.unlisten('hideFindLabel', toggleFindLabel);
+		removeAttribute(gFindBar, 'hideFindLabel');
+	}
 	
 	if(UNLOADED) {
 		overlayAid.removeOverlayURI('chrome://browser/content/browser.xul', 'findbar');

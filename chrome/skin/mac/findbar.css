@@ -5,43 +5,43 @@
 	url("chrome://global/content/viewPartialSource.xul") {
 
 	/* Rounded inner corners */
-	#FindToolbar[movetotop]:before {
+	findbar[movetotop]:before {
 		-moz-margin-start: -18px;
 	}
-	#FindToolbar[movetotop]:after {
+	findbar[movetotop]:after {
 		-moz-margin-start: 2px;
 	}
-	#FindToolbar[movetotop]:before,
-	#FindToolbar[movetotop]:after {
+	findbar[movetotop]:before,
+	findbar[movetotop]:after {
 		margin-top: -4px;
 	}
-	#FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
-	#FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
+	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
+	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
 		box-shadow:	2px -2px 0 -2px rgba(0,0,0,0.57),
 				7px -4px 0px -4px -moz-mac-chrome-active,
 				6px -4px 0px -4px -moz-mac-chrome-active;
 	}
-	#FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
-	#FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
+	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
+	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
 		box-shadow: 	-2px -2px 0 -2px rgba(0,0,0,0.57),
 				-7px -4px 0px -4px -moz-mac-chrome-active,
 				-6px -4px 0px -4px -moz-mac-chrome-active;
 	}
-	#FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):-moz-window-inactive:before,
-	#FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):-moz-window-inactive:after {
+	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):-moz-window-inactive:before,
+	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):-moz-window-inactive:after {
 		box-shadow: 	2px -2px 0 -2px rgba(0,0,0,0.32),
 				7px -4px 0px -4px -moz-mac-chrome-inactive,
 				6px -4px 0px -4px -moz-mac-chrome-inactive;
 	}
-	#FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):-moz-window-inactive:after,
-	#FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):-moz-window-inactive:before {
+	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):-moz-window-inactive:after,
+	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):-moz-window-inactive:before {
 		box-shadow: 	-2px -2px 0 -2px rgba(0,0,0,0.32),
 				-7px -4px 0px -4px -moz-mac-chrome-inactive,
 				-6px -4px 0px -4px -moz-mac-chrome-inactive;
 	}
 	
 	/* Find Bar */
-	#FindToolbar[movetotop]:not([inPDFJS]) {
+	findbar[movetotop]:not([inPDFJS]) {
 		background-color: -moz-mac-chrome-active;
 		border-bottom: 1px solid rgba(0,0,0,0.57);
 		border-right: 1px solid rgba(0,0,0,0.57);
@@ -50,7 +50,7 @@
 		-moz-border-right-colors: rgba(0,0,0,0.57);
 		-moz-border-left-colors: rgba(0,0,0,0.57);
 	}
-	#FindToolbar[movetotop]:not([inPDFJS]):-moz-window-inactive {
+	findbar[movetotop]:not([inPDFJS]):-moz-window-inactive {
 		background-color: -moz-mac-chrome-inactive;
 		border-bottom: 1px solid rgba(0,0,0,0.32);
 		border-right: 1px solid rgba(0,0,0,0.32);
@@ -68,21 +68,36 @@
 	}
 	
 	/* Textbox resizers */
-	#FindToolbar #findbartweak-find-textbox {
+	findbar .findbar-textbox {
 		min-width: 176px;
 	}
 	
-	#FindToolbar .find-textbox-resizer {
+	findbar .find-textbox-resizer {
 		width: 6px;
 	}
 	
-	#FindToolbar resizer[anonid="find-left-resizer"] {
+	window:not([findbartweak-FF25]) findbar resizer[anonid="find-left-resizer"] {
 		-moz-margin-end: -9px;
 		-moz-margin-start: 3px;
 	}
-	#FindToolbar resizer[anonid="find-right-resizer"] {
+	window:not([findbartweak-FF25]) findbar resizer[anonid="find-right-resizer"] {
 		-moz-margin-start: -9px;
 		-moz-margin-end: 3px;
+	}
+	
+	window[findbartweak-FF25] findbar resizer[anonid="find-left-resizer"] {
+		width: 6px;
+		min-width: 6px;
+		max-width: 6px;
+		-moz-margin-end: -4px;
+		-moz-margin-start: -2px;
+	}
+	window[findbartweak-FF25] findbar resizer[anonid="find-right-resizer"] {
+		width: 6px;
+		min-width: 6px;
+		max-width: 6px;
+		-moz-margin-start: -4px;
+		-moz-margin-end: -2px;
 	}
 	
 	/* Grid stuff */
@@ -94,56 +109,67 @@
 		height: 14px;
 	}
 	
-	/* OSX version doesn't have these images, by hiding the labels we are pretty much making the buttons useless, so I'm adding the images back */
-	#FindToolbar[hideLabels] .findbar-find-next image,
-	#FindToolbar[hideLabels] .findbar-find-previous image {
+	/* OSX version doesn't have these images, by hiding the labels we are pretty much making the buttons useless, so I'm adding the images back.
+	Not true anymore in FF25 with the new find bar */
+	window:not([findbartweak-FF25]) findbar[hideLabels] .findbar-find-next image,
+	window:not([findbartweak-FF25]) findbar[hideLabels] .findbar-find-previous image {
 		max-height: 14px;
 		max-width: 14px;
 	}
 	
-	#FindToolbar[hideLabels] .findbar-find-next {
+	window:not([findbartweak-FF25]) findbar[hideLabels] .findbar-find-next {
 		list-style-image: url("chrome://findbartweak-os/skin/find.png");
 		-moz-image-region: rect(0px 16px 16px 0px);
 	}
-	#FindToolbar[hideLabels] .findbar-find-next:hover {
+	window:not([findbartweak-FF25]) findbar[hideLabels] .findbar-find-next:hover {
 		-moz-image-region: rect(16px 16px 32px 0px);
 	}
-	#FindToolbar[hideLabels] .findbar-find-next[disabled="true"] {
+	window:not([findbartweak-FF25]) findbar[hideLabels] .findbar-find-next[disabled="true"] {
 		-moz-image-region: rect(32px 16px 48px 0px) !important;
 	}
 	
-	#FindToolbar[hideLabels] .findbar-find-previous {
+	window:not([findbartweak-FF25]) findbar[hideLabels] .findbar-find-previous {
 		list-style-image: url("chrome://findbartweak-os/skin/find.png");
 		-moz-image-region: rect(0px 32px 16px 16px);
 	}
-	#FindToolbar[hideLabels] .findbar-find-previous:hover {
+	window:not([findbartweak-FF25]) findbar[hideLabels] .findbar-find-previous:hover {
 		-moz-image-region: rect(16px 32px 32px 16px);
 	}
-	#FindToolbar[hideLabels] .findbar-find-previous[disabled="true"] {
+	window:not([findbartweak-FF25]) findbar[hideLabels] .findbar-find-previous[disabled="true"] {
 		-moz-image-region: rect(32px 32px 48px 16px) !important;
 	}
 	
-	.findbar-cs-button:not([checked="true"]) {
+	.findbar-cs-button:not([checked="true"]),
+	window[findbartweak-FF25] findbar[hideLabels] toolbarbutton[anonid="find-case-sensitive"]:not([checked="true"]) {
 		-moz-image-region: rect(16px 16px 32px 0px);
 	}
 	
-	#FindToolbar[hideLabels] toolbarbutton[anonid="highlight"] image {
+	window[findbartweak-FF25] findbar[hideLabels] toolbarbutton[anonid="highlight"][checked="true"] {
+		-moz-image-region: rect(0px 32px 16px 16px);
+	}
+	
+	findbar[hideLabels] toolbarbutton[anonid="highlight"] image {
 		margin: 3px 0;
 	}
 	
 	/* Find in Tabs */
-	#findbartweak-findInTabs-box[movetotop] {
+	#findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme) {
 		background-color: -moz-mac-chrome-active;
+	}
+	#findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme):-moz-window-inactive {
+		background-color: -moz-mac-chrome-inactive;
+	}
+	
+	#findbartweak-findInTabs-box[movetotop] {
 		border-bottom: 1px solid rgba(0,0,0,0.57);
 		-moz-border-bottom-colors: rgba(0,0,0,0.57);
 	}
 	#findbartweak-findInTabs-box[movetotop]:-moz-window-inactive {
-		background-color: -moz-mac-chrome-inactive;
 		border-bottom: 1px solid rgba(0,0,0,0.32);
 		-moz-border-bottom-colors: rgba(0,0,0,0.32);
 	}
 	
-	#FindToolbar:not([hideLabels]) toolbarbutton:not(.findbar-closebutton) image {
+	findbar:not([hideLabels]) toolbarbutton:not(.findbar-closebutton) image {
 		margin-top: 0;
 		margin-bottom: 0;
 		-moz-margin-end: 0;

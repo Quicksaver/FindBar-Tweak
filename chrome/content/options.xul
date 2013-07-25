@@ -84,15 +84,15 @@
 		
 		<groupbox align="start">
 			<caption label="&Optdisplay.label;"/>
-			<checkbox label="&OptmovetoTop.label;" preference="pref-movetoTop"/>
+			<checkbox id="movetoTopCheckbox" label="&OptmovetoTop.label;" preference="pref-movetoTop"/>
 			<checkbox label="&OptmovetoRight.label;" preference="pref-movetoRight"/>
 		</groupbox>
 		<groupbox align="start">
 			<caption label="&OptButtonAndLabels.label;"/>
 			<checkbox label="&OptuseCounter.label;" preference="pref-useCounter"/>
 			<checkbox label="&OpthideClose.label;" preference="pref-hideClose"/>
-			<checkbox label="&OpthideLabels.label;" preference="pref-hideLabels"/>
-			<checkbox label="&OpthideFindLabel.label;" preference="pref-hideFindLabel"/>
+			<checkbox id="hideLabels" label="&OpthideLabels.label;" preference="pref-hideLabels"/>
+			<checkbox id="hideFindLabelCheckbox" label="&OpthideFindLabel.label;" preference="pref-hideFindLabel"/>
 		</groupbox>
 		<groupbox align="center">
 			<caption align="center">

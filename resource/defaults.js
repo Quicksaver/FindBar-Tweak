@@ -1,4 +1,4 @@
-var defaultsVersion = '1.1.0';
+var defaultsVersion = '1.1.1';
 var objName = 'findbartweak';
 var objPathString = 'findbartweak';
 
@@ -43,7 +43,7 @@ var prefList = {
 	sightsAllSameColor: true,
 	
 	blurCloses: false,
-	perTab: false,
+	perTab: (Services.vc.compare(Services.appinfo.platformVersion, "25.0a1") >= 0),
 	onStartup: false,
 	findbarHidden: true,
 	
@@ -60,10 +60,6 @@ var prefList = {
 	fillTextShowFindBar: true,
 	layoutEatSpaces: defaultBranch.getBoolPref('layout.word_select.eat_space_to_next_word'),
 	layoutStopAtPunctuation: defaultBranch.getBoolPref('layout.word_select.stop_at_punctuation'),
-	
-	/* hidden settings for now, mechanism isn't good enough yet */
-	squareLook: false,
-	placeAbove: false,
 	
 	ctrlFCloses: true,
 	ctrlFClosesOnValue: true,
@@ -82,6 +78,8 @@ var prefList = {
 	lwthemecolor: '',
 	lwthemebgColor: ''
 };
+
+var perTabFB = false;
 
 function startAddon(window) {
 	prepareObject(window);
@@ -103,6 +101,8 @@ function startConditions(aReason) {
 }
 
 function onStartup(aReason) {
+	if(Services.vc.compare(Services.appinfo.platformVersion, "25.0a1") >= 0) { perTabFB = true; }
+	
 	moduleAid.load('builtinPrefs');
 	moduleAid.load('highlightColor');
 	moduleAid.load('compatibilityFix/sandboxFixes');

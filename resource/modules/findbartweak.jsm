@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.1';
+moduleAid.VERSION = '1.1.2';
 
 this.viewSource = false;
 
@@ -11,7 +11,11 @@ this.toggleBlurCloses = function() {
 };
 
 this.togglePerTab = function() {
-	moduleAid.loadIf('perTab', !viewSource && prefAid.perTab && !prefAid.blurCloses);
+	if(!perTabFB) {
+		moduleAid.loadIf('perTab', !viewSource && prefAid.perTab && !prefAid.blurCloses);
+	} else {
+		moduleAid.loadIf('globalFB', !viewSource && !prefAid.perTab && !prefAid.blurCloses);
+	}
 };
 
 this.toggleRememberStartup = function() {
@@ -24,6 +28,7 @@ this.toggleFindInTabs = function() {
 
 moduleAid.LOADMODULE = function() {
 	if(document.documentElement.getAttribute('windowtype') == 'navigator:view-source') { viewSource = $('viewSource'); }
+	toggleAttribute(document.documentElement, objName+'-FF25', perTabFB);
 	
 	moduleAid.load('initFindbar');
 	moduleAid.load('FindBarUI');
@@ -50,6 +55,7 @@ moduleAid.UNLOADMODULE = function() {
 	moduleAid.unload('rememberStartup');
 	moduleAid.unload('findInTabs');
 	moduleAid.unload('perTab');
+	moduleAid.unload('globalFB');
 	moduleAid.unload('blurCloses');
 	moduleAid.unload('ctrlF');
 	
@@ -66,4 +72,6 @@ moduleAid.UNLOADMODULE = function() {
 	moduleAid.unload('highlights');
 	moduleAid.unload('FindBarUI');
 	moduleAid.unload('initFindbar');
+	
+	removeAttribute(document.documentElement, objName+'-FF25');
 };

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.18';
+moduleAid.VERSION = '1.2.0';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -34,9 +34,12 @@ this.escHighlights = function(e) {
 	}
 };
 
-this.highlightOnClose = function() {
+this.highlightOnClose = function(e) {
 	// Cancel a delayed highlight when closing the find bar
 	timerAid.cancel('delayHighlight');
+	
+	// If we're closing another findbar, do nothing else
+	if(e.type == 'ClosedFindBarAnotherTab') { return; }
 	
 	// To remove the grid and the esc key listener if there are no highlights
 	if(documentHighlighted && (!gFindBar._findField.value || linkedPanel._notFoundHighlights)) {
@@ -47,7 +50,7 @@ this.highlightOnClose = function() {
 this.highlightsOnToggling = function(e) {
 	var aHighlight = e.detail;
 	// Remove highlights when hitting Esc
-	if(aHighlight) { // this is aHighlight
+	if(aHighlight) {
 		listenerAid.add(contentDocument, 'keyup', escHighlights);
 	} else {
 		listenerAid.remove(contentDocument, 'keyup', escHighlights);
@@ -71,10 +74,10 @@ this.highlightsTabOpened = function(e) {
 };
 
 // Handler for when switching tabs
-this.highlightsTabSelected = function() {
+this.highlightsTabSelected = function(e) {
 	// Bugfix: it would call highlights on new tabs always, because the tab would have a "rehighlight" attribute (all lowercase) which I can't find out where I'm setting!
 	// This could cause a noticeable slowdown when switching to new tabs for the first time.
-	if(linkedPanel._neverCurrent) {
+	if(!perTabFB && linkedPanel._neverCurrent) {
 		delete linkedPanel._neverCurrent;
 		linkedPanel._statusUI = gFindBar.nsITypeAheadFind.FIND_FOUND; // Simulate an empty search, to clear the find bar when switching to the new tab
 		documentReHighlight = false;
@@ -82,7 +85,28 @@ this.highlightsTabSelected = function() {
 	
 	// The objective was to aSync only the reHighlight() part, but because the findField value could change in the meantime, that would fail,
 	// so I'm aSync'ing this whole bit.
-	timerAid.init('highlightsTabSelected', function() { 
+	timerAid.init('highlightsTabSelected', function() {
+		if(perTabFB) {
+			if(!gFindBarInitialized || findBarHidden) {
+				documentReHighlight = false;
+			}
+			
+			if(documentReHighlight) {
+				var originalValue = null;
+				if(gFindBar._keepCurrentValue && linkedPanel._findWord != gFindBar._findField.value) {
+					originalValue = gFindBar._findField.value;
+					gFindBar._findField.value = linkedPanel._findWord;
+				}
+				
+				reHighlight(documentHighlighted);
+				
+				if(originalValue) {
+					gFindBar._findField.value = originalValue;
+				}
+			}
+			return;
+		}
+		
 		var originalValue = gFindBar._findField.value;
 		
 		if(linkedPanel._findWord && (documentHighlighted || documentReHighlight)) {
@@ -141,7 +165,7 @@ this.highlightsProgressListener = {
 		// This isn't a problem in firefox, and it is probably better because new content also doesn't trigger a re-highlight,
 		// but since we do trigger a re-highlight in that case, it's better if we try to keep the button state as well.
 		// I'm using the same conditioning as in the original browser's onLocationChange handler.
-		if(webProgress.isTopLevel) {
+		if(gFindBarInitialized && webProgress.isTopLevel) {
 			gFindBar.getElement("highlight").checked = documentHighlighted;
 		}
 		
@@ -166,7 +190,7 @@ this.highlightsProgressListener = {
 
 // ReDo highlights when hitting FindAgain if necessary (should rarely be triggered actually)
 this.highlightsFindAgain = function() {
-	if(documentReHighlight) {
+	if(documentReHighlight && (!perTabFB || viewSource || gFindBarInitialized)) {
 		reHighlight(documentHighlighted);
 	}
 };
@@ -204,24 +228,9 @@ this.highlightOnFindAgain = function(e) {
 	gFindBar._setHighlightTimeout();
 };
 
-this.toggleHighlightByDefault = function() {
-	moduleAid.loadIf('highlightByDefault', prefAid.highlightByDefault);
-};
-
-this.toggleHideOnClose = function() {
-	moduleAid.loadIf('hideOnClose', prefAid.hideWhenFinderHidden);
-};
-
-this.toggleFillSelectedText = function() {
-	moduleAid.loadIf('fillSelectedText', prefAid.fillSelectedText);
-};
-
-moduleAid.LOADMODULE = function() {
-	this.backups = {
-		_setHighlightTimeout: gFindBar._setHighlightTimeout
-	};
-	
-	gFindBar._setHighlightTimeout = function() {
+this.highlightsInit = function(bar) {
+	bar.__setHighlightTimeout = bar._setHighlightTimeout;
+	bar._setHighlightTimeout = function() {
 		// We want this to be updated regardless of what happens
 		linkedPanel._findWord = this._findField.value;
 		
@@ -257,42 +266,75 @@ moduleAid.LOADMODULE = function() {
 		}, delay);
 	};
 	
-	gFindBar._toggleHighlight = gFindBar.toggleHighlight;
-	gFindBar.toggleHighlight = function(aHighlight) {
+	bar._toggleHighlight = bar.toggleHighlight;
+	bar.toggleHighlight = function(aHighlight) {
 		// Bugfix: with PDF.JS find would not work because it would hang when checking for PDFView.pdfDocument.numPages when PDFView.pdfDocument was still null.
 		if(isPDFJS && contentDocument.readyState != 'complete') {
 			return;
 		}
 		
-		if(dispatch(gFindBar, { type: 'WillToggleHighlight', detail: aHighlight })) {
+		var suffix = (perTabFB && !viewSource && this.linkedPanel != gBrowser.mCurrentTab.linkedPanel) ? 'AnotherTab' : '';
+		
+		if(dispatch(this, { type: 'WillToggleHighlight'+suffix, detail: aHighlight })) {
 			this._toggleHighlight(aHighlight);
-			dispatch(this, { type: 'ToggledHighlight', detail: aHighlight, cancelable: false });
+			dispatch(this, { type: 'ToggledHighlight'+suffix, detail: aHighlight, cancelable: false });
 		}
 	};
 	
-	gFindBar.__findAgain = gFindBar._findAgain;
-	gFindBar._findAgain = function(aFindPrevious) {
-		if(dispatch(this, { type: 'WillFindAgain', detail: { aFindPrevious: aFindPrevious } })) {
+	bar.__findAgain = bar._findAgain;
+	bar._findAgain = function(aFindPrevious) {
+		var suffix = (perTabFB && !viewSource && this.linkedPanel != gBrowser.mCurrentTab.linkedPanel) ? 'AnotherTab' : '';
+		
+		if(dispatch(this, { type: 'WillFindAgain'+suffix, detail: { aFindPrevious: aFindPrevious } })) {
 			var ret = this.__findAgain(aFindPrevious);
-			dispatch(this, { type: 'FoundAgain', cancelable: false, detail: { aFindPrevious: aFindPrevious, retValue: ret } });
+			dispatch(this, { type: 'FoundAgain'+suffix, cancelable: false, detail: { aFindPrevious: aFindPrevious, retValue: ret } });
 			return ret;
 		}
 		return null;
 	};
+};
+
+this.highlightsDeinit = function(bar) {
+	bar._setHighlightTimeout = bar.__setHighlightTimeout;
+	bar.toggleHighlight = bar._toggleHighlight;
+	bar._findAgain = bar.__findAgain;
+	delete bar.__setHighlightTimeout;
+	delete bar.__findAgain;
+	delete bar._toggleHighlight;
+};
+
+this.toggleHighlightByDefault = function() {
+	moduleAid.loadIf('highlightByDefault', prefAid.highlightByDefault);
+};
+
+this.toggleHideOnClose = function() {
+	moduleAid.loadIf('hideOnClose', prefAid.hideWhenFinderHidden);
+};
+
+this.toggleFillSelectedText = function() {
+	moduleAid.loadIf('fillSelectedText', prefAid.fillSelectedText);
+};
+
+moduleAid.LOADMODULE = function() {
+	initFindBar('highlights', highlightsInit, highlightsDeinit);
 	
-	listenerAid.add(gFindBar, 'WillUpdateStatusFindBar', emptyNoFindUpdating);
-	listenerAid.add(gFindBar, 'ClosedFindBar', highlightOnClose);
-	listenerAid.add(gFindBar, 'WillToggleHighlight', highlightsOnToggling);
-	listenerAid.add(gFindBar, 'WillFindAgain', highlightsFindAgain);
-	listenerAid.add(gFindBar, 'FoundAgain', highlightOnFindAgain);
+	listenerAid.add(window, 'WillUpdateStatusFindBar', emptyNoFindUpdating);
+	listenerAid.add(window, 'ClosedFindBar', highlightOnClose);
+	listenerAid.add(window, 'ClosedFindBarAnotherTab', highlightOnClose);
+	listenerAid.add(window, 'WillToggleHighlight', highlightsOnToggling);
+	listenerAid.add(window, 'WillFindAgain', highlightsFindAgain);
+	listenerAid.add(window, 'FoundAgain', highlightOnFindAgain);
 	observerAid.add(reHighlightAll, 'ReHighlightAll');
 	
 	if(!viewSource) {
-		listenerAid.add(gFindBar, 'UpdatedStatusFindBar', keepStatusUI);
+		listenerAid.add(window, 'UpdatedStatusFindBar', keepStatusUI);
 		listenerAid.add(gBrowser.tabContainer, "TabSelect", highlightsTabSelected);
-		listenerAid.add(gBrowser.tabContainer, "TabOpen", highlightsTabOpened);
 		listenerAid.add(gBrowser, "DOMContentLoaded", highlightsContentLoaded);
 		gBrowser.addTabsProgressListener(highlightsProgressListener);
+		
+		if(!perTabFB) {
+			listenerAid.add(gBrowser.tabContainer, "TabOpen", highlightsTabOpened);
+		}
 	}
 	
 	moduleAid.load('highlightDoc');
@@ -332,7 +374,7 @@ moduleAid.UNLOADMODULE = function() {
 			}
 		}
 		
-		listenerAid.remove(gFindBar, 'UpdatedStatusFindBar', keepStatusUI);
+		listenerAid.remove(window, 'UpdatedStatusFindBar', keepStatusUI);
 		listenerAid.remove(gBrowser.tabContainer, "TabSelect", highlightsTabSelected);
 		listenerAid.remove(gBrowser.tabContainer, "TabOpen", highlightsTabOpened);
 		listenerAid.remove(gBrowser, "DOMContentLoaded", highlightsContentLoaded);
@@ -347,19 +389,12 @@ moduleAid.UNLOADMODULE = function() {
 	}
 	
 	observerAid.remove(reHighlightAll, 'ReHighlightAll');
-	listenerAid.remove(gFindBar, 'WillUpdateStatusFindBar', emptyNoFindUpdating);
-	listenerAid.remove(gFindBar, 'ClosedFindBar', highlightOnClose);
-	listenerAid.remove(gFindBar, 'WillToggleHighlight', highlightsOnToggling);
-	listenerAid.remove(gFindBar, 'WillFindAgain', highlightsFindAgain);
-	listenerAid.remove(gFindBar, 'FoundAgain', highlightOnFindAgain);
+	listenerAid.remove(window, 'WillUpdateStatusFindBar', emptyNoFindUpdating);
+	listenerAid.remove(window, 'ClosedFindBar', highlightOnClose);
+	listenerAid.remove(window, 'ClosedFindBarAnotherTab', highlightOnClose);
+	listenerAid.remove(window, 'WillToggleHighlight', highlightsOnToggling);
+	listenerAid.remove(window, 'WillFindAgain', highlightsFindAgain);
+	listenerAid.remove(window, 'FoundAgain', highlightOnFindAgain);
 	
-	if(this.backups) {
-		gFindBar._setHighlightTimeout = this.backups._setHighlightTimeout;
-		delete this.backups;
-	}
-	
-	gFindBar.toggleHighlight = gFindBar._toggleHighlight;
-	gFindBar._findAgain = gFindBar.__findAgain;
-	delete gFindBar.__findAgain;
-	delete gFindBar._toggleHighlight;
+	deinitFindBar('highlights');
 };

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.2';
+moduleAid.VERSION = '1.1.0';
 
 this.blurClosesAdd = function() {
 	listenerAid.add(window, 'focus', delayBlurCloses, true);
@@ -20,29 +20,50 @@ this.blurCloses = function(e) {
 	}
 };
 
-this.blurClosesTabSelect = function() {
-	gFindBar.close();
+this.blurClosesTabSelect = function(e) {
+	if(e.type == 'TabSelect') {
+		gFindBar.close();
+	} else if(currentTab && currentTab._findBar) {
+		currentTab._findBar.close();
+	}
 };
 
 moduleAid.LOADMODULE = function() {
-	if(!gFindBar.hidden) {
-		gFindBar.close();
+	if(!perTabFB) {
+		if(!gFindBar.hidden) {
+			gFindBar.close();
+		}
+	} else if(!viewSource) {
+		for(var t=0; t<gBrowser.mTabs.length; t++) {
+			var tab = gBrowser.mTabs[t];
+			if(tab._findBar && !tab._findBar.hidden) {
+				tab._findBar.close();
+			}
+		}
 	}
 	
-	listenerAid.add(gFindBar, 'OpenedFindBar', blurClosesAdd);
-	listenerAid.add(gFindBar, 'ClosedFindBar', blurClosesRemove);
+	listenerAid.add(window, 'OpenedFindBar', blurClosesAdd);
+	listenerAid.add(window, 'ClosedFindBar', blurClosesRemove);
+	listenerAid.add(window, 'ClosedFindBarAnotherTab', blurClosesRemove);
 	
 	if(!viewSource) {
-		listenerAid.add(gBrowser.tabContainer, "TabSelect", blurClosesTabSelect);
+		if(!perTabFB) {
+			listenerAid.add(gBrowser.tabContainer, "TabSelect", blurClosesTabSelect);
+		} else {
+			listenerAid.add(gBrowser.tabContainer, "TabSelectPrevious", blurClosesTabSelect);
+		}
 	}
 };
 
 moduleAid.UNLOADMODULE = function() {
-	listenerAid.remove(gFindBar, 'OpenedFindBar', blurClosesAdd);
-	listenerAid.remove(gFindBar, 'ClosedFindBar', blurClosesRemove);
+	listenerAid.remove(window, 'OpenedFindBar', blurClosesAdd);
+	listenerAid.remove(window, 'ClosedFindBar', blurClosesRemove);
+	listenerAid.remove(window, 'ClosedFindBarAnotherTab', blurClosesRemove);
+	
 	blurClosesRemove();
 	
 	if(!viewSource) {
 		listenerAid.remove(gBrowser.tabContainer, "TabSelect", blurClosesTabSelect);
+		listenerAid.remove(gBrowser.tabContainer, "TabSelectPrevious", blurClosesTabSelect);
 	}
 };

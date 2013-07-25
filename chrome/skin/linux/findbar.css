@@ -5,24 +5,24 @@
 	url("chrome://global/content/viewPartialSource.xul") {
 
 	/* Rounded inner corners */
-	#FindToolbar[movetotop]:before {
+	findbar[movetotop]:before {
 		-moz-margin-start: -16px;
 	}
-	#FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
-	#FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
+	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
+	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
 		box-shadow: 	2px -2px 0 -2px rgb(178,174,170),
 		                7px -4px 0px -4px -moz-dialog,
 		                6px -4px 0px -4px -moz-dialog;
 	}
-	#FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
-	#FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
+	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
+	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
 		box-shadow: 	-2px -2px 0 -2px rgb(178,174,170),
 		                -7px -4px 0px -4px -moz-dialog,
 		                -6px -4px 0px -4px -moz-dialog;
 	}
 	
 	/* Find Bar */
-	#FindToolbar[movetotop]:not([inPDFJS]) {
+	findbar[movetotop]:not([inPDFJS]) {
 		background-color: -moz-dialog;
 		border-bottom: 1px solid rgb(0,0,0);
 		border-right: 1px solid rgb(0,0,0);
@@ -32,12 +32,12 @@
 		-moz-border-left-colors: rgb(178,174,170);
 	}
 	
-	#FindToolbar textbox[anonid="findbar-textbox"] {
+	window:not([findbartweak-FF25]) findbar textbox[anonid="findbar-textbox"] {
 		min-height: 28px;
 		max-height: 28px;
 	}
-	#FindToolbar:not([movetotop])[movetoright]:-moz-locale-dir(ltr) toolbarbutton
-	#FindToolbar:not([movetotop]):not([movetoright]):-moz-locale-dir(rtl) toolbarbutton {
+	window:not([findbartweak-FF25]) findbar:not([movetotop])[movetoright]:-moz-locale-dir(ltr) toolbarbutton
+	window:not([findbartweak-FF25]) findbar:not([movetotop]):not([movetoright]):-moz-locale-dir(rtl) toolbarbutton {
 		max-height: 28px;
 	}
 	
@@ -48,21 +48,34 @@
 	#addon-bar #findbartweak-button image { height: 16px; }
 	
 	/* Textbox resizers */
-	#FindToolbar #findbartweak-find-textbox {
+	window:not([findbartweak-FF25]) findbar .findbar-textbox {
 		min-width: 180px;
 	}
 	
-	#FindToolbar .find-textbox-resizer {
+	window[findbartweak-FF25] findbar .findbar-textbox {
+		min-width: 14em;
+	}
+	
+	findbar .find-textbox-resizer {
 		width: 4px;
 	}
 	
-	#FindToolbar resizer[anonid="find-left-resizer"] {
+	window:not([findbartweak-FF25]) findbar resizer[anonid="find-left-resizer"] {
 		-moz-margin-end: -7px;
 		-moz-margin-start: 3px;
 	}
-	#FindToolbar resizer[anonid="find-right-resizer"] {
+	window:not([findbartweak-FF25]) findbar resizer[anonid="find-right-resizer"] {
 		-moz-margin-start: -7px;
 		-moz-margin-end: 3px;
+	}
+	
+	window[findbartweak-FF25] findbar resizer[anonid="find-left-resizer"] {
+		-moz-margin-end: -3px;
+		-moz-margin-start: -1px;
+	}
+	window[findbartweak-FF25] findbar resizer[anonid="find-right-resizer"] {
+		-moz-margin-start: -3px;
+		-moz-margin-end: -1px;
 	}
 	
 	/* Grid stuff */
@@ -75,8 +88,11 @@
 	}
 	
 	/* Find in Tabs */
-	#findbartweak-findInTabs-box[movetotop] {
+	#findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme) {
 		background-color: -moz-dialog;
+	}
+	
+	#findbartweak-findInTabs-box[movetotop] {
 		border-bottom: 1px solid rgb(0,0,0);
 		-moz-border-bottom-colors: rgb(178,174,170);
 	}

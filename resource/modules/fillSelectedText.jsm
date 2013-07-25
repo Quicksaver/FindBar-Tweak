@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.1';
+moduleAid.VERSION = '1.1.0';
 
 this.doFastFind = true;
 
@@ -76,63 +76,68 @@ this.fillSelectedTextKeyUp = function(e) {
         }
 };
 
-moduleAid.LOADMODULE = function() {
+this.fillSelectedTextInit = function(bar) {
 	// Selecting with the caret backwards would always reset the caret back to the end of the selection when calling _find(),
 	// we need to work around that so the selection doesn't keep resetting
-	if(!this.backups) {
-		this.backups = {
-			__find: gFindBar.__find
-		};
-		gFindBar.__find = function(aValue) {
-			if(!this._dispatchFindEvent(""))
-				return this.nsITypeAheadFind.FIND_PENDING;
+	bar.___find = bar.__find;
+	bar.__find = function(aValue) {
+		if(!this._dispatchFindEvent(""))
+			return this.nsITypeAheadFind.FIND_PENDING;
+		
+		var val = aValue || this._findField.value;
+		var res = this.nsITypeAheadFind.FIND_NOTFOUND;
+		
+		// Only search on input if we don't have a last-failed string,
+		// or if the current search string doesn't start with it.
+		if(this._findFailedString == null || val.indexOf(this._findFailedString) != 0) {
+			this._enableFindButtons(val);
+			if(this.getElement("highlight").checked)
+				this._setHighlightTimeout();
 			
-			var val = aValue || this._findField.value;
-			var res = this.nsITypeAheadFind.FIND_NOTFOUND;
+			this._updateCaseSensitivity(val);
 			
-			// Only search on input if we don't have a last-failed string,
-			// or if the current search string doesn't start with it.
-			if(this._findFailedString == null || val.indexOf(this._findFailedString) != 0) {
-				this._enableFindButtons(val);
-				if(this.getElement("highlight").checked)
-					this._setHighlightTimeout();
-				
-				this._updateCaseSensitivity(val);
-				
-				if(doFastFind) {
-					// This is what resets the caret
-					var fastFind = this.browser.fastFind;
-					res = fastFind.find(val, this._findMode == this.FIND_LINKS);
-				} else {
-					res = workAroundFastFind(val);
-				}
-				
-				this._updateFoundLink(res);
-				this._updateStatusUI(res, false);
-				
-				if (res == this.nsITypeAheadFind.FIND_NOTFOUND)
-					this._findFailedString = val;
-				else
-					this._findFailedString = null;
+			if(doFastFind) {
+				// This is what resets the caret
+				var fastFind = this.browser.fastFind;
+				res = fastFind.find(val, this._findMode == this.FIND_LINKS);
+			} else {
+				res = workAroundFastFind(val);
 			}
 			
-			if (this._findMode != this.FIND_NORMAL)
-				this._setFindCloseTimeout();
+			this._updateFoundLink(res);
+			this._updateStatusUI(res, false);
 			
-			if (this._findResetTimeout != -1)
-				window.clearTimeout(this._findResetTimeout);
-			
-			// allow a search to happen on input again after a second has
-			// expired since the previous input, to allow for dynamic
-			// content and/or page loading
-			this._findResetTimeout = window.setTimeout(function(self) {
-					self._findFailedString = null;
-					self._findResetTimeout = -1; },
-				1000, this);
-			
-			return res;
-		};
-	}
+			if (res == this.nsITypeAheadFind.FIND_NOTFOUND)
+				this._findFailedString = val;
+			else
+				this._findFailedString = null;
+		}
+		
+		if (this._findMode != this.FIND_NORMAL)
+			this._setFindCloseTimeout();
+		
+		if (this._findResetTimeout != -1)
+			window.clearTimeout(this._findResetTimeout);
+		
+		// allow a search to happen on input again after a second has
+		// expired since the previous input, to allow for dynamic
+		// content and/or page loading
+		this._findResetTimeout = window.setTimeout(function(self) {
+				self._findFailedString = null;
+				self._findResetTimeout = -1; },
+			1000, this);
+		
+		return res;
+	};
+};
+
+this.fillSelectedTextDeinit = function(bar) {
+	bar.__find = bar.___find;
+	delete bar.___find;
+};
+
+moduleAid.LOADMODULE = function() {
+	initFindBar('fillSelectedText', fillSelectedTextInit, fillSelectedTextDeinit);
 	
 	listenerAid.add(gBrowser, 'mouseup', fillSelectedTextMouseUp);
 	listenerAid.add(gBrowser, 'keyup', fillSelectedTextKeyUp);
@@ -142,8 +147,5 @@ moduleAid.UNLOADMODULE = function() {
 	listenerAid.remove(gBrowser, 'mouseup', fillSelectedTextMouseUp);
 	listenerAid.remove(gBrowser, 'keyup', fillSelectedTextKeyUp);
 	
-	if(this.backups) {
-		gFindBar.__find = this.backups.__find;
-		delete this.backups;
-	}
+	deinitFindBar('fillSelectedText');
 };

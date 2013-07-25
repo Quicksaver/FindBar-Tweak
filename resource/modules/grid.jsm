@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.1';
+moduleAid.VERSION = '1.2.2';
 
 this.ROWS_MINIMUM = 150; // number of rows in the highlight grid - kind of the "highlight granularity"
 this.ROWS_MULTIPLIER = 2; // Add extra rows if their height exceeds this value
@@ -122,7 +122,7 @@ this.resetHighlightGrid = function() {
 	grid._currentRows = new Array();
 	grid._hoverRows = new Array();
 	
-	// Somm grid appearance updates
+	// Some grid appearance updates
 	positionGrid();
 	
 	removeAttribute(grid, 'gridSpacers');
@@ -517,9 +517,9 @@ this.clearHoverRows = function() {
 moduleAid.LOADMODULE = function() {
 	prefAid.setDefaults({ side: 0 }, 'scrollbar', 'layout');
 	
-	listenerAid.add(gFindBar, 'SelectedFIThit', gridFollowCurrentHit);
-	listenerAid.add(gFindBar, 'UpdatedStatusFindBar', gridFollowCurrentHit);
-	listenerAid.add(gFindBar, 'UpdatedPDFMatches', matchesPDFGrid);
+	listenerAid.add(window, 'SelectedFIThit', gridFollowCurrentHit);
+	listenerAid.add(window, 'UpdatedStatusFindBar', gridFollowCurrentHit);
+	listenerAid.add(window, 'UpdatedPDFMatches', matchesPDFGrid);
 	
 	prefAid.listen('gridAdjustPadding', adjustGrid);
 	prefAid.listen('gridAdjustWidth', adjustGrid);
@@ -533,9 +533,9 @@ moduleAid.UNLOADMODULE = function() {
 	prefAid.unlisten('gridAdjustWidth', adjustGrid);
 	styleAid.unload('adjustGrid_'+_UUID);
 	
-	listenerAid.remove(gFindBar, 'SelectedFIThit', gridFollowCurrentHit);
-	listenerAid.remove(gFindBar, 'UpdatedStatusFindBar', gridFollowCurrentHit);
-	listenerAid.remove(gFindBar, 'UpdatedPDFMatches', matchesPDFGrid);
+	listenerAid.remove(window, 'SelectedFIThit', gridFollowCurrentHit);
+	listenerAid.remove(window, 'UpdatedStatusFindBar', gridFollowCurrentHit);
+	listenerAid.remove(window, 'UpdatedPDFMatches', matchesPDFGrid);
 	listenerAid.remove(browserPanel, 'resize', delayResizeGridSpacers);
 	
 	if(!viewSource) {

@@ -1,7 +1,9 @@
-moduleAid.VERSION = '1.1.4';
+moduleAid.VERSION = '1.2.0';
 
 this.highlightByDefault = function() {
-	gFindBar.getElement("highlight").checked = true;
+	if(!perTabFB || viewSource || gFindBarInitialized) {
+		gFindBar.getElement("highlight").checked = true;
+	}
 };
 
 this.highlightByDefaultOnContentLoaded = function(e) {
@@ -36,10 +38,10 @@ this.highlightByDefaultProgressListener = {
 };
 
 moduleAid.LOADMODULE = function() {
-	listenerAid.add(gFindBar, 'OpenedFindBar', highlightByDefault);
+	listenerAid.add(window, 'OpenedFindBar', highlightByDefault);
 	
 	// Always highlight all by default when selecting text and filling the findbar with it
-	listenerAid.add(gFindBar, 'WillFillSelectedText', highlightByDefault);
+	listenerAid.add(window, 'WillFillSelectedText', highlightByDefault);
 	
 	if(!viewSource) {
 		listenerAid.add(gBrowser.tabContainer, "TabSelect", highlightByDefault);
@@ -52,12 +54,21 @@ moduleAid.LOADMODULE = function() {
 };
 
 moduleAid.UNLOADMODULE = function() {
-	listenerAid.remove(gFindBar, 'OpenedFindBar', highlightByDefault);
-	listenerAid.remove(gFindBar, 'WillFillSelectedText', highlightByDefault);
+	listenerAid.remove(window, 'OpenedFindBar', highlightByDefault);
+	listenerAid.remove(window, 'WillFillSelectedText', highlightByDefault);
 	
 	if(!viewSource) {
 		listenerAid.remove(gBrowser.tabContainer, "TabSelect", highlightByDefault);
 		listenerAid.remove(gBrowser, "DOMContentLoaded", highlightByDefaultOnContentLoaded);
 		gBrowser.removeTabsProgressListener(highlightByDefaultProgressListener);
+		
+		if(perTabFB) {
+			for(var t=0; t<gBrowser.mTabs.length; t++) {
+				var tab = gBrowser.mTabs[t];
+				if(tab._findBar && !trueAttribute(tab._findBar.browser.contentDocument.documentElement, 'highlighted')) {
+					tab._findBar.getElement("highlight").checked = false;
+				}
+			}
+		}
 	}
 };

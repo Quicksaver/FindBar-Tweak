@@ -6,20 +6,30 @@
 	url("chrome://global/content/viewSource.xul"),
 	url("chrome://global/content/viewPartialSource.xul") {
 
-	#FindToolbar[hideLabels] toolbarbutton label,
-	#FindToolbar[hideLabels] checkbox label,
-	#FindToolbar[hideLabels] checkbox[anonid="find-case-sensitive"],
-	#FindToolbar[hideFindLabel] label[anonid="find-label"],
-	#FindToolbar[noClose] .findbar-closebutton {
+	findbar[hideLabels] toolbarbutton label,
+	findbar[hideLabels] checkbox label,
+	findbar[hideLabels] checkbox[anonid="find-case-sensitive"],
+	findbar[hideFindLabel] label[anonid="find-label"],
+	findbar[noClose] .findbar-closebutton {
 		display: none;
 	}
 	
-	#FindToolbar[hideLabels] toolbarbutton image,
-	#FindToolbar[hideLabels] checkbox image {
+	findbar[hideLabels] toolbarbutton image,
+	findbar[hideLabels] checkbox image {
 		margin: 0;
 	}
 	
-	#FindToolbar[movetotop] {
+	window[findbartweak-FF25] findbar[hideLabels] .findbar-highlight .toolbarbutton-icon,
+	window[findbartweak-FF25] findbar[hideLabels] .findbar-case-sensitive .toolbarbutton-icon {
+		display: -moz-box;
+	}
+	
+	window[findbartweak-FF25] findbar[hideLabels] toolbarbutton[anonid="highlight"] {
+		list-style-image: url("chrome://findbartweak/skin/toolbar.png");
+		-moz-image-region: rect(16px 32px 32px 16px);
+	}
+	
+	findbar[movetotop] {
 		position: fixed;
 		overflow: hidden;
 		border-top: none;
@@ -27,30 +37,52 @@
 		background-image: none;
 	}
 	
-	#FindToolbar description[anonid="find-status"] {
+	findbar[movetotop] spacer {
+		min-width: 15px;
+	}
+	
+	window:not([findbartweak-FF25]) findbar description[anonid="find-status"] {
 		-moz-margin-end: 4px !important;
 	}
 	
-	#FindToolbar:not([movetotop])[movetoright]:-moz-locale-dir(ltr) > hbox.findbar-container,
-	#FindToolbar:not([movetotop]):not([movetoright]):-moz-locale-dir(rtl) > hbox.findbar-container {
+	window:not([findbartweak-FF25]) findbar:not([movetotop])[movetoright]:-moz-locale-dir(ltr) > hbox.findbar-container,
+	window:not([findbartweak-FF25]) findbar:not([movetotop]):not([movetoright]):-moz-locale-dir(rtl) > hbox.findbar-container {
 		position: absolute;
 		text-align: end;
 	}
-	#FindToolbar:not([movetotop])[movetoright]:-moz-locale-dir(ltr) > hbox.findbar-container > *,
-	#FindToolbar:not([movetotop]):not([movetoright]):-moz-locale-dir(rtl) > hbox.findbar-container > * {
+	window:not([findbartweak-FF25]) findbar:not([movetotop])[movetoright]:-moz-locale-dir(ltr) > hbox.findbar-container > *,
+	window:not([findbartweak-FF25]) findbar:not([movetotop]):not([movetoright]):-moz-locale-dir(rtl) > hbox.findbar-container > * {
 		position: static;
 		text-align: start;
 		vertical-align: middle;
 	}
 	
-	.findbar-cs-button {
+	window[findbartweak-FF25] findbar:not([movetotop])[movetoright]:-moz-locale-dir(ltr) > hbox.findbar-container,
+	window[findbartweak-FF25] findbar:not([movetotop]):not([movetoright]):-moz-locale-dir(rtl) > hbox.findbar-container {
+		direction: rtl;
+	}
+	window[findbartweak-FF25] findbar:not([movetotop])[movetoright]:-moz-locale-dir(ltr) > hbox.findbar-container > *,
+	window[findbartweak-FF25] findbar:not([movetotop]):not([movetoright]):-moz-locale-dir(rtl) > hbox.findbar-container > * {
+		direction: ltr;
+	}
+	
+	window[findbartweak-FF25] findbar:not([movetotop])[movetoright]:-moz-locale-dir(ltr) .findbar-find-status,
+	window[findbartweak-FF25] findbar:not([movetotop]):not([movetoright]):-moz-locale-dir(rtl) .findbar-find-status {
+		margin: 0 12px !important; /* !important tag is necessary, the original also have !important tags */
+	}
+	
+	.findbar-cs-button,
+	window[findbartweak-FF25] findbar[hideLabels] toolbarbutton[anonid="find-case-sensitive"] {
 		list-style-image: url("chrome://findbartweak/skin/toolbar.png");
 		-moz-image-region: rect(0px 16px 16px 0px);
+	}
+	
+	window:not([findbartweak-FF25]) .findbar-cs-button {
 		-moz-margin-end: 3px;
 	}
 	
 	/* Rounded inner corners */
-	#FindToolbar[movetotop]:before {
+	findbar[movetotop]:before {
 		content: "";
 		width: 16px;
 		height: 16px;
@@ -58,7 +90,7 @@
 		background: transparent;
 		position: fixed;
 	}
-	#FindToolbar[movetotop]:after {
+	findbar[movetotop]:after {
 		content: "";
 		width: 16px;
 		height: 16px;
@@ -68,21 +100,21 @@
 	}
 	
 	/* Find Toolbar styled for PDF.JS documents */
-	#FindToolbar[movetotop][inPDFJS]:-moz-locale-dir(ltr):before,
-	#FindToolbar[movetotop][inPDFJS]:-moz-locale-dir(rtl):after {
+	findbar[movetotop][inPDFJS]:-moz-locale-dir(ltr):before,
+	findbar[movetotop][inPDFJS]:-moz-locale-dir(rtl):after {
 		box-shadow: 	2px -2px 0 -2px rgba(255,255,255,0.08),
 		                1px -1px 0 -1px rgba(0,0,0,0.15),
 		                7px -4px 0px -4px rgba(68,68,68,0.95),
 		                6px -4px 0px -4px rgba(68,68,68,0.95);
 	}
-	#FindToolbar[movetotop][inPDFJS]:-moz-locale-dir(ltr):after,
-	#FindToolbar[movetotop][inPDFJS]:-moz-locale-dir(rtl):before {
+	findbar[movetotop][inPDFJS]:-moz-locale-dir(ltr):after,
+	findbar[movetotop][inPDFJS]:-moz-locale-dir(rtl):before {
 		box-shadow: 	-2px -2px 0 -2px rgba(255,255,255,0.08),
 		                -1px -1px 0 -1px rgba(0,0,0,0.15),
 		                -7px -4px 0px -4px rgba(68,68,68,0.95),
 		                -6px -4px 0px -4px rgba(68,68,68,0.95);
 	}
-	#FindToolbar[movetotop][inPDFJS] {
+	findbar[movetotop][inPDFJS] {
 		border: none;
 		background-color: rgb(71,71,71);
 		background-image: url("resource://pdf.js/web/images/texture.png"), -moz-linear-gradient(rgba(68,68,68,0.95), rgba(68,68,68,0.95));
@@ -95,22 +127,29 @@
 		                rgba(0,0,0,0.15) 0px 1px 0px 0px,
 		                rgba(0,0,0,0.1) 0px 1px 1px 0px;
 	}
-	#FindToolbar[movetotop][inPDFJS] toolbarbutton:not([disabled="true"]) {
+	findbar[movetotop][inPDFJS] toolbarbutton:not([disabled="true"]) {
 		color: rgb(216,216,216);
 	}
 	
 	/* Textbox resizers */
-	#FindToolbar:not([hideLabels]) #findbartweak-find-textbox {
+	findbar:not([hideLabels]) .findbar-textbox {
 		max-width: 680px;
 	}
-	#FindToolbar[hideLabels] #findbartweak-find-textbox {
+	findbar[hideLabels] .findbar-textbox {
 		max-width: 1000px;
 	}
 	
-	#FindToolbar .find-textbox-resizer {
+	findbar .find-textbox-resizer {
 		-moz-appearance: none !important;
 		height: 20px;
 		opacity: 0.001;
+	}
+	
+	findbar:not([movetoright]) resizer[anonid="find-left-resizer"]:-moz-locale-dir(ltr),
+	findbar[movetoright] resizer[anonid="find-left-resizer"]:-moz-locale-dir(rtl),
+	findbar[movetoright] resizer[anonid="find-right-resizer"]:-moz-locale-dir(ltr),
+	findbar:not([movetoright]) resizer[anonid="find-right-resizer"]:-moz-locale-dir(rtl) {
+		display: none;
 	}
 	
 	/* Grid stuff */
@@ -142,27 +181,7 @@
 		position: relative;
 		top: -13px;
 	}
-	
-	/* Findbar square look on top */
-	#FindToolbar[movetotop][squareLook] {
-		border-radius: 0px !important;
-	}
-	
-	#FindToolbar[movetotop][placeAbove] {
-		border-left: none !important;
-		border-right: none !important;
-	}
-	
-	#FindToolbar[movetotop][squareLook]:not([movetoright]) {
-		-moz-border-start: none !important;
-	}
 
-		
-	#FindToolbar[movetotop][squareLook]:before,
-	#FindToolbar[movetotop][squareLook]:after {
-		display: none;
-	}
-	
 	/* For the toolbar button */
 	#findbartweak-button {
 		list-style-image: url("chrome://findbartweak/skin/button.png");
@@ -171,19 +190,20 @@
 	#TabsToolbar #findbartweak-button .toolbarbutton-icon { height: 20px; }
 	
 	/* Find In Tabs */
-	#browser-bottombox[lwthemefooter="true"] {
+	#browser-bottombox[lwthemefooter="true"],
+	#main-window:-moz-lwtheme {
 		background-repeat: repeat-y;
 	}
 	
-	#findbartweak-findInTabs-resizer {
+	resizer[anonid="findbartweak-findInTabs-resizer"] {
 		-moz-appearance: none;
 		background: none;
 		height: 4px;
 	}
-	#findbartweak-findInTabs-resizer:not([movetotop]) {
+	window:not([findbartweak-FF25]) resizer[anonid="findbartweak-findInTabs-resizer"] {
 		margin-bottom: -4px;
 	}
-	#findbartweak-findInTabs-resizer[movetotop] {
+	window[findbartweak-FF25] resizer[anonid="findbartweak-findInTabs-resizer"] {
 		margin-top: -4px;
 	}
 	
@@ -217,7 +237,14 @@
 		-moz-image-region: rect(0px, 32px, 16px, 16px);
 	}
 	
-	#FindToolbar[noClose] .findbar-tabs-update {
+	window[findbartweak-FF25] .findbar-tabs-update {
+		-moz-margin-end: 5px;
+	}
+	window[findbartweak-FF25] findbar:not([hideLabels]) .findbar-tabs-update image {
+		display: none;
+	}
+	
+	findbar[noClose] .findbar-tabs-update {
 		-moz-margin-start: 3px;
 	}
 	

@@ -1,14 +1,14 @@
-moduleAid.VERSION = '1.4.6';
+moduleAid.VERSION = '1.5.0';
 
-this.__defineGetter__('FITresizer', function() { return $(objName+'-findInTabs-resizer'); });
+this.__defineGetter__('FITresizer', function() { return gFindBar._FITresizer; });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
 this.__defineGetter__('FITtabs', function() { return $(objName+'-findInTabs-tabs'); });
 this.__defineGetter__('FITtabsList', function() { return FITtabs.firstChild; });
 this.__defineGetter__('FITtabsHeader', function() { return FITtabsList.firstChild; });
 this.__defineGetter__('FIThits', function() { return $(objName+'-findInTabs-hits'); });
 this.__defineGetter__('FITbroadcaster', function() { return $(objName+'-findInTabs-broadcaster'); });
-this.__defineGetter__('FITbutton', function() { return gFindBar.getElement(objName+'-find-tabs'); });
-this.__defineGetter__('FITupdate', function() { return gFindBar.getElement(objName+'-find-tabs-update'); });
+this.__defineGetter__('FITbutton', function() { return gFindBar._FITtoggle; });
+this.__defineGetter__('FITupdate', function() { return gFindBar._FITupdate; });
 
 this.HITS_LENGTH = 150; // Length of preview text from preview items in find in tabs box
 
@@ -18,9 +18,8 @@ this.toggleFIT = function() {
 	var toggle = FITbox.hidden;
 	
 	FITbox.hidden = !toggle;
-	FITresizer.hidden = !toggle;
-	FITupdate.hidden = !toggle;
 	toggleAttribute(FITbroadcaster, 'checked', toggle);
+	updateFITElements();
 	
 	/* Open the findbar if it isn't already when opening FIT */
 	if(toggle && (gFindBar.hidden || gFindBar._findMode == gFindBar.FIND_TYPEAHEAD)) {
@@ -29,8 +28,25 @@ this.toggleFIT = function() {
 			gFindBar._setHighlightTimeout();
 		}
 	}
+	else if(!toggle && linkedPanel._findWord) {
+		gFindBar.value = linkedPanel._findWord;
+	}
 	
-	gFindBar._keepCurrentValue = toggle;
+	initFindBar('toggleFIT',
+		function(bar) { bar._keepCurrentValue = toggle; },
+		function(bar) { delete bar._keepCurrentValue; },
+		true
+	);
+	
+	if(perTabFB) {
+		timerAid.init('toggleFIT', function() {
+			if(toggle) {
+				moduleAid.load('globalFB');
+			} else {
+				togglePerTab();
+			}
+		}, 0);
+	}
 	
 	shouldFindAll();
 };
@@ -43,31 +59,49 @@ this.commandUpdateFIT = function() {
 	shouldFindAll();
 };
 
-// I think it's better to add the button dynamically, since the findbar is a whole bunch of anonymous elements
-this.addFITButton = function() {
-	if(!FITbutton) {
-		var button = document.createElement('toolbarbutton');
-		button.setAttribute('anonid', objName+'-find-tabs');
-		button.setAttribute('class', 'findbar-highlight findbar-tabs tabbable findbar-no-find-fast');
-		button.setAttribute('observes', objName+'-findInTabs-broadcaster');
-		gFindBar.getElement("findbar-container").insertBefore(button, gFindBar.getElement('highlight'));
-	}
+this.addFITElements = function(bar) {
+	var container = bar.getElement("findbar-container");
 	
-	if(!FITupdate) {
-		var button = document.createElement('toolbarbutton');
-		button.setAttribute('anonid', objName+'-find-tabs-update');
-		button.setAttribute('class', 'findbar-tabs-update findbar-no-find-fast findbar-no-auto-show tabbable');
-		button.setAttribute('label', stringsAid.get('findInTabs', 'updateButtonLabel'));
-		button.setAttribute('tooltiptext', stringsAid.get('findInTabs', 'updateButtonTooltip'+(Services.appinfo.OS == 'Darwin' ? 'Mac' : 'Win')));
-		button.hidden = true;
-		gFindBar.getElement("findbar-container").insertBefore(button, gFindBar.getElement('find-label'));
-		
-		listenerAid.add(FITupdate, 'command', shouldFindAll);
-	}
+	var toggleButton = document.createElement('toolbarbutton');
+	setAttribute(toggleButton, 'anonid', objName+'-find-tabs');
+	setAttribute(toggleButton, 'class', 'findbar-highlight findbar-tabs tabbable findbar-no-find-fast');
+	setAttribute(toggleButton, 'observes', objName+'-findInTabs-broadcaster');
+	bar._FITtoggle = container.insertBefore(toggleButton, bar.getElement('highlight'));
+	
+	var updateButton = document.createElement('toolbarbutton');
+	setAttribute(updateButton, 'anonid', objName+'-find-tabs-update');
+	setAttribute(updateButton, 'class', 'findbar-tabs-update findbar-no-find-fast findbar-no-auto-show tabbable');
+	setAttribute(updateButton, 'label', stringsAid.get('findInTabs', 'updateButtonLabel'));
+	setAttribute(updateButton, 'tooltiptext', stringsAid.get('findInTabs', 'updateButtonTooltip'+(Services.appinfo.OS == 'Darwin' ? 'Mac' : 'Win')));
+	setAttribute(updateButton, 'oncommand', objName+'.shouldFindAll();');
+	updateButton.hidden = true;
+	bar._FITupdate = container.insertBefore(updateButton, bar.getElement((!perTabFB) ? 'find-label' : 'findbar-textbox-wrapper'));
+	
+	var resizer = document.createElement('resizer');
+	setAttribute(resizer, 'anonid', objName+'-findInTabs-resizer');
+	setAttribute(resizer, 'dir', 'top');
+	setAttribute(resizer, 'element', objName+'-findInTabs-box');
+	resizer.hidden = true;
+	var sibling = (!perTabFB) ? bar : bar.nextSibling;
+	bar._FITresizer = bar.parentNode.insertBefore(resizer, sibling);
+	
+	updateFITElements();
 };
 
-this.updateButtonKeepHidden = function() {
+this.removeFITElements = function(bar) {
+	bar._FITtoggle.parentNode.removeChild(bar._FITtoggle);
+	bar._FITupdate.parentNode.removeChild(bar._FITupdate);
+	bar._FITresizer.parentNode.removeChild(bar._FITresizer);
+	delete bar._FITtoggle;
+	delete bar._FITupdate;
+	delete bar._FITresizer;
+};
+
+this.updateFITElements = function() {
+	FITresizer.hidden = FITbox.hidden;
 	FITupdate.hidden = FITbox.hidden;
+	
+	toggleAttribute(FITresizer, 'dir', trueAttribute(FITbox, 'movetotop'), 'bottom', 'top');
 };
 
 this.closeFITWithFindBar = function() {
@@ -195,7 +229,7 @@ this.selectFIThit = function() {
 		return;
 	}
 	
-	var inFindBar = inWindow.document.getElementById('FindToolbar');
+	var inFindBar = inWindow.document.getElementById('FindToolbar') || inWindow.gFindBar;
 	var ranges = FITtabsList.currentItem.linkedHits.currentItem.linkedRanges;
 	var rangeIdx = FITtabsList.currentItem.linkedHits.currentItem.rangeIdx;
 	if(rangeIdx > -1) {
@@ -228,9 +262,9 @@ this.selectFIThit = function() {
 		|| unWrap.PDFFindController.state.query != gFindBar._findField.value
 		|| unWrap.PDFFindController.state.caseSensitive != !!gFindBar._typeAheadCaseSensitive) {
 			var caseSensitive = !!gFindBar._typeAheadCaseSensitive;
-			inWindow.gFindBar._findField.value = gFindBar._findField.value;
-			inWindow.gFindBar.getElement('find-case-sensitive').checked = caseSensitive;
-			inWindow.gFindBar._setCaseSensitivity(caseSensitive); // This should be enough to trigger the find
+			inFindBar._findField.value = gFindBar._findField.value;
+			inFindBar.getElement('find-case-sensitive').checked = caseSensitive;
+			inFindBar._setCaseSensitivity(caseSensitive); // This should be enough to trigger the find
 			
 			aSync(function() {
 				finishSelectingPDFhit(unWrap, inFindBar, selectRange);
@@ -1524,7 +1558,7 @@ this.autoSelectOnUpdateStatus = function() {
 
 this.FITobserver = function(aSubject, aTopic, aData) {
 	// Don't do anything if it's not needed
-	if(!gFindBar || !gFindBar._findField.value || FITbox.hidden) { return; }
+	if((perTabFB && !gFindBarInitialized) || !gFindBar || !gFindBar._findField.value || FITbox.hidden) { return; }
 	
 	var doc = null;
 	var item = null;
@@ -1634,16 +1668,24 @@ this.FITViewSourceClosed = function(aWindow) {
 	FITobserver(aWindow.document.getElementById('content').contentDocument, 'FIT-update-doc', 'domwindowclosed');
 };
 
-this.loadFindInTabs = function() {
-	addFITButton();
+this.FITTabSelect = function() {
+	if(perTabFB) {
+		updateFITElements();
+	}
 	
-	listenerAid.add(gFindBar, 'OpenedFindBar', alwaysOpenFIT);
-	listenerAid.add(gFindBar, 'ClosedFindBar', closeFITWithFindBar);
-	listenerAid.add(gFindBar, 'FoundFindBar', shouldFindAll);
-	listenerAid.add(gFindBar, 'UpdatedUIFindBar', updateButtonKeepHidden, false);
-	listenerAid.add(gFindBar, 'FoundAgain', autoSelectFITtab);
-	listenerAid.add(gFindBar, 'UpdatedStatusFindBar', autoSelectOnUpdateStatus);
-	listenerAid.add(gBrowser.tabContainer, 'TabSelect', autoSelectFITtab);
+	autoSelectFITtab();
+};
+
+this.loadFindInTabs = function() {
+	initFindBar('findInTabs', addFITElements, removeFITElements);
+	
+	listenerAid.add(window, 'OpenedFindBar', alwaysOpenFIT);
+	listenerAid.add(window, 'ClosedFindBar', closeFITWithFindBar);
+	listenerAid.add(window, 'FoundFindBar', shouldFindAll);
+	listenerAid.add(window, 'UpdatedUIFindBar', updateFITElements, false);
+	listenerAid.add(window, 'FoundAgain', autoSelectFITtab);
+	listenerAid.add(window, 'UpdatedStatusFindBar', autoSelectOnUpdateStatus);
+	listenerAid.add(gBrowser.tabContainer, 'TabSelect', FITTabSelect);
 	
 	// Update FIT lists as needed
 	observerAid.add(FITobserver, 'FIT-update-doc');
@@ -1658,29 +1700,31 @@ this.loadFindInTabs = function() {
 	alwaysOpenFIT();
 };
 
+this.toggleMoveFITtoTop = function() {
+	if(perTabFB || prefAid.movetoTop) {
+		overlayAid.overlayURI('chrome://'+objPathString+'/content/findInTabs.xul', 'movetoTop_FIT');
+	} else {
+		overlayAid.removeOverlayURI('chrome://'+objPathString+'/content/findInTabs.xul', 'movetoTop_FIT');
+	}
+};
+
 moduleAid.LOADMODULE = function() {
+	prefAid.listen('movetoTop', toggleMoveFITtoTop);
+	toggleMoveFITtoTop();
+	
 	overlayAid.overlayWindow(window, 'findInTabs', null, loadFindInTabs);
 };
 
 moduleAid.UNLOADMODULE = function() {
-	if(FITbutton) {
-		gFindBar.getElement("findbar-container").removeChild(FITbutton);
-	}
+	deinitFindBar('toggleFIT');
 	
-	if(FITupdate) {
-		listenerAid.remove(FITupdate, 'command', shouldFindAll);
-		gFindBar.getElement("findbar-container").removeChild(FITupdate);
-	}
-	
-	delete gFindBar._keepCurrentValue;
-	
-	listenerAid.remove(gFindBar, 'OpenedFindBar', alwaysOpenFIT);
-	listenerAid.remove(gFindBar, 'ClosedFindBar', closeFITWithFindBar);
-	listenerAid.remove(gFindBar, 'FoundFindBar', shouldFindAll);
-	listenerAid.remove(gFindBar, 'UpdatedUIFindBar', updateButtonKeepHidden, false);
-	listenerAid.remove(gFindBar, 'FoundAgain', autoSelectFITtab);
-	listenerAid.remove(gFindBar, 'UpdatedStatusFindBar', autoSelectOnUpdateStatus);
-	listenerAid.remove(gBrowser.tabContainer, 'TabSelect', autoSelectFITtab);
+	listenerAid.remove(window, 'OpenedFindBar', alwaysOpenFIT);
+	listenerAid.remove(window, 'ClosedFindBar', closeFITWithFindBar);
+	listenerAid.remove(window, 'FoundFindBar', shouldFindAll);
+	listenerAid.remove(window, 'UpdatedUIFindBar', updateFITElements, false);
+	listenerAid.remove(window, 'FoundAgain', autoSelectFITtab);
+	listenerAid.remove(window, 'UpdatedStatusFindBar', autoSelectOnUpdateStatus);
+	listenerAid.remove(gBrowser.tabContainer, 'TabSelect', FITTabSelect);
 	
 	observerAid.remove(FITobserver, 'FIT-update-doc');
 	listenerAid.remove(gBrowser, 'load', FITtabLoaded, true);
@@ -1691,6 +1735,8 @@ moduleAid.UNLOADMODULE = function() {
 	
 	prefAid.unlisten('alwaysOpenFIT', alwaysOpenFIT);
 	
+	deinitFindBar('findInTabs');
+	
 	overlayAid.removeOverlayWindow(window, 'findInTabs');
 	
 	// Ensure we remove tabs of closing windows from lists
@@ -1698,5 +1744,10 @@ moduleAid.UNLOADMODULE = function() {
 		for(var t=0; t<gBrowser.mTabs.length; t++) {
 			observerAid.notify('FIT-update-doc', gBrowser.mTabs[t], 'TabClose');
 		}
+	}
+	
+	prefAid.unlisten('movetoTop', toggleMoveFITtoTop);
+	if(UNLOADED || !prefAid.findInTabs) {
+		overlayAid.removeOverlayURI('chrome://'+objPathString+'/content/findInTabs.xul', 'movetoTop_FIT');
 	}
 };

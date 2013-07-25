@@ -5,40 +5,52 @@
 	url("chrome://global/content/viewPartialSource.xul") {
 
 	/* Rounded inner corners */
-	#FindToolbar[movetotop]:before {
+	window:not([findbartweak-FF25]) findbar[movetotop]:before {
 		-moz-margin-start: -16px;
 	}
-	#FindToolbar[movetotop]:before,
-	#FindToolbar[movetotop]:after {
+	window:not([findbartweak-FF25]) findbar[movetotop]:before,
+	window:not([findbartweak-FF25]) findbar[movetotop]:after {
 		margin-top: -1px;
 	}
-	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]) #FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
-	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]) #FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
+	
+	window[findbartweak-FF25] findbar[movetotop]:before {
+		-moz-margin-start: -24px;
+	}
+	window[findbartweak-FF25] findbar[movetotop]:after {
+		-moz-margin-start: 8px;
+	}
+	window[findbartweak-FF25] findbar[movetotop]:before,
+	window[findbartweak-FF25] findbar[movetotop]:after {
+		margin-top: -4px;
+	}
+	
+	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
+	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
 		box-shadow: 	2px -2px 0 -2px rgb(160,160,160),
 		                7px -4px 0px -4px rgb(219,234,249),
 		                6px -4px 0px -4px rgb(219,234,249);
 	}
-	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]) #FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
-	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]) #FindToolbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
+	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
+	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
 		box-shadow: 	-2px -2px 0 -2px rgb(160,160,160),
 		                -7px -4px 0px -4px rgb(219,234,249),
 		                -6px -4px 0px -4px rgb(219,234,249);
 	}
 	
 	/* Rounded inner corners Windows XP */
-	window[findbartweak-oscpu="Windows NT 5.1"] #FindToolbar[movetotop]:not([inPDFJS]):before {
+	window[findbartweak-oscpu="Windows NT 5.1"] findbar[movetotop]:not([inPDFJS]):before {
 		box-shadow: 	2px -2px 0 -2px rgb(160,160,160),
 		                7px -4px 0px -4px -moz-dialog,
 		                6px -4px 0px -4px -moz-dialog;
 	}
-	window[findbartweak-oscpu="Windows NT 5.1"] #FindToolbar[movetotop]:not([inPDFJS]):after {
+	window[findbartweak-oscpu="Windows NT 5.1"] findbar[movetotop]:not([inPDFJS]):after {
 		box-shadow: 	-2px -2px 0 -2px rgb(160,160,160),
 		                -7px -4px 0px -4px -moz-dialog,
 		                -6px -4px 0px -4px -moz-dialog;
 	}
 	
 	/* Find Bar */
-	#FindToolbar[movetotop]:not([inPDFJS]) {
+	findbar[movetotop]:not([inPDFJS]) {
 		border-bottom: 1px solid rgb(0,0,0);
 		border-right: 1px solid rgb(0,0,0);
 		border-left: 1px solid rgb(0,0,0);
@@ -47,19 +59,19 @@
 		-moz-border-left-colors: rgb(160, 160, 160);
 	}
 	
-	window[findbartweak-oscpu="Windows NT 5.1"] #FindToolbar[movetotop]:not([inPDFJS]) {
+	window[findbartweak-oscpu="Windows NT 5.1"] findbar[movetotop]:not([inPDFJS]) {
 		background-color: -moz-dialog;
 	}
-	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]) #FindToolbar[movetotop]:not([inPDFJS]) {
+	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]) findbar[movetotop]:not([inPDFJS]) {
 		background-color: rgb(219,234,249);
 	}
 	
-	#FindToolbar textbox[anonid="findbar-textbox"] {
+	window:not([findbartweak-FF25]) findbar textbox[anonid="findbar-textbox"] {
 		min-height: 22px;
 		max-height: 22px;
 	}
 	
-	window[findbartweak-oscpu="Windows NT 6.2"] #FindToolbar[hideLabels] toolbarbutton:not(.findbar-closebutton) {
+	window[findbartweak-oscpu="Windows NT 6.2"]:not([findbartweak-FF25]) findbar[hideLabels] toolbarbutton:not(.findbar-closebutton) {
 		min-height: 23px;
 	}
 	
@@ -78,39 +90,52 @@
 	window[findbartweak-oscpu="Windows NT 6.2"] #addon-bar #findbartweak-button image { height: 18px; }
 	
 	/* For the View Source window */
-	#viewSource #FindToolbar[movetotop] {
+	#viewSource findbar[movetotop] {
 		background-color: -moz-dialog;
 	}
-	#viewSource #FindToolbar[movetotop]:before {
+	#viewSource findbar[movetotop]:before {
 		box-shadow: 	2px -2px 0 -2px rgb(160,160,160),
 		                7px -4px 0px -4px -moz-dialog,
 		                6px -4px 0px -4px -moz-dialog;
 	}
-	#viewSource #FindToolbar[movetotop]:after {
+	#viewSource findbar[movetotop]:after {
 		box-shadow: 	-2px -2px 0 -2px rgb(160,160,160),
 		                -7px -4px 0px -4px -moz-dialog,
 		                -6px -4px 0px -4px -moz-dialog;
 	}
 	
 	/* Textbox resizers */
-	window:not([findbartweak-oscpu="Windows NT 5.1"]) #FindToolbar #findbartweak-find-textbox {
+	window:not([findbartweak-oscpu="Windows NT 5.1"]):not([findbartweak-FF25]) findbar .findbar-textbox {
 		min-width: 120px;
 	}
-	window[findbartweak-oscpu="Windows NT 5.1"] #FindToolbar #findbartweak-find-textbox {
+	window[findbartweak-oscpu="Windows NT 5.1"]:not([findbartweak-FF25]) findbar .findbar-textbox {
 		min-width: 127px;
 	}
 	
-	#FindToolbar .find-textbox-resizer {
+	window[findbartweak-FF25] findbar .findbar-textbox {
+		min-width: 14em;
+	}
+	
+	findbar .find-textbox-resizer {
 		width: 4px;
 	}
 	
-	#FindToolbar resizer[anonid="find-left-resizer"] {
+	window:not([findbartweak-FF25]) findbar resizer[anonid="find-left-resizer"] {
 		-moz-margin-end: -7px;
 		-moz-margin-start: 3px;
 	}
-	#FindToolbar resizer[anonid="find-right-resizer"] {
+	window:not([findbartweak-FF25]) findbar resizer[anonid="find-right-resizer"] {
 		-moz-margin-start: -7px;
 		-moz-margin-end: 3px;
+	}
+	
+	window[findbartweak-FF25] findbar resizer[anonid="find-left-resizer"] {
+		-moz-margin-end: -3px;
+		-moz-margin-start: -1px;
+	}
+	window[findbartweak-FF25] findbar resizer[anonid="find-right-resizer"] {
+		-moz-margin-start: -3px;
+		-moz-margin-end: -1px;
 	}
 	
 	/* Grid stuff */
@@ -132,7 +157,7 @@
 	}
 	
 	/* Find in Tabs */
-	window[findbartweak-oscpu="Windows NT 5.1"] #findbartweak-findInTabs-box[movetotop] {
+	window[findbartweak-oscpu="Windows NT 5.1"] #findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme) {
 		background-color: -moz-dialog;
 	}
 	
@@ -140,12 +165,12 @@
 		border-bottom: 1px solid rgb(160, 160, 160);
 	}
 	
-	window:not([findbartweak-oscpu="Windows NT 5.1"]) #findbartweak-findInTabs-box[movetotop] {
+	window:not([findbartweak-oscpu="Windows NT 5.1"]) #findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme) {
 		background-color: rgb(219,234,249);
 	}
 	
-	window[findbartweak-oscpu="Windows NT 5.1"] #FindToolbar:not([hideLabels]) .findbar-tabs image,
-	window[findbartweak-oscpu="Windows NT 5.1"] #FindToolbar:not([hideLabels]) .findbar-tabs-update image {
+	window[findbartweak-oscpu="Windows NT 5.1"] findbar:not([hideLabels]) .findbar-tabs image,
+	window[findbartweak-oscpu="Windows NT 5.1"] findbar:not([hideLabels]) .findbar-tabs-update image {
 		margin-top: 0;
 		margin-bottom: 0;
 		-moz-margin-start: 0;

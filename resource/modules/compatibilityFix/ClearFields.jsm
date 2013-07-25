@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.0';
+moduleAid.VERSION = '1.0.1';
 
 this.clearFieldsOnClick = function() {
 	gFindBar._find();
@@ -13,10 +13,10 @@ moduleAid.LOADMODULE = function() {
 	clearFieldsAddListener();
 	
 	// This is put here because the clear field button isn't added at startup
-	listenerAid.add(gFindBar, 'OpenedFindBar', clearFieldsAddListener);
+	listenerAid.add(window, 'OpenedFindBar', clearFieldsAddListener);
 };
 
 moduleAid.UNLOADMODULE = function() {
 	listenerAid.remove($('ClearFields-in-find'), 'click', clearFieldsOnClick);
-	listenerAid.remove(gFindBar, 'OpenedFindBar', clearFieldsAddListener);
+	listenerAid.remove(window, 'OpenedFindBar', clearFieldsAddListener);
 };

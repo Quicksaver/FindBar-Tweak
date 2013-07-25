@@ -1,11 +1,12 @@
-moduleAid.VERSION = '1.0.0';
-
-this.__defineGetter__('leftTextboxResizer', function() { return gFindBar.getElement('find-left-resizer'); });
-this.__defineGetter__('rightTextboxResizer', function() { return gFindBar.getElement('find-right-resizer'); });
+moduleAid.VERSION = '1.1.0';
 
 this.textboxResizersRTL = false;
+this.textboxResizing = false;
 
-this.saveTextboxWidth = function() {
+this.saveTextboxWidth = function(obj, prop, oldVal, newVal) {
+	if(textboxResizing || oldVal == newVal) { return; }
+	textboxResizing = true;
+	
 	var width = parseInt(gFindBar._findField.getAttribute('width'));
 	var max = (prefAid.hideLabels) ? 1000 : 680;
 	if(width < minTextboxWidth || width > max) {
@@ -17,26 +18,43 @@ this.saveTextboxWidth = function() {
 			setAttribute(gFindBar._findField, 'width', max);
 			prefAid.findFieldWidth = max;
 		}
+		
+		textboxResizing = false;
 		return;
 	}
 	
 	prefAid.findFieldWidth = parseInt(gFindBar._findField.getAttribute('width'));
 	
 	delayTextboxResizersRedrawCorners();
+	
+	textboxResizing = false;
 };
 
-this.setTextboxResizers = function() {
-	if(leftTextboxResizer && rightTextboxResizer) { return; }
+this.findFieldWidthChanged = function() {
+	initFindBar('textboxWidth',
+		function(bar) {
+			setAttribute(bar._findField, 'width', prefAid.findFieldWidth);
+		},
+		function(bar) {
+			removeAttribute(bar._findField, 'width');
+		},
+		true
+	);
+};
+
+this.setTextboxResizers = function(bar) {
+	bar._findField.id = objName+'-find-textbox';
+	if(!viewSource && perTabFB) {
+		bar._findField.id += '-'+gBrowser.getNotificationBox(bar.browser).id;
+	}
 	
-	gFindBar._findField.id = objName+'-find-textbox';
-	setAttribute(gFindBar._findField, 'width', prefAid.findFieldWidth);
-	
-	objectWatcher.addAttributeWatcher(gFindBar._findField, 'width', saveTextboxWidth);
+	objectWatcher.addAttributeWatcher(bar._findField, 'width', saveTextboxWidth);
 	
 	var leftResizer = document.createElement('resizer');
 	setAttribute(leftResizer, 'class', 'find-textbox-resizer');
 	setAttribute(leftResizer, 'anonid', 'find-left-resizer');
-	setAttribute(leftResizer, 'element', objName+'-find-textbox');
+	setAttribute(leftResizer, 'element', bar._findField.id);
+	setAttribute(leftResizer, 'ondblclick', objName+'.dblClickTextboxResizer(event);');
 	
 	var rightResizer = leftResizer.cloneNode(true);
 	setAttribute(rightResizer, 'anonid', 'find-right-resizer');
@@ -45,27 +63,24 @@ this.setTextboxResizers = function() {
 	setAttribute(leftResizer, 'dir', (textboxResizersRTL ? 'right' : 'left'));
 	setAttribute(rightResizer, 'dir', (textboxResizersRTL ? 'left' : 'right'));
 	
-	gFindBar.getElement("findbar-container").insertBefore(leftResizer, gFindBar._findField);
-	gFindBar.getElement("findbar-container").insertBefore(rightResizer, gFindBar._findField.nextSibling);
-	
-	listenerAid.add(leftTextboxResizer, 'dblclick', dblClickTextboxResizer, true);
-	listenerAid.add(rightTextboxResizer, 'dblclick', dblClickTextboxResizer, true);
-	
-	chooseTextboxResizer();
-	aSync(chooseTextboxResizer, 500); // Mac OSX wouldn't hide one of the resizers on startup for some reason
+	bar._findField.parentNode.insertBefore(leftResizer, bar._findField);
+	bar._findField.parentNode.insertBefore(rightResizer, bar._findField.nextSibling);
 };
 
-this.chooseTextboxResizer = function() {
-	if(leftTextboxResizer) {
-		leftTextboxResizer.hidden = (!textboxResizersRTL && !prefAid.movetoRight) || (textboxResizersRTL && prefAid.movetoRight);
-	}
-	if(rightTextboxResizer) {
-		rightTextboxResizer.hidden = (!textboxResizersRTL && prefAid.movetoRight) || (textboxResizersRTL && !prefAid.movetoRight);
-	}
+this.unsetTextboxResizers = function(bar) {
+	objectWatcher.removeAttributeWatcher(bar._findField, 'width', saveTextboxWidth);
+	
+	var leftResizer = bar.getElement("find-left-resizer");
+	var rightResizer = bar.getElement("find-right-resizer");
+	
+	leftResizer.parentNode.removeChild(leftResizer);
+	rightResizer.parentNode.removeChild(rightResizer);
+	
+	bar._findField.id = '';
 };
 
 this.delayTextboxResizersRedrawCorners = function() {
-	if(!prefAid.movetoTop) { return; }
+	if(!prefAid.movetoTop || typeof(moveTop) == 'undefined') { return; }
 	timerAid.init('delayTextboxResizersRedrawCorners', moveTop, 100);
 };
 
@@ -85,22 +100,11 @@ this.dblClickTextboxResizer = function(e) {
 moduleAid.LOADMODULE = function() {
 	textboxResizersRTL = (getComputedStyle((viewSource) ? viewSource : $('main-window')).getPropertyValue('direction') == 'rtl');
 	
-	listenerAid.add(gFindBar, 'OpenedFindBar', setTextboxResizers);
-	prefAid.listen('movetoRight', chooseTextboxResizer);
-	
-	setTextboxResizers();
+	findFieldWidthChanged();
+	initFindBar('textboxResizers', setTextboxResizers, unsetTextboxResizers);
 };
 
 moduleAid.UNLOADMODULE = function() {
-	listenerAid.remove(gFindBar, 'OpenedFindBar', setTextboxResizers);
-	prefAid.listen('movetoRight', chooseTextboxResizer);
-	objectWatcher.removeAttributeWatcher(gFindBar._findField, 'width', saveTextboxWidth);
-	
-	listenerAid.remove(leftTextboxResizer, 'dblclick', dblClickTextboxResizer, true);
-	listenerAid.remove(rightTextboxResizer, 'dblclick', dblClickTextboxResizer, true);
-	if(leftTextboxResizer) { leftTextboxResizer.parentNode.removeChild(leftTextboxResizer); }
-	if(rightTextboxResizer) { rightTextboxResizer.parentNode.removeChild(rightTextboxResizer); }
-	
-	gFindBar._findField.id = '';
-	removeAttribute(gFindBar._findField, 'width');
+	deinitFindBar('textboxResizers');
+	deinitFindBar('textboxWidth');
 };

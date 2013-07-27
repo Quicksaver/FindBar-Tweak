@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.0';
+moduleAid.VERSION = '1.5.1';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -355,6 +355,11 @@ moduleAid.LOADMODULE = function() {
 	moveTop();
 	
 	if(!viewSource) {
+		// we just init this so we can easily remove the collapsed state later when disabling the module if necessary
+		initFindBar('hideOnChrome',
+			function(bar) { return; },
+			function(bar) { hideIt(bar, true); }
+		);
 		hideOnChrome();
 	}
 };
@@ -379,13 +384,7 @@ moduleAid.UNLOADMODULE = function() {
 			}
 		}
 		
-		// revert hideOnChrome()
-		for(var t=0; t<gBrowser.mTabs.length; t++) {
-			var tab = gBrowser.mTabs[t];
-			if(gBrowser.isFindBarInitialized(tab)) {
-				hideIt(gBrowser.getFindBar(tab), true);
-			}
-		}
+		deinitFindBar('hideOnChrome');
 	}
 	
 	listenerAid.remove(browserPanel, "browserPanelResized", delayMoveTop, false);

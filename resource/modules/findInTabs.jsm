@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.0';
+moduleAid.VERSION = '1.5.1';
 
 this.__defineGetter__('FITresizer', function() { return gFindBar._FITresizer; });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -1639,7 +1639,7 @@ this.FITtabLoaded = function(e) {
 	}
 };
 
-this.FITtabClosed = function(e) {	
+this.FITtabClosed = function(e) {
 	observerAid.notify('FIT-update-doc', e.target, e.type);
 };
 
@@ -1684,6 +1684,7 @@ this.loadFindInTabs = function() {
 	listenerAid.add(window, 'FoundFindBar', shouldFindAll);
 	listenerAid.add(window, 'UpdatedUIFindBar', updateFITElements, false);
 	listenerAid.add(window, 'FoundAgain', autoSelectFITtab);
+	listenerAid.add(window, 'SelectedFIThit', autoSelectFITtab);
 	listenerAid.add(window, 'UpdatedStatusFindBar', autoSelectOnUpdateStatus);
 	listenerAid.add(gBrowser.tabContainer, 'TabSelect', FITTabSelect);
 	
@@ -1723,6 +1724,7 @@ moduleAid.UNLOADMODULE = function() {
 	listenerAid.remove(window, 'FoundFindBar', shouldFindAll);
 	listenerAid.remove(window, 'UpdatedUIFindBar', updateFITElements, false);
 	listenerAid.remove(window, 'FoundAgain', autoSelectFITtab);
+	listenerAid.remove(window, 'SelectedFIThit', autoSelectFITtab);
 	listenerAid.remove(window, 'UpdatedStatusFindBar', autoSelectOnUpdateStatus);
 	listenerAid.remove(gBrowser.tabContainer, 'TabSelect', FITTabSelect);
 	

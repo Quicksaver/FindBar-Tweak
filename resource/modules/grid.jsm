@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.2';
+moduleAid.VERSION = '1.2.3';
 
 this.ROWS_MINIMUM = 150; // number of rows in the highlight grid - kind of the "highlight granularity"
 this.ROWS_MULTIPLIER = 2; // Add extra rows if their height exceeds this value
@@ -14,7 +14,7 @@ this.__defineGetter__('grid', function() {
 	boxNode.setAttribute('anonid', 'gridBox');
 	
 	// It shouldn't depend on the stylesheet being loaded, it could error and the browser would be unusable
-	boxNode.setAttribute('style', 'pointer-events: none;');
+	boxNode.style.pointerEvents = 'none';
 	
 	var gridNode = document.createElement('grid');
 	gridNode.setAttribute('anonid', 'findGrid');
@@ -129,7 +129,8 @@ this.resetHighlightGrid = function() {
 	listenerAid.remove(browserPanel, 'resize', delayResizeGridSpacers);
 	
 	if(viewSource) {
-		removeAttribute($$('[anonid="gridBox"]')[0], 'style');
+		grid.parentNode.style.top = '';
+		grid.parentNode.style.height = '';
 		listenerAid.remove(viewSource, 'resize', delayGridResizeViewSource);
 	}
 	
@@ -421,9 +422,8 @@ this.gridResizeViewSource = function() {
 	if(!viewSource) { return; }
 	
 	var contentPos = $('content').getBoundingClientRect();
-	var styleString = 'top: '+contentPos.top+'px;';
-	styleString += ' height: '+contentPos.height+'px;';
-	setAttribute($$('[anonid="gridBox"]')[0], 'style', styleString);
+	grid.parentNode.style.top = contentPos.top+'px';
+	grid.parentNode.style.height = contentPos.height+'px';
 	listenerAid.add(viewSource, 'resize', delayGridResizeViewSource);
 };
 

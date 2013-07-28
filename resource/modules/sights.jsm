@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.4';
+moduleAid.VERSION = '1.4.5';
 
 this.__defineGetter__('preferencesDialog', function() { return (typeof(inPreferences) != 'undefined' && inPreferences); });
 
@@ -13,7 +13,7 @@ this.__defineGetter__('sights', function() {
 	boxNode.setAttribute('anonid', 'findSights');
 	
 	// It shouldn't depend on the stylesheet being loaded, it could error and the browser would be unusable
-	boxNode.setAttribute('style', 'pointer-events: none;');
+	boxNode.style.pointerEvents = 'none';
 	
 	// Insert the box into the tab
 	boxNode = (!viewSource) ? gBrowser.mCurrentBrowser.parentNode.appendChild(boxNode) : linkedPanel.appendChild(boxNode);
@@ -565,9 +565,8 @@ this.sightsResizeViewSource = function() {
 	if(!viewSource) { return; }
 	
 	var contentPos = $('content').getBoundingClientRect();
-	var styleString = 'top: '+contentPos.top+'px;';
-	styleString += ' height: '+contentPos.height+'px;';
-	setAttribute($$('[anonid="findSights"]')[0], 'style', styleString);
+	sights.style.top = contentPos.top+'px';
+	sights.style.height = contentPos.height+'px';
 	listenerAid.add(viewSource, 'resize', delaySightsResizeViewSource);
 };
 

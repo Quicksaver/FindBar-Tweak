@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.2';
+moduleAid.VERSION = '1.5.3';
 
 this.__defineGetter__('FITresizer', function() { return gFindBar._FITresizer; });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -85,7 +85,7 @@ this.addFITElements = function(bar) {
 	var sibling = (!perTabFB) ? bar : bar.nextSibling;
 	bar._FITresizer = bar.parentNode.insertBefore(resizer, sibling);
 	
-	if((!perTabFB || gFindbarInitialized) && bar == gFindBar) {
+	if((!perTabFB || gFindBarInitialized) && bar == gFindBar) {
 		updateFITElements();
 	}
 };

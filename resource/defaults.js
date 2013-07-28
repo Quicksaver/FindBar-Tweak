@@ -1,4 +1,4 @@
-var defaultsVersion = '1.1.1';
+var defaultsVersion = '1.1.2';
 var objName = 'findbartweak';
 var objPathString = 'findbartweak';
 
@@ -69,7 +69,6 @@ var prefList = {
 	/* to revert the builtin preferences */
 	FAYTtimeout: defaultBranch.getIntPref('accessibility.typeaheadfind.timeout'),
 	FAYTenabled: defaultBranch.getBoolPref('accessibility.typeaheadfind'),
-	FAYToriginal: defaultBranch.getBoolPref('accessibility.typeaheadfind'),
 	FAYTprefill: defaultBranch.getBoolPref('accessibility.typeaheadfind.prefillwithselection'),
 	resetNative: false,
 	

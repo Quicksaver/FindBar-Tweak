@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.2';
+moduleAid.VERSION = '1.2.3';
 
 this.inPreferences = true;
 this.__defineGetter__('linkedPanel', function() { return window.document; });
@@ -18,22 +18,15 @@ this.previewSights = function(box, style) {
 };
 
 this.resetNativePrefs = function() {
-	prefAid.reset('FAYTenabled');
-	prefAid.reset('FAYToriginal');
-	prefAid.reset('FAYTtimeout');
-	prefAid.reset('FAYTprefill');
-	prefAid.reset('layoutEatSpaces');
-	prefAid.reset('layoutStopAtPunctuation');
-	prefAid.reset('selectColor');
-	prefAid.reset('highlightColor');
-	
 	prefAid.reset('typeaheadfind');
 	prefAid.reset('timeout');
 	prefAid.reset('prefillwithselection');
-	prefAid.reset('textHighlightBackground');
+	prefAid.reset('eat_space_to_next_word');
+	prefAid.reset('stop_at_punctuation');
 	prefAid.reset('textHighlightForeground');
-	prefAid.reset('textSelectBackgroundAttention');
+	prefAid.reset('textHighlightBackground');
 	prefAid.reset('textSelectForeground');
+	prefAid.reset('textSelectBackgroundAttention');
 	
 	$('pref-typeaheadfind').value = $('pref-typeaheadfind').valueFromPreferences;
 	$('pref-timeout').value = $('pref-timeout').valueFromPreferences;

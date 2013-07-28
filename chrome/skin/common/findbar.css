@@ -89,6 +89,10 @@
 		-moz-margin-end: 3px;
 	}
 	
+	window[noToolboxBorder] #navigator-toolbox:after {
+		display: none;
+	}
+	
 	/* Rounded inner corners */
 	findbar[movetotop]:before {
 		content: "";
@@ -208,19 +212,16 @@
 		background: none;
 		height: 4px;
 	}
-	window:not([findbartweak-FF25]) resizer[anonid="findbartweak-findInTabs-resizer"] {
+	window:not([findbartweak-FF25]) resizer[anonid="findbartweak-findInTabs-resizer"]:not([movetotop]) {
 		margin-bottom: -4px;
 	}
-	window[findbartweak-FF25] resizer[anonid="findbartweak-findInTabs-resizer"] {
+	window[findbartweak-FF25] resizer[anonid="findbartweak-findInTabs-resizer"],
+	window:not([findbartweak-FF25]) resizer[anonid="findbartweak-findInTabs-resizer"][movetotop] {
 		margin-top: -4px;
 	}
 	
 	#findbartweak-findInTabs-box {
 		min-height: 20px;
-	}
-	
-	#findbartweak-findInTabs-box[movetotop] {
-		margin-top: -1px;
 	}
 	
 	#findbartweak-findInTabs-hits richlistitem {

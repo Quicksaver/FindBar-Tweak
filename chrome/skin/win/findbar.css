@@ -162,7 +162,12 @@
 	}
 	
 	#findbartweak-findInTabs-box[movetotop] {
-		border-bottom: 1px solid rgb(160, 160, 160);
+		border-bottom: 1px solid ThreeDShadow;
+	}
+	window[sizemode="normal"] #findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme) {
+		border-left: 1px solid rgba(10%,10%,10%,.4);
+		border-right: 1px solid rgba(10%,10%,10%,.4);
+		background-clip: padding-box;
 	}
 	
 	window:not([findbartweak-oscpu="Windows NT 5.1"]) #findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme) {

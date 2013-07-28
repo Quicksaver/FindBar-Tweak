@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.3.0';
+moduleAid.VERSION = '1.4.0';
 
 this.__defineGetter__('findCSButton', function() { return gFindBar.getElement(objName+'-find-cs-button'); });
 this.__defineGetter__('findCSCheckbox', function() { return gFindBar.getElement('find-case-sensitive'); });
@@ -191,6 +191,23 @@ this.toggleKeepButtons = function(startup) {
 		},
 		true
 	);
+};
+
+this.toolboxBorderCounter = { length: 0 };
+this.noToolboxBorder = function(name, incr) {
+	if(incr) {
+		if(!toolboxBorderCounter[name]) {
+			toolboxBorderCounter.length++;
+			toolboxBorderCounter[name] = true;
+		}
+	} else {
+		if(toolboxBorderCounter[name]) {
+			toolboxBorderCounter.length--;
+			delete toolboxBorderCounter[name];
+		}
+	}
+	
+	toggleAttribute(document.documentElement, 'noToolboxBorder', toolboxBorderCounter.length);
 };
 	
 moduleAid.LOADMODULE = function() {

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.1';
+moduleAid.VERSION = '1.5.2';
 
 this.__defineGetter__('FITresizer', function() { return gFindBar._FITresizer; });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -85,7 +85,9 @@ this.addFITElements = function(bar) {
 	var sibling = (!perTabFB) ? bar : bar.nextSibling;
 	bar._FITresizer = bar.parentNode.insertBefore(resizer, sibling);
 	
-	updateFITElements();
+	if((!perTabFB || gFindbarInitialized) && bar == gFindBar) {
+		updateFITElements();
+	}
 };
 
 this.removeFITElements = function(bar) {
@@ -101,6 +103,22 @@ this.updateFITElements = function() {
 	FITresizer.hidden = FITbox.hidden;
 	FITupdate.hidden = FITbox.hidden;
 	
+	if(trueAttribute(FITbox, 'movetotop') && !trueAttribute(FITresizer, 'movetotop')) {
+		if(!perTabFB) {
+			gFindBar._FITresizer = browserPanel.insertBefore(FITresizer, FITbox.nextSibling);
+		}
+		setAttribute(gFindBar._FITresizer, 'movetotop');
+	}
+	else if(!trueAttribute(FITbox, 'movetotop') && trueAttribute(FITresizer, 'movetotop')) {
+		if(!perTabFB) {
+			gFindBar._FITresizer = gFindBar.parentNode.insertBefore(FITresizer, gFindBar);
+		}
+		removeAttribute(gFindBar._FITresizer, 'movetotop');
+	}
+	
+	noToolboxBorder('FIT', (!FITbox.hidden && trueAttribute(FITbox, 'movetotop')));
+	
+	toggleAttribute(FITresizer, 'movetotop', trueAttribute(FITbox, 'movetotop'));
 	toggleAttribute(FITresizer, 'dir', trueAttribute(FITbox, 'movetotop'), 'bottom', 'top');
 };
 
@@ -1696,6 +1714,9 @@ this.loadFindInTabs = function() {
 	windowMediator.register(FITViewSourceOpened, 'domwindowopened', 'navigator:view-source');
 	windowMediator.register(FITViewSourceClosed, 'domwindowclosed', 'navigator:view-source');
 	
+	// Move the resizer when necessary
+	objectWatcher.addAttributeWatcher(FITbox, 'movetotop', updateFITElements);
+	
 	prefAid.listen('alwaysOpenFIT', alwaysOpenFIT);
 	
 	alwaysOpenFIT();
@@ -1718,6 +1739,8 @@ moduleAid.LOADMODULE = function() {
 
 moduleAid.UNLOADMODULE = function() {
 	deinitFindBar('toggleFIT');
+	
+	objectWatcher.removeAttributeWatcher(FITbox, 'movetotop', updateFITElements);
 	
 	listenerAid.remove(window, 'OpenedFindBar', alwaysOpenFIT);
 	listenerAid.remove(window, 'ClosedFindBar', closeFITWithFindBar);

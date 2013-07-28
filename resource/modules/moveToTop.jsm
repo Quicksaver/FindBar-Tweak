@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.1';
+moduleAid.VERSION = '1.5.2';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -244,7 +244,7 @@ this.stylePersonaFindBar = function() {
 
 this.changeLook = function() {
 	// Apply the special style for the findbar in pdf documents
-	if((isPDFJS && !gFindBar.getAttribute('inPDFJS'))
+	if((isPDFJS && !trueAttribute(gFindBar, 'inPDFJS'))
 	|| (!isPDFJS && trueAttribute(gFindBar, 'inPDFJS'))) {
 		delayMoveTop();
 	}

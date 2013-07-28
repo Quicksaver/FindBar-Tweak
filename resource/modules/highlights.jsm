@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.0';
+moduleAid.VERSION = '1.2.1';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -198,6 +198,12 @@ this.highlightsFindAgain = function() {
 // This always calls toggleHighlight() at least once with a false argument, then with a true argument if reDo is true.
 // This way we ensure the old highlights are removed before adding new ones.
 this.reHighlight = function(reDo) {
+	// If there's no need to even call toggleHighlight(false) if we shouldn't, this can save a few ms when selecting tabs or loading documents
+	if(!documentHighlighted && ((perTabFB && !gFindBarInitialized) || gFindBar.hidden || !gFindBar._findField.value)) {
+		documentReHighlight = false;
+		return;
+	}
+	
 	gFindBar.toggleHighlight(false);
 	if(reDo && dispatch(gFindBar, { type: 'WillReHighlight' })) {
 		gFindBar.toggleHighlight(true);

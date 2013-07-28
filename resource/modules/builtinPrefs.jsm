@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.0.0';
+moduleAid.VERSION = '2.0.1';
 
 this.nativePrefs = {};
 
@@ -26,6 +26,11 @@ this.handleNativePref = function(nPref, cPref) {
 };
 
 this.resetNativePrefs = function() {
+	for(var x in nativePrefs) {
+		prefAid.unlisten(nativePrefs[x].cPref, nativePrefs[x].changedCustom);
+		prefAid.unlisten(x, nativePrefs[x].changedNative);
+	}
+	
 	if(!prefAid.resetNative) {
 		for(var x in nativePrefs) {
 			prefAid[x] = nativePrefs[x].revertValue;
@@ -34,13 +39,6 @@ this.resetNativePrefs = function() {
 		for(var x in nativePrefs) {
 			prefAid.reset(x);
 		}
-	}
-};
-
-this.unhandleNativePrefs = function() {
-	for(var x in nativePrefs) {
-		prefAid.unlisten(nativePrefs[x].cPref, nativePrefs[x].changedCustom);
-		prefAid.unlisten(x, nativePrefs[x].changedNative);
 	}
 };
 
@@ -59,6 +57,5 @@ moduleAid.LOADMODULE = function() {
 };
 
 moduleAid.UNLOADMODULE = function() {
-	unhandleNativePrefs();
 	resetNativePrefs();
 };

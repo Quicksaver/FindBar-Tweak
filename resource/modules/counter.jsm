@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.4';
+moduleAid.VERSION = '1.1.5';
 
 this.REDOINGHIGHLIGHTS = false;
 this.__defineGetter__('counter', function() { return gFindBar._findStatusDesc.textContent; });
@@ -28,7 +28,9 @@ this.fillHighlightCounter = function(e) {
 	
 	// Special routine for PDF.JS
 	if(isPDFJS) {
-		if(contentDocument.readyState != 'complete') { return; }
+		// 'complete' is for FF22 (maybe 23?) and below, 'interactive' is for FF23 (maybe 24?) and above
+		// I hope adding this doesn't break anything else.
+		if(contentDocument.readyState != 'complete' && contentDocument.readyState != 'interactive') { return; }
 		
 		// We need this to access protected properties, hidden from privileged code
 		var unWrap = XPCNativeWrapper.unwrap(contentWindow);

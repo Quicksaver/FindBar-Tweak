@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.0.0';
+moduleAid.VERSION = '2.0.1';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return window.gFindBarInitialized; });
@@ -167,7 +167,7 @@ this.initializeListener = function(e) {
 	bar[objName+'_initialized'] = { length: 0 };
 	for(var r in initRoutines) {
 		initRoutines[r].init(bar);
-		bar[objName+'_initialized'][name] = true;
+		bar[objName+'_initialized'][r] = true;
 		bar[objName+'_initialized'].length++;
 	}
 };
@@ -181,6 +181,18 @@ moduleAid.LOADMODULE = function() {
 	if(!viewSource && perTabFB) {
 		listenerAid.add(gBrowser.tabContainer, "TabSelect", tabSelectBaseListener);
 		tabSelectBaseListener();
+		
+		// I only need this until bug 893349 lands
+		if(gBrowser.getFindBar.toString().indexOf('findinitialized') == -1) {
+			toCode.modify(gBrowser, 'getFindBar', [
+				['return findBar;',
+					'	let event = document.createEvent("Events");\n'
+					+'	event.initEvent("findinitialized", true, false);\n'
+					+'	aTab.dispatchEvent(event);\n'
+					+'	return findBar;'
+				]
+			]);
+		}
 	}
 	listenerAid.add(window, 'findinitialized', initializeListener);
 	
@@ -193,6 +205,8 @@ moduleAid.UNLOADMODULE = function() {
 	listenerAid.remove(window, 'findinitialized', initializeListener);
 	if(!viewSource && perTabFB) {
 		listenerAid.remove(gBrowser.tabContainer, "TabSelect", tabSelectBaseListener);
+		
+		toCode.revert(gBrowser, 'getFindBar');
 	}
 	
 	/* Prevent a ZC */

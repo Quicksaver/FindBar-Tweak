@@ -75,6 +75,10 @@
 		min-height: 23px;
 	}
 	
+	window[findbartweak-FF25] findbar[movetotop] {
+		box-shadow: none;
+	}
+	
 	/* For the toolbar button */
 	#navigator-toolbox[iconsize="small"] :not(#TabsToolbar) #findbartweak-button .toolbarbutton-icon,
 	#navigator-toolbox[mode="full"] :not(#TabsToolbar) #findbartweak-button .toolbarbutton-icon {

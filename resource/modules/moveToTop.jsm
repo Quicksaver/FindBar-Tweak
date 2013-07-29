@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.2';
+moduleAid.VERSION = '1.5.3';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -152,7 +152,7 @@ this.moveTop = function() {
 	if(!viewSource) { findPersonaPosition(); }
 	
 	// Doing it aSync prevents the window elements from jumping at startup (stylesheet not loaded yet)
-	aSync(function() { setAttribute(gFindBar, 'movetotop', 'true'); });
+	aSync(function() { setOnTop(); });
 };
 
 this.forceCornerRedraw = function() {
@@ -320,8 +320,12 @@ this.hideOnChromeAttrWatcher = function(obj, prop, oldVal, newVal) {
 };
 
 this.setOnTop = function(e) {
-	if(!e.defaultPrevented) {
-		setAttribute(gFindBar, 'movetotop', 'true');
+	if(!e || !e.defaultPrevented) {
+		initFindBar('movetotop',
+			function(bar) { setAttribute(bar, 'movetotop', 'true'); },
+			function(bar) { removeAttribute(bar, 'movetotop'); },
+			true
+		);
 	}
 };
 
@@ -355,11 +359,15 @@ moduleAid.LOADMODULE = function() {
 	moveTop();
 	
 	if(!viewSource) {
-		// we just init this so we can easily remove the collapsed state later when disabling the module if necessary
-		initFindBar('hideOnChrome',
+		// we just init this so we can easily remove the collapsed state and others later when disabling the module if necessary
+		initFindBar('resetTopState',
 			function(bar) { return; },
-			function(bar) { hideIt(bar, true); }
+			function(bar) {
+				hideIt(bar, true);
+				removeAttribute(bar, 'inPDFJS');
+			}
 		);
+		
 		hideOnChrome();
 	}
 };
@@ -384,7 +392,7 @@ moduleAid.UNLOADMODULE = function() {
 			}
 		}
 		
-		deinitFindBar('hideOnChrome');
+		deinitFindBar('resetTopState');
 	}
 	
 	listenerAid.remove(browserPanel, "browserPanelResized", delayMoveTop, false);
@@ -396,8 +404,7 @@ moduleAid.UNLOADMODULE = function() {
 	listenerAid.remove(window, "HighlightCounterUpdated", moveTopAsNeeded);
 	listenerAid.remove(browserPanel, 'resize', browserPanelResized);
 	
-	gFindBar.removeAttribute('movetotop');
-	gFindBar.removeAttribute('inPDFJS');
+	deinitFindBar('movetotop');
 	
 	prefAid.unlisten('movetoRight', moveTop);
 	

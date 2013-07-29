@@ -139,7 +139,8 @@
 		                rgba(0,0,0,0.15) 0px 1px 0px 0px,
 		                rgba(0,0,0,0.1) 0px 1px 1px 0px;
 	}
-	findbar[movetotop][inPDFJS] toolbarbutton:not([disabled="true"]) {
+	findbar[movetotop][inPDFJS] toolbarbutton:not([disabled="true"]),
+	window[findbartweak-FF25] findbar[movetotop][inPDFJS] .findbar-find-status {
 		color: rgb(216,216,216);
 	}
 	

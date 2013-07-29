@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.3';
+moduleAid.VERSION = '1.5.4';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -118,6 +118,7 @@ this.moveTop = function() {
 	}
 	
 	toggleAttribute(gFindBar, 'inPDFJS', (isPDFJS && toolbar));
+	toggleNotificationState();
 	
 	if(!shouldReMoveTop(moveTopStyle)) { return; }
 	lastTopStyle = moveTopStyle;
@@ -242,6 +243,10 @@ this.stylePersonaFindBar = function() {
 	}
 };
 
+this.toggleNotificationState = function() {
+	toggleAttribute(gFindBar, 'inNotification', gBrowser.getNotificationBox().currentNotification && !gBrowser.getNotificationBox().notificationsHidden);
+};
+
 this.changeLook = function() {
 	// Apply the special style for the findbar in pdf documents
 	if((isPDFJS && !trueAttribute(gFindBar, 'inPDFJS'))
@@ -272,6 +277,7 @@ this.hideOnChrome = function() {
 		}
 		
 		changeLook();
+		toggleNotificationState();
 	}, 0);
 };
 
@@ -365,6 +371,7 @@ moduleAid.LOADMODULE = function() {
 			function(bar) {
 				hideIt(bar, true);
 				removeAttribute(bar, 'inPDFJS');
+				removeAttribute(bar, 'inNotification');
 			}
 		);
 		

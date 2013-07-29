@@ -10,7 +10,8 @@
 	findbar[hideLabels] checkbox label,
 	findbar[hideLabels] checkbox[anonid="find-case-sensitive"],
 	findbar[hideFindLabel] label[anonid="find-label"],
-	findbar[noClose] .findbar-closebutton {
+	findbar[noClose] .findbar-closebutton,
+	findbar[inNotification] {
 		display: none;
 	}
 	

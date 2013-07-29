@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.0.1';
+moduleAid.VERSION = '2.0.2';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return window.gFindBarInitialized; });
@@ -107,8 +107,10 @@ this.initFindBar = function(name, init, deinit, force) {
 				gFindBar[objName+'_initialized'] = { length: 0 };
 			}
 			init(gFindBar);
+			if(!gFindBar[objName+'_initialized'][name]) {
+				gFindBar[objName+'_initialized'].length++;
+			}
 			gFindBar[objName+'_initialized'][name] = true;
-			gFindBar[objName+'_initialized'].length++;
 		}
 	} else {
 		for(var t=0; t<gBrowser.mTabs.length; t++) {
@@ -120,8 +122,10 @@ this.initFindBar = function(name, init, deinit, force) {
 						bar[objName+'_initialized'] = { length: 0 };
 					}
 					init(bar);
+					if(!bar[objName+'_initialized'][name]) {
+						bar[objName+'_initialized'].length++;
+					}
 					bar[objName+'_initialized'][name] = true;
-					bar[objName+'_initialized'].length++;
 				}
 			}
 		}

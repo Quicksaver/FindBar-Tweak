@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.0';
+moduleAid.VERSION = '1.4.1';
 
 this.__defineGetter__('findCSButton', function() { return gFindBar.getElement(objName+'-find-cs-button'); });
 this.__defineGetter__('findCSCheckbox', function() { return gFindBar.getElement('find-case-sensitive'); });
@@ -102,13 +102,8 @@ this.csButtonCommand = function(e) {
 	return true;
 };
 
-this.toggleButtonState = function(e) {
-	toggleAttribute($(objName+'-button'), 'checked', (e.type == 'OpenedFindBar'));
-};
-
-// Only used in FF25
-this.tabSelectToggleButtonState = function() {
-	toggleAttribute($(objName+'-button'), 'checked', (gFindBarInitialized && !findBarHidden));
+this.toggleButtonState = function() {
+	toggleAttribute($(objName+'-button'), 'checked', ((!perTabFB || gFindBarInitialized) && !findBarHidden));
 };
 
 this.toggleClose = function() {
@@ -240,7 +235,7 @@ moduleAid.LOADMODULE = function() {
 	listenerAid.add(window, 'ClosedFindBar', toggleButtonState);
 	
 	if(!viewSource && perTabFB) {
-		listenerAid.add(gBrowser.tabContainer, "TabSelect", tabSelectToggleButtonState);
+		listenerAid.add(gBrowser.tabContainer, "TabSelect", toggleButtonState);
 	}
 	
 	prefAid.listen('hideClose', toggleClose);
@@ -279,7 +274,7 @@ moduleAid.UNLOADMODULE = function() {
 	
 	if(perTabFB) {
 		if(!viewSource) {
-			listenerAid.remove(gBrowser.tabContainer, "TabSelect", tabSelectToggleButtonState);
+			listenerAid.remove(gBrowser.tabContainer, "TabSelect", toggleButtonState);
 		}
 		deinitFindBar('contextMenu');
 	}

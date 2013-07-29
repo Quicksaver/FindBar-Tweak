@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.1';
+moduleAid.VERSION = '1.0.2';
 
 this.rememberOnOpen = function() {
 	if(gFindBar._findMode == gFindBar.FIND_NORMAL) {
@@ -11,11 +11,11 @@ this.rememberOnClose = function() {
 };
 
 moduleAid.LOADMODULE = function() {
-	listenerAid.add(gFindBar, 'OpenedFindBar', rememberOnOpen);
-	listenerAid.add(gFindBar, 'ClosedFindBar', rememberOnClose);
+	listenerAid.add(window, 'OpenedFindBar', rememberOnOpen);
+	listenerAid.add(window, 'ClosedFindBar', rememberOnClose);
 	
-	if(STARTED == APP_STARTUP && !prefAid.findbarHidden) {
-		gFindBar.open();
+	if(STARTED == APP_STARTUP && !prefAid.findbarHidden && gFindBar.hidden) {
+		gFindBar.onFindCommand();
 	}
 	
 	if((!perTabFB || gFindBarInitialized) && !gFindBar.hidden && gFindBar._findMode == gFindBar.FIND_NORMAL) {
@@ -24,10 +24,10 @@ moduleAid.LOADMODULE = function() {
 };
 
 moduleAid.UNLOADMODULE = function() {
-	listenerAid.remove(gFindBar, 'OpenedFindBar', rememberOnOpen);
-	listenerAid.remove(gFindBar, 'ClosedFindBar', rememberOnClose);
+	listenerAid.remove(window, 'OpenedFindBar', rememberOnOpen);
+	listenerAid.remove(window, 'ClosedFindBar', rememberOnClose);
 	
-	if(UNLOADED && UNLOADED != APP_SHUTDOWN) {
+	if((UNLOADED && UNLOADED != APP_SHUTDOWN) || !prefAid.onStartup) {
 		prefAid.findbarHidden = true;
 	}
 };

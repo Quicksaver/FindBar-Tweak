@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.0';
+moduleAid.VERSION = '1.0.1';
 
 this.findBarHiddenState = true;
 
@@ -14,6 +14,7 @@ this.globalFBOnOpen = function() {
 this.globalFBOpenAll = function() {
 	for(var t=0; t<gBrowser.mTabs.length; t++) {
 		var bar = gBrowser.getFindBar(gBrowser.mTabs[t]);
+		if(bar == gFindBar && !gFindBar.hidden) { continue; }
 		bar.open();
 	}
 };

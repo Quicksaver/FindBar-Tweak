@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.3';
+moduleAid.VERSION = '1.5.4';
 
 this.__defineGetter__('FITresizer', function() { return gFindBar._FITresizer; });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -103,17 +103,20 @@ this.updateFITElements = function() {
 	FITresizer.hidden = FITbox.hidden;
 	FITupdate.hidden = FITbox.hidden;
 	
-	if(trueAttribute(FITbox, 'movetotop') && !trueAttribute(FITresizer, 'movetotop')) {
-		if(!perTabFB) {
-			gFindBar._FITresizer = browserPanel.insertBefore(FITresizer, FITbox.nextSibling);
+	if(!perTabFB) {
+		if(trueAttribute(FITbox, 'movetotop')) {
+			if(FITresizer.getAttribute('position') != 'top') {
+				gFindBar._FITresizer = browserPanel.insertBefore(FITresizer, FITbox.nextSibling);
+			}
+			setAttribute(FITresizer, 'position', 'top');
+		} else {
+			if(FITresizer.getAttribute('position') != 'bottom') {
+				gFindBar._FITresizer = gFindBar.parentNode.insertBefore(FITresizer, gFindBar);
+			}
+			setAttribute(FITresizer, 'position', 'bottom');
 		}
-		setAttribute(gFindBar._FITresizer, 'movetotop');
-	}
-	else if(!trueAttribute(FITbox, 'movetotop') && trueAttribute(FITresizer, 'movetotop')) {
-		if(!perTabFB) {
-			gFindBar._FITresizer = gFindBar.parentNode.insertBefore(FITresizer, gFindBar);
-		}
-		removeAttribute(gFindBar._FITresizer, 'movetotop');
+	} else {
+		toggleAttribute(FITresizer, 'position', trueAttribute(FITbox, 'movetotop'), 'top', 'bottom');
 	}
 	
 	noToolboxBorder('FIT', (!FITbox.hidden && trueAttribute(FITbox, 'movetotop')));
@@ -1723,7 +1726,7 @@ this.loadFindInTabs = function() {
 };
 
 this.toggleMoveFITtoTop = function() {
-	if(perTabFB || prefAid.movetoTop) {
+	if((perTabFB && !prefAid.movetoBottom) || prefAid.movetoTop) {
 		overlayAid.overlayURI('chrome://'+objPathString+'/content/findInTabs.xul', 'movetoTop_FIT');
 	} else {
 		overlayAid.removeOverlayURI('chrome://'+objPathString+'/content/findInTabs.xul', 'movetoTop_FIT');
@@ -1732,6 +1735,7 @@ this.toggleMoveFITtoTop = function() {
 
 moduleAid.LOADMODULE = function() {
 	prefAid.listen('movetoTop', toggleMoveFITtoTop);
+	prefAid.listen('movetoBottom', toggleMoveFITtoTop);
 	toggleMoveFITtoTop();
 	
 	overlayAid.overlayWindow(window, 'findInTabs', null, loadFindInTabs);
@@ -1772,6 +1776,7 @@ moduleAid.UNLOADMODULE = function() {
 	}
 	
 	prefAid.unlisten('movetoTop', toggleMoveFITtoTop);
+	prefAid.unlisten('movetoBottom', toggleMoveFITtoTop);
 	if(UNLOADED || !prefAid.findInTabs) {
 		overlayAid.removeOverlayURI('chrome://'+objPathString+'/content/findInTabs.xul', 'movetoTop_FIT');
 	}

@@ -112,6 +112,14 @@
 		position: fixed;
 	}
 	
+	/* Find Toolbar at the bottom in FF25 */
+	window[findbartweak-FF25] findbar:not([position="top"]) {
+		-moz-box-ordinal-group: 3;
+	}
+	window[findbartweak-FF25] resizer[anonid="findbartweak-findInTabs-resizer"][position="bottom"] {
+		-moz-box-ordinal-group: 2;
+	}
+	
 	/* Find Toolbar styled for PDF.JS documents */
 	findbar[movetotop][inPDFJS]:-moz-locale-dir(ltr):before,
 	findbar[movetotop][inPDFJS]:-moz-locale-dir(rtl):after {
@@ -214,11 +222,10 @@
 		background: none;
 		height: 4px;
 	}
-	window:not([findbartweak-FF25]) resizer[anonid="findbartweak-findInTabs-resizer"]:not([movetotop]) {
+	resizer[anonid="findbartweak-findInTabs-resizer"][position="bottom"] {
 		margin-bottom: -4px;
 	}
-	window[findbartweak-FF25] resizer[anonid="findbartweak-findInTabs-resizer"],
-	window:not([findbartweak-FF25]) resizer[anonid="findbartweak-findInTabs-resizer"][movetotop] {
+	resizer[anonid="findbartweak-findInTabs-resizer"][position="top"] {
 		margin-top: -4px;
 	}
 	

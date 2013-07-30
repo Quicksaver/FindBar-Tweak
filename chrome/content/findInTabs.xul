@@ -24,6 +24,7 @@
 	<vbox id="browser-bottombox">
 		<hbox id="objName-findInTabs-box"
 			insertafter="FindToolbar"
+			position="1"
 			hidden="true"
 			height="200"
 			persist="height">

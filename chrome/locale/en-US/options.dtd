@@ -9,7 +9,7 @@
 <!ENTITY Optabout.label "About">
 
 <!ENTITY Optgen.label "Findbar Options">
-<!ENTITY Optdisplay.label "Display Options">
+<!ENTITY Optdisplay.label "Findbar Position">
 <!ENTITY OptButtonAndLabels.label "Buttons and Labels">
 <!ENTITY Optgrid.label "Highlights Grid">
 
@@ -54,9 +54,10 @@
 <!ENTITY OpthideLabels.labelFF25 "Show button icons instead of labels">
 <!ENTITY OpthideFindLabel.label "Hide 'Find:' label">
 <!ENTITY OpthideClose.label "Hide the Findbar close button">
-<!ENTITY OptmovetoTop.label "Move the Findbar to the top of the browser">
-<!ENTITY OptmovetoTop.labelFF25 "Place the Findbar above the webpage">
+<!ENTITY OptmovetoTop.label "Move to the top of the browser">
+<!ENTITY OptmovetoTop.labelFF25 "Place above the webpage">
 <!ENTITY OptmovetoRight.label "Place on the right">
+<!ENTITY OptmovetoBottom.label "Move to the bottom of the browser">
 <!ENTITY OptblurCloses.label "Close the Findbar when it loses focus">
 <!ENTITY OptperTab.label "Findbar starts closed in new tabs">
 <!ENTITY OptonStartup.label "Remember Findbar opened/closed state on startup">

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.1';
+moduleAid.VERSION = '1.4.2';
 
 this.__defineGetter__('findCSButton', function() { return gFindBar.getElement(objName+'-find-cs-button'); });
 this.__defineGetter__('findCSCheckbox', function() { return gFindBar.getElement('find-case-sensitive'); });
@@ -161,7 +161,8 @@ this.toggleFindLabel = function() {
 };
 
 this.toggleMoveToTop = function() {
-	moduleAid.loadIf('moveToTop', prefAid.movetoTop);
+	moduleAid.loadIf('moveToTop', prefAid.movetoTop && (!perTabFB || !prefAid.movetoBottom));
+	moduleAid.loadIf('moveToBottom', prefAid.movetoBottom && perTabFB);
 };
 
 this.toggleMoveToRight = function(startup) {
@@ -241,6 +242,7 @@ moduleAid.LOADMODULE = function() {
 	prefAid.listen('hideClose', toggleClose);
 	prefAid.listen('hideLabels', toggleLabels);
 	prefAid.listen('movetoTop', toggleMoveToTop);
+	prefAid.listen('movetoBottom', toggleMoveToTop);
 	prefAid.listen('movetoRight', toggleMoveToRight);
 	prefAid.listen('keepButtons', toggleKeepButtons);
 	
@@ -257,10 +259,12 @@ moduleAid.UNLOADMODULE = function() {
 	prefAid.unlisten('hideClose', toggleClose);
 	prefAid.unlisten('hideLabels', toggleLabels);
 	prefAid.unlisten('movetoTop', toggleMoveToTop);
+	prefAid.unlisten('movetoBottom', toggleMoveToTop);
 	prefAid.unlisten('movetoRight', toggleMoveToRight);
 	prefAid.unlisten('keepButtons', toggleKeepButtons);
 	
 	moduleAid.unload('moveToTop');
+	moduleAid.unload('moveToBottom');
 	moduleAid.unload('resizeTextbox');
 	
 	deinitFindBar('toggleClose');

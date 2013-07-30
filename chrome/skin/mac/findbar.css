@@ -169,6 +169,10 @@
 		-moz-border-bottom-colors: rgba(0,0,0,0.32);
 	}
 	
+	window[findbartweak-FF25] #findbartweak-findInTabs-box:not([movetotop]) {
+		border-top: 1px solid #888;
+	}
+	
 	findbar:not([hideLabels]) toolbarbutton:not(.findbar-closebutton) image {
 		margin-top: 0;
 		margin-bottom: 0;

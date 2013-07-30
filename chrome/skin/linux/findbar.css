@@ -97,6 +97,11 @@
 		-moz-border-bottom-colors: rgb(178,174,170);
 	}
 	
+	window[findbartweak-FF25] #findbartweak-findInTabs-box:not([movetotop]) {
+		border-top: 2px solid;
+		-moz-border-top-colors: ThreeDShadow ThreeDHighlight;
+	}
+	
 	.findbar-tabs image,
 	.findbar-tabs-update image,
 	.findbar-cs-button image {

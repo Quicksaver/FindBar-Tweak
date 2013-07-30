@@ -76,6 +76,7 @@
 			<preference id="pref-keepSelectContrast" name="extensions.findbartweak.keepSelectContrast" type="bool"/>
 			<preference id="pref-useCounter" name="extensions.findbartweak.useCounter" type="bool"/>
 			<preference id="pref-movetoTop" name="extensions.findbartweak.movetoTop" type="bool"/>
+			<preference id="pref-movetoBottom" name="extensions.findbartweak.movetoBottom" type="bool"/>
 			<preference id="pref-movetoRight" name="extensions.findbartweak.movetoRight" type="bool"/>
 			<preference id="pref-hideClose" name="extensions.findbartweak.hideClose" type="bool"/>
 			<preference id="pref-hideLabels" name="extensions.findbartweak.hideLabels" type="bool"/>
@@ -84,7 +85,8 @@
 		
 		<groupbox align="start">
 			<caption label="&Optdisplay.label;"/>
-			<checkbox id="movetoTopCheckbox" label="&OptmovetoTop.label;" preference="pref-movetoTop"/>
+			<checkbox id="movetoBottomCheckbox" label="&OptmovetoBottom.label;" preference="pref-movetoBottom" hidden="true"/>
+			<checkbox id="movetoTopCheckbox" label="&OptmovetoTop.label;" dependson="!pref-movetoBottom" preference="pref-movetoTop"/>
 			<checkbox label="&OptmovetoRight.label;" preference="pref-movetoRight"/>
 		</groupbox>
 		<groupbox align="start">

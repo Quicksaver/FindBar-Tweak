@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.4';
+moduleAid.VERSION = '1.5.5';
 
 this.__defineGetter__('FITresizer', function() { return gFindBar._FITresizer; });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -100,6 +100,8 @@ this.removeFITElements = function(bar) {
 };
 
 this.updateFITElements = function() {
+	if(perTabFB && !gFindBarInitialized) { return; }
+	
 	FITresizer.hidden = FITbox.hidden;
 	FITupdate.hidden = FITbox.hidden;
 	
@@ -729,6 +731,7 @@ this.countFITinTab = function(aWindow, item, word) {
 
 // When the user selects a tab in the browser, select the corresponding item in the tabs list if it exists
 this.autoSelectFITtab = function() {
+	if(perTabFB && !gFindBarInitialized) { return; } // On TabSelect
 	if(!contentWindow || !FITtabsList) { return; } // Usually triggered when a selection is on a frame and the frame closes
 	
 	for(var i=1; i<FITtabsList.childNodes.length; i++) {
@@ -1566,7 +1569,7 @@ this.replaceLineBreaks = function(str) {
 };
 
 this.alwaysOpenFIT = function() {
-	if(prefAid.alwaysOpenFIT && !gFindBar.hidden && FITbox.hidden) {
+	if(prefAid.alwaysOpenFIT && (!perTabFB || gFindBarInitialized) && !gFindBar.hidden && FITbox.hidden) {
 		toggleFIT();
 	}
 };

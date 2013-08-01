@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.1';
+moduleAid.VERSION = '1.0.2';
 
 this.findBarHiddenState = true;
 
@@ -27,8 +27,11 @@ this.globalFBOnClose = function() {
 
 this.globalFBCloseAll = function() {
 	for(var t=0; t<gBrowser.mTabs.length; t++) {
-		var bar = gBrowser.getFindBar(gBrowser.mTabs[t]);
-		bar.close();
+		if(gBrowser.mTabs[t]._findBar) {
+			var bar = gBrowser.getFindBar(gBrowser.mTabs[t]);
+			if(gFindBarInitialized && bar == gFindBar && gFindBar.hidden) { continue; }
+			bar.close();
+		}
 	}
 };
 
@@ -63,7 +66,7 @@ moduleAid.LOADMODULE = function() {
 	listenerAid.add(window, 'OpenedFindBar', globalFBOnOpen);
 	listenerAid.add(window, 'ClosedFindBar', globalFBOnClose);
 	
-	findBarHiddenState = gFindBar.hidden;
+	findBarHiddenState = !gFindBarInitialized || gFindBar.hidden;
 	if(!findBarHiddenState) {
 		globalFBOnOpen();
 	} else {

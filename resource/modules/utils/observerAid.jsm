@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.0.1';
+moduleAid.VERSION = '2.0.2';
 moduleAid.LAZY = true;
 
 // observerAid - Helper for adding and removing observers
@@ -49,7 +49,7 @@ this.observerAid = {
 	
 	observing: function(anObserver, aTopic) {
 		for(var i = 0; i < this.observers.length; i++) {
-			if(this.observers[i].observer == anObserver && this.observers[i].topic == aTopic) {
+			if((this.observers[i].observer == anObserver || this.observers[i].observer.observe == anObserver.observe) && this.observers[i].topic == aTopic) {
 				return i;
 			}
 		}

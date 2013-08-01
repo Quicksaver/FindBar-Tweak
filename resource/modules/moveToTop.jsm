@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.4';
+moduleAid.VERSION = '1.5.5';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -244,7 +244,7 @@ this.stylePersonaFindBar = function() {
 };
 
 this.toggleNotificationState = function() {
-	toggleAttribute(gFindBar, 'inNotification', gBrowser.getNotificationBox().currentNotification && !gBrowser.getNotificationBox().notificationsHidden);
+	toggleAttribute(gFindBar, 'inNotification', !viewSource && gBrowser.getNotificationBox().currentNotification && !gBrowser.getNotificationBox().notificationsHidden);
 };
 
 this.changeLook = function() {

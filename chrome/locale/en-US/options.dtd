@@ -58,6 +58,7 @@
 <!ENTITY OptmovetoTop.labelFF25 "Place above the webpage">
 <!ENTITY OptmovetoRight.label "Place on the right">
 <!ENTITY OptmovetoBottom.label "Move to the bottom of the browser">
+<!ENTITY OptFF25Tweaks.label "Make the findbar continuous with the rest of the chrome">
 <!ENTITY OptblurCloses.label "Close the Findbar when it loses focus">
 <!ENTITY OptperTab.label "Findbar starts closed in new tabs">
 <!ENTITY OptonStartup.label "Remember Findbar opened/closed state on startup">

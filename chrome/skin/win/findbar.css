@@ -79,6 +79,22 @@
 		box-shadow: none;
 	}
 	
+	/* FF25 Tweaks */
+	window[findbartweak-FF25Tweaks] #navigator-toolbox:after {
+		display: none;
+	}
+	
+	window[findbartweak-FF25Tweaks][findbartweak-oscpu="Windows NT 5.1"] #browser > *:not([renderabove]):not([noTopBorder]) {
+		border-top: 1px solid ThreeDShadow;
+	}
+	window[findbartweak-FF25Tweaks]:not([findbartweak-oscpu="Windows NT 5.1"]) #browser > *:not([renderabove]):not([noTopBorder]) {
+		border-top: 1px solid #aabccf;
+	}
+	
+	window[findbartweak-FF25Tweaks] #appcontent findbar:-moz-lwtheme {
+		background-color: transparent;
+	}
+	
 	/* For the toolbar button */
 	#navigator-toolbox[iconsize="small"] :not(#TabsToolbar) #findbartweak-button .toolbarbutton-icon,
 	#navigator-toolbox[mode="full"] :not(#TabsToolbar) #findbartweak-button .toolbarbutton-icon {
@@ -165,7 +181,7 @@
 		background-color: -moz-dialog;
 	}
 	
-	#findbartweak-findInTabs-box[movetotop] {
+	window:not([findbartweak-FF25Tweaks]) #findbartweak-findInTabs-box[movetotop] {
 		border-bottom: 1px solid ThreeDShadow;
 	}
 	window[sizemode="normal"] #findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme) {

@@ -1,4 +1,4 @@
-var defaultsVersion = '1.1.3';
+var defaultsVersion = '1.1.4';
 var objName = 'findbartweak';
 var objPathString = 'findbartweak';
 
@@ -50,6 +50,7 @@ var prefList = {
 	movetoTop: false,
 	movetoBottom: false,
 	movetoRight: false,
+	FF25Tweaks: true,
 	hideClose: false,
 	hideLabels: false,
 	hideFindLabel: false,

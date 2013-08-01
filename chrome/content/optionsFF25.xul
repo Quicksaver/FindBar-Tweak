@@ -5,4 +5,5 @@
 	<checkbox id="hideLabels" label="&OpthideLabels.labelFF25;"/>
 	<checkbox id="movetoTopCheckbox" label="&OptmovetoTop.labelFF25;"/>
 	<checkbox id="movetoBottomCheckbox" hidden="false"/>
+	<checkbox id="FF25TweaksCheckbox" hidden="false" />
 </overlay>

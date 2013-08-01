@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.2';
+moduleAid.VERSION = '1.4.3';
 
 this.__defineGetter__('findCSButton', function() { return gFindBar.getElement(objName+'-find-cs-button'); });
 this.__defineGetter__('findCSCheckbox', function() { return gFindBar.getElement('find-case-sensitive'); });
@@ -189,6 +189,10 @@ this.toggleKeepButtons = function(startup) {
 	);
 };
 
+this.toggleFF25Tweaks = function() {
+	moduleAid.loadIf('FF25Tweaks', perTabFB && prefAid.FF25Tweaks && !prefAid.movetoTop && !prefAid.movetoBottom);
+};
+
 this.toolboxBorderCounter = { length: 0 };
 this.noToolboxBorder = function(name, incr) {
 	if(incr) {
@@ -205,7 +209,7 @@ this.noToolboxBorder = function(name, incr) {
 	
 	toggleAttribute(document.documentElement, 'noToolboxBorder', toolboxBorderCounter.length);
 };
-	
+
 moduleAid.LOADMODULE = function() {
 	// For the case-sensitive button
 	prefAid.setDefaults({ casesensitive: 0 }, 'typeaheadfind', 'accessibility');
@@ -245,6 +249,9 @@ moduleAid.LOADMODULE = function() {
 	prefAid.listen('movetoBottom', toggleMoveToTop);
 	prefAid.listen('movetoRight', toggleMoveToRight);
 	prefAid.listen('keepButtons', toggleKeepButtons);
+	prefAid.listen('FF25Tweaks', toggleFF25Tweaks);
+	prefAid.listen('movetoTop', toggleFF25Tweaks);
+	prefAid.listen('movetoBottom', toggleFF25Tweaks);
 	
 	moduleAid.load('resizeTextbox');
 	
@@ -253,6 +260,7 @@ moduleAid.LOADMODULE = function() {
 	toggleMoveToTop();
 	toggleMoveToRight();
 	toggleKeepButtons();
+	toggleFF25Tweaks();
 };
 
 moduleAid.UNLOADMODULE = function() {
@@ -262,7 +270,11 @@ moduleAid.UNLOADMODULE = function() {
 	prefAid.unlisten('movetoBottom', toggleMoveToTop);
 	prefAid.unlisten('movetoRight', toggleMoveToRight);
 	prefAid.unlisten('keepButtons', toggleKeepButtons);
+	prefAid.unlisten('FF25Tweaks', toggleFF25Tweaks);
+	prefAid.unlisten('movetoTop', toggleFF25Tweaks);
+	prefAid.unlisten('movetoBottom', toggleFF25Tweaks);
 	
+	moduleAid.unload('FF25Tweaks');
 	moduleAid.unload('moveToTop');
 	moduleAid.unload('moveToBottom');
 	moduleAid.unload('resizeTextbox');

@@ -88,8 +88,8 @@
 			<caption label="&Optdisplay.label;"/>
 			<checkbox id="movetoBottomCheckbox" label="&OptmovetoBottom.label;" preference="pref-movetoBottom" hidden="true"/>
 			<checkbox id="movetoTopCheckbox" label="&OptmovetoTop.label;" dependson="!pref-movetoBottom" preference="pref-movetoTop"/>
-			<checkbox label="&OptmovetoRight.label;" preference="pref-movetoRight"/>
 			<checkbox id="FF25TweaksCheckbox" label="&OptFF25Tweaks.label;" dependson="!pref-movetoTop,!pref-movetoBottom" preference="pref-FF25Tweaks" hidden="true" />
+			<checkbox label="&OptmovetoRight.label;" preference="pref-movetoRight"/>
 		</groupbox>
 		<groupbox align="start">
 			<caption label="&OptButtonAndLabels.label;"/>

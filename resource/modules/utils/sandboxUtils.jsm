@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.1.1';
+moduleAid.VERSION = '2.1.2';
 moduleAid.LAZY = true;
 
 // window - Similarly to windowMediator.callOnMostRecent, the window property returns the most recent navigator:browser window object
@@ -89,6 +89,9 @@ this.removeAttribute = function(obj, attr) { loadAttributesTools(); return remov
 // toggleAttribute() - sets attr on obj if condition is true; I'm uber lazy
 this.toggleAttribute = function(obj, attr, condition, trueval, falseval) { loadAttributesTools(); return toggleAttribute(obj, attr, condition, trueval, falseval); };
 
+// trueAttribute() - checks if attr on obj has value 'true'; once again, I'm uber lazy
+this.trueAttribute = function(obj, attr) { loadAttributesTools(); return trueAttribute(obj, attr); };
+
 this.loadSandboxTools = function() {
 	delete this.xmlHttpRequest;
 	delete this.aSync;
@@ -106,6 +109,7 @@ this.loadAttributesTools = function() {
 	delete this.setAttribute;
 	delete this.removeAttribute;
 	delete this.toggleAttribute;
+	delete this.trueAttribute;
 	moduleAid.load('utils/attributes');
 };
 

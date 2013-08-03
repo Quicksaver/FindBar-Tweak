@@ -5,18 +5,30 @@
 	url("chrome://global/content/viewPartialSource.xul") {
 
 	/* Rounded inner corners */
-	findbar[movetotop]:before {
+	window:not([findbartweak-FF25]) findbar[movetotop]:before {
 		-moz-margin-start: -16px;
 	}
+	
+	window[findbartweak-FF25] findbar[movetotop]:before {
+		-moz-margin-start: -24px;
+	}
+	window[findbartweak-FF25] findbar[movetotop]:after {
+		-moz-margin-start: 8px;
+	}
+	window[findbartweak-FF25] findbar[movetotop]:before,
+	window[findbartweak-FF25] findbar[movetotop]:after {
+		margin-top: -4px;
+	}
+	
 	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
 	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
-		box-shadow: 	2px -2px 0 -2px rgb(178,174,170),
+		box-shadow: 	2px -2px 0 -2px ThreeDShadow,
 		                7px -4px 0px -4px -moz-dialog,
 		                6px -4px 0px -4px -moz-dialog;
 	}
 	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
 	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
-		box-shadow: 	-2px -2px 0 -2px rgb(178,174,170),
+		box-shadow: 	-2px -2px 0 -2px ThreeDShadow,
 		                -7px -4px 0px -4px -moz-dialog,
 		                -6px -4px 0px -4px -moz-dialog;
 	}
@@ -27,25 +39,27 @@
 		border-bottom: 1px solid rgb(0,0,0);
 		border-right: 1px solid rgb(0,0,0);
 		border-left: 1px solid rgb(0,0,0);
-		-moz-border-bottom-colors: rgb(178,174,170);
-		-moz-border-right-colors: rgb(178,174,170);
-		-moz-border-left-colors: rgb(178,174,170);
+		-moz-border-bottom-colors: ThreeDShadow;
+		-moz-border-right-colors: ThreeDShadow;
+		-moz-border-left-colors: ThreeDShadow;
 	}
 	
-	window:not([findbartweak-FF25]) findbar textbox[anonid="findbar-textbox"] {
-		min-height: 28px;
-		max-height: 28px;
+	/* FF25 Tweaks */
+	#main-window[noToolboxBorder]:not([disablechrome]) #navigator-toolbox,
+	#main-window[findbartweak-FF25Tweaks]:not([disablechrome]) #navigator-toolbox[tabsontop=true] {
+		border-bottom: none;
 	}
-	window:not([findbartweak-FF25]) findbar:not([movetotop])[movetoright]:-moz-locale-dir(ltr) toolbarbutton
-	window:not([findbartweak-FF25]) findbar:not([movetotop]):not([movetoright]):-moz-locale-dir(rtl) toolbarbutton {
-		max-height: 28px;
+	
+	window[findbartweak-FF25Tweaks] #browser > *:not([renderabove]):not([noTopBorder]) {
+		border-top: 1px solid ThreeDShadow;
 	}
 	
 	/* For the toolbar button */
-	#findbartweak-button image { padding: 0; }
-	#navigator-toolbox[iconsize="large"] :not(#TabsToolbar) #findbartweak-button .toolbarbutton-icon { height: 24px; }
-	#navigator-toolbox[iconsize="small"] :not(#TabsToolbar) #findbartweak-button .toolbarbutton-icon { height: 16px; }
-	#addon-bar #findbartweak-button image { height: 16px; }
+	toolbar[iconsize="small"] #findbartweak-button image { max-height: 16px; }
+	
+	toolbar[iconsize="large"] #findbartweak-button image {
+		list-style-image: url("chrome://findbartweak-os/skin/button.png");
+	}
 	
 	/* Textbox resizers */
 	window:not([findbartweak-FF25]) findbar .findbar-textbox {
@@ -58,6 +72,7 @@
 	
 	findbar .find-textbox-resizer {
 		width: 4px;
+		height: calc(1.2em + 5px); /* I think this faithfully represents font-height plus box-padding, thus should work with OS font zoom */
 	}
 	
 	window:not([findbartweak-FF25]) findbar resizer[anonid="find-left-resizer"] {
@@ -92,20 +107,13 @@
 		background-color: -moz-dialog;
 	}
 	
-	#findbartweak-findInTabs-box[movetotop] {
+	window:not([findbartweak-FF25Tweaks]) #findbartweak-findInTabs-box[movetotop] {
 		border-bottom: 1px solid rgb(0,0,0);
-		-moz-border-bottom-colors: rgb(178,174,170);
+		-moz-border-bottom-colors: ThreeDShadow;
 	}
 	
 	window[findbartweak-FF25] #findbartweak-findInTabs-box:not([movetotop]) {
 		border-top: 2px solid;
 		-moz-border-top-colors: ThreeDShadow ThreeDHighlight;
-	}
-	
-	.findbar-tabs image,
-	.findbar-tabs-update image,
-	.findbar-cs-button image {
-		min-height: 16px;
-		max-height: 16px;
 	}
 }

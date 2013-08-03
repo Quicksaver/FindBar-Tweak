@@ -6,13 +6,19 @@
 	url("chrome://global/content/viewSource.xul"),
 	url("chrome://global/content/viewPartialSource.xul") {
 
-	findbar[hideLabels] toolbarbutton label,
-	findbar[hideLabels] checkbox label,
 	findbar[hideLabels] checkbox[anonid="find-case-sensitive"],
 	findbar[hideFindLabel] label[anonid="find-label"],
 	findbar[noClose] .findbar-closebutton,
 	findbar[inNotification] {
 		display: none;
+	}
+	
+	findbar[hideLabels] toolbarbutton label,
+	findbar[hideLabels] checkbox label {
+		/* I'm not just hiding these through display:none because this way it's like they still exist, so the height of the buttons is unaffected */
+		width: 0 !important;
+		margin-left: 0 !important;
+		margin-right: 0 !important;
 	}
 	
 	findbar[hideLabels] toolbarbutton image,
@@ -90,10 +96,6 @@
 		-moz-margin-end: 3px;
 	}
 	
-	window[noToolboxBorder] #navigator-toolbox:after {
-		display: none;
-	}
-	
 	/* Rounded inner corners */
 	findbar[movetotop]:before {
 		content: "";
@@ -110,6 +112,12 @@
 		border-radius: 8px;
 		background: transparent;
 		position: fixed;
+	}
+	
+	/* FF25 Tweaks */
+	window[findbartweak-FF25Tweaks] findbar:-moz-lwtheme,
+	window[findbartweak-FF25] #content:-moz-lwtheme {
+		background-color: transparent !important; /* !important tag needed to override style attr of #content in WinXP */
 	}
 	
 	/* Find Toolbar at the bottom in FF25 */
@@ -163,8 +171,7 @@
 	
 	findbar .find-textbox-resizer {
 		-moz-appearance: none !important;
-		height: 20px;
-		opacity: 0.001;
+		background: none;
 	}
 	
 	findbar:not([movetoright]) resizer[anonid="find-left-resizer"]:-moz-locale-dir(ltr),
@@ -208,8 +215,6 @@
 	#findbartweak-button {
 		list-style-image: url("chrome://findbartweak/skin/button.png");
 	}
-	
-	#TabsToolbar #findbartweak-button .toolbarbutton-icon { height: 20px; }
 	
 	/* Find In Tabs */
 	#browser-bottombox[lwthemefooter="true"],
@@ -258,7 +263,8 @@
 	window[findbartweak-FF25] .findbar-tabs-update {
 		-moz-margin-end: 5px;
 	}
-	window[findbartweak-FF25] findbar:not([hideLabels]) .findbar-tabs-update image {
+	window[findbartweak-FF25] findbar:not([hideLabels]) .findbar-tabs-update image,
+	window[findbartweak-FF25] findbar:not([hideLabels]) .findbar-tabs image {
 		display: none;
 	}
 	

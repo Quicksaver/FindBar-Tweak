@@ -3,7 +3,7 @@
 	url("chrome://browser/content/browser.xul"),
 	url("chrome://global/content/viewSource.xul"),
 	url("chrome://global/content/viewPartialSource.xul") {
-
+	
 	/* Rounded inner corners */
 	window:not([findbartweak-FF25]) findbar[movetotop]:before {
 		-moz-margin-start: -16px;
@@ -24,55 +24,56 @@
 		margin-top: -4px;
 	}
 	
-	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
-	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
-		box-shadow: 	2px -2px 0 -2px rgb(160,160,160),
-		                7px -4px 0px -4px rgb(219,234,249),
-		                6px -4px 0px -4px rgb(219,234,249);
-	}
-	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
-	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
-		box-shadow: 	-2px -2px 0 -2px rgb(160,160,160),
-		                -7px -4px 0px -4px rgb(219,234,249),
-		                -6px -4px 0px -4px rgb(219,234,249);
-	}
-	
-	/* Rounded inner corners Windows XP */
-	window[findbartweak-oscpu="Windows NT 5.1"] findbar[movetotop]:not([inPDFJS]):before {
-		box-shadow: 	2px -2px 0 -2px rgb(160,160,160),
+	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
+	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
+		box-shadow: 	2px -2px 0 -2px ThreeDShadow,
 		                7px -4px 0px -4px -moz-dialog,
 		                6px -4px 0px -4px -moz-dialog;
 	}
-	window[findbartweak-oscpu="Windows NT 5.1"] findbar[movetotop]:not([inPDFJS]):after {
-		box-shadow: 	-2px -2px 0 -2px rgb(160,160,160),
+	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
+	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
+		box-shadow: 	-2px -2px 0 -2px ThreeDShadow,
 		                -7px -4px 0px -4px -moz-dialog,
 		                -6px -4px 0px -4px -moz-dialog;
 	}
 	
+	@media not all and (-moz-windows-classic) {
+		@media (-moz-windows-default-theme) {
+			window:not(#viewSource) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
+			window:not(#viewSource) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
+				box-shadow: 	2px -2px 0 -2px rgb(170,188,207),
+				                7px -4px 0px -4px rgb(219,234,249),
+				                6px -4px 0px -4px rgb(219,234,249);
+			}
+			window:not(#viewSource) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
+			window:not(#viewSource) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
+				box-shadow: 	-2px -2px 0 -2px rgb(170,188,207),
+				                -7px -4px 0px -4px rgb(219,234,249),
+				                -6px -4px 0px -4px rgb(219,234,249);
+			}
+		}
+	}
+	
 	/* Find Bar */
 	findbar[movetotop]:not([inPDFJS]) {
+		background-color: -moz-dialog;
 		border-bottom: 1px solid rgb(0,0,0);
 		border-right: 1px solid rgb(0,0,0);
 		border-left: 1px solid rgb(0,0,0);
-		-moz-border-bottom-colors: rgb(160, 160, 160);
-		-moz-border-right-colors: rgb(160, 160, 160);
-		-moz-border-left-colors: rgb(160, 160, 160);
+		-moz-border-bottom-colors: ThreeDShadow;
+		-moz-border-right-colors: ThreeDShadow;
+		-moz-border-left-colors: ThreeDShadow;
 	}
 	
-	window[findbartweak-oscpu="Windows NT 5.1"] findbar[movetotop]:not([inPDFJS]) {
-		background-color: -moz-dialog;
-	}
-	#main-window:not([findbartweak-oscpu="Windows NT 5.1"]) findbar[movetotop]:not([inPDFJS]) {
-		background-color: rgb(219,234,249);
-	}
-	
-	window:not([findbartweak-FF25]) findbar textbox[anonid="findbar-textbox"] {
-		min-height: 22px;
-		max-height: 22px;
-	}
-	
-	window[findbartweak-oscpu="Windows NT 6.2"]:not([findbartweak-FF25]) findbar[hideLabels] toolbarbutton:not(.findbar-closebutton) {
-		min-height: 23px;
+	@media not all and (-moz-windows-classic) {
+		@media (-moz-windows-default-theme) {
+			window:not(#viewSource) findbar[movetotop]:not([inPDFJS]) {
+				background-color: rgb(219,234,249);
+				-moz-border-bottom-colors: rgb(170,188,207);
+				-moz-border-right-colors: rgb(170,188,207);
+				-moz-border-left-colors: rgb(170,188,207);
+			}
+		}
 	}
 	
 	window[findbartweak-FF25] findbar[movetotop] {
@@ -80,56 +81,35 @@
 	}
 	
 	/* FF25 Tweaks */
+	window[noToolboxBorder] #navigator-toolbox:after,
 	window[findbartweak-FF25Tweaks] #navigator-toolbox:after {
 		display: none;
 	}
 	
-	window[findbartweak-FF25Tweaks][findbartweak-oscpu="Windows NT 5.1"] #browser > *:not([renderabove]):not([noTopBorder]) {
+	window[findbartweak-FF25Tweaks] #browser > *:not([renderabove]):not([noTopBorder]) {
 		border-top: 1px solid ThreeDShadow;
 	}
-	window[findbartweak-FF25Tweaks]:not([findbartweak-oscpu="Windows NT 5.1"]) #browser > *:not([renderabove]):not([noTopBorder]) {
-		border-top: 1px solid #aabccf;
-	}
-	
-	window[findbartweak-FF25Tweaks] #appcontent findbar:-moz-lwtheme {
-		background-color: transparent;
+	@media not all and (-moz-windows-classic) {
+		@media (-moz-windows-default-theme) {
+			window[findbartweak-FF25Tweaks] #browser > *:not([renderabove]):not([noTopBorder]) {
+				border-top: 1px solid rgb(170,188,207);
+			}
+		}
 	}
 	
 	/* For the toolbar button */
-	#navigator-toolbox[iconsize="small"] :not(#TabsToolbar) #findbartweak-button .toolbarbutton-icon,
-	#navigator-toolbox[mode="full"] :not(#TabsToolbar) #findbartweak-button .toolbarbutton-icon {
-		height: 18px;
-	}
-	
-	#navigator-toolbox:not([mode="full"])[iconsize="large"] :not(#TabsToolbar) #findbartweak-button .toolbarbutton-icon { height: 24px; }
 	#navigator-toolbox[iconsize=large][mode=icons] > :not(#TabsToolbar) > #findbartweak-button > .toolbarbutton-icon { padding: 2px 6px; }
 	
-	window[findbartweak-oscpu="Windows NT 5.1"] #addon-bar #findbartweak-button { padding: 3px; }
-	window[findbartweak-oscpu="Windows NT 5.1"] #addon-bar #findbartweak-button image { height: 17px; }
-	
-	window[findbartweak-oscpu="Windows NT 6.2"] #addon-bar #findbartweak-button image { height: 18px; }
-	
-	/* For the View Source window */
-	#viewSource findbar[movetotop] {
-		background-color: -moz-dialog;
-	}
-	#viewSource findbar[movetotop]:before {
-		box-shadow: 	2px -2px 0 -2px rgb(160,160,160),
-		                7px -4px 0px -4px -moz-dialog,
-		                6px -4px 0px -4px -moz-dialog;
-	}
-	#viewSource findbar[movetotop]:after {
-		box-shadow: 	-2px -2px 0 -2px rgb(160,160,160),
-		                -7px -4px 0px -4px -moz-dialog,
-		                -6px -4px 0px -4px -moz-dialog;
-	}
-	
 	/* Textbox resizers */
-	window:not([findbartweak-oscpu="Windows NT 5.1"]):not([findbartweak-FF25]) findbar .findbar-textbox {
-		min-width: 120px;
-	}
-	window[findbartweak-oscpu="Windows NT 5.1"]:not([findbartweak-FF25]) findbar .findbar-textbox {
+	window:not([findbartweak-FF25]) findbar .findbar-textbox {
 		min-width: 127px;
+	}
+	@media not all and (-moz-windows-classic) {
+		@media (-moz-windows-default-theme) {
+			window:not([findbartweak-FF25]) findbar .findbar-textbox {
+				min-width: 120px;
+			}
+		}
 	}
 	
 	window[findbartweak-FF25] findbar .findbar-textbox {
@@ -138,6 +118,7 @@
 	
 	findbar .find-textbox-resizer {
 		width: 4px;
+		height: calc(1.2em + 5px); /* I think this faithfully represents font-height plus box-padding, thus should work with OS font zoom */
 	}
 	
 	window:not([findbartweak-FF25]) findbar resizer[anonid="find-left-resizer"] {
@@ -158,32 +139,48 @@
 		-moz-margin-end: -1px;
 	}
 	
-	/* Grid stuff */
-	window:not([findbartweak-oscpu="Windows NT 5.1"]) grid[anonid="findGrid"]:not([gridSpacers="none"]) row.topSpacer[flex="0"],
-	window:not([findbartweak-oscpu="Windows NT 5.1"]) grid[anonid="findGrid"][gridSpacers="single"] row.bottomSpacer[flex="0"] {
-		height: 18px;
-	}
-	window:not([findbartweak-oscpu="Windows NT 5.1"]) grid[anonid="findGrid"][gridSpacers="double"] row.bottomSpacer[flex="0"] {
-		height: 36px;
-	}
-	
-	/* Grid stuff Windows XP */
-	window[findbartweak-oscpu="Windows NT 5.1"] grid[anonid="findGrid"]:not([gridSpacers="none"]) row.topSpacer[flex="0"],
-	window[findbartweak-oscpu="Windows NT 5.1"] grid[anonid="findGrid"][gridSpacers="single"] row.bottomSpacer[flex="0"] {
+	/* Grid button spacers heights, these don't take into account OS zoom settings! */
+	grid[anonid="findGrid"]:not([gridSpacers="none"]) row.topSpacer[flex="0"],
+	grid[anonid="findGrid"][gridSpacers="single"] row.bottomSpacer[flex="0"] {
 		height: 17px;
 	}
-	window[findbartweak-oscpu="Windows NT 5.1"] grid[anonid="findGrid"][gridSpacers="double"] row.bottomSpacer[flex="0"] {
+	grid[anonid="findGrid"][gridSpacers="double"] row.bottomSpacer[flex="0"] {
 		height: 34px;
 	}
 	
+	@media not all and (-moz-windows-classic) {
+		@media (-moz-windows-default-theme) {
+			grid[anonid="findGrid"]:not([gridSpacers="none"]) row.topSpacer[flex="0"],
+			grid[anonid="findGrid"][gridSpacers="single"] row.bottomSpacer[flex="0"] {
+				height: 18px;
+			}
+			grid[anonid="findGrid"][gridSpacers="double"] row.bottomSpacer[flex="0"] {
+				height: 36px;
+			}
+		}
+	}
+	
 	/* Find in Tabs */
-	window[findbartweak-oscpu="Windows NT 5.1"] #findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme) {
+	#findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme) {
 		background-color: -moz-dialog;
 	}
 	
 	window:not([findbartweak-FF25Tweaks]) #findbartweak-findInTabs-box[movetotop] {
 		border-bottom: 1px solid ThreeDShadow;
 	}
+	
+	@media not all and (-moz-windows-classic) {
+		@media (-moz-windows-default-theme) {
+			#findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme) {
+				background-color: rgb(219,234,249);
+			}
+			
+			window:not([findbartweak-FF25Tweaks]) #findbartweak-findInTabs-box[movetotop] {
+				border-bottom: 1px solid rgb(170,188,207);
+			}
+		}
+	}
+	
 	window[sizemode="normal"] #findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme) {
 		border-left: 1px solid rgba(10%,10%,10%,.4);
 		border-right: 1px solid rgba(10%,10%,10%,.4);
@@ -193,24 +190,5 @@
 	window[findbartweak-FF25] #findbartweak-findInTabs-box:not([movetotop]) {
 		border-top: 2px solid transparent;
 		-moz-border-top-colors: rgba(0,0,0,.15) rgba(255,255,255,.15);
-	}
-	
-	window:not([findbartweak-oscpu="Windows NT 5.1"]) #findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme) {
-		background-color: rgb(219,234,249);
-	}
-	
-	window[findbartweak-oscpu="Windows NT 5.1"] findbar:not([hideLabels]) .findbar-tabs image,
-	window[findbartweak-oscpu="Windows NT 5.1"] findbar:not([hideLabels]) .findbar-tabs-update image {
-		margin-top: 0;
-		margin-bottom: 0;
-		-moz-margin-start: 0;
-		-moz-margin-end: 5px;
-	}
-	
-	.findbar-tabs image,
-	.findbar-tabs-update image,
-	.findbar-cs-button image {
-		min-height: 16px;
-		max-height: 16px;
 	}
 }

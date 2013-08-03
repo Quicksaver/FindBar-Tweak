@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.5';
+moduleAid.VERSION = '1.5.6';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -66,7 +66,10 @@ this.moveTop = function() {
 	
 	// Bugfix: ensure these declarations only take effect when the stylesheet is loaded (from the overlay) as well.
 	// Otherwise, at startup, the browser would jump for half a second with empty space on the right.
-	if((!viewSource && perTabFB && !gFindBarInitialized) || gFindBar.getAttribute('context') != objPathString+'_findbarMenu') { return; }
+	if(!viewSource && !perTabFB && gFindBar.getAttribute('context') != objPathString+'_findbarMenu') {
+		delayMoveTop();
+		return;
+	}
 	
 	moveTopStyle = {
 		marginTop: null,
@@ -169,7 +172,13 @@ this.forceCornerRedraw = function() {
 	}, 10);
 };
 
-this.findPersonaPosition = function() {
+this.findPersonaPosition = function(aSubject, aTopic) {
+	// Bugfix: OSX changes some margins and paddings and stuff and this would leave the findbar poorly placed
+	if(aTopic && Services.appinfo.OS == 'Darwin') {
+		moveTop();
+		return;
+	}
+	
 	if(!trueAttribute(mainWindow, 'lwtheme')) {
 		prefAid.lwthemebgImage = '';
 		prefAid.lwthemebgWidth = 0;
@@ -328,8 +337,34 @@ this.hideOnChromeAttrWatcher = function(obj, prop, oldVal, newVal) {
 this.setOnTop = function(e) {
 	if(!e || !e.defaultPrevented) {
 		initFindBar('movetotop',
-			function(bar) { setAttribute(bar, 'movetotop', 'true'); },
-			function(bar) { removeAttribute(bar, 'movetotop'); },
+			function(bar) {
+				setAttribute(bar, 'movetotop', 'true');
+				
+				// Bugfix: in windows 8 the findbar's bottom border will jump clicking a button if we are showing the icons instead of the labels.
+				// I have no idea why this happens as none of its children elements increase heights or margins.
+				// But at least the findbar itself increases its height by 1px.
+				// We only need to do this once, the findbar's height doesn't (or shouldn't) change
+				var container = bar.getElement('findbar-container');
+				var height = container.clientHeight || bar.clientHeight;
+				// if !container.clientHeight means findbar is hidden, we can use bar.clientHeight because it takes the desired value in this case.
+				// Sometimes, with the the bar closed, the height value is lower than it should be, so we check for that.
+				if(!bar._calcHeight || bar._calcHeight < height) {
+					bar._calcHeight = height;
+					
+					var containerStyle = getComputedStyle(container);
+					var barStyle = getComputedStyle(bar);
+					
+					height += parseInt(containerStyle.getPropertyValue('margin-bottom')) + parseInt(containerStyle.getPropertyValue('margin-top'));
+					height += parseInt(barStyle.getPropertyValue('padding-bottom')) + parseInt(barStyle.getPropertyValue('padding-top'));
+					height += parseInt(barStyle.getPropertyValue('border-bottom-width')) + parseInt(barStyle.getPropertyValue('border-top-width'));
+					bar.style.maxHeight = height+'px';
+				}
+			},
+			function(bar) {
+				removeAttribute(bar, 'movetotop');
+				bar.style.maxHeight = '';
+				delete bar._calcHeight;
+			},
 			true
 		);
 	}

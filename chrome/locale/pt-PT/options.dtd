@@ -7,7 +7,7 @@
 <!ENTITY Opttweaks.label "Afinações">
 <!ENTITY Optabout.label "Sobre">
 <!ENTITY Optgen.label "Opções da Barra de Procura">
-<!ENTITY Optdisplay.label "Opções de Visualização">
+<!ENTITY Optdisplay.label "Posição da Barra de Procura">
 <!ENTITY OptButtonAndLabels.label "Botões e Legendas">
 <!ENTITY Optgrid.label "Grelha de Realces">
 <!ENTITY OpthighlightByDefault.label "Realçar todas as ocorrências por defeito">
@@ -44,10 +44,14 @@
 <!ENTITY OptsightsSameColor.label "Usar a mesma cor dos realces">
 <!ENTITY OptsightsSameColorCurrent.label "Usar a mesma cor da ocorrência atual">
 <!ENTITY OpthideLabels.label "Esconder o texto dos botões">
+<!ENTITY OpthideLabels.labelFF25 "Mostrar ícones nos botões em vez de texto">
 <!ENTITY OpthideFindLabel.label "Esconder a legenda &quot;Procurar:&quot;">
 <!ENTITY OpthideClose.label "Esconder o botão de fecho da barra de procura">
-<!ENTITY OptmovetoTop.label "Mover a barra de procura para o topo da janela">
+<!ENTITY OptmovetoTop.label "Mover para o topo da janela">
+<!ENTITY OptmovetoTop.labelFF25 "Colocar sobre o conteúdo web">
 <!ENTITY OptmovetoRight.label "Colocar à direita">
+<!ENTITY OptmovetoBottom.label "Mover para o fundo da janela">
+<!ENTITY OptFF25Tweaks.label "Integrar com as barras de ferramentas no topo da janela">
 <!ENTITY OptblurCloses.label "Fechar a barra de procura ao realizar outra ação">
 <!ENTITY OptperTab.label "Novos separadores são iniciados com a barra de procura fechada">
 <!ENTITY OptonStartup.label "Lembrar o estado aberto/fechado da barra de procura ao iniciar">

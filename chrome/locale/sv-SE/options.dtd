@@ -7,7 +7,7 @@
 <!ENTITY Opttweaks.label "Justeringar">
 <!ENTITY Optabout.label "Om">
 <!ENTITY Optgen.label "Söklistalternativ">
-<!ENTITY Optdisplay.label "Visningsalternativ">
+<!ENTITY Optdisplay.label "Söklistens position">
 <!ENTITY OptButtonAndLabels.label "Knappar och etiketter">
 <!ENTITY Optgrid.label "Visning av markeringspositioner">
 <!ENTITY OpthighlightByDefault.label "Färgmarkera alla träffar som standard">
@@ -44,10 +44,14 @@
 <!ENTITY OptsightsSameColor.label "Använd samma färg som vid färgmarkering">
 <!ENTITY OptsightsSameColorCurrent.label "Använd samma färg som för den aktuella träffen">
 <!ENTITY OpthideLabels.label "Dölj knappetiketter">
+<!ENTITY OpthideLabels.labelFF25 "Visa knappikoner istället för etiketter">
 <!ENTITY OpthideFindLabel.label "Dölj etiketten &quot;Sök:&quot;">
 <!ENTITY OpthideClose.label "Dölj söklistens stängknapp">
-<!ENTITY OptmovetoTop.label "Placera söklisten överst i webbläsarfönstret">
+<!ENTITY OptmovetoTop.label "Flytta överst i webbläsaren">
+<!ENTITY OptmovetoTop.labelFF25 "Placera ovanför webbsidan">
 <!ENTITY OptmovetoRight.label "Placera till höger i fönstret">
+<!ENTITY OptmovetoBottom.label "Flytta nederst i webbläsaren">
+<!ENTITY OptFF25Tweaks.label "Integrera med resten av kromdelen överst i webbläsaren">
 <!ENTITY OptblurCloses.label "Stäng söklisten när den förlorar fokus">
 <!ENTITY OptperTab.label "Stäng söklisten i nya flikar">
 <!ENTITY OptonStartup.label "Kom ihåg söklistens öppen/stängd-tillstånd vid programstart">

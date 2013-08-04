@@ -7,7 +7,7 @@
 <!ENTITY Opttweaks.label "Ulepszenia">
 <!ENTITY Optabout.label "Informacja">
 <!ENTITY Optgen.label "Opcje paska wyszukiwania">
-<!ENTITY Optdisplay.label "Ustawienia wyświetlania">
+<!ENTITY Optdisplay.label "Pozycja paska wyszukiwania">
 <!ENTITY OptButtonAndLabels.label "Przyciski i etykiety">
 <!ENTITY Optgrid.label "Znaczniki paska przewijania">
 <!ENTITY OpthighlightByDefault.label "Podświetlaj automatycznie wszystkie znalezione frazy">
@@ -44,10 +44,14 @@
 <!ENTITY OptsightsSameColor.label "Ten sam kolor co podświetlenia">
 <!ENTITY OptsightsSameColorCurrent.label "Ten sam kolor co aktualne wystąpienie">
 <!ENTITY OpthideLabels.label "Ukryj etykiety przycisków">
+<!ENTITY OpthideLabels.labelFF25 "Show button icons instead of labels">
 <!ENTITY OpthideFindLabel.label "Ukryj napis &quot;Znajdź&quot;">
 <!ENTITY OpthideClose.label "Ukryj przycisk zamykania paska">
-<!ENTITY OptmovetoTop.label "Przenieś pasek wyszukiwania do góry">
+<!ENTITY OptmovetoTop.label "Przenieś na górę przeglądarki">
+<!ENTITY OptmovetoTop.labelFF25 "Umieść poniżej strony">
 <!ENTITY OptmovetoRight.label "Pokazuj po prawej stronie">
+<!ENTITY OptmovetoBottom.label "Przenieś na dół przeglądarki">
+<!ENTITY OptFF25Tweaks.label "Integracja z resztą interfejsu na górze">
 <!ENTITY OptblurCloses.label "Zamykaj pasek, gdy traci on fokus">
 <!ENTITY OptperTab.label "Nie pokazuj paska przy otwieraniu nowych kart">
 <!ENTITY OptonStartup.label "Pamiętaj stan pokazania/schowania paska przy starcie">

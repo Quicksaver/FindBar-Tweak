@@ -7,7 +7,7 @@
 <!ENTITY Opttweaks.label "调整">
 <!ENTITY Optabout.label "关于">
 <!ENTITY Optgen.label "查找栏选项">
-<!ENTITY Optdisplay.label "显示效果选项">
+<!ENTITY Optdisplay.label "查找栏位置">
 <!ENTITY OptButtonAndLabels.label "按钮和说明文字">
 <!ENTITY Optgrid.label "高亮网格">
 <!ENTITY OpthighlightByDefault.label "默认高亮所有匹配项">
@@ -44,10 +44,14 @@
 <!ENTITY OptsightsSameColor.label "使用与高亮相同的颜色">
 <!ENTITY OptsightsSameColorCurrent.label "从当前的匹配使用相同颜色">
 <!ENTITY OpthideLabels.label "隐藏按钮的说明文字">
+<!ENTITY OpthideLabels.labelFF25 "显示按钮图标而不是文字">
 <!ENTITY OpthideFindLabel.label "隐藏“查找：”字样">
 <!ENTITY OpthideClose.label "隐藏查找栏关闭按钮">
-<!ENTITY OptmovetoTop.label "查找栏置于窗口顶部">
+<!ENTITY OptmovetoTop.label "移动到浏览器底部">
+<!ENTITY OptmovetoTop.labelFF25 "置于在网页上方">
 <!ENTITY OptmovetoRight.label "查找栏置于右侧">
+<!ENTITY OptmovetoBottom.label "移动到浏览器底部">
+<!ENTITY OptFF25Tweaks.label "与浏览器上部的其余部分整合">
 <!ENTITY OptblurCloses.label "失去焦点时关闭查找栏">
 <!ENTITY OptperTab.label "在新标签页中关闭查找栏">
 <!ENTITY OptonStartup.label "启动时恢复上次的打开状态">

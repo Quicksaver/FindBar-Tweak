@@ -7,7 +7,7 @@
 <!ENTITY Opttweaks.label "Anpassungsmöglichkeiten">
 <!ENTITY Optabout.label "Über">
 <!ENTITY Optgen.label "Suchleisten-Einstellungen">
-<!ENTITY Optdisplay.label "Anzeigeeinstellungen">
+<!ENTITY Optdisplay.label "Position der Suchleiste">
 <!ENTITY OptButtonAndLabels.label "Schaltflächen und Beschriftungen">
 <!ENTITY Optgrid.label "Hervorhebungsbalken">
 <!ENTITY OpthighlightByDefault.label "Automatisch alle Vorkommen des gesuchten Begriffs hervorheben">
@@ -44,10 +44,14 @@
 <!ENTITY OptsightsSameColor.label "Identische Farbe wie bei den Hervorhebungen verwenden">
 <!ENTITY OptsightsSameColorCurrent.label "Gleiche Farbe wie beim aktuellen Treffer verwenden">
 <!ENTITY OpthideLabels.label "Schaltflächentext ausblenden">
+<!ENTITY OpthideLabels.labelFF25 "Symbole der Schaltflächen anstelle der Beschriftung anzeigen">
 <!ENTITY OpthideFindLabel.label "Text „Suchen:“ ausblenden">
-<!ENTITY OpthideClose.label "Die Schließen-Schaltfläche ausblenden">
-<!ENTITY OptmovetoTop.label "Die Such-Symbolleiste an den oberen Rand des Browsers verschieben">
+<!ENTITY OpthideClose.label "Die Schaltfläche „Schließen“ ausblenden">
+<!ENTITY OptmovetoTop.label "Ans obere Ende des Browsers verschieben">
+<!ENTITY OptmovetoTop.labelFF25 "Über der Webseite platzieren">
 <!ENTITY OptmovetoRight.label "Rechts anordnen">
+<!ENTITY OptmovetoBottom.label "Ans untere Ende des Browsers verschieben">
+<!ENTITY OptFF25Tweaks.label "In den Rest des Chrome im oberen Bereich integrieren">
 <!ENTITY OptblurCloses.label "Die Suchleiste schließen, wenn sie den Fokus verliert">
 <!ENTITY OptperTab.label "Neue Tabs ohne Suchleiste öffnen">
 <!ENTITY OptonStartup.label "Den Zustand der Such-Symbolleiste (eingeblendet/ausgeblendet) beim Start wiederherstellen">

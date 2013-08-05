@@ -1,6 +1,6 @@
-moduleAid.VERSION = '1.0.2';
+moduleAid.VERSION = '1.0.3';
 
-this._getFindBarHidden = function() { return linkedPanel._findBarOpen; };
+this._getFindBarHidden = function() { return !linkedPanel._findBarOpen; };
 
 this.reopenPerTabSelected = function() {
 	if(linkedPanel._findBarOpen) {
@@ -22,8 +22,10 @@ this.perTabOnClose = function() {
 
 moduleAid.LOADMODULE = function() {
 	listenerAid.add(gBrowser.tabContainer, "TabSelect", reopenPerTabSelected);
-	listenerAid.add(window, 'OpenedFindBar', perTabOnOpen);
-	listenerAid.add(window, 'ClosedFindBar', perTabOnClose);
+	
+	// Keep capture = true so these go before all others, to update _findBarOpen property first for those methods that depend on it like toggleButtonState()
+	listenerAid.add(window, 'OpenedFindBar', perTabOnOpen, true);
+	listenerAid.add(window, 'ClosedFindBar', perTabOnClose, true);
 	
 	if(!gFindBar.hidden) {
 		linkedPanel._findBarOpen = true;
@@ -37,8 +39,8 @@ moduleAid.UNLOADMODULE = function() {
 	}
 	
 	listenerAid.remove(gBrowser.tabContainer, "TabSelect", reopenPerTabSelected);
-	listenerAid.remove(window, 'OpenedFindBar', perTabOnOpen);
-	listenerAid.remove(window, 'ClosedFindBar', perTabOnClose);
+	listenerAid.remove(window, 'OpenedFindBar', perTabOnOpen, true);
+	listenerAid.remove(window, 'ClosedFindBar', perTabOnClose, true);
 	
 	// Have to set this back
 	_getFindBarHidden = function() { return gFindBar.hidden; };

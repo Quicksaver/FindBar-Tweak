@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.5';
+moduleAid.VERSION = '1.5.6';
 
 this.__defineGetter__('FITresizer', function() { return gFindBar._FITresizer; });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -510,6 +510,7 @@ this.createTabItem = function(aWindow) {
 	
 	var itemFavicon = document.createElement('image');
 	var itemCount = document.createElement('label');
+	itemCount.hits = 0;
 	
 	var itemLabel = document.createElement('label');
 	itemLabel.setAttribute('flex', '1');
@@ -678,6 +679,7 @@ this.countFITinTab = function(aWindow, item, word) {
 		if(!loadingTab) {
 			setAttribute(item.linkedTitle, 'unloaded', 'true');
 			setAttribute(item.linkedCount, 'value', '');
+			item.linkedCount.hits = -1;
 		}
 		
 		var hit = document.createElement('richlistitem');
@@ -690,6 +692,7 @@ this.countFITinTab = function(aWindow, item, word) {
 		hit.appendChild(hitLabel);
 		
 		item.linkedHits.appendChild(hit);
+		orderByHits(item);
 		return;
 	}
 	
@@ -700,18 +703,23 @@ this.countFITinTab = function(aWindow, item, word) {
 	// This means there are too many results, which could slow down the browser
 	if(levels === null) {
 		setAttribute(item.linkedCount, 'value', prefAid.maxFIT+'+');
+		item.linkedCount.hits = prefAid.maxFIT +1;
 	} else {
 		var list = [];
 		orderHits(levels, list);
 		// The browser gets useless past a point
 		if(list.length > prefAid.maxFIT) {
 			setAttribute(item.linkedCount, 'value', prefAid.maxFIT+'+');
+			item.linkedCount.hits = prefAid.maxFIT +1;
 			levels = null;
 		} else {
 			var hits = countFITinLevels(list, item.linkedHits, aWindow);
 			setAttribute(item.linkedCount, 'value', hits);
+			item.linkedCount.hits = hits;
 		}
 	}
+	
+	item = orderByHits(item);
 	
 	// Resize the header so it fits nicely into the results
 	// +8 comes from padding
@@ -727,6 +735,18 @@ this.countFITinTab = function(aWindow, item, word) {
 		
 		autoSelectFIThit(item.linkedHits);
 	}
+};
+
+// Re-arrange the items by amount of hits, with the tabs with most hits on top
+this.orderByHits = function(item) {
+	while(item.previousSibling && item.previousSibling.linkedCount && item.linkedCount.hits > item.previousSibling.linkedCount.hits) {
+		item = item.parentNode.insertBefore(item, item.previousSibling);
+	}
+	while(item.nextSibling && item.nextSibling.linkedCount && item.linkedCount.hits < item.nextSibling.linkedCount.hits) {
+		item = item.parentNode.insertBefore(item, item.nextSibling.nextSibling);
+	}
+	
+	return item;
 };
 
 // When the user selects a tab in the browser, select the corresponding item in the tabs list if it exists

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.5';
+moduleAid.VERSION = '1.1.6';
 
 moduleAid.LOADMODULE = function() {
 	if(!viewSource) {
@@ -11,7 +11,6 @@ moduleAid.LOADMODULE = function() {
 		});
 		
 		moduleAid.load('compatibilityFix/lessChrome');
-		moduleAid.load('compatibilityFix/canadianWeather');
 	}
 	
 	AddonManager.getAddonByID('clearfields@alex.alexander.googlepages.com', function(addon) {
@@ -27,7 +26,6 @@ moduleAid.UNLOADMODULE = function() {
 	moduleAid.unload('compatibilityFix/findlist');
 	moduleAid.unload('compatibilityFix/ClearFields');
 	
-	moduleAid.unload('compatibilityFix/canadianWeather');
 	moduleAid.unload('compatibilityFix/lessChrome');
 	moduleAid.unload('compatibilityFix/TreeStyleTab');
 	moduleAid.unload('compatibilityFix/autopager');

@@ -29,14 +29,6 @@
 			<checkbox dependson="!pref-perTab,!pref-blurCloses" label="&OptonStartup.label;" preference="pref-onStartup"/>
 		</groupbox>
 		<groupbox align="start">
-			<caption label="&OptFAYTmode.caption;"/>
-			<radiogroup preference="pref-FAYTmode">
-				<radio dependson="pref-typeaheadfind" label="&OptFAYTmode.quickFind;" value="quick"/>
-				<radio label="&OptFAYTmode.alwaysQuick;" value="alwaysquick"/>
-				<radio label="&OptFAYTmode.normalFind;" value="normal"/>
-			</radiogroup>
-        </groupbox>
-		<groupbox align="start">
 			<caption label="&OptquickFindOptions.label;"/>
 			<checkbox label="&OptFAYT.label;" preference="pref-typeaheadfind"/>
 			<checkbox dependson="pref-FAYTmode:alwaysquick;!pref-FAYTmode:normal,pref-typeaheadfind" label="&OptkeepButtons.label;" preference="pref-keepButtons"/>
@@ -53,6 +45,14 @@
 					onsynctopreference="return parseInt(document.getElementById('timeoutTextbox').value || 0) * 1000;"/>
 	            <label dependson="pref-FAYTmode:alwaysquick;!pref-FAYTmode:normal,pref-typeaheadfind" value="&OptFAYTTimeout.afterLabel;"/>
 	        </hbox>
+        </groupbox>
+		<groupbox align="start">
+			<caption label="&OptFAYTmode.caption;"/>
+			<radiogroup preference="pref-FAYTmode">
+				<radio dependson="pref-typeaheadfind" label="&OptFAYTmode.quickFind;" value="quick"/>
+				<radio label="&OptFAYTmode.alwaysQuick;" value="alwaysquick"/>
+				<radio label="&OptFAYTmode.normalFind;" value="normal"/>
+			</radiogroup>
         </groupbox>
 		<groupbox align="start">
 			<caption><checkbox label="&OptfindInTabs.label;" preference="pref-findInTabs"/></caption>

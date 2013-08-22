@@ -50,7 +50,7 @@
 		border-bottom: none;
 	}
 	
-	window[findbartweak-FF25Tweaks] #browser > *:not([renderabove]):not([noTopBorder]):not(.omnisidebar_switch) {
+	window[findbartweak-FF25Tweaks]:not([disablechrome="true"]) #browser > *:not([renderabove]):not([noTopBorder]):not(.omnisidebar_switch) {
 		border-top: 1px solid ThreeDShadow;
 	}
 	

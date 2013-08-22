@@ -76,10 +76,10 @@
 		-moz-border-bottom-colors: transparent;
 	}
 	
-	window[findbartweak-FF25Tweaks] #browser > *:not([renderabove]):not([noTopBorder]):not(.omnisidebar_switch) {
+	window[findbartweak-FF25Tweaks]:not([disablechrome="true"]) #browser > *:not([renderabove]):not([noTopBorder]):not(.omnisidebar_switch) {
 		border-top: 1px solid rgba(0,0,0,0.57);
 	}
-	window[findbartweak-FF25Tweaks] #browser > *:not([renderabove]):not([noTopBorder]):not(.omnisidebar_switch):-moz-window-inactive {
+	window[findbartweak-FF25Tweaks]:not([disablechrome="true"]) #browser > *:not([renderabove]):not([noTopBorder]):not(.omnisidebar_switch):-moz-window-inactive {
 		border-top: 1px solid rgba(0,0,0,0.32);
 	}
 	

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.6';
+moduleAid.VERSION = '1.5.7';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -55,6 +55,20 @@ this.containerPDFResize = function(e) {
 	delayMoveTop();
 };
 
+this.fixFindBarPosition = function() {
+	if(!perTabFB) { return; }
+	
+	// Bug 893446 sets these properties to relative and absolute, causing the findbar to jump around when toggling it.
+	gFindBar.style.position = '';
+	gFindBar.parentNode.style.position = '';
+				
+	// Bug 893446 sets gFindBar.style.height incorrectly, we don't need this when we're using this feature
+	gFindBar.style.height = '';
+	
+	// Bug 893446 scrolls the content when toggling the findbar, this is of course not necessary as well with this feature
+	gFindBar._contentScrollOffset = 0;
+};
+
 // Handles the position of the findbar
 this.moveTop = function() {
 	// always move it at least once to prevent the initial hangup
@@ -70,6 +84,8 @@ this.moveTop = function() {
 		delayMoveTop();
 		return;
 	}
+	
+	fixFindBarPosition();
 	
 	moveTopStyle = {
 		marginTop: null,
@@ -134,15 +150,23 @@ this.moveTop = function() {
 	sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 	sscode += '@-moz-document url("'+document.baseURI+'") {\n';
 	sscode += '	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop] {\n';
-	sscode += '		max-width: ' + Math.max(moveTopStyle.maxWidth, 5) + 'px;\n';
-	sscode += (!prefAid.movetoRight) ? '		left: ' + moveTopStyle.left + 'px;\n' : '		right: ' + moveTopStyle.right + 'px;\n';
-	sscode += '		top: ' + moveTopStyle.top + 'px;\n';
+	sscode += '		max-width: ' + Math.max(moveTopStyle.maxWidth, 5) + 'px !important;\n';
+	// Bug 893446 sets left and right values to 0, so we need to overwrite them
+	if(!prefAid.movetoRight) {
+		sscode += '	left: ' + moveTopStyle.left + 'px !important;\n';
+		sscode += '	right: auto !important;\n';
+	} else {
+		sscode += '	right: ' + moveTopStyle.right + 'px !important;\n';
+		sscode += '	left: auto !important;\n';
+	}
+	sscode += '		top: ' + moveTopStyle.top + 'px !important;\n';
+	sscode += '		bottom: auto !important;\n';
 	sscode += '	}';
 	sscode += '}';
 	
 	styleAid.load('topFindBar_'+_UUID, sscode, true);
 	
-	if(gFindBar.scrollLeftMax > 0) {
+	if(gFindBar.scrollLeftMax > 0 && !perTabFB) {
 		var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 		sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 		sscode += '@-moz-document url("'+document.baseURI+'") {\n';
@@ -376,6 +400,7 @@ moduleAid.LOADMODULE = function() {
 	listenerAid.add(browserPanel, 'resize', browserPanelResized);
 	listenerAid.add(window, 'WillOpenFindBar', setOnTop);
 	listenerAid.add(window, 'OpenedFindBar', moveTop);
+	listenerAid.add(window, 'ClosedFindBar', fixFindBarPosition);
 	listenerAid.add(window, "UpdatedStatusFindBar", moveTopAsNeeded);
 	listenerAid.add(window, "HighlightCounterUpdated", moveTopAsNeeded);
 	listenerAid.add(window, 'FindBarUIChanged', moveTopAsNeeded);
@@ -442,6 +467,7 @@ moduleAid.UNLOADMODULE = function() {
 	listenerAid.remove(window, 'FindBarUIChanged', moveTopAsNeeded);
 	listenerAid.remove(window, 'WillOpenFindBar', setOnTop);
 	listenerAid.remove(window, 'OpenedFindBar', moveTop);
+	listenerAid.remove(window, 'ClosedFindBar', fixFindBarPosition);
 	listenerAid.remove(window, "UpdatedStatusFindBar", moveTopAsNeeded);
 	listenerAid.remove(window, "HighlightCounterUpdated", moveTopAsNeeded);
 	listenerAid.remove(browserPanel, 'resize', browserPanelResized);

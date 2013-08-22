@@ -1,17 +1,31 @@
-moduleAid.VERSION = '1.0.0';
+moduleAid.VERSION = '1.0.1';
 
 this.delayTopBorderInContent = function() {
 	timerAid.init('delayTopBorderInContent', noTopBorderInContent, 10);
 };
 
-this.noTopBorderInContent = function() {
+this.noTopBorderInContent = function(e) {
 	if(gFindBarInitialized
 	&& !gFindBar.hidden
 	&& !gFindBar.collapsed
 	&& (!gBrowser.getNotificationBox().currentNotification || gBrowser.getNotificationBox().notificationsHidden)) {
-		setAttribute($('appcontent'), 'noTopBorder', 'true');
+		if(!e || e.type != 'OpenedFindBar') {
+			setAttribute($('appcontent'), 'noTopBorder', 'true');
+		} else {
+			gFindBar.style.marginTop = '-1px';
+			gFindBar._contentScrollOffset--; // Compensate the content scroll
+			listenerAid.add(gFindBar, 'transitionend', transitionEndNoTopBorderInContent);
+		}
 	} else {
 		removeAttribute($('appcontent'), 'noTopBorder');
+	}
+};
+
+this.transitionEndNoTopBorderInContent = function(e) {
+	if(e.target == gFindBar && e.propertyName == (gFindBar.hidden ? "visibility" : "transform")) {
+		listenerAid.remove(gFindBar, 'transitionend', transitionEndNoTopBorderInContent);
+		gFindBar.style.marginTop = '';
+		setAttribute($('appcontent'), 'noTopBorder', 'true');
 	}
 };
 
@@ -37,7 +51,7 @@ moduleAid.LOADMODULE = function() {
 	
 	listenerAid.add(window, 'OpenedFindBar', noTopBorderInContent);
 	listenerAid.add(window, 'ClosedFindBar', noTopBorderInContent);
-	listenerAid.add(gBrowser.tabContainer, "TabSelect", delayTopBorderInContent);
+	listenerAid.add(gBrowser.tabContainer, "TabSelect", noTopBorderInContent);
 	listenerAid.add(browserPanel, 'resize', delayTopBorderInContent);
 	observerAid.add(personaTextColor, "lightweight-theme-changed");
 	
@@ -48,7 +62,7 @@ moduleAid.LOADMODULE = function() {
 moduleAid.UNLOADMODULE = function() {
 	listenerAid.remove(window, 'OpenedFindBar', noTopBorderInContent);
 	listenerAid.remove(window, 'ClosedFindBar', noTopBorderInContent);
-	listenerAid.remove(gBrowser.tabContainer, "TabSelect", delayTopBorderInContent);
+	listenerAid.remove(gBrowser.tabContainer, "TabSelect", noTopBorderInContent);
 	listenerAid.remove(browserPanel, 'resize', delayTopBorderInContent);
 	observerAid.remove(personaTextColor, "lightweight-theme-changed");
 	

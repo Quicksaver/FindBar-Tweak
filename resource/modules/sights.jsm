@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.5';
+moduleAid.VERSION = '1.4.6';
 
 this.__defineGetter__('preferencesDialog', function() { return (typeof(inPreferences) != 'undefined' && inPreferences); });
 
@@ -172,7 +172,7 @@ this.buildSights = function(x, y, scrollLeft, scrollTop, current, style) {
 		
 		var newSize = this.clientWidth +(this.clientLeft *2); // element width plus borders
 		if(this._sights.style == 'focus') {
-			var newSize = this.clientWidth /1.5;
+			var newSize = this.clientWidth /1.125;
 			
 			// Remove the sight when it gets too small
 			if(newSize < 40) {
@@ -183,7 +183,7 @@ this.buildSights = function(x, y, scrollLeft, scrollTop, current, style) {
 					return;
 				}
 				else {
-					newSize = 400 /1.5;
+					newSize = 400 /1.125;
 				}
 			}
 		}
@@ -248,7 +248,7 @@ this.buildSights = function(x, y, scrollLeft, scrollTop, current, style) {
 		this.style.width = newSize+'px';
 		
 		if(!this._sights.timer) {
-			this._sights.timer = timerAid.create(this.updateSights, (this._sights.style == 'focus') ? 100 : 20, 'slack', this);
+			this._sights.timer = timerAid.create(this.updateSights, (this._sights.style == 'focus') ? 25 : 20, 'slack', this);
 		}
 	}
 	

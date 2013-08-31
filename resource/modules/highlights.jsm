@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.1';
+moduleAid.VERSION = '1.2.2';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -180,6 +180,11 @@ this.highlightsProgressListener = {
 				if(!request || !request.isPending()) {
 					reHighlight(documentHighlighted);
 				}
+				
+				// Bugfix issue #42: when opening an image file, highlights from previous loaded document would remain
+				else if(request.contentType.indexOf('image/') === 0) {
+					reHighlight(false);
+				}
 			}
 			else if(browser.contentDocument) {
 				setAttribute(browser.contentDocument.documentElement, 'reHighlight', 'true');
@@ -201,6 +206,12 @@ this.reHighlight = function(reDo) {
 	// If there's no need to even call toggleHighlight(false) if we shouldn't, this can save a few ms when selecting tabs or loading documents
 	if(!documentHighlighted && ((perTabFB && !gFindBarInitialized) || gFindBar.hidden || !gFindBar._findField.value)) {
 		documentReHighlight = false;
+		
+		// Clean-up any leftover highlights stuff
+		if(!perTabFB || gFindBarInitialized) {
+			dispatch(gFindBar, { type: 'CleanUpHighlights', cancelable: false });
+		}
+		
 		return;
 	}
 	

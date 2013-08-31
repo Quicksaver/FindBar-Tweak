@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.3';
+moduleAid.VERSION = '1.2.4';
 
 this.ROWS_MINIMUM = 150; // number of rows in the highlight grid - kind of the "highlight granularity"
 this.ROWS_MULTIPLIER = 2; // Add extra rows if their height exceeds this value
@@ -91,8 +91,7 @@ this.positionGrid = function() {
 	grid.parentNode.style.direction = dir;
 };
 
-// Prepares the grid to be filled with the highlights
-this.resetHighlightGrid = function() {
+this.cleanHighlightGrid = function() {
 	var rows = grid.childNodes[1];
 	
 	// Reset (clean) all grid rows
@@ -104,6 +103,13 @@ this.resetHighlightGrid = function() {
 		delete rows.childNodes[i]._pdfPages;
 		delete rows.childNodes[i]._hasMatches;
 	}
+};
+
+// Prepares the grid to be filled with the highlights
+this.resetHighlightGrid = function() {
+	cleanHighlightGrid();
+	
+	var rows = grid.childNodes[1];
 	
 	// Adjust number of rows
 	var gridHeight = Math.max(grid.clientHeight - (rows.childNodes[0].clientHeight *2), 0);
@@ -520,6 +526,7 @@ moduleAid.LOADMODULE = function() {
 	listenerAid.add(window, 'SelectedFIThit', gridFollowCurrentHit);
 	listenerAid.add(window, 'UpdatedStatusFindBar', gridFollowCurrentHit);
 	listenerAid.add(window, 'UpdatedPDFMatches', matchesPDFGrid);
+	listenerAid.add(window, 'CleanUpHighlights', cleanHighlightGrid);
 	
 	prefAid.listen('gridAdjustPadding', adjustGrid);
 	prefAid.listen('gridAdjustWidth', adjustGrid);
@@ -536,6 +543,7 @@ moduleAid.UNLOADMODULE = function() {
 	listenerAid.remove(window, 'SelectedFIThit', gridFollowCurrentHit);
 	listenerAid.remove(window, 'UpdatedStatusFindBar', gridFollowCurrentHit);
 	listenerAid.remove(window, 'UpdatedPDFMatches', matchesPDFGrid);
+	listenerAid.remove(window, 'CleanUpHighlights', cleanHighlightGrid);
 	listenerAid.remove(browserPanel, 'resize', delayResizeGridSpacers);
 	
 	if(!viewSource) {

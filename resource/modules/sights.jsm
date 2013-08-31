@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.7';
+moduleAid.VERSION = '1.4.8';
 
 this.__defineGetter__('preferencesDialog', function() { return (typeof(inPreferences) != 'undefined' && inPreferences); });
 
@@ -579,6 +579,10 @@ this.preferencesColorListener = function() {
 	sightsColor($($('pref-sightsSameColor').value ? 'selectColor' : $('pref-sightsSameColorAll').value ? 'highlightsColor' : 'sightsColor').getAttribute('color'));
 };
 
+this.cleanHighlightSights = function() {
+	delete sights._highlights;
+};
+
 this.toggleSightsCurrent = function() {
 	if(prefAid.sightsCurrent) {
 		listenerAid.add(window, 'FoundFindBar', currentSights);
@@ -600,10 +604,12 @@ this.toggleSightsHighlights = function() {
 		listenerAid.add(browserPanel, 'scroll', sightsOnScroll, true);
 		listenerAid.add(window, 'UpdatedStatusFindBar', allSightsOnUpdateStatus);
 		listenerAid.add(window, 'UpdatedPDFMatches', allSightsOnUpdateStatus);
+		listenerAid.add(window, 'CleanUpHighlights', cleanHighlightSights);
 	} else {
 		listenerAid.remove(browserPanel, 'scroll', sightsOnScroll, true);
 		listenerAid.remove(window, 'UpdatedStatusFindBar', allSightsOnUpdateStatus);
 		listenerAid.remove(window, 'UpdatedPDFMatches', allSightsOnUpdateStatus);
+		listenerAid.remove(window, 'CleanUpHighlights', cleanHighlightSights);
 	}
 	
 	observerAid.notify('ReHighlightAll');

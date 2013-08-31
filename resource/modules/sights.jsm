@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.6';
+moduleAid.VERSION = '1.4.7';
 
 this.__defineGetter__('preferencesDialog', function() { return (typeof(inPreferences) != 'undefined' && inPreferences); });
 
@@ -111,6 +111,11 @@ this.positionSights = function(range, scrollTop, scrollLeft, clientHeight, clien
 	
 	var centerX = limitLeft +(dimensions.width /2);
 	var centerY = limitTop +(dimensions.height /2);
+	
+	// Bugfix: sights would not be properly placed when using any kind of zoom factor
+	var fullZoom = gBrowser.mCurrentBrowser.markupDocumentViewer.fullZoom;
+	centerX *= fullZoom;
+	centerY *= fullZoom;
 	
 	// Don't add a sight if there's already one with the same coords
 	for(var i=0; i<sights.childNodes.length; i++) {

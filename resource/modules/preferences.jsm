@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.3';
+moduleAid.VERSION = '1.2.4';
 
 this.inPreferences = true;
 this.__defineGetter__('linkedPanel', function() { return window.document; });
@@ -14,7 +14,7 @@ this.previewSights = function(box, style) {
 	}
 	
 	var dimensions = box.getBoundingClientRect();
-	buildSights(dimensions.left +(dimensions.width /2), dimensions.top +(dimensions.height /2), 0, 0, true, style);
+	buildSights(dimensions.left +(dimensions.width /2), dimensions.top +(dimensions.height /2), { scrollLeft: 0, scrollTop: 0, current: true, style: style });
 };
 
 this.resetNativePrefs = function() {

@@ -217,8 +217,8 @@
 	}
 	
 	/* Find In Tabs */
-	#browser-bottombox[lwthemefooter="true"],
-	#main-window:-moz-lwtheme {
+	#main-window[findbartweak-FITopen] #browser-bottombox[lwthemefooter="true"],
+	#main-window[findbartweak-FITopen]:-moz-lwtheme {
 		background-repeat: repeat-y;
 	}
 	

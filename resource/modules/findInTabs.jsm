@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.6';
+moduleAid.VERSION = '1.5.7';
 
 this.__defineGetter__('FITresizer', function() { return gFindBar._FITresizer; });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -104,6 +104,10 @@ this.updateFITElements = function() {
 	
 	FITresizer.hidden = FITbox.hidden;
 	FITupdate.hidden = FITbox.hidden;
+	
+	// Bugfix: only repeat the background when it's actually needed, otherwise it looks weird sometimes
+	toggleAttribute(document.documentElement, objName+'-FITopen', !FITbox.hidden && trueAttribute(FITbox, 'movetotop'));
+	toggleAttribute($('browser-bottombox'), objName+'-FITopen', !FITbox.hidden && !trueAttribute(FITbox, 'movetotop'));
 	
 	if(!perTabFB) {
 		if(trueAttribute(FITbox, 'movetotop')) {
@@ -1768,6 +1772,8 @@ moduleAid.UNLOADMODULE = function() {
 	deinitFindBar('toggleFIT');
 	
 	objectWatcher.removeAttributeWatcher(FITbox, 'movetotop', updateFITElements);
+	removeAttribute(document.documentElement, objName+'-FITopen');
+	removeAttribute($('browser-bottombox'), objName+'-FITopen');
 	
 	listenerAid.remove(window, 'OpenedFindBar', alwaysOpenFIT);
 	listenerAid.remove(window, 'ClosedFindBar', closeFITWithFindBar);

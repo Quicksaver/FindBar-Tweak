@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.0';
+moduleAid.VERSION = '1.1.1';
 
 this.doFastFind = true;
 
@@ -81,7 +81,7 @@ this.fillSelectedTextInit = function(bar) {
 	// we need to work around that so the selection doesn't keep resetting
 	bar.___find = bar.__find;
 	bar.__find = function(aValue) {
-		if(!this._dispatchFindEvent(""))
+		if(this._dispatchFindEvent && !this._dispatchFindEvent(""))
 			return this.nsITypeAheadFind.FIND_PENDING;
 		
 		var val = aValue || this._findField.value;

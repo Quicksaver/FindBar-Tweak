@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.2';
+moduleAid.VERSION = '1.1.3';
 
 this.viewSource = false;
 
@@ -11,9 +11,8 @@ this.toggleBlurCloses = function() {
 };
 
 this.togglePerTab = function() {
-	if(!perTabFB) {
-		moduleAid.loadIf('perTab', !viewSource && prefAid.perTab && !prefAid.blurCloses);
-	} else {
+	moduleAid.loadIf('perTab', !viewSource && prefAid.perTab && !prefAid.blurCloses);
+	if(perTabFB) {
 		moduleAid.loadIf('globalFB', !viewSource && !prefAid.perTab && !prefAid.blurCloses);
 	}
 };

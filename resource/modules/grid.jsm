@@ -218,6 +218,7 @@ this.fillHighlightGrid = function(toAdd) {
 	// For normal HTML pages
 	else {
 		// I had checks for this before, if it reaches this point this shouldn't error but I'm preventing it anyway
+		// Framesets fail here as expected, since I don't place grids in each frame, a grid here would be useless.
 		try {
 			var scrollTop = contentDocument.getElementsByTagName('html')[0].scrollTop || contentDocument.getElementsByTagName('body')[0].scrollTop;
 			var fullHTMLHeight = contentDocument.getElementsByTagName('html')[0].scrollHeight || contentDocument.getElementsByTagName('body')[0].scrollHeight;

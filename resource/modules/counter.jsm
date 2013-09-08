@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.6';
+moduleAid.VERSION = '1.1.7';
 
 this.REDOINGHIGHLIGHTS = false;
 this.__defineGetter__('counter', function() { return gFindBar._findStatusDesc.textContent; });
@@ -47,7 +47,11 @@ this.fillHighlightCounter = function(e) {
 		
 		if(total == 0) { return; }
 		
-		counter = stringsAid.get('counter', 'counterFormat', [ ["$hit$", selected], ["$total$", total] ]);
+		if(selected > 0) {
+			counter = stringsAid.get('counter', 'counterFormat', [ ["$hit$", selected], ["$total$", total] ]);
+		} else {
+			counter = stringsAid.get('counter', 'counterSimple', [ ["$total$", total] ]);
+		}
 		gFindBar._findStatusDesc.hidden = false;
 		gFindBar._findStatusIcon.hidden = false;
 		
@@ -102,7 +106,11 @@ this.fillHighlightCounter = function(e) {
 		}
 	}
 	
-	counter = stringsAid.get('counter', 'counterFormat', [ ["$hit$", h], ["$total$", linkedPanel._counterHighlights.length] ]);
+	if(h > 0) {
+		counter = stringsAid.get('counter', 'counterFormat', [ ["$hit$", h], ["$total$", linkedPanel._counterHighlights.length] ]);
+	} else {
+		counter = stringsAid.get('counter', 'counterSimple', [ ["$total$", linkedPanel._counterHighlights.length] ]);
+	}
 	gFindBar._findStatusDesc.hidden = false;
 	gFindBar._findStatusIcon.hidden = false;
 	

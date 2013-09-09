@@ -1,0 +1,8 @@
+/* Grid stuff for frame grids */
+div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"]:not([gridSpacers="none"]) div.topSpacer[flex="0"],
+div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"][gridSpacers="single"] div.bottomSpacer[flex="0"] {
+	min-height: 0px;
+}
+div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"][gridSpacers="double"] div.bottomSpacer[flex="0"] {
+	min-height: 14px;
+}

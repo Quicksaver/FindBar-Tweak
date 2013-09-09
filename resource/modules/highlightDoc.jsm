@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.3.5';
+moduleAid.VERSION = '1.3.6';
 
 this.alwaysUpdateStatusUI = function(e) {
 	// toggleHighlight() doesn't update the UI in these conditions, we need it to, to update the counter (basically hide it)
@@ -103,7 +103,8 @@ moduleAid.LOADMODULE = function() {
 					innerRanges = null;
 					if(prefAid.useGrid) {
 						var toAddtoGrid = [];
-						fillGrid = resetHighlightGrid();
+						resetHighlightGrid();
+						fillGrid = true;
 					}
 					
 					// Using the sights?
@@ -186,7 +187,7 @@ moduleAid.LOADMODULE = function() {
 							if(!aWindow && fillGrid) {
 								var editableNode = this._getEditableNode(retRange.startContainer);
 								if(editableNode) {
-									fillGrid = (toAddtoGrid.push({ node: editableNode, pattern: true, ranges: new Array(retRange) }) <= prefAid.gridLimit);
+									fillGrid = (toAddtoGrid.push({ node: editableNode, pattern: true, rangeEdit: retRange }) <= prefAid.gridLimit);
 								} else {
 									fillGrid = (toAddtoGrid.push({ node: retRange, pattern: false }) <= prefAid.gridLimit);
 								}

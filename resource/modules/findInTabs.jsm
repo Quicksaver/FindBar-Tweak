@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.7';
+moduleAid.VERSION = '1.5.8';
 
 this.__defineGetter__('FITresizer', function() { return gFindBar._FITresizer; });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -414,8 +414,11 @@ this.highlightFITinGrid = function(item) {
 		for(var i=0; i<ranges.length; i++) {
 			if(compareRanges(selectRange, ranges[i].range)) {
 				for(var r=0; r<ranges[i].rows.length; r++) {
-					setAttribute(ranges[i].rows[r], 'hover', 'true');
-					hoverRows.push(ranges[i].rows[r]);
+					try {
+						setAttribute(ranges[i].rows[r], 'hover', 'true');
+						hoverRows.push(ranges[i].rows[r]);
+					}
+					catch(ex) {} // Frame grids could go wrong, but it shouldn't stop the script
 				}
 				return;
 			}

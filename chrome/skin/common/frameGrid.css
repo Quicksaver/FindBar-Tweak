@@ -1,0 +1,32 @@
+@import url("chrome://findbartweak-os/skin/frameGrid.css");
+
+/* Grid stuff for frame grids */
+div[ownedByFindBarTweak][anonid="gridBox"] {
+	pointer-events: none;
+}
+
+div[ownedByFindBarTweak][anonid="gridBox"][hidden="true"][unHide="true"]:not([beingPositioned]) {
+	display: flex !important;
+}
+
+div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"] {
+	opacity: 0.7;
+}
+
+div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"],
+div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"] > div {
+	display: flex;
+	flex-direction: column;
+}
+
+div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"] div[flex="0"] {
+	flex: 0;
+}
+div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"] > div,
+div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"] div[flex="1"] {
+	flex: 1;
+}
+
+div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"] div[pattern] {
+	background-image: url("chrome://findbartweak/skin/pattern.gif");
+}

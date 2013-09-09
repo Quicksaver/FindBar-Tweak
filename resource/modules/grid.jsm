@@ -101,7 +101,7 @@ this.placeGridOnFrame = function(aGrid) {
 	timerAid.cancel('resizeSelectRePositionFrameGrid');
 	
 	var placement = aGrid.linkedFrame.getClientRects()[0];
-	if(!placement) { return; }
+	if(!placement) { return; } // If for example the frame is invisible
 	
 	var frameStyle = getComputedStyle(aGrid.linkedFrame);
 	

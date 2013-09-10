@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.3.6';
+moduleAid.VERSION = '1.3.7';
 
 this.alwaysUpdateStatusUI = function(e) {
 	// toggleHighlight() doesn't update the UI in these conditions, we need it to, to update the counter (basically hide it)
@@ -58,6 +58,18 @@ this.trackPDFMatches = function(e) {
 		// Because it might still not be finished, we should update later
 		timerAid.init('trackPDFMatches', trackPDFMatches, 250);
 	}
+};
+
+this.shouldFillGrid = function(toAdd) {
+	var count = toAdd.length;
+	for(var i=0; i<toAdd.length; i++) {
+		if(toAdd[i].ranges) {
+			count--;
+			count += toAdd[i].ranges.length;
+		}
+	}
+	
+	return count <= prefAid.gridLimit;
 };
 
 this.compareRanges = function(aRange, bRange) {
@@ -137,7 +149,8 @@ moduleAid.LOADMODULE = function() {
 							for(var r=0; r<innerRanges.length; r++) {
 								frameRanges.push(innerRanges[r]);
 							}
-							fillGrid = (toAddtoGrid.push({ node: win.frames[i].frameElement, pattern: true, ranges: frameRanges }) <= prefAid.gridLimit);
+							toAddtoGrid.push({ node: win.frames[i].frameElement, pattern: true, ranges: frameRanges });
+							fillGrid = shouldFillGrid(toAddtoGrid);
 						}
 					}
 					
@@ -187,10 +200,11 @@ moduleAid.LOADMODULE = function() {
 							if(!aWindow && fillGrid) {
 								var editableNode = this._getEditableNode(retRange.startContainer);
 								if(editableNode) {
-									fillGrid = (toAddtoGrid.push({ node: editableNode, pattern: true, rangeEdit: retRange }) <= prefAid.gridLimit);
+									toAddtoGrid.push({ node: editableNode, pattern: true, rangeEdit: retRange });
 								} else {
-									fillGrid = (toAddtoGrid.push({ node: retRange, pattern: false }) <= prefAid.gridLimit);
+									toAddtoGrid.push({ node: retRange, pattern: false });
 								}
+								fillGrid = shouldFillGrid(toAddtoGrid);
 							}
 							else if(innerRanges) {
 								innerRanges.push(retRange);

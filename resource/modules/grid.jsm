@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.3.0';
+moduleAid.VERSION = '1.3.1';
 
 this.ROWS_MINIMUM = 150; // number of rows in the highlight grid - kind of the "highlight granularity"
 this.ROWS_MULTIPLIER = 2; // Add extra rows if their height exceeds this value
@@ -330,13 +330,13 @@ this.fillHighlightGrid = function(toAdd) {
 				rowList = placeHighlight(aGrid, absTop, absBot, toAdd[i].pattern);
 			}
 			
-			// This range comes from the doc.body, we add it directly
-			if(!toAdd[i].ranges) {
-				aGrid._allHits.push({ range: aRange, rows: rowList });
-			}
 			// This is an editable node, add it directly
-			else if(toAdd[i].rangeEdit) {
+			if(toAdd[i].rangeEdit) {
 				aGrid._allHits.push({ range: toAdd[i].rangeEdit, rows: rowList });
+			}
+			// This range comes from the doc.body, we add it directly
+			else if(!toAdd[i].ranges) {
+				aGrid._allHits.push({ range: aRange, rows: rowList });
 			}
 			// This is a frame element, add necessary grid
 			else {

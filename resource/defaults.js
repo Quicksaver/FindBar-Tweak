@@ -1,4 +1,4 @@
-var defaultsVersion = '1.1.4';
+var defaultsVersion = '1.1.5';
 var objName = 'findbartweak';
 var objPathString = 'findbartweak';
 
@@ -41,6 +41,7 @@ var prefList = {
 	sightsSameColorAll: true,
 	sightsAllColor: '#EF0FFF',
 	sightsAllSameColor: true,
+	sightsLimit: 10,
 	
 	blurCloses: false,
 	perTab: (Services.vc.compare(Services.appinfo.platformVersion, "25.0a1") >= 0),

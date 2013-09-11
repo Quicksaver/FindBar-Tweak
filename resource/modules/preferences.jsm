@@ -1,10 +1,11 @@
-moduleAid.VERSION = '1.2.4';
+moduleAid.VERSION = '1.2.5';
 
 this.inPreferences = true;
 this.__defineGetter__('linkedPanel', function() { return window.document; });
 
 this.previewSights = function(box, style) {
 	moduleAid.load('sights');
+	if(!sights._groups) { sights._groups = new Array(); }
 	
 	// Hide the current sights
 	for(var i=0; i<sights.childNodes.length; i++) {
@@ -14,7 +15,7 @@ this.previewSights = function(box, style) {
 	}
 	
 	var dimensions = box.getBoundingClientRect();
-	buildSights(dimensions.left +(dimensions.width /2), dimensions.top +(dimensions.height /2), { scrollLeft: 0, scrollTop: 0, current: true, style: style });
+	buildSights(null, dimensions.left +(dimensions.width /2), dimensions.top +(dimensions.height /2), { scrollLeft: 0, scrollTop: 0, current: true, style: style });
 };
 
 this.resetNativePrefs = function() {

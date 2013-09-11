@@ -49,6 +49,7 @@
 <!ENTITY OptsightsColor.label "Sights Color">
 <!ENTITY OptsightsSameColor.label "Use the same color from highlights">
 <!ENTITY OptsightsSameColorCurrent.label "Use the same color from the current hit">
+<!ENTITY OptsightsLimit.label "Maximum number of sights on screen:">
 
 <!ENTITY OpthideLabels.label "Hide button labels">
 <!ENTITY OpthideLabels.labelFF25 "Show button icons instead of labels">

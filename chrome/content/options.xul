@@ -197,6 +197,7 @@
 			<preference id="pref-sightsColor" name="extensions.findbartweak.sightsColor" type="string"/>
 			<preference id="pref-sightsAllSameColor" name="extensions.findbartweak.sightsAllSameColor" type="bool"/>
 			<preference id="pref-sightsAllColor" name="extensions.findbartweak.sightsAllColor" type="string"/>
+			<preference id="pref-sightsLimit" name="extensions.findbartweak.sightsLimit" type="int"/>
 		</preferences>
 		
 		<groupbox align="start">
@@ -227,6 +228,15 @@
 			<checkbox label="&OptsightsHighlights.label;" preference="pref-sightsHighlights"/>
 			<vbox align="center" style="-moz-margin-start: 30px;">
 				<vbox align="start">
+					<hbox align="center">
+						<label dependson="pref-sightsHighlights" value="&OptsightsLimit.label;"/>
+						<textbox dependson="pref-sightsHighlights"
+							type="number"
+							size="2"
+							min="1"
+							max="100"
+							preference="pref-sightsLimit"/>
+					</hbox>
 					<checkbox dependson="pref-sightsHighlights" label="&OptsightsSameColor.label;" preference="pref-sightsAllSameColor"/>
 				</vbox>
 				<hbox align="center">

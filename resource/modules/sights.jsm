@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.10';
+moduleAid.VERSION = '1.5.0';
 
 this.__defineGetter__('preferencesDialog', function() { return (typeof(inPreferences) != 'undefined' && inPreferences); });
 
@@ -11,6 +11,7 @@ this.__defineGetter__('sights', function() {
 	// First the grid itself
 	var boxNode = document.createElement('hbox');
 	boxNode.setAttribute('anonid', 'findSights');
+	boxNode._groups = new Array();
 	
 	// It shouldn't depend on the stylesheet being loaded, it could error and the browser would be unusable
 	boxNode.style.pointerEvents = 'none';
@@ -25,11 +26,11 @@ this.__defineGetter__('sights', function() {
 });
 
 // We pass it scrollLeft and scrollTop because it's much lighter when just getting them once and passing them along instead of getting them every position cycle
-this.positionSights = function(range, scrollTop, scrollLeft, clientHeight, clientWidth, toOwn, PDFtoolbarHeight) {
+this.positionSights = function(sGroup, range, scrollTop, scrollLeft, clientHeight, clientWidth, toOwn, PDFtoolbarHeight) {
 	// If these aren't set, we just assume the range is visible and should be always sighted, such as in FindAgain (F3) which scrolls to the search hit
 	var current = (!clientHeight && !clientWidth);
 	var dimensions = range.node.getClientRects()[0];
-	if(!dimensions) { return; } // Something's wrong here, maybe the range has changed in the meantime
+	if(!dimensions) { return sGroup; } // Something's wrong here, maybe the range has changed in the meantime
 	
 	var editableNode = (!isPDFJS) ? gFindBar._getEditableNode(range.node.startContainer) : null;
 	var editableRect = (editableNode) ? editableNode.getClientRects()[0] : null;
@@ -51,7 +52,7 @@ this.positionSights = function(range, scrollTop, scrollLeft, clientHeight, clien
 				|| dimensions.right +xMod < editableRect.left
 				|| dimensions.left +xMod > editableRect.right) {
 					range.sights = false;
-					return;
+					return sGroup;
 				}
 			}
 			
@@ -62,7 +63,7 @@ this.positionSights = function(range, scrollTop, scrollLeft, clientHeight, clien
 				|| dimensions.right +xMod < 0
 				|| dimensions.left +xMod > frame.clientWidth) {
 					range.sights = false;
-					return;
+					return sGroup;
 				}
 			}
 			
@@ -84,7 +85,7 @@ this.positionSights = function(range, scrollTop, scrollLeft, clientHeight, clien
 		// failsafe
 		catch(ex) {
 			range.sights = false;
-			return;
+			return sGroup;
 		}
 	}
 	
@@ -94,7 +95,7 @@ this.positionSights = function(range, scrollTop, scrollLeft, clientHeight, clien
 		|| dimensions.right +xMod < editableRect.left
 		|| dimensions.left +xMod > editableRect.right) {
 			range.sights = false;
-			return;
+			return sGroup;
 		}
 	}
 	
@@ -112,13 +113,16 @@ this.positionSights = function(range, scrollTop, scrollLeft, clientHeight, clien
 		|| limitRight < 0
 		|| limitLeft > clientWidth) {
 			range.sights = false;
-			return;
+			return sGroup;
 		}
 	}
 	
 	// On scrolling, only show sights on those that haven't been shown already
-	if(range.sights) { return; }
+	if(range.sights) { return sGroup; }
 	range.sights = true;
+	
+	// Keep our limit
+	if(!current && sights.childNodes.length >= prefAid.sightsLimit) { return sGroup; }
 	
 	var centerX = limitLeft +(dimensions.width /2);
 	var centerY = limitTop +(dimensions.height /2);
@@ -131,7 +135,7 @@ this.positionSights = function(range, scrollTop, scrollLeft, clientHeight, clien
 	// Don't add a sight if there's already one with the same coords
 	for(var i=0; i<sights.childNodes.length; i++) {
 		if(sights.childNodes[i]._sights.top == centerY && sights.childNodes[i]._sights.left == centerY) {
-			return;
+			return sGroup;
 		}
 	}
 	
@@ -144,36 +148,210 @@ this.positionSights = function(range, scrollTop, scrollLeft, clientHeight, clien
 		detail.ownDoc = (!isPDFJS) ? range.node.startContainer.ownerDocument : range.node.ownerDocument;
 		detail.toOwn = toOwn;
 	}
-	buildSights(centerX, centerY, detail);
+	
+	return buildSights(sGroup, centerX, centerY, detail);
 };
 
 // x and y are the center of the box
-this.buildSights = function(x, y, detail) {
+this.buildSights = function(sGroup, x, y, detail) {
 	if(!detail.style) { detail.style = prefAid.sightsStyle; }
 	var style = detail.style;
 	
+	if(!sGroup) {
+		sGroup = {
+			allSights: new Array(),
+			timer: null,
+			style: style,
+			current: detail.current || false,
+			fullCycles: 0,
+			phase: 0,
+			maxRepeat: prefAid.sightsRepeat,
+			hold: 0,
+			ownDoc: (detail.ownDoc) ? detail.ownDoc : null,
+			toOwn: (detail.toOwn) ? detail.toOwn : null,
+			scrollTop: detail.scrollTop,
+			scrollLeft: detail.scrollLeft,
+			
+			selfRemove: function() {
+				var allGroups = sights._groups;
+				for(var g=0; g<allGroups.length; g++) {
+					if(allGroups[g] == this) {
+						this.timer.cancel();
+						this.removeSights();
+						allGroups.splice(g, 1);
+						return;
+					}
+				}
+			},
+			
+			removeSights: function() {
+				for(var s=0; s<this.allSights.length; s++) {
+					this.allSights[s].parentNode.removeChild(this.allSights[s]);
+				}
+			},
+			
+			// Method for the sight to auto-update themselves
+			updateSights: function() {
+				// A few failsafes
+				if(typeof(linkedPanel) == 'undefined' || typeof(timerAid) == 'undefined' || UNLOADED) {
+					this.selfRemove();
+					return;
+				}
+				
+				// Remove hidden sights
+				for(var s=0; s<this.allSights.length; s++) {
+					if(this.allSights[s].hidden) {
+						this.allSights[s].parentNode.removeChild(this.allSights[s]);
+						this.allSights.splice(s, 1);
+						s--;
+					}
+				}
+				if(this.allSights.length == 0) {
+					this.selfRemove();
+					return;
+				}
+				
+				// We update all sights in the group at the same time, they are all equal (they were created at the same time) so we can use the same values
+				var newSize = this.allSights[0].clientWidth +(this.allSights[0].clientLeft *2); // element width plus borders
+				if(this.style == 'focus') {
+					var newSize = this.allSights[0].clientWidth /1.125;
+					
+					// Remove the sight when it gets too small
+					if(newSize < 40) {
+						this.fullCycles++;
+						if(this.fullCycles == this.maxRepeat) {
+							this.selfRemove();
+							return;
+						}
+						else {
+							newSize = 400 /1.125;
+						}
+					}
+				}
+				else if(this.style == 'circle') {
+					// Let's hold for a bit
+					if(this.phase == 360) {
+						if(!this.hold) { this.hold = 5; }
+						this.hold--;
+					}
+					
+					if(!this.hold) {
+						this.phase += 45;
+						
+						// Remove when we finish animating
+						if(this.phase > 720) {
+							this.fullCycles++;
+							if(this.fullCycles == this.maxRepeat) {
+								this.selfRemove();
+								return;
+							}
+							else {
+								this.phase = 45;
+							}
+						}
+						
+						for(var s=0; s<this.allSights.length; s++) {
+							var sight = this.allSights[s];
+							toggleAttribute(sight, 'gt0', (this.phase <= 180));
+							toggleAttribute(sight, 'gt180', (this.phase > 180 && this.phase <= 360));
+							toggleAttribute(sight, 'gt360', (this.phase > 360 && this.phase <= 540));
+							toggleAttribute(sight, 'gt540', (this.phase > 540));
+							sight.childNodes[0].childNodes[0].setAttribute('style', '-moz-transform: rotate('+this.phase+'deg); transform: rotate('+this.phase+'deg);');
+						}
+					}
+				}
+				
+				// Let's make sure the document actually exists
+				try {
+					if(preferencesDialog) {
+						var scrollTop = this.scrollTop;
+						var scrollLeft = this.scrollLeft;
+					} else if(isPDFJS) {
+						var scrollTop = contentDocument.getElementById('viewerContainer').scrollTop;
+						var scrollLeft = contentDocument.getElementById('viewerContainer').scrollLeft;
+					} else if(!this.ownDoc) {
+						var scrollTop = contentDocument.getElementsByTagName('html')[0].scrollTop || contentDocument.getElementsByTagName('body')[0].scrollTop;
+						var scrollLeft = contentDocument.getElementsByTagName('html')[0].scrollLeft || contentDocument.getElementsByTagName('body')[0].scrollLeft;
+					} else {
+						try {
+							var scrollTop = contentDocument.getElementsByTagName('html')[0].scrollTop || contentDocument.getElementsByTagName('body')[0].scrollTop;
+							var scrollLeft = contentDocument.getElementsByTagName('html')[0].scrollLeft || contentDocument.getElementsByTagName('body')[0].scrollLeft;
+						} catch(exx) {
+							var scrollTop = 0;
+							var scrollLeft = 0;
+						}
+						
+						var ownDoc = this.ownDoc;
+						while(ownDoc != this.toOwn) {
+							// If the text is inside a frame, we take into account its scrollTop and scrollLeft values as well
+							try {
+								var frameScrollTop = ownDoc.getElementsByTagName('html')[0].scrollTop || ownDoc.getElementsByTagName('body')[0].scrollTop;
+								var frameScrollLeft = ownDoc.getElementsByTagName('html')[0].scrollLeft || ownDoc.getElementsByTagName('body')[0].scrollLeft;
+								scrollTop += frameScrollTop;
+								scrollLeft += frameScrollLeft;
+							}
+							catch(exx) {}
+							
+							ownDoc = ownDoc.defaultView.parent.document;
+						}
+					}
+				}
+				catch(ex) {
+					this.selfRemove();
+					return;
+				}
+				
+				var yDelta = 0;
+				var xDelta = 0;
+				if(scrollTop != this.scrollTop) {
+					yDelta = scrollTop -this.scrollTop;
+					this.scrollTop = scrollTop;
+				}
+				if(scrollLeft != this.scrollLeft) {
+					var xDelta = scrollLeft -this.scrollLeft;
+					this.scrollLeft = scrollLeft;
+				}
+				
+				for(var s=0; s<this.allSights.length; s++) {
+					var sight = this.allSights[s];
+					
+					var newTop = (sight._sights.top -(newSize /2));
+					var newLeft = (sight._sights.left -(newSize /2));
+					
+					newTop -= yDelta;
+					newLeft -= xDelta;
+					sight._sights.top -= yDelta;
+					sight._sights.left -= xDelta;
+					
+					sight.style.top = newTop+'px';
+					sight.style.left = newLeft+'px';
+					sight.style.height = newSize+'px';
+					sight.style.width = newSize+'px';
+				}
+			}
+		};
+		
+		sights._groups.push(sGroup);
+		sGroup.timer = timerAid.create(sGroup.updateSights, (style == 'focus') ? 25 : 20, 'slack', sGroup);
+	};
+		
 	var box = document.createElement('box');
 	box.setAttribute('anonid', 'highlightSights');
 	box.setAttribute('sightsStyle', style);
-	box.style.height = (style == 'focus') ? '400px' : '100px';
-	box.style.width = (style == 'focus') ? '400px' : '100px';
+	
+	var size = (style == 'focus') ? 400 : 100;
+	box.style.height = size+'px';
+	box.style.width = size+'px';
+	box.style.top = y -(size /2)+'px';
+	box.style.left = x -(size /2)+'px';
 	
 	box._sights = {
 		top: y,
 		left: x,
 		ownDoc: (detail.ownDoc) ? detail.ownDoc : null,
-		toOwn: (detail.toOwn) ? detail.toOwn : null,
-		scrollTop: detail.scrollTop,
-		scrollLeft: detail.scrollLeft,
-		current: detail.current || false,
-		preferences: preferencesDialog,
-		style: style,
-		phase: 0,
-		fullCycles: 0,
-		maxRepeat: prefAid.sightsRepeat,
-		timer: null
+		toOwn: (detail.toOwn) ? detail.toOwn : null
 	};
-	toggleAttribute(box, 'current', box._sights.current);
+	toggleAttribute(box, 'current', sGroup.current);
 	
 	if(style == 'circle') {
 		var innerContainer = document.createElement('box');
@@ -187,141 +365,21 @@ this.buildSights = function(x, y, detail) {
 		otherInnerContainer.appendChild(otherInnerBox);
 		box.appendChild(innerContainer);
 		box.appendChild(otherInnerContainer);
+		
+		setAttribute(box, 'gt0', 'true');
 	}
 	
-	// Method for the sight to auto-update itself
-	box.updateSights = function() {
-		// A few failsafes
-		if(typeof(linkedPanel) == 'undefined' || typeof(timerAid) == 'undefined' || UNLOADED || this.hidden) {
-			if(this._sights.timer) { this._sights.timer.cancel(); }
-			this.parentNode.removeChild(this);
-			return;
-		}
-		
-		var newSize = this.clientWidth +(this.clientLeft *2); // element width plus borders
-		if(this._sights.style == 'focus') {
-			var newSize = this.clientWidth /1.125;
-			
-			// Remove the sight when it gets too small
-			if(newSize < 40) {
-				this._sights.fullCycles++;
-				if(this._sights.fullCycles == this._sights.maxRepeat) {
-					if(this._sights.timer) { this._sights.timer.cancel(); }
-					this.parentNode.removeChild(this);
-					return;
-				}
-				else {
-					newSize = 400 /1.125;
-				}
-			}
-		}
-		else if(this._sights.style == 'circle') {
-			// Let's hold for a bit
-			if(this._sights.phase == 360) {
-				if(!this._sights.hold) { this._sights.hold = 5; }
-				this._sights.hold--;
-			}
-			
-			if(!this._sights.hold) {
-				this._sights.phase += 45;
-				
-				// Remove when we finish animating
-				if(this._sights.phase > 720) {
-					this._sights.fullCycles++;
-					if(this._sights.fullCycles == this._sights.maxRepeat) {
-						if(this._sights.timer) { this._sights.timer.cancel(); }
-						this.parentNode.removeChild(this);
-						return;
-					}
-					else {
-						this._sights.phase = 45;
-					}
-				}
-				
-				toggleAttribute(this, 'gt0', (this._sights.phase <= 180));
-				toggleAttribute(this, 'gt180', (this._sights.phase > 180 && this._sights.phase <= 360));
-				toggleAttribute(this, 'gt360', (this._sights.phase > 360 && this._sights.phase <= 540));
-				toggleAttribute(this, 'gt540', (this._sights.phase > 540));
-				this.childNodes[0].childNodes[0].setAttribute('style', '-moz-transform: rotate('+this._sights.phase+'deg); transform: rotate('+this._sights.phase+'deg);');
-			}
-		}
-		
-		// Let's make sure the document actually exists
-		try {
-			if(this._sights.preferences) {
-				var scrollTop = this.scrollTop;
-				var scrollLeft = this.scrollLeft;
-			} else if(isPDFJS) {
-				var scrollTop = contentDocument.getElementById('viewerContainer').scrollTop;
-				var scrollLeft = contentDocument.getElementById('viewerContainer').scrollLeft;
-			} else if(!this._sights.ownDoc) {
-				var scrollTop = contentDocument.getElementsByTagName('html')[0].scrollTop || contentDocument.getElementsByTagName('body')[0].scrollTop;
-				var scrollLeft = contentDocument.getElementsByTagName('html')[0].scrollLeft || contentDocument.getElementsByTagName('body')[0].scrollLeft;
-			} else {
-				try {
-					var scrollTop = contentDocument.getElementsByTagName('html')[0].scrollTop || contentDocument.getElementsByTagName('body')[0].scrollTop;
-					var scrollLeft = contentDocument.getElementsByTagName('html')[0].scrollLeft || contentDocument.getElementsByTagName('body')[0].scrollLeft;
-				} catch(exx) {
-					var scrollTop = 0;
-					var scrollLeft = 0;
-				}
-				
-				var ownDoc = this._sights.ownDoc;
-				while(ownDoc != this._sights.toOwn) {
-					// If the text is inside a frame, we take into account its scrollTop and scrollLeft values as well
-					try {
-						var frameScrollTop = ownDoc.getElementsByTagName('html')[0].scrollTop || ownDoc.getElementsByTagName('body')[0].scrollTop;
-						var frameScrollLeft = ownDoc.getElementsByTagName('html')[0].scrollLeft || ownDoc.getElementsByTagName('body')[0].scrollLeft;
-						scrollTop += frameScrollTop;
-						scrollLeft += frameScrollLeft;
-					}
-					catch(exx) {}
-					
-					ownDoc = ownDoc.defaultView.parent.document;
-				}
-			}
-		}
-		catch(ex) {
-			if(this._sights.timer) { this._sights.timer.cancel(); }
-			this.parentNode.removeChild(this);
-			return;
-		}
-		
-		var newTop = (this._sights.top -(newSize /2));
-		var newLeft = (this._sights.left -(newSize /2));
-		
-		if(scrollTop != this._sights.scrollTop) {
-			var yDelta = scrollTop -this._sights.scrollTop;
-			newTop -= yDelta;
-			this._sights.top -= yDelta;
-			this._sights.scrollTop = scrollTop;
-		}
-		if(scrollLeft != this._sights.scrollLeft) {
-			var xDelta = scrollLeft -this._sights.scrollLeft;
-			newLeft -= xDelta;
-			this._sights.left -= xDelta;
-			this._sights.scrollLeft = scrollLeft;
-		}
-		
-		this.style.top = newTop+'px';
-		this.style.left = newLeft+'px';
-		this.style.height = newSize+'px';
-		this.style.width = newSize+'px';
-		
-		if(!this._sights.timer) {
-			this._sights.timer = timerAid.create(this.updateSights, (this._sights.style == 'focus') ? 25 : 20, 'slack', this);
-		}
-	}
-	
-	sights.appendChild(box);
-	box.updateSights();
+	sGroup.allSights.push(sights.appendChild(box));
+	return sGroup;
 };
 
 this.cancelCurrentSights = function() {
 	// Hide the current sights
-	for(var i=0; i<sights.childNodes.length; i++) {
-		if(sights.childNodes[i]._sights.current) {
-			sights.childNodes[i].hidden = true;
+	for(var g=0; g<sights._groups.length; g++) {
+		if(sights._groups[g].current) {
+			for(var s=0; s<sights._groups[g].allSights.length; s++) {
+				sights._groups[g].allSights[s].hidden = true;
+			}
 		}
 	}
 };
@@ -368,7 +426,7 @@ this.currentSights = function(e) {
 		if(sel[0]._findWord && gFindBar._findField.value != sel[0]._findWord) { return; }
 		sel[0]._findWord = gFindBar._findField.value;
 		
-		positionSights({ node: sel[0] }, scrollTop, scrollLeft, null, null, unWrap.document);
+		positionSights(null, { node: sel[0] }, scrollTop, scrollLeft, null, null, unWrap.document);
 		return;
 	}
 	
@@ -395,7 +453,7 @@ this.currentSights = function(e) {
 	}
 	
 	if(sel.rangeCount == 1) {
-		positionSights({ node: sel.getRangeAt(0) }, scrollTop, scrollLeft);
+		positionSights(null, { node: sel.getRangeAt(0) }, scrollTop, scrollLeft);
 	}
 };
 
@@ -499,8 +557,17 @@ this.sightsOnVisibleHighlights = function(aHighlights) {
 	}
 	catch(ex) { return; }
 	
+	// We use one sights group for each doc at least
+	var previousDoc = null;
+	var toGroup = null;
 	for(var i=0; i<sights._highlights.length; i++) {
-		positionSights(sights._highlights[i], scrollTop, scrollLeft, clientHeight, clientWidth, (isPDFJS) ? unWrap.document : contentDocument, (isPDFJS) ? toolbarHeight : null);
+		var doc = (!isPDFJS) ? sights._highlights[i].node.startContainer.ownerDocument : sights._highlights[i].node.ownerDocument;
+		if(previousDoc != doc) {
+			toGroup = null;
+			previousDoc = doc;
+		}
+		
+		toGroup = positionSights(toGroup, sights._highlights[i], scrollTop, scrollLeft, clientHeight, clientWidth, (isPDFJS) ? unWrap.document : contentDocument, (isPDFJS) ? toolbarHeight : null);
 	}
 };
 

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.3.7';
+moduleAid.VERSION = '1.3.8';
 
 this.alwaysUpdateStatusUI = function(e) {
 	// toggleHighlight() doesn't update the UI in these conditions, we need it to, to update the counter (basically hide it)
@@ -229,11 +229,11 @@ moduleAid.LOADMODULE = function() {
 						linkedPanel._counterHighlights = counterHighlights;
 					}
 					
-					if(fillGrid) {
+					if(aHighlight && fillGrid) {
 						fillHighlightGrid(toAddtoGrid);
 					}
 					
-					if(aSights) {
+					if(aHighlight && aSights) {
 						sightsOnVisibleHighlights(aSights);
 					}
 					

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.8';
+moduleAid.VERSION = '1.5.9';
 
 this.__defineGetter__('FITresizer', function() { return gFindBar._FITresizer; });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -400,12 +400,11 @@ this.highlightFITinGrid = function(item) {
 		// If it gets here it's probably a page that hasn't been rendered yet
 		var patternRows = grid.querySelectorAll('[pattern]');
 		for(var i=0; i<patternRows.length; i++) {
-			if(!patternRows[i]._pdfPages) { continue; }
-			for(var p=0; p<patternRows[i]._pdfPages.length; p++) {
-				if(patternRows[i]._pdfPages[p] == selectRange.p) {
-					setAttribute(patternRows[i], 'hover', 'true');
-					hoverRows.push(patternRows[i]);
-				}
+			if(typeof(patternRows[i]._pdfPage) == 'undefined') { continue; }
+			
+			if(patternRows[i]._pdfPage == selectRange.p) {
+				setAttribute(patternRows[i], 'hover', 'true');
+				hoverRows.push(patternRows[i]);
 			}
 		}
 	}

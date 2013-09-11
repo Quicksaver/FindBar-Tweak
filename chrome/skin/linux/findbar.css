@@ -94,11 +94,11 @@
 	}
 	
 	/* Grid stuff */
-	grid[anonid="findGrid"]:not([gridSpacers="none"]) row.topSpacer[flex="0"],
-	grid[anonid="findGrid"][gridSpacers="single"] row.bottomSpacer[flex="0"] {
+	vbox[anonid="findGrid"]:not([gridSpacers="none"]) vbox.topSpacer[flex="0"],
+	vbox[anonid="findGrid"][gridSpacers="single"] vbox.bottomSpacer[flex="0"] {
 		height: 16px;
 	}
-	grid[anonid="findGrid"][gridSpacers="double"] row.bottomSpacer[flex="0"] {
+	vbox[anonid="findGrid"][gridSpacers="double"] vbox.bottomSpacer[flex="0"] {
 		height: 32px;
 	}
 	

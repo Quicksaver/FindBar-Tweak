@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.3';
+moduleAid.VERSION = '1.2.4';
 
 this.uiBackup = {};
 
@@ -98,7 +98,7 @@ this.setHighlightColorStyleSheet = function(rgb) {
 	sscode += '			background-color: '+prefAid.highlightColor+';\n';
 	sscode += '			color: '+((darkBackgroundRGB(rgb)) ? '#FFFFFF' : '#000000')+';\n';
 	sscode += '		}\n';
-	sscode += '		grid[anonid="findGrid"] row[highlight]:not([current]):not([hover]) {\n';
+	sscode += '		vbox[anonid="findGrid"] vbox[highlight]:not([current]):not([hover]) {\n';
 	sscode += '			background-color: '+prefAid.highlightColor+';\n';
 	sscode += '		}\n';
 	sscode += '}';
@@ -161,8 +161,8 @@ this.setSelectColorStyleSheet = function(rgb) {
 	sscode += '			background-color: rgba('+rgb.r+','+rgb.g+','+rgb.b+',0.03);\n';
 	sscode += '			box-shadow: inset 0 0 2px 1px rgba('+rgb.r+','+rgb.g+','+rgb.b+',0.2);\n';
 	sscode += '		}\n';
-	sscode += '		grid[anonid="findGrid"] row[highlight][current],\n';
-	sscode += '		grid[anonid="findGrid"] row[highlight][hover] {\n';
+	sscode += '		vbox[anonid="findGrid"] vbox[highlight][current],\n';
+	sscode += '		vbox[anonid="findGrid"] vbox[highlight][hover] {\n';
 	sscode += '			background-color: '+prefAid.selectColor+';\n';
 	sscode += '		}\n';
 	sscode += '}';

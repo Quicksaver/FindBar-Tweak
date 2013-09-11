@@ -188,17 +188,36 @@
 		height: 100%;
 	}
 	
-	grid[anonid="findGrid"] {
+	vbox[anonid="findGrid"] {
 		opacity: 0.7;
 	}
 	
-	grid[anonid="findGrid"][gridSpacers="none"] row[flex="0"] {
+	vbox[anonid="findGrid"] > vbox:not(.topSpacer):not(.bottomSpacer) {
+		position: relative;
+	}
+	
+	vbox[anonid="findGrid"] > vbox > vbox:not([highlight]) {
+		display: none;
+	}
+	
+	vbox[anonid="findGrid"] vbox[highlight] {
+		position: absolute;
+		width: 100%;
+		min-height: 2px !important;
+	}
+	
+	vbox[anonid="findGrid"][gridSpacers="none"] vbox[flex="0"] {
 		height: 0px;
 	}
 	
-	grid[anonid="findGrid"] row[pattern] {
+	vbox[anonid="findGrid"] vbox[pattern] {
 		background-image: url("chrome://findbartweak/skin/pattern.gif");
 	}
+	
+	vbox[anonid="findGrid"] vbox[highlight]:not([pattern]):not([current]):not([hover]) { z-index: 100; }
+	vbox[anonid="findGrid"] vbox[pattern]:not([current]):not([hover]) { z-index: 200; }
+	vbox[anonid="findGrid"] vbox[current] { z-index: 300; }
+	vbox[anonid="findGrid"] vbox[hover] { z-index: 400; }
 	
 	/* Grid for the View Source window */
 	#viewSource hbox[anonid="gridBox"] {

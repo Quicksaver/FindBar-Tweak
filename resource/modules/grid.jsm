@@ -1,7 +1,4 @@
-moduleAid.VERSION = '1.3.1';
-
-this.ROWS_MINIMUM = 150; // number of rows in the highlight grid - kind of the "highlight granularity"
-this.ROWS_MULTIPLIER = 2; // Add extra rows if their height exceeds this value
+moduleAid.VERSION = '1.4.0';
 
 this.__defineGetter__('grid', function() {
 	var grids = (!viewSource) ? linkedPanel.querySelectorAll('[anonid="findGrid"]') : $$('[anonid="findGrid"]');
@@ -9,14 +6,18 @@ this.__defineGetter__('grid', function() {
 		return grids[0];
 	}
 	
-	var boxNode = createGrid(document);
+	var boxNode = templateGrid.cloneNode(templateGrid, true);
 	boxNode.firstChild._frames = new Array();
+	boxNode.firstChild._lastUsedRow = -1;
+	initGridArrays(boxNode.firstChild);
 	
 	// Insert the grid into the tab
 	boxNode = (!viewSource) ? gBrowser.mCurrentBrowser.parentNode.appendChild(boxNode) : linkedPanel.appendChild(boxNode);
 	
 	return boxNode.firstChild;
 });
+
+this.templateGrid = null;
 
 // Creates a new grid
 this.createGrid = function(doc, html) {
@@ -27,42 +28,45 @@ this.createGrid = function(doc, html) {
 	// It shouldn't depend on the stylesheet being loaded, it could error and the browser would be unusable
 	boxNode.style.pointerEvents = 'none';
 	
-	var gridNode = doc.createElement((html) ? 'div' : 'grid');
+	var gridNode = doc.createElement((html) ? 'div' : 'vbox');
 	gridNode.setAttribute('anonid', 'findGrid');
-	gridNode._allHits = new Array();
-	gridNode._currentRows = new Array();
-	gridNode._hoverRows = new Array();
 	gridNode = boxNode.appendChild(gridNode);
 	
-	// Then columns
-	if(!html) {
-		var columns = doc.createElement('columns');
-		columns = gridNode.appendChild(columns);
-		var column = doc.createElement('column');
-		column = columns.appendChild(column);
-	}
-	
-	// Then start adding the rows
-	var rows = doc.createElement((html) ? 'div' : 'rows');
-	rows = gridNode.appendChild(rows);
-	
 	// Starting with the top spacer
-	var topspacer = doc.createElement((html) ? 'div' : 'row');
+	var topspacer = doc.createElement((html) ? 'div' : 'vbox');
 	topspacer.setAttribute('flex', '0');
 	topspacer.setAttribute('class', 'topSpacer');
-	topspacer = rows.appendChild(topspacer);
+	topspacer = gridNode.appendChild(topspacer);
 	
-	// Actual highlight rows
-	var row = doc.createElement((html) ? 'div' : 'row');
-	row.setAttribute('flex', '1');
-	row = rows.appendChild(row);
+	// Container for the highlight rows
+	var container = doc.createElement((html) ? 'div' : 'vbox');
+	container.setAttribute('flex', '1');
+	container = gridNode.appendChild(container);
+	
+	// Row template, so I can just clone from this
+	var row = doc.createElement((html) ? 'div' : 'vbox');
+	row.style.minHeight = '2px';
+	container.appendChild(row);
+	adjustGridRows(gridNode);
 	
 	// append another spacer at the bottom
 	var bottomspacer = topspacer.cloneNode(true);
 	bottomspacer.setAttribute('class', 'bottomSpacer');
-	rows.appendChild(bottomspacer);
+	gridNode.appendChild(bottomspacer);
 	
 	return boxNode;
+};
+
+this.adjustGridRows = function(aGrid) {
+	var rows = aGrid.childNodes[1];
+	if(rows.childNodes.length == prefAid.gridLimit) { return; }
+	
+	while(rows.childNodes.length < prefAid.gridLimit) {
+		rows.appendChild(rows.firstChild.cloneNode(true));
+	}
+	while(rows.childNodes.length > prefAid.gridLimit) {
+		rows.removeChild(rows.lastChild);
+	}
 };
 
 // Positions the grid on the right or on the left, accordingly to where the scrollbar should go in different locale layouts
@@ -144,56 +148,38 @@ this.placeGridOnFrame = function(aGrid) {
 
 // Removes all highlights from the grid
 this.cleanHighlightGrid = function(aGrid) {
-	if(!aGrid || !aGrid.childNodes) {
-		aGrid = grid;
-		cleanHighlightGrid(aGrid);
-		for(var f=0; f<aGrid._frames.length; f++) {
-			cleanHighlightGrid(aGrid._frames[f]);
-		}
-		return;
-	}
-	
-	var rows = aGrid.childNodes[1] || aGrid.childNodes[0];
+	if(!aGrid || !aGrid.childNodes) { aGrid = grid; }
+	var rows = aGrid.childNodes[1];
 	
 	// Reset (clean) all grid rows
-	for(var i=1; i<rows.childNodes.length-1; i++) {
-		removeAttribute(rows.childNodes[i], 'highlight');
-		removeAttribute(rows.childNodes[i], 'pattern');
-		removeAttribute(rows.childNodes[i], 'current');
-		removeAttribute(rows.childNodes[i], 'hover');
-		delete rows.childNodes[i]._pdfPages;
-		delete rows.childNodes[i]._hasMatches;
+	for(var r=0; r<aGrid._currentRows.length; r++) {
+		removeAttribute(aGrid._currentRows[r], 'current');
+	}
+	for(var r=0; r<aGrid._hoverRows.length; r++) {
+		removeAttribute(aGrid._hoverRows[r], 'hover');
+	}
+	for(var r=0; r<aGrid._pdfPageRows.length; r++) {
+		removeAttribute(aGrid._pdfPageRows[r], 'highlight');
+		removeAttribute(aGrid._pdfPageRows[r], 'pattern');
+		aGrid._pdfPageRows[r].highlight = null;
+		delete aGrid._pdfPageRows[r]._pdfPage;
+	}
+	for(var i=0; i<aGrid._allHits.length; i++) {
+		for(var r=0; r<aGrid._allHits[i].rows.length; r++) {
+			removeAttribute(aGrid._allHits[i].rows[r], 'highlight');
+			removeAttribute(aGrid._allHits[i].rows[r], 'pattern');
+			aGrid._allHits[i].rows[r].highlight = null;
+		}
 	}
 	
+	initGridArrays(aGrid);
+};
+
+this.initGridArrays = function(aGrid) {
 	aGrid._allHits = new Array();
 	aGrid._currentRows = new Array();
 	aGrid._hoverRows = new Array();
-};
-
-// Adjustes the number of rows in the grid.
-// Grids in frames have no minimum rows, they are all 2 pixels high.
-this.adjustGridRows = function(aGrid) {
-	var rows = aGrid.childNodes[1] || aGrid.childNodes[0];
-	var noMinimum = (aGrid.linkedFrame) ? true : false;
-	
-	// Adjust number of rows
-	var height = aGrid.clientHeight;
-	
-	// When adding the grid in a frame for the first time, it may not have been drawn yet, so it doesn't have a height value yet
-	if(!height) { height = parseInt(aGrid.parentNode.style.height); }
-	
-	var gridHeight = Math.max(height - (rows.childNodes[0].clientHeight *2), 0);
-	aGrid._gridHeight = gridHeight;
-	
-	var optRows = Math.ceil(gridHeight / ROWS_MULTIPLIER);
-	var num_rows = Math.max(optRows, (!noMinimum) ? ROWS_MINIMUM : 1);
-	while(rows.childNodes.length -2 > num_rows) {
-		rows.removeChild(rows.childNodes[1]);
-	}
-	while(rows.childNodes.length -2 < num_rows) {
-		var newNode = rows.childNodes[1].cloneNode(true);
-		rows.insertBefore(newNode, rows.lastChild);
-	}
+	aGrid._pdfPageRows = new Array();
 };
 
 this.testFrameGrid = function(aGrid, f) {
@@ -219,7 +205,6 @@ this.resetHighlightGrid = function() {
 	var aGrid = grid;
 	
 	cleanHighlightGrid(aGrid);
-	adjustGridRows(aGrid);
 	positionGrid(aGrid);
 	
 	removeAttribute(aGrid, 'gridSpacers');
@@ -241,10 +226,8 @@ this.resetHighlightGrid = function() {
 			// In case the frame element doesn't exist anymore for some reason, we remove it from the array.
 			if(!testFrameGrid(aGrid, f)) { continue; }
 			
-			cleanHighlightGrid(aGrid._frames[f]);
 			positionGrid(aGrid._frames[f]);
 			placeGridOnFrame(aGrid._frames[f]);
-			adjustGridRows(aGrid._frames[f]);
 			removeAttribute(aGrid._frames[f], 'gridSpacers');
 			removeAttribute(aGrid.parentNode, 'unHide');
 			
@@ -291,17 +274,9 @@ this.fillHighlightGrid = function(toAdd) {
 			
 			// If the page isn't rendered yet, use a placeholder for the page with a pattern
 			else {
-				var rect = contentDocument.getElementById('pageContainer'+unWrap.PDFView.pages[p].id).getBoundingClientRect();
-				var absTop = (rect.top + scrollTop) / fullHTMLHeight;
-				var absBot = (rect.bottom + scrollTop) / fullHTMLHeight;
-				
-				var rowList = placeHighlight(aGrid, absTop, absBot, true);
-				for(var r=0; r<rowList.length; r++) {
-					if(!rowList[r]._pdfPages) {
-						rowList[r]._pdfPages = [];
-					}
-					rowList[r]._pdfPages.push(p);
-				}
+				var row = placeHighlight(aGrid, contentDocument.getElementById('pageContainer'+unWrap.PDFView.pages[p].id), scrollTop, fullHTMLHeight, true);
+				row._pdfPage = p;
+				aGrid._pdfPageRows.push(row);
 			}
 		}
 		
@@ -323,11 +298,7 @@ this.fillHighlightGrid = function(toAdd) {
 			
 			if(fullHTMLHeight > 0) {
 				var aRange = toAdd[i].node;
-				var rect = aRange.getBoundingClientRect();
-				var absTop = (rect.top + scrollTop) / fullHTMLHeight;
-				var absBot = (rect.bottom + scrollTop) / fullHTMLHeight;
-				
-				rowList = placeHighlight(aGrid, absTop, absBot, toAdd[i].pattern);
+				rowList.push(placeHighlight(aGrid, aRange, scrollTop, fullHTMLHeight, toAdd[i].pattern));
 			}
 			
 			// This is an editable node, add it directly
@@ -355,6 +326,45 @@ this.fillHighlightGrid = function(toAdd) {
 						}
 						
 						if(!frameGrid) {
+							// If we don't have a grid, first we try to clone an already existing grid present in this document, it's faster this way
+							for(var f=0; f<aGrid._frames.length; f++) {
+								if(aGrid._frames[f].ownerDocument == frame.ownerDocument) {
+									// for safety, since afterwards we assume as much
+									if(aGrid._frames[f].childNodes[1].childNodes.length != prefAid.gridLimit) {
+										aGrid._frames[f].parentNode.removeChild(aGrid._frames[f]);
+										aGrid._frames.splice(f, 1);
+										f--;
+										continue;
+									}
+									
+									var boxNode = aGrid._frames[f].parentNode.cloneNode(true);
+									
+									// ok we should be able to safely add it to the document now
+									boxNode = frame.ownerDocument.documentElement.appendChild(boxNode);
+									
+									var bGrid = boxNode.firstChild;
+									bGrid.linkedFrame = frame;
+									aGrid._frames.push(bGrid);
+									
+									// Initialize it
+									var rows = bGrid.childNodes[1];
+									for(var c=0; c<rows.childNodes.length; c++) {
+										removeHighlight(rows.childNodes[c]);
+									}
+									bGrid._lastUsedRow = -1;
+									positionGrid(bGrid);
+									placeGridOnFrame(bGrid);
+									
+									// We're ready to add the highlights now
+									frameGrid = bGrid;
+									
+									break;
+								}
+							}
+						}
+						
+						if(!frameGrid) {
+							// Still no grid for this frame, so we create a new one
 							var boxNode = createGrid(frame.ownerDocument, true);
 							
 							// We need to ensure specificity
@@ -370,10 +380,9 @@ this.fillHighlightGrid = function(toAdd) {
 							aGrid._frames.push(bGrid);
 							
 							// Initialize it
-							cleanHighlightGrid(bGrid);
+							bGrid._lastUsedRow = -1;
 							positionGrid(bGrid);
 							placeGridOnFrame(bGrid);
-							adjustGridRows(bGrid);
 							
 							// We're ready to add the highlights now
 							frameGrid = bGrid;
@@ -386,11 +395,7 @@ this.fillHighlightGrid = function(toAdd) {
 						}
 						
 						var bRange = toAdd[i].ranges[r];
-						var rect = bRange.getBoundingClientRect();
-						var absTop = (rect.top + frameGrid._scrollTop) / frameGrid._fullHTMLHeight;
-						var absBot = (rect.bottom + frameGrid._scrollTop) / frameGrid._fullHTMLHeight;
-						
-						var frameRowList = placeHighlight(frameGrid, absTop, absBot);
+						var frameRowList = new Array(placeHighlight(frameGrid, bRange, frameGrid._scrollTop, frameGrid._fullHTMLHeight));
 						aGrid._allHits.push({ range: bRange, rows: rowList.concat(frameRowList) });
 						
 						setAttribute(frameGrid.parentNode, 'unHide', 'true');
@@ -413,36 +418,44 @@ this.fillHighlightGrid = function(toAdd) {
 	listenerAid.add(browserPanel, 'resize', delayResizeGridSpacers);
 };
 
-this.placeHighlight = function(aGrid, absTop, absBot, pattern) {
-	var rowList = [];
+this.placeHighlight = function(aGrid, node, scrollTop, fullHTMLHeight, pattern) {
+	var rows = aGrid.childNodes[1];
 	
-	var highlighted = false;
-	var row_bottom = 0;
-	var rows = aGrid.childNodes[1] || aGrid.childNodes[0];
-	for(var j=1; j<rows.childNodes.length-1; j++) {
-		var row = rows.childNodes[j];
-		var rowHeight = row.clientHeight || ROWS_MULTIPLIER; // frame grids don't paint quick enough after just being added
-		
-		var row_top = row_bottom;
-		var row_bottom = row_top + (rowHeight / aGrid._gridHeight);
-		
-		// If any part of the row's range is within the match's range, highlight it
-		if( (absTop >= row_top || absBot >= row_top) && (absTop <= row_bottom || absBot <= row_bottom) ) {
+	aGrid._lastUsedRow++;
+	if(aGrid._lastUsedRow == aGrid.childNodes[1].childNodes.length) { aGrid._lastUsedRow = 0; }
+	while(aGrid.childNodes[1].childNodes[aGrid._lastUsedRow].highlight) {
+		aGrid._lastUsedRow++;
+		if(aGrid._lastUsedRow == aGrid.childNodes[1].childNodes.length) { aGrid._lastUsedRow = 0; }
+	}
+	var row = aGrid.childNodes[1].childNodes[aGrid._lastUsedRow];
+	
+	// By separating this part of the process, we gain valuable speed when running searches with lots of highlights (no breaks when typing)
+	row.highlight = {
+		node: node,
+		timer: aSync(function() {
+			if(!row.highlight || row.highlight.node != node) { return; }
+			
+			var rect = node.getBoundingClientRect();
+			var absTop = (rect.top + scrollTop) / fullHTMLHeight;
+			var absBot = (rect.bottom + scrollTop) / fullHTMLHeight;
+			
 			setAttribute(row, 'highlight', 'true');
 			toggleAttribute(row, 'pattern', pattern);
-			highlighted = true;
-			
-			rowList.push(row);
-		}
-		
-		// Don't cycle through the whole grid unnecessarily
-		else if(highlighted) {
-			return rowList;
-		}
-	}
+			row.style.top = (absTop *100)+'%';
+			row.style.height = ((absBot -absTop) *100)+'%';
+		}, 250)
+	};
 	
-	// returns an array with the highlighted rows for this range
-	return rowList;
+	return row;
+};
+
+this.removeHighlight = function(row) {
+	removeAttribute(row, 'hover');
+	removeAttribute(row, 'current');
+	removeAttribute(row, 'pattern');
+	removeAttribute(row, 'highlight');
+	delete row._pdfPage;
+	row.highlight = null;
 };
 
 this.fillGridWithPDFPage = function(aGrid, p, unWrap, scrollTop, fullHTMLHeight) {
@@ -474,28 +487,13 @@ this.fillGridWithPDFPage = function(aGrid, p, unWrap, scrollTop, fullHTMLHeight)
 		}
 		
 		var allRows = new Array();
+		var rowList = new Array();
 		// Use these highlighted nodes to fill the grid
 		for(var h=0; h<highlights.length; h++) {
-			var rect = highlights[h].getBoundingClientRect();
-			var absTop = (rect.top + scrollTop) / fullHTMLHeight;
-			var absBot = (rect.bottom + scrollTop) / fullHTMLHeight;
-			
-			var rowList = placeHighlight(aGrid, absTop, absBot, false);
-			rowList_loop: for(var r=0; r<rowList.length; r++) {
-				if(!rowList[r]._hasMatches) {
-					rowList[r]._hasMatches = 0;
-				}
-				rowList[r]._hasMatches++;
-				
-				// We don't need duplicate rows
-				for(var a=0; a<allRows.length; a++) {
-					if(allRows[a] == rowList[r]) { continue rowList_loop; }
-				}
-				allRows.push(rowList[r]);
-			}
+			rowList.push(placeHighlight(aGrid, highlights[h], scrollTop, fullHTMLHeight, false));
 		}
 		
-		aGrid._allHits.push({ p: p, m: m, rows: allRows });
+		aGrid._allHits.push({ p: p, m: m, rows: rowList });
 	}
 };
 
@@ -524,26 +522,15 @@ this.updatePDFGrid = function() {
 	var unWrap = XPCNativeWrapper.unwrap(contentWindow);
 	
 	var updatePages = [];
-	var rows = aGrid.childNodes[1];
-	for(var j=1; j<rows.childNodes.length-1; j++) {
-		var row = rows.childNodes[j];
-		if(!row.getAttribute('pattern')) { continue; }
-		
-		for(var p=0; p<row._pdfPages.length; p++) {
-			if(unWrap.PDFView.pages[row._pdfPages[p]].textLayer
-			&& unWrap.PDFView.pages[row._pdfPages[p]].textLayer.renderingDone
-			&& unWrap.PDFView.pages[row._pdfPages[p]].renderingState == 3) {
-				updatePages.push(row._pdfPages[p]);
-				row._pdfPages.splice(p, 1);
-			}
-		}
-		
-		if(row._pdfPages.length == 0) {
-			removeAttribute(row, 'pattern');
-			delete row._pdfPages;
-			if(!row._hasMatches || row._hasMatches == 0) {
-				removeAttribute(row, 'highlight');
-			}
+	for(var j=0; j<aGrid._pdfPageRows.length; j++) {
+		if(unWrap.PDFView.pages[aGrid._pdfPageRows[j]._pdfPage].textLayer
+		&& unWrap.PDFView.pages[aGrid._pdfPageRows[j]._pdfPage].textLayer.renderingDone
+		&& unWrap.PDFView.pages[aGrid._pdfPageRows[j]._pdfPage].renderingState == 3) {
+			updatePages.push(aGrid._pdfPageRows[j]._pdfPage);
+			
+			removeHighlight(aGrid._pdfPageRows[j]);
+			aGrid._pdfPageRows.splice(j, 1);
+			j--;
 		}
 	}
 	
@@ -576,7 +563,7 @@ this.gridResizeSpacers = function(aGrid) {
 		return;
 	}
 	
-	// Lets make sure contentDocument and it's elements exist before trying to access them
+	// Lets make sure contentDocument and its elements exist before trying to access them
 	var doc = (aGrid.linkedFrame) ? aGrid.linkedFrame.contentDocument: contentDocument;
 	try {
 		if(!isPDFJS) {
@@ -621,7 +608,7 @@ this.adjustGrid = function() {
 	sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 	sscode += '@-moz-document url("'+document.baseURI+'") {\n';
 	sscode += '	window['+objName+'_UUID="'+_UUID+'"] hbox[anonid="gridBox"] { -moz-padding-start: '+(defaultPadding +prefAid.gridAdjustPadding)+'px; }\n';
-	sscode += '	window['+objName+'_UUID="'+_UUID+'"] grid[anonid="findGrid"] { width: '+(defaultWidth +prefAid.gridAdjustWidth)+'px; }\n';
+	sscode += '	window['+objName+'_UUID="'+_UUID+'"] vbox[anonid="findGrid"] { width: '+(defaultWidth +prefAid.gridAdjustWidth)+'px; }\n';
 	sscode += '}';
 	
 	styleAid.load('adjustGrid_'+_UUID, sscode, true);
@@ -648,13 +635,8 @@ this.gridFollowCurrentHit = function(e) {
 	
 	// don't keep calling grid, performance boost
 	var allHits = grid._allHits;
-	var rows = grid._currentRows;
 	
-	// Remove "current" status from every row in the grid
-	for(var j=0; j<rows.length; j++) {
-		removeAttribute(rows[j], 'current');
-	}
-	grid._currentRows = new Array();
+	clearCurrentRows();
 	var rows = grid._currentRows;
 	
 	// Special routine for PDF.JS
@@ -708,11 +690,23 @@ this.gridFollowCurrentHit = function(e) {
 };
 
 this.clearHoverRows = function() {
+	// Remove "current" status from every row in the grid
 	var rows = grid._hoverRows;
-	while(rows.length > 0) {
-		try { removeAttribute(rows.shift(), 'hover'); }
-		catch(ex) {} // Frame grids could go wrong, but it's irrelevant
+	for(var j=0; j<rows.length; j++) {
+		try { removeAttribute(rows[j], 'hover'); }
+		catch(ex) {}
 	}
+	grid._hoverRows = new Array();
+};
+
+this.clearCurrentRows = function() {
+	// Remove "current" status from every row in the grid
+	var rows = grid._currentRows;
+	for(var j=0; j<rows.length; j++) {
+		try { removeAttribute(rows[j], 'current'); }
+		catch(ex) {}
+	}
+	grid._currentRows = new Array();
 };
 
 this.tabSelectRePositionFrameGrid = function() {
@@ -740,7 +734,7 @@ this.setRePositionTagFrameGrid = function() {
 	}
 	
 	return (f > 0) ? true : false;
-}
+};
 
 this.rePositionFrameGrid = function() {
 	if(!documentHighlighted) { return; } // there's no point in wasting cpu if it's going to be invisible
@@ -753,50 +747,16 @@ this.rePositionFrameGrid = function() {
 		placeGridOnFrame(aGrid._frames[f]);
 		f++;
 	}
-}
+};
 
-moduleAid.LOADMODULE = function() {
-	prefAid.setDefaults({ side: 0 }, 'scrollbar', 'layout');
-	
-	listenerAid.add(window, 'SelectedFIThit', gridFollowCurrentHit);
-	listenerAid.add(window, 'UpdatedStatusFindBar', gridFollowCurrentHit);
-	listenerAid.add(window, 'UpdatedPDFMatches', matchesPDFGrid);
-	listenerAid.add(window, 'CleanUpHighlights', cleanHighlightGrid);
-	
-	if(!viewSource) {
-		listenerAid.add(browserPanel, 'MozScrolledAreaChanged', resizeRePositionFrameGrid, true);
-		listenerAid.add(gBrowser.tabContainer, 'TabSelect', tabSelectRePositionFrameGrid);
-		styleAid.load('frameGrid', 'frameGrid');
-	}
-	
-	prefAid.listen('gridAdjustPadding', adjustGrid);
-	prefAid.listen('gridAdjustWidth', adjustGrid);
-	adjustGrid();
-	
+this.listenGridLimit = function() {
+	removeAllGrids();
 	observerAid.notify('ReHighlightAll');
 };
 
-moduleAid.UNLOADMODULE = function() {
-	prefAid.unlisten('gridAdjustPadding', adjustGrid);
-	prefAid.unlisten('gridAdjustWidth', adjustGrid);
-	styleAid.unload('adjustGrid_'+_UUID);
-	styleAid.unload('adjustFrameGrid_'+_UUID);
-	
-	listenerAid.remove(window, 'SelectedFIThit', gridFollowCurrentHit);
-	listenerAid.remove(window, 'UpdatedStatusFindBar', gridFollowCurrentHit);
-	listenerAid.remove(window, 'UpdatedPDFMatches', matchesPDFGrid);
-	listenerAid.remove(window, 'CleanUpHighlights', cleanHighlightGrid);
-	listenerAid.remove(browserPanel, 'resize', delayResizeGridSpacers);
-	
+this.removeAllGrids = function() {
 	if(!viewSource) {
-		listenerAid.remove(browserPanel, 'MozScrolledAreaChanged', resizeRePositionFrameGrid, true);
-		listenerAid.remove(gBrowser.tabContainer, 'TabSelect', tabSelectRePositionFrameGrid);
-		if(UNLOADED || !prefAid.useGrid) { styleAid.unload('frameGrid', 'frameGrid'); }
-		
 		for(var t=0; t<gBrowser.mTabs.length; t++) {
-			if(gBrowser.mTabs[t].linkedBrowser.contentDocument) {
-				listenerAid.remove(gBrowser.mTabs[t].linkedBrowser.contentDocument.getElementById('viewerContainer'), 'scroll', delayUpdatePDFGrid);
-			}
 			var panel = $(gBrowser.mTabs[t].linkedPanel);
 			var innerGrid = panel.querySelectorAll('[anonid="gridBox"]');
 			if(innerGrid.length > 0) {
@@ -814,6 +774,58 @@ moduleAid.UNLOADMODULE = function() {
 		if(innerGrid.length > 0) {
 			innerGrid[0].parentNode.removeChild(innerGrid[0]);
 		}
+	}
+};
+
+moduleAid.LOADMODULE = function() {
+	prefAid.setDefaults({ side: 0 }, 'scrollbar', 'layout');
+	templateGrid = createGrid(document);
+	
+	listenerAid.add(window, 'SelectedFIThit', gridFollowCurrentHit);
+	listenerAid.add(window, 'UpdatedStatusFindBar', gridFollowCurrentHit);
+	listenerAid.add(window, 'UpdatedPDFMatches', matchesPDFGrid);
+	listenerAid.add(window, 'CleanUpHighlights', cleanHighlightGrid);
+	
+	if(!viewSource) {
+		listenerAid.add(browserPanel, 'MozScrolledAreaChanged', resizeRePositionFrameGrid, true);
+		listenerAid.add(gBrowser.tabContainer, 'TabSelect', tabSelectRePositionFrameGrid);
+		styleAid.load('frameGrid', 'frameGrid');
+	}
+	
+	prefAid.listen('gridAdjustPadding', adjustGrid);
+	prefAid.listen('gridAdjustWidth', adjustGrid);
+	prefAid.listen('gridLimit', listenGridLimit);
+	adjustGrid();
+	
+	observerAid.notify('ReHighlightAll');
+};
+
+moduleAid.UNLOADMODULE = function() {
+	prefAid.unlisten('gridAdjustPadding', adjustGrid);
+	prefAid.unlisten('gridAdjustWidth', adjustGrid);
+	prefAid.unlisten('gridLimit', listenGridLimit);
+	styleAid.unload('adjustGrid_'+_UUID);
+	styleAid.unload('adjustFrameGrid_'+_UUID);
+	
+	listenerAid.remove(window, 'SelectedFIThit', gridFollowCurrentHit);
+	listenerAid.remove(window, 'UpdatedStatusFindBar', gridFollowCurrentHit);
+	listenerAid.remove(window, 'UpdatedPDFMatches', matchesPDFGrid);
+	listenerAid.remove(window, 'CleanUpHighlights', cleanHighlightGrid);
+	listenerAid.remove(browserPanel, 'resize', delayResizeGridSpacers);
+	
+	removeAllGrids();
+	if(!viewSource) {
+		listenerAid.remove(browserPanel, 'MozScrolledAreaChanged', resizeRePositionFrameGrid, true);
+		listenerAid.remove(gBrowser.tabContainer, 'TabSelect', tabSelectRePositionFrameGrid);
+		if(UNLOADED || !prefAid.useGrid) { styleAid.unload('frameGrid', 'frameGrid'); }
+		
+		for(var t=0; t<gBrowser.mTabs.length; t++) {
+			if(gBrowser.mTabs[t].linkedBrowser.contentDocument) {
+				listenerAid.remove(gBrowser.mTabs[t].linkedBrowser.contentDocument.getElementById('viewerContainer'), 'scroll', delayUpdatePDFGrid);
+			}
+		}
+	}
+	else {
 		listenerAid.remove(viewSource, 'resize', delayGridResizeViewSource);
 	}
 		

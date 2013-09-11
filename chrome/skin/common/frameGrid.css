@@ -13,16 +13,29 @@ div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"] {
 	opacity: 0.7;
 }
 
+div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"] > div:not(.topSpacer):not(.bottomSpacer) {
+	position: relative;
+}
+
 div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"],
 div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"] > div {
 	display: flex;
 	flex-direction: column;
 }
 
+div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"] > div > div:not([highlight]) {
+	display: none;
+}
+	
+div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"] div[highlight] {
+	position: absolute;
+	width: 100%;
+	min-height: 2px !important;
+}
+
 div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"] div[flex="0"] {
 	flex: 0;
 }
-div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"] > div,
 div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"] div[flex="1"] {
 	flex: 1;
 }
@@ -30,3 +43,8 @@ div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"] div[flex="1"] 
 div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"] div[pattern] {
 	background-image: url("chrome://findbartweak/skin/pattern.gif");
 }
+	
+div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"] div[highlight]:not([pattern]):not([current]):not([hover]) { z-index: 100; }
+div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"] div[pattern]:not([current]):not([hover]) { z-index: 200; }
+div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"] div[current] { z-index: 300; }
+div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"] div[hover] { z-index: 400; }

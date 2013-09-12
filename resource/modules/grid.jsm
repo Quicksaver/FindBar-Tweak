@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.0';
+moduleAid.VERSION = '1.4.1';
 
 this.__defineGetter__('grid', function() {
 	var grids = (!viewSource) ? linkedPanel.querySelectorAll('[anonid="findGrid"]') : $$('[anonid="findGrid"]');
@@ -607,8 +607,10 @@ this.adjustGrid = function() {
 	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 	sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 	sscode += '@-moz-document url("'+document.baseURI+'") {\n';
-	sscode += '	window['+objName+'_UUID="'+_UUID+'"] hbox[anonid="gridBox"] { -moz-padding-start: '+(defaultPadding +prefAid.gridAdjustPadding)+'px; }\n';
-	sscode += '	window['+objName+'_UUID="'+_UUID+'"] vbox[anonid="findGrid"] { width: '+(defaultWidth +prefAid.gridAdjustWidth)+'px; }\n';
+	sscode += '	window['+objName+'_UUID="'+_UUID+'"] vbox[anonid="findGrid"] {\n';
+	sscode += '		-moz-margin-start: '+(defaultPadding +prefAid.gridAdjustPadding)+'px;\n';
+	sscode += '		width: '+(defaultWidth +prefAid.gridAdjustWidth)+'px;\n';
+	sscode += '	}\n';
 	sscode += '}';
 	
 	styleAid.load('adjustGrid_'+_UUID, sscode, true);

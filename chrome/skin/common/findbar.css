@@ -338,6 +338,35 @@
 		text-shadow: 0px 0px 9px white, 0px 0px 9px white, 0px 1px 0px rgba(255, 255, 255, 0.3);
 	}
 	
+	.findInTabs-splitter {
+		margin-top: 26px;
+		margin-bottom: 5px;
+	}
+	
+	#findbartweak-findInTabs-filterBox {
+		width: 16px;
+		margin-top: 5px;
+		margin-left: -5px;
+		margin-right: -11px;
+	}
+	
+	#findbartweak-findInTabs-filter {
+		list-style-image: url("chrome://findbartweak/skin/findintabs.png");
+		-moz-image-region: rect(0px 48px 16px 32px);
+		opacity: 0.7;
+		-moz-transition: opacity .1s;
+		transition: opacity .1s; /* Firefox 16 */
+	}
+	#findbartweak-findInTabs-filter:hover,
+	#findbartweak-findInTabs-filter[active]:hover {
+		opacity: 1;
+		cursor: pointer;
+	}
+	#findbartweak-findInTabs-filter[active] {
+		opacity: 0.85;
+		-moz-image-region: rect(16px 48px 32px 32px);
+	}
+	
 	/* Some personas add a shadow to the entries */
 	.findInTabs-list label:not([unloaded]) {
 		text-shadow: none;

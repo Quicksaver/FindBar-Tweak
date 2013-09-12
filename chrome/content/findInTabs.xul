@@ -30,7 +30,10 @@
 			persist="height">
 			
 			<box id="objName-findInTabs-tabs" class="findInTabs-list" flex="1" width="400" persist="width" />
-			<splitter/>
+			<vbox id="objName-findInTabs-filterBox" flex="0">
+				<image id="objName-findInTabs-filter" onclick="objName.toggleFITGroups();"/>
+			</vbox>
+			<splitter class="findInTabs-splitter" resizebefore="flex"/>
 			<box id="objName-findInTabs-hits" class="findInTabs-list" flex="1" width="800" persist="width" />
 		</hbox>
 	</vbox>

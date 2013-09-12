@@ -1,18 +1,28 @@
-moduleAid.VERSION = '1.5.9';
+moduleAid.VERSION = '1.6.0';
 
 this.__defineGetter__('FITresizer', function() { return gFindBar._FITresizer; });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
 this.__defineGetter__('FITtabs', function() { return $(objName+'-findInTabs-tabs'); });
 this.__defineGetter__('FITtabsList', function() { return FITtabs.firstChild; });
+this.__defineGetter__('FITtabsGroups', function() { return FITtabsList.nextSibling; });
 this.__defineGetter__('FITtabsHeader', function() { return FITtabsList.firstChild; });
 this.__defineGetter__('FIThits', function() { return $(objName+'-findInTabs-hits'); });
 this.__defineGetter__('FITbroadcaster', function() { return $(objName+'-findInTabs-broadcaster'); });
 this.__defineGetter__('FITbutton', function() { return gFindBar._FITtoggle; });
 this.__defineGetter__('FITupdate', function() { return gFindBar._FITupdate; });
+this.__defineGetter__('FITfilter', function() { return $(objName+'-findInTabs-filter'); });
 
 this.HITS_LENGTH = 150; // Length of preview text from preview items in find in tabs box
 
 this.processingFITTab = false; // true means we are processing a tab currently, to ensure we only do one at a time to boost performance
+
+// All the different filters we can use for the FIT lists
+this.FITfilterList = [
+	stringsAid.get('findInTabs', 'groupsEverything'),
+	stringsAid.get('findInTabs', 'groupsSource'),
+	stringsAid.get('findInTabs', 'groupsAllTabs'),
+	stringsAid.get('findInTabs', 'groupsPinnedTabs')
+];
 
 this.toggleFIT = function() {
 	var toggle = FITbox.hidden;
@@ -49,6 +59,34 @@ this.toggleFIT = function() {
 	}
 	
 	shouldFindAll();
+};
+
+this.toggleFITGroups = function() {
+	var toggle = FITtabsGroups.hidden;
+	
+	FITtabsGroups.hidden = !toggle;
+	FITtabsList.hidden = toggle;
+	
+	if(toggle) {
+		aSync(autoSelectFITGroup);
+	} else {
+		if(selectFITgroup()) {
+			shouldFindAll();
+		}
+	}
+};
+
+this.autoSelectFITGroup = function() {
+	// This is just weird...
+	if(!FITtabsGroups.itemCount) {
+		aSync(autoSelectFITGroup, 10);
+		return;
+	}
+	
+	FITtabsGroups.selectedIndex = FITtabs._selectedGroupI;
+	FITtabsGroups.ensureSelectedElementIsVisible();
+	
+	updateFITgroupNames();
 };
 
 this.commandUpdateFIT = function() {
@@ -129,6 +167,11 @@ this.updateFITElements = function() {
 	
 	toggleAttribute(FITresizer, 'movetotop', trueAttribute(FITbox, 'movetotop'));
 	toggleAttribute(FITresizer, 'dir', trueAttribute(FITbox, 'movetotop'), 'bottom', 'top');
+};
+
+this.updateFITfilterTooltip = function() {
+	setAttribute(FITfilter, 'tooltiptext', stringsAid.get('findInTabs', 'filterTooltip', [ ['$group$', FITtabs._selectedGroupTitle] ]));
+	toggleAttribute(FITfilter, 'active', FITtabs._selectedGroupI);
 };
 
 this.closeFITWithFindBar = function() {
@@ -460,12 +503,99 @@ this.finishSelectingPDFhit = function(unWrap, inFindBar, range) {
 	}, 50);
 };
 
+this.anySourcesOpen = function() {
+	var anySources = false;
+	windowMediator.callOnAll(function(aWindow) {
+		anySources = true;
+	}, 'navigator:view-source');
+	
+	return anySources;
+};
+
+this.updateFITgroupNames = function() {
+	// We only show these entries if there are any ViewSource Windows open
+	if(!anySourcesOpen()) {
+		setAttribute(FITtabsGroups.children[0].childNodes[0], 'value', FITfilterList[2]);
+		if(FITtabs._selectedGroupI == 1 || FITtabs._selectedGroupI == 2) {
+			FITtabs._selectedGroupI = 0;
+			FITtabs._selectedGroupTitle = FITtabsGroups.children[0].childNodes[0].getAttribute('value');
+			FITtabsGroups.selectedIndex = 0;
+		}
+		FITtabsGroups.children[1].hidden = true;
+		FITtabsGroups.children[2].hidden = true;
+	} else {
+		setAttribute(FITtabsGroups.children[0].childNodes[0], 'value', FITfilterList[0]);
+		FITtabsGroups.children[1].hidden = false;
+		FITtabsGroups.children[2].hidden = false;
+	}
+	
+	for(var i in FITtabsGroups.children) {
+		var item = FITtabsGroups.children[i];
+		if(item.linkedGroup) {
+			setAttribute(item.childNodes[0], 'value', getTabGroupName(item.linkedGroup));
+		}
+	}
+	
+	updateFITfilterTooltip();
+};
+
+this.selectFITgroup = function() {
+	// No point in doing anything if selection isn't changed
+	if(FITtabsGroups.selectedIndex == FITtabs._selectedGroupI || FITtabsGroups.selectedIndex == -1) {
+		return false;
+	}
+	
+	var group = FITtabsGroups.selectedItem;
+	if(FITtabsGroups.selectedIndex > FITfilterList.length -1) {
+		try {
+			if(!group || !group.linkedGroup) {
+				shouldFindAll();
+				return true;
+			}
+		} catch(ex) {
+			shouldFindAll();
+			return true;
+		}
+	}
+	
+	if(group) {
+		FITtabs._selectedGroup = group.linkedGroup;
+		FITtabs._selectedGroupI = FITtabsGroups.selectedIndex;
+		FITtabs._selectedGroupTitle = group.childNodes[0].getAttribute('value');
+		return true;
+	}
+	
+	return false;
+};
+
 // The main commander of the FIT function, cleans up results and schedules new ones if the box is opened	
 this.shouldFindAll = function() {
+	if(FITtabsList) {
+		// Update in case we are filtering only source windows and we close the last one
+		if((FITtabs._selectedGroupI == 1 || FITtabs._selectedGroupI == 2) && !anySourcesOpen()) {
+			FITtabs._selectedGroupI = 0;
+		}
+		selectFITgroup();
+	}
+	
+	// We need all tab groups initialized in all windows, wait until all's ok
+	var allInitialized = true;
+	windowMediator.callOnAll(function(aWindow) {
+		if(!aWindow.TabView || !aWindow.TabView._window) {
+			allInitialized = false;
+			aWindow.TabView._initFrame();
+		}
+	}, 'navigator:browser', null, true);
+	if(!allInitialized) {
+		timerAid.init('shouldFindAll', shouldFindAll, 100);
+		return;
+	}
+			
 	// Remove previous results if they exist
-	if(FITtabs.firstChild) { FITtabs.removeChild(FITtabs.firstChild); }
+	while(FITtabs.firstChild) { FITtabs.removeChild(FITtabs.firstChild); }
 	while(FIThits.firstChild) { FIThits.removeChild(FIThits.firstChild); }
 	
+	// Tabs list
 	var newTabs = document.createElement('richlistbox');
 	newTabs.setAttribute('flex', '1');
 	newTabs.onselect = selectFITtab;
@@ -485,6 +615,67 @@ this.shouldFindAll = function() {
 	
 	FITtabs.appendChild(newTabs);
 	
+	// Tab Groups List
+	if(!FITtabs._selectedGroupI || FITtabs._selectedGroupI == -1) {
+		FITtabs._selectedGroup = null;
+		FITtabs._selectedGroupI = 0;
+	}
+	
+	if(FITtabs._selectedGroupI > FITfilterList.length -1) {
+		try {
+			if(!FITtabs._selectedGroup) {
+				FITtabs._selectedGroup = null;
+			}
+		}
+		catch(ex) {
+			FITtabs._selectedGroup = null;
+		}
+		FITtabs._selectedGroupI = 0;
+	}
+	
+	var groupTabs = document.createElement('richlistbox');
+	groupTabs.setAttribute('flex', '1');
+	groupTabs.ondblclick = function(e) { if(e.button == 0) { toggleFITGroups(); } };
+	groupTabs.onkeyup = function(e) { if(e.keyCode == e.DOM_VK_RETURN || e.keyCode == e.DOM_VK_ENTER) { toggleFITGroups(); } };
+	
+	var newHeader = document.createElement('listheader');
+	var firstCol = document.createElement('treecol');
+	firstCol.setAttribute('label', stringsAid.get('findInTabs', 'groupsHeader'));
+	firstCol.setAttribute('flex', '1');
+	newHeader.appendChild(firstCol);
+	groupTabs.appendChild(newHeader);
+	
+	for(var f=0; f<FITfilterList.length; f++) {
+		createGroupItem(null, groupTabs, FITfilterList[f]);
+	}
+	var itemCount = FITfilterList.length -1;
+	
+	windowMediator.callOnAll(function(aWindow) {
+		for(var i in aWindow.TabView._window.GroupItems.groupItems) {
+			var groupItem = aWindow.TabView._window.GroupItems.groupItems[i];
+			if(groupItem.hidden) { continue; }
+			
+			createGroupItem(groupItem, groupTabs);
+			itemCount++;
+			if(FITtabs._selectedGroup == groupItem) {
+				FITtabs._selectedGroupI = itemCount;
+			}
+		}
+	}, 'navigator:browser');
+	
+	if(FITtabs._selectedGroupI <= FITfilterList.length -1) {
+		FITtabs._selectedGroup = null;
+		if(!FITtabs._selectedGroupI) {
+			FITtabs._selectedGroupTitle = FITfilterList[(anySourcesOpen()) ? 0 : 2];
+		} else {
+			FITtabs._selectedGroupTitle = FITfilterList[FITtabs._selectedGroupI];
+		}
+	}
+	groupTabs.hidden = true;
+	FITtabs.appendChild(groupTabs);
+	
+	updateFITfilterTooltip();
+	
 	timerAid.init('shouldFindAll', function() {
 		if(FITbroadcaster.getAttribute('checked')) { beginFITFind(); }
 	}, 250);
@@ -493,10 +684,27 @@ this.shouldFindAll = function() {
 this.beginFITFind = function() {
 	if(!gFindBar._findField.value) { return; }
 	
-	browserMediator.callOnAll(getFITTabs, null, true, true);
-	windowMediator.callOnAll(function(aWindow) {
-		getFITTabs(aWindow.document.getElementById('content').contentDocument.defaultView);
-	}, 'navigator:view-source');
+	if(FITtabs._selectedGroupI != 1) { // Only Source Windows
+		browserMediator.callOnAll(function(aWindow) {
+			if(FITtabs._selectedGroupI > 2) { // Pinned or Specific Group
+				var tab = getTabForContent(aWindow.document);
+				
+				if(FITtabs._selectedGroupI == 3) { // Pinned
+					if(!tab.pinned) { return; }
+				}
+				
+				// Does it belong to our filtered group
+				else if(!tab._tabViewTabItem || !tab._tabViewTabItem.parent || tab._tabViewTabItem.parent != FITtabs._selectedGroup) { return; }
+			}
+			
+			getFITTabs(aWindow);
+		}, null, true, true);
+	}
+	if(FITtabs._selectedGroupI < 2) { // All Tabs and Source Windows or Only Source Windows
+		windowMediator.callOnAll(function(aWindow) {
+			getFITTabs(aWindow.document.getElementById('content').contentDocument.defaultView);
+		}, 'navigator:view-source');
+	}
 };
 
 this.removeTabItem = function(item) {
@@ -533,6 +741,44 @@ this.createTabItem = function(aWindow) {
 	resetTabHits(newItem);
 	
 	return FITtabsList.appendChild(newItem);
+};
+
+this.createGroupItem = function(aGroup, groupTabs, aName) {
+	var newItem = document.createElement('richlistitem');
+	newItem.setAttribute('align', 'center');
+	newItem.linkedGroup = aGroup;
+	
+	var itemLabel = document.createElement('label');
+	itemLabel.setAttribute('flex', '1');
+	itemLabel.setAttribute('crop', 'end');
+	itemLabel = newItem.appendChild(itemLabel);
+	
+	if(aGroup && !aName) {
+		aName = getTabGroupName(aGroup);
+	}
+	
+	itemLabel.setAttribute('value', aName);
+	
+	return groupTabs.appendChild(newItem);
+};
+
+this.getTabGroupName = function(aGroup) {
+	// This is a copy of what happens in TabView._createGroupMenuItem()
+	var aName = aGroup.getTitle();
+	if(!aName.trim()) {
+		var topChildLabel = aGroup.getTopChild().tab.label;
+		var childNum = aGroup.getChildren().length;
+		
+		if(childNum > 1) {
+			var num = childNum -1;
+			aName = window.gNavigatorBundle.getString("tabview.moveToUnnamedGroup.label");
+			aName = window.PluralForm.get(num, aName).replace("#1", topChildLabel).replace("#2", num);
+		} else {
+			aName = topChildLabel;
+		}
+	}
+	
+	return aName;
 };
 
 this.resetTabHits = function(item) {
@@ -589,6 +835,7 @@ this.updateTabItem = function(item) {
 				if(!inTab) { return; }
 				
 				var inBox = inTab.boxObject.firstChild;
+				if(!inBox) { return; }
 				while(inBox.className.indexOf('tab-stack') < 0) {
 					inBox = inBox.nextSibling;
 					if(!inBox) { return; }
@@ -1663,6 +1910,23 @@ this.FITobserver = function(aSubject, aTopic, aData) {
 		}
 		
 		if(!item) {
+			// We need to obey our filters here as well
+			if(FITtabs._selectedGroupI) {
+				if(aData == 'domwindowopened') {
+					if(FITtabs._selectedGroupI > 1) { return; } // Only tabs
+				}
+				else if(FITtabs._selectedGroupI > 2) {
+					var tab = getTabForContent(doc);
+					
+					if(FITtabs._selectedGroupI == 3) { // Pinned
+						if(!tab.pinned) { return; }
+					}
+					
+					// Does it belong to our filtered group
+					else if(!tab._tabViewTabItem || !tab._tabViewTabItem.parent || tab._tabViewTabItem.parent != FITtabs._selectedGroup) { return; }
+				}
+			}
+			
 			item = createTabItem(doc.defaultView);
 		} else {
 			item.linkedDocument = doc;

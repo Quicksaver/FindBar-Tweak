@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.2';
+moduleAid.VERSION = '1.2.3';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -182,7 +182,7 @@ this.highlightsProgressListener = {
 				}
 				
 				// Bugfix issue #42: when opening an image file, highlights from previous loaded document would remain
-				else if(request.contentType.indexOf('image/') === 0) {
+				else if(request.contentType && request.contentType.indexOf('image/') === 0) {
 					reHighlight(false);
 				}
 			}

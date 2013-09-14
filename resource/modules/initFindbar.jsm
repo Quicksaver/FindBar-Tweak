@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.0.3';
+moduleAid.VERSION = '2.1.0';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return window.gFindBarInitialized; });
@@ -18,50 +18,123 @@ this.__defineSetter__('findBarHidden', function(v) { return gFindBar.hidden = v;
 
 this.currentTab = null;
 
+this.doFastFind = true;
+
+this.workAroundFastFind = function(aWord, aWindow) {
+	var win = aWindow || gFindBar.browser.contentWindow;
+	for(var i = 0; win.frames && i < win.frames.length; i++) {
+		if(workAroundFastFind(aWord, win.frames[i])) {
+			return gFindBar.nsITypeAheadFind.FIND_FOUND;
+		}
+	}
+	
+	var doc = win.document;
+	if(!doc || !(doc instanceof window.HTMLDocument) || !doc.body) {
+		return gFindBar.nsITypeAheadFind.FIND_NOTFOUND;
+	}
+	
+	var searchRange = doc.createRange();
+	searchRange.selectNodeContents(doc.body);
+	
+	var startPt = searchRange.cloneRange();
+	startPt.collapse(true);
+	
+	var endPt = searchRange.cloneRange();
+	endPt.collapse(false);
+	
+	var retRange = null;
+	var finder = Components.classes['@mozilla.org/embedcomp/rangefind;1'].createInstance().QueryInterface(Components.interfaces.nsIFind);
+	finder.caseSensitive = gFindBar._shouldBeCaseSensitive(aWord);
+	
+	while((retRange = finder.Find(aWord, searchRange, startPt, endPt))) {
+		return gFindBar.nsITypeAheadFind.FIND_FOUND;
+	}
+	
+	return gFindBar.nsITypeAheadFind.FIND_NOTFOUND;
+};
+
+this.compareRanges = function(aRange, bRange) {
+	if(aRange.nodeType || bRange.nodeType) { return false; } // Don't know if this could get here
+	if(aRange.startContainer == bRange.startContainer
+	&& aRange.endContainer == bRange.endContainer
+	&& aRange.startOffset == bRange.startOffset
+	&& aRange.endOffset == bRange.endOffset) {
+		return true;
+	}
+	return false;
+};
+
+this.cancelKeypressTextfield = function(e) {
+	switch(e.keyCode) {
+		case e.DOM_VK_RETURN:
+		case e.DOM_VK_TAB:
+			e.preventDefault();
+			break;
+		case e.DOM_VK_PAGE_UP:
+		case e.DOM_VK_PAGE_DOWN:
+			if(!event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
+				e.preventDefault();
+			}
+			break;
+		case e.DOM_VK_UP:
+		case e.DOM_VK_DOWN:
+			e.preventDefault();
+			break;
+		default: break;
+	}
+};
+
 this.baseInit = function(bar) {
-	bar._open = bar.open;
-	bar.open = function(aMode) {
-		var suffix = (perTabFB && !viewSource && this.linkedPanel != gBrowser.mCurrentTab.linkedPanel) ? 'AnotherTab' : '';
+	if(!FITFull) {
+		bar._open = bar.open;
+		bar.open = function(aMode) {
+			var suffix = (perTabFB && !viewSource && this.linkedPanel != gBrowser.mCurrentTab.linkedPanel) ? 'AnotherTab' : '';
+			
+			if(dispatch(this, { type: 'WillOpenFindBar'+suffix, detail: aMode })) {
+				var ret = this._open(aMode);
+				dispatch(this, { type: 'OpenedFindBar'+suffix, cancelable: false, detail: aMode });
+				return ret;
+			}
+			return false;
+		};
+		bar._close = bar.close;
+		bar.close = function() {
+			var suffix = (perTabFB && !viewSource && this.linkedPanel != gBrowser.mCurrentTab.linkedPanel) ? 'AnotherTab' : '';
+			
+			if(dispatch(this, { type: 'WillCloseFindBar'+suffix })) {
+				this._close();
+				dispatch(this, { type: 'ClosedFindBar'+suffix, cancelable: false });
+			}
+		};
+		bar.__updateFindUI = bar._updateFindUI;
+		bar._updateFindUI = function() {
+			var suffix = (perTabFB && !viewSource && this.linkedPanel != gBrowser.mCurrentTab.linkedPanel) ? 'AnotherTab' : '';
+			
+			if(dispatch(this, { type: 'WillUpdateUIFindBar'+suffix })) {
+				this.__updateFindUI();
+				dispatch(this, { type: 'UpdatedUIFindBar'+suffix, cancelable: false });
+			}
+		};
+		bar.__updateStatusUI = bar._updateStatusUI;
+		bar._updateStatusUI = function(res, aFindPrevious) {
+			var suffix = (perTabFB && !viewSource && this.linkedPanel != gBrowser.mCurrentTab.linkedPanel) ? 'AnotherTab' : '';
+			
+			if(dispatch(this, { type: 'WillUpdateStatusFindBar'+suffix, detail: { res: res, aFindPrevious: aFindPrevious } })) {
+				this.__updateStatusUI(res, aFindPrevious);
+				this._findStatusDesc.hidden = !this._findStatusDesc.textContent;
+				this._findStatusIcon.hidden = !this._findStatusIcon.getAttribute('status');
+				dispatch(this, { type: 'UpdatedStatusFindBar'+suffix, cancelable: false, detail: { res: res, aFindPrevious: aFindPrevious } });
+			}
+		};
 		
-		if(dispatch(this, { type: 'WillOpenFindBar'+suffix, detail: aMode })) {
-			var ret = this._open(aMode);
-			dispatch(this, { type: 'OpenedFindBar'+suffix, cancelable: false, detail: aMode });
-			return ret;
+		if(perTabFB) {
+			bar.__defineGetter__('linkedPanel', function() { return this.parentNode.parentNode.parentNode.id; });
 		}
-		return false;
-	};
-	bar._close = bar.close;
-	bar.close = function() {
-		var suffix = (perTabFB && !viewSource && this.linkedPanel != gBrowser.mCurrentTab.linkedPanel) ? 'AnotherTab' : '';
-		
-		if(dispatch(this, { type: 'WillCloseFindBar'+suffix })) {
-			this._close();
-			dispatch(this, { type: 'ClosedFindBar'+suffix, cancelable: false });
-		}
-	};
-	bar.__updateFindUI = bar._updateFindUI;
-	bar._updateFindUI = function() {
-		var suffix = (perTabFB && !viewSource && this.linkedPanel != gBrowser.mCurrentTab.linkedPanel) ? 'AnotherTab' : '';
-		
-		if(dispatch(this, { type: 'WillUpdateUIFindBar'+suffix })) {
-			this.__updateFindUI();
-			dispatch(this, { type: 'UpdatedUIFindBar'+suffix, cancelable: false });
-		}
-	};
-	bar.__updateStatusUI = bar._updateStatusUI;
-	bar._updateStatusUI = function(res, aFindPrevious) {
-		var suffix = (perTabFB && !viewSource && this.linkedPanel != gBrowser.mCurrentTab.linkedPanel) ? 'AnotherTab' : '';
-		
-		if(dispatch(this, { type: 'WillUpdateStatusFindBar'+suffix, detail: { res: res, aFindPrevious: aFindPrevious } })) {
-			this.__updateStatusUI(res, aFindPrevious);
-			this._findStatusDesc.hidden = !this._findStatusDesc.textContent;
-			this._findStatusIcon.hidden = !this._findStatusIcon.getAttribute('status');
-			dispatch(this, { type: 'UpdatedStatusFindBar'+suffix, cancelable: false, detail: { res: res, aFindPrevious: aFindPrevious } });
-		}
-	};
-	bar.__find = bar._find;
+	}
+	
+	bar.___find = bar._find;
 	bar._find = function(aValue) {
-		var suffix = (perTabFB && !viewSource && this.linkedPanel != gBrowser.mCurrentTab.linkedPanel) ? 'AnotherTab' : '';
+		var suffix = (!FITFull && perTabFB && !viewSource && this.linkedPanel != gBrowser.mCurrentTab.linkedPanel) ? 'AnotherTab' : '';
 		
 		if(dispatch(this, { type: 'WillFindFindBar'+suffix, detail: aValue })) {
 			var ret = this.__find(aValue);
@@ -71,26 +144,87 @@ this.baseInit = function(bar) {
 		return null;
 	};
 	
-	if(perTabFB) {
-		bar.__defineGetter__('linkedPanel', function() { return this.parentNode.parentNode.parentNode.id; });
-	}
+	// Selecting with the caret backwards would always reset the caret back to the end of the selection when calling _find(),
+	// we need to work around that so the selection doesn't keep resetting. This happens in the case of fillWithSelection.
+	bar.__find = function(aValue) {
+		if(FITFull)
+			return this.nsITypeAheadFind.FIND_FOUND;
+		
+		if(this._dispatchFindEvent && !this._dispatchFindEvent(""))
+			return this.nsITypeAheadFind.FIND_PENDING;
+		
+		var val = aValue || this._findField.value;
+		var res = this.nsITypeAheadFind.FIND_NOTFOUND;
+		
+		// Only search on input if we don't have a last-failed string,
+		// or if the current search string doesn't start with it.
+		if(this._findFailedString == null || val.indexOf(this._findFailedString) != 0) {
+			this._enableFindButtons(val);
+			if(this.getElement("highlight").checked)
+				this._setHighlightTimeout();
+			
+			this._updateCaseSensitivity(val);
+			
+			if(doFastFind) {
+				// This is what resets the caret
+				var fastFind = this.browser.fastFind;
+				res = fastFind.find(val, this._findMode == this.FIND_LINKS);
+			} else {
+				res = workAroundFastFind(val);
+			}
+			
+			this._updateFoundLink(res);
+			this._updateStatusUI(res, false);
+			
+			if (res == this.nsITypeAheadFind.FIND_NOTFOUND)
+				this._findFailedString = val;
+			else
+				this._findFailedString = null;
+		}
+		
+		if (this._findMode != this.FIND_NORMAL)
+			this._setFindCloseTimeout();
+		
+		if (this._findResetTimeout != -1)
+			window.clearTimeout(this._findResetTimeout);
+		
+		// allow a search to happen on input again after a second has
+		// expired since the previous input, to allow for dynamic
+		// content and/or page loading
+		this._findResetTimeout = window.setTimeout(function(self) {
+			self._findFailedString = null;
+			self._findResetTimeout = -1; },
+		1000, this);
+		
+		return res;
+	};
 };
 
 this.baseDeinit = function(bar) {
-	bar.open = bar._open;
-	bar.close = bar._close;
-	bar._updateFindUI = bar.__updateFindUI;
-	bar._updateStatusUI = bar.__updateStatusUI;
-	bar._find = bar.__find;
-	delete bar._open;
-	delete bar._close;
-	delete bar.__updateFindUI;
-	delete bar.__updateStatusUI;
-	delete bar.__find;
-	delete bar.linkedPanel;
+	if(!FITFull) {
+		bar.open = bar._open;
+		bar.close = bar._close;
+		bar._updateFindUI = bar.__updateFindUI;
+		bar._updateStatusUI = bar.__updateStatusUI;
+		delete bar._open;
+		delete bar._close;
+		delete bar.__updateFindUI;
+		delete bar.__updateStatusUI;
+		delete bar.linkedPanel;
+		
+		bar._findStatusDesc.hidden = false;
+		bar._findStatusIcon.hidden = false;
+	}
 	
-	bar._findStatusDesc.hidden = false;
-	bar._findStatusIcon.hidden = false;
+	bar._find = bar.___find;
+	delete bar.___find;
+	delete bar.__find;
+};
+
+this.cancelEvent = function(e) {
+	e.preventDefault();
+	e.stopPropagation();
+	return false;
 };
 
 // Support for per-tab findbar introduced in FF25.
@@ -101,7 +235,7 @@ this.initFindBar = function(name, init, deinit, force) {
 	if(!force && initRoutines[name]) { return; }
 	initRoutines[name] = { init: init, deinit: deinit };
 	
-	if(viewSource || !perTabFB) {
+	if(FITFull || viewSource || !perTabFB) {
 		if(force || !gFindBar[objName+'_initialized'] || !gFindBar[objName+'_initialized'][name]) {
 			if(!gFindBar[objName+'_initialized']) {
 				gFindBar[objName+'_initialized'] = { length: 0 };
@@ -137,7 +271,7 @@ this.deinitFindBar = function(name) {
 	var deinit = initRoutines[name].deinit;
 	delete initRoutines[name];
 	
-	if(viewSource || !perTabFB) {
+	if(FITFull || viewSource || !perTabFB) {
 		if(gFindBar[objName+'_initialized'] && gFindBar[objName+'_initialized'][name]) {
 			deinit(gFindBar);
 			delete gFindBar[objName+'_initialized'][name];
@@ -182,7 +316,7 @@ this.tabSelectBaseListener = function() {
 };
 
 moduleAid.LOADMODULE = function() {
-	if(!viewSource && perTabFB) {
+	if(!FITFull && !viewSource && perTabFB) {
 		listenerAid.add(gBrowser.tabContainer, "TabSelect", tabSelectBaseListener);
 		tabSelectBaseListener();
 		
@@ -195,13 +329,13 @@ moduleAid.LOADMODULE = function() {
 moduleAid.UNLOADMODULE = function() {
 	deinitFindBar('base');
 	
-	if(!viewSource && perTabFB) {
+	if(!FITFull && !viewSource && perTabFB) {
 		listenerAid.remove(gBrowser.tabContainer, "TabSelect", tabSelectBaseListener);
 		listenerAid.remove(window, 'TabFindInitialized', initializeListener);
 	}
 	
 	/* Prevent a ZC */
-	if(viewSource || !perTabFB) {
+	if(FITFull || viewSource || !perTabFB) {
 		delete gFindBar[objName+'_initialized']
 	} else {
 		for(var t=0; t<gBrowser.mTabs.length; t++) {

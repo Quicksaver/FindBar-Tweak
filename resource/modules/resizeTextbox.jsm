@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.0';
+moduleAid.VERSION = '1.1.1';
 
 this.textboxResizersRTL = false;
 this.textboxResizing = false;
@@ -8,7 +8,7 @@ this.saveTextboxWidth = function(obj, prop, oldVal, newVal) {
 	textboxResizing = true;
 	
 	var width = parseInt(gFindBar._findField.getAttribute('width'));
-	var max = (prefAid.hideLabels) ? 1000 : 680;
+	var max = (prefAid.hideLabels || FITFull) ? 1000 : 680;
 	if(width < minTextboxWidth || width > max) {
 		if(width < minTextboxWidth) {
 			setAttribute(gFindBar._findField, 'width', minTextboxWidth);
@@ -44,7 +44,7 @@ this.findFieldWidthChanged = function() {
 
 this.setTextboxResizers = function(bar) {
 	bar._findField.id = objName+'-find-textbox';
-	if(!viewSource && perTabFB) {
+	if(!FITFull && !viewSource && perTabFB) {
 		bar._findField.id += '-'+gBrowser.getNotificationBox(bar.browser).id;
 	}
 	
@@ -87,8 +87,8 @@ this.delayTextboxResizersRedrawCorners = function() {
 this.dblClickTextboxResizer = function(e) {
 	e.preventDefault();
 	var width = parseInt(gFindBar._findField.getAttribute('width'));
-	var maxCompare = (prefAid.hideLabels) ? 560 : 480;
-	var max = (prefAid.hideLabels) ? '1000' : '680';
+	var maxCompare = (prefAid.hideLabels || FITFull) ? 560 : 480;
+	var max = (prefAid.hideLabels || FITFull) ? '1000' : '680';
 	if(width >= maxCompare) {
 		setAttribute(gFindBar._findField, 'width', minTextboxWidth);
 	} else {
@@ -98,7 +98,7 @@ this.dblClickTextboxResizer = function(e) {
 };
 
 moduleAid.LOADMODULE = function() {
-	textboxResizersRTL = (getComputedStyle((viewSource) ? viewSource : $('main-window')).getPropertyValue('direction') == 'rtl');
+	textboxResizersRTL = (getComputedStyle((viewSource) ? viewSource : (FITFull) ? FITFull : $('main-window')).getPropertyValue('direction') == 'rtl');
 	
 	findFieldWidthChanged();
 	initFindBar('textboxResizers', setTextboxResizers, unsetTextboxResizers);

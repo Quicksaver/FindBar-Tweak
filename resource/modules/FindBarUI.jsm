@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.5';
+moduleAid.VERSION = '1.5.0';
 
 this.__defineGetter__('findCSButton', function() { return gFindBar.getElement(objName+'-find-cs-button'); });
 this.__defineGetter__('findCSCheckbox', function() { return gFindBar.getElement('find-case-sensitive'); });
@@ -219,74 +219,85 @@ moduleAid.LOADMODULE = function() {
 	overlayAid.overlayURI('chrome://global/content/viewSource.xul', 'findbar');
 	overlayAid.overlayURI('chrome://global/content/viewPartialSource.xul', 'findbar');
 	
-	if(perTabFB) {
-		initFindBar('contextMenu', function(bar) { setAttribute(bar, 'context', objPathString+'_findbarMenu'); }, function(bar) { removeAttribute(bar, 'context'); });
-	}
-	else {
+	if(!perTabFB) {
 		prefAid.listen('hideFindLabel', toggleFindLabel);
 		toggleFindLabel();
 	}
 	
-	listenerAid.add(window, 'WillOpenFindBar', alwaysFindNormal, true);
-	listenerAid.add(window, 'OpenedFindBar', toggleButtonState);
-	listenerAid.add(window, 'ClosedFindBar', toggleButtonState);
-	
-	if(!viewSource && perTabFB) {
-		listenerAid.add(gBrowser.tabContainer, "TabSelect", toggleButtonState);
-	}
-	
 	prefAid.listen('hideClose', toggleClose);
 	prefAid.listen('hideLabels', toggleLabels);
-	prefAid.listen('movetoTop', toggleMoveToTop);
-	prefAid.listen('movetoBottom', toggleMoveToTop);
 	prefAid.listen('movetoRight', toggleMoveToRight);
-	prefAid.listen('keepButtons', toggleKeepButtons);
-	prefAid.listen('FF25Tweaks', toggleFF25Tweaks);
-	prefAid.listen('movetoTop', toggleFF25Tweaks);
-	prefAid.listen('movetoBottom', toggleFF25Tweaks);
 	
 	moduleAid.load('resizeTextbox');
 	
 	toggleClose();
 	toggleLabels();
-	toggleMoveToTop();
 	toggleMoveToRight();
-	toggleKeepButtons();
-	toggleFF25Tweaks();
+	
+	if(!FITFull) {
+		if(perTabFB) {
+			initFindBar('contextMenu', function(bar) { setAttribute(bar, 'context', objPathString+'_findbarMenu'); }, function(bar) { removeAttribute(bar, 'context'); });
+		}
+		
+		prefAid.listen('movetoTop', toggleMoveToTop);
+		prefAid.listen('movetoBottom', toggleMoveToTop);
+		prefAid.listen('keepButtons', toggleKeepButtons);
+		prefAid.listen('movetoTop', toggleFF25Tweaks);
+		prefAid.listen('movetoBottom', toggleFF25Tweaks);
+		prefAid.listen('FF25Tweaks', toggleFF25Tweaks);
+		
+		listenerAid.add(window, 'WillOpenFindBar', alwaysFindNormal, true);
+		listenerAid.add(window, 'OpenedFindBar', toggleButtonState);
+		listenerAid.add(window, 'ClosedFindBar', toggleButtonState);
+		
+		if(!viewSource && perTabFB) {
+			listenerAid.add(gBrowser.tabContainer, "TabSelect", toggleButtonState);
+		}
+		
+		toggleMoveToTop();
+		toggleKeepButtons();
+		toggleFF25Tweaks();
+	}
 };
 
 moduleAid.UNLOADMODULE = function() {
+	if(!FITFull) {
+		prefAid.unlisten('movetoTop', toggleMoveToTop);
+		prefAid.unlisten('movetoBottom', toggleMoveToTop);
+		prefAid.unlisten('keepButtons', toggleKeepButtons);
+		prefAid.unlisten('movetoTop', toggleFF25Tweaks);
+		prefAid.unlisten('movetoBottom', toggleFF25Tweaks);
+		prefAid.unlisten('FF25Tweaks', toggleFF25Tweaks);
+		
+		moduleAid.unload('FF25Tweaks');
+		moduleAid.unload('moveToTop');
+		moduleAid.unload('moveToBottom');
+		
+		deinitFindBar('toggleKeepButtons');
+		
+		listenerAid.remove(window, 'WillOpenFindBar', alwaysFindNormal, true);
+		listenerAid.remove(window, 'OpenedFindBar', toggleButtonState);
+		listenerAid.remove(window, 'ClosedFindBar', toggleButtonState);
+		
+		if(perTabFB) {
+			if(!viewSource) {
+				listenerAid.remove(gBrowser.tabContainer, "TabSelect", toggleButtonState);
+			}
+			deinitFindBar('contextMenu');
+		}
+	}
+		
 	prefAid.unlisten('hideClose', toggleClose);
 	prefAid.unlisten('hideLabels', toggleLabels);
-	prefAid.unlisten('movetoTop', toggleMoveToTop);
-	prefAid.unlisten('movetoBottom', toggleMoveToTop);
 	prefAid.unlisten('movetoRight', toggleMoveToRight);
-	prefAid.unlisten('keepButtons', toggleKeepButtons);
-	prefAid.unlisten('FF25Tweaks', toggleFF25Tweaks);
-	prefAid.unlisten('movetoTop', toggleFF25Tweaks);
-	prefAid.unlisten('movetoBottom', toggleFF25Tweaks);
 	
-	moduleAid.unload('FF25Tweaks');
-	moduleAid.unload('moveToTop');
-	moduleAid.unload('moveToBottom');
 	moduleAid.unload('resizeTextbox');
 	
 	deinitFindBar('toggleClose');
 	deinitFindBar('toggleLabels');
 	deinitFindBar('toggleMoveToRight');
-	deinitFindBar('toggleKeepButtons');
 	
-	listenerAid.remove(window, 'WillOpenFindBar', alwaysFindNormal, true);
-	listenerAid.remove(window, 'OpenedFindBar', toggleButtonState);
-	listenerAid.remove(window, 'ClosedFindBar', toggleButtonState);
-	
-	if(perTabFB) {
-		if(!viewSource) {
-			listenerAid.remove(gBrowser.tabContainer, "TabSelect", toggleButtonState);
-		}
-		deinitFindBar('contextMenu');
-	}
-	else {
+	if(!perTabFB) {
 		prefAid.unlisten('hideFindLabel', toggleFindLabel);
 		removeAttribute(gFindBar, 'hideFindLabel');
 	}

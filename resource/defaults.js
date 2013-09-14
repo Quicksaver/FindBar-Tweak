@@ -1,4 +1,4 @@
-var defaultsVersion = '1.1.6';
+var defaultsVersion = '1.2.0';
 var objName = 'findbartweak';
 var objPathString = 'findbartweak';
 
@@ -26,6 +26,8 @@ var prefList = {
 	findInTabs: true,
 	alwaysOpenFIT: false,
 	maxFIT: 1000,
+	FITFull: false,
+	multipleFITFull: false,
 	
 	useGrid: true,
 	gridLimit: 100,
@@ -107,6 +109,7 @@ function onStartup(aReason) {
 	
 	moduleAid.load('builtinPrefs');
 	moduleAid.load('highlightColor');
+	moduleAid.load('findInTabsSandbox');
 	moduleAid.load('compatibilityFix/sandboxFixes');
 	
 	// Apply the add-on to every window opened and to be opened
@@ -130,6 +133,7 @@ function onShutdown(aReason) {
 	browserMediator.callOnAll(stopAddon, null, true);
 	
 	moduleAid.unload('compatibilityFix/sandboxFixes');
+	moduleAid.unload('findInTabsSandbox');
 	moduleAid.unload('highlightColor');
 	moduleAid.unload('builtinPrefs');
 }

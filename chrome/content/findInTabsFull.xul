@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://findbartweak/skin/findbar.css" type="text/css"?>
+<?xml-stylesheet href="chrome://findbartweak-os/skin/findbar.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://findbartweak/locale/findbar.dtd">
+<window 
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	id="findbartweak-findInTabs"
+	title="&FITbutton.label;"
+	windowtype="addon:findInTabs"
+	height="300"
+	width="600"
+	persist="width height screenX screenY sizemode">
+	
+	<popupset id="mainPopupSet">
+		<menupopup id="objName_findbarMenu">
+			<menuitem label="&MenuOptions.label;" oncommand="objName.doOpenOptions();" />
+		</menupopup>
+	</popupset>
+	
+	<keyset id="objName-findInTabs-keyset">
+		<key id="objName-findInTabs-update-key"
+			keycode="VK_F3"
+			modifiers="alt"
+			oncommand="objName.commandUpdateFIT();" />
+		<key id="objName-findInTabs-open-key"
+			keycode="VK_F3"
+			modifiers="accel"
+			oncommand="objName.toggleFIT();" />
+		<key id="cmd_find"
+			key="F"
+			modifiers="accel"
+			oncommand="objName.toggleFIT();" />
+		<key id="cmd_errorConsole"
+			key="J"
+			modifiers="accel,shift"
+			oncommand="objName.FITtoErrorConsole();" />
+	</keyset>
+	
+	<vbox id="contentBox" flex="1">
+		<findbar id="FindToolbar" class="findInTabs-bar" context="objName_findbarMenu" />
+		<hbox id="objName-findInTabs-box"
+			insertafter="FindToolbar"
+			position="1"
+			flex="1">
+			
+			<box id="findbartweak-findInTabs-tabs" class="findInTabs-list" flex="1" width="400" persist="width" />
+			<vbox id="findbartweak-findInTabs-filterBox" flex="0">
+				<image id="objName-findInTabs-filter" onclick="objName.toggleFITGroups();"/>
+			</vbox>
+			<splitter class="findInTabs-splitter" resizebefore="flex"/>
+			<box id="findbartweak-findInTabs-hits" class="findInTabs-list" flex="1" width="800" persist="width" />
+		</hbox>
+	</vbox>
+	
+</window>

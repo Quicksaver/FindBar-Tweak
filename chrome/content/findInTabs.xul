@@ -2,19 +2,9 @@
 <!DOCTYPE overlay SYSTEM "chrome://findbartweak/locale/findbar.dtd">
 <overlay id="findInTabs_overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 	
-	<broadcasterset id="mainBroadcasterSet">
-		<broadcaster id="objName-findInTabs-broadcaster"
-			label="&FITbutton.label;"
-			tooltiptext="&FITbutton.tooltip;"
-			accesskey="&FITbutton.accesskey;"
-			type="checkbox"
-			autoCheck="false"
-			oncommand="objName.toggleFIT();" />
-	</broadcasterset>
-	
 	<window id="main-window">
-		<keyset id="objName-findInTabs-keyset">
-			<key id="objName-findInTabs-key"
+		<keyset id="objName-findInTabs-update-keyset">
+			<key id="objName-findInTabs-update-key"
 				keycode="VK_F3"
 				modifiers="alt"
 				oncommand="objName.commandUpdateFIT();" />

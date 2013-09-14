@@ -12,6 +12,8 @@
 			<preference id="pref-hideWhenFinderHidden" name="extensions.findbartweak.hideWhenFinderHidden" type="bool"/>
 			<preference id="pref-findInTabs" name="extensions.findbartweak.findInTabs" type="bool"/>
 			<preference id="pref-alwaysOpenFIT" name="extensions.findbartweak.alwaysOpenFIT" type="bool"/>
+			<preference id="pref-FITFull" name="extensions.findbartweak.FITFull" type="bool"/>
+			<preference id="pref-multipleFITFull" name="extensions.findbartweak.multipleFITFull" type="bool"/>
 			<preference id="pref-maxFIT" name="extensions.findbartweak.maxFIT" type="int"/>
 			<preference id="pref-blurCloses" name="extensions.findbartweak.blurCloses" type="bool"/>
 			<preference id="pref-perTab" name="extensions.findbartweak.perTab" type="bool"/>
@@ -56,7 +58,9 @@
         </groupbox>
 		<groupbox align="start">
 			<caption><checkbox label="&OptfindInTabs.label;" preference="pref-findInTabs"/></caption>
-			<checkbox label="&OptalwaysOpenFIT.label;" dependson="pref-findInTabs" preference="pref-alwaysOpenFIT"/>
+			<checkbox label="&OptalwaysOpenFIT.label;" dependson="pref-findInTabs,!pref-FITFull" preference="pref-alwaysOpenFIT"/>
+			<checkbox label="&OptFITFull.label;" dependson="pref-findInTabs" preference="pref-FITFull"/>
+			<checkbox label="&OptmultipleFITFull.label;" dependson="pref-findInTabs" preference="pref-multipleFITFull"/>
 			<hbox align="center">
 				<label dependson="pref-findInTabs" value="&OptmaxFIT.label;"/>
 				<textbox type="number"

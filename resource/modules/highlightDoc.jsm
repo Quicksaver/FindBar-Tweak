@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.3.8';
+moduleAid.VERSION = '1.3.9';
 
 this.alwaysUpdateStatusUI = function(e) {
 	// toggleHighlight() doesn't update the UI in these conditions, we need it to, to update the counter (basically hide it)
@@ -70,17 +70,6 @@ this.shouldFillGrid = function(toAdd) {
 	}
 	
 	return count <= prefAid.gridLimit;
-};
-
-this.compareRanges = function(aRange, bRange) {
-	if(aRange.nodeType || bRange.nodeType) { return false; } // Don't know if this could get here
-	if(aRange.startContainer == bRange.startContainer
-	&& aRange.endContainer == bRange.endContainer
-	&& aRange.startOffset == bRange.startOffset
-	&& aRange.endOffset == bRange.endOffset) {
-		return true;
-	}
-	return false;
 };
 
 this.toggleCounter = function() {

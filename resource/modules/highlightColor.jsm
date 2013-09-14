@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.4';
+moduleAid.VERSION = '1.2.5';
 
 this.uiBackup = {};
 
@@ -93,7 +93,8 @@ this.setHighlightColorStyleSheet = function(rgb) {
 	sscode += '@-moz-document\n';
 	sscode += '	url("chrome://browser/content/browser.xul"),\n';
 	sscode += '	url("chrome://global/content/viewSource.xul"),\n';
-	sscode += '	url("chrome://global/content/viewPartialSource.xul") {\n';
+	sscode += '	url("chrome://global/content/viewPartialSource.xul"),\n';
+	sscode += '	url("chrome://findbartweak/content/findInTabsFull.xul") {\n';
 	sscode += '		.findInTabs-list label[highlight]:not([current]):not(:hover) {\n';
 	sscode += '			background-color: '+prefAid.highlightColor+';\n';
 	sscode += '			color: '+((darkBackgroundRGB(rgb)) ? '#FFFFFF' : '#000000')+';\n';
@@ -151,7 +152,8 @@ this.setSelectColorStyleSheet = function(rgb) {
 	sscode += '@-moz-document\n';
 	sscode += '	url("chrome://browser/content/browser.xul"),\n';
 	sscode += '	url("chrome://global/content/viewSource.xul"),\n';
-	sscode += '	url("chrome://global/content/viewPartialSource.xul") {\n';
+	sscode += '	url("chrome://global/content/viewPartialSource.xul"),\n';
+	sscode += '	url("chrome://findbartweak/content/findInTabsFull.xul") {\n';
 	sscode += '		.findInTabs-list label[highlight][current],\n';
 	sscode += '		.findInTabs-list label[highlight]:hover {\n';
 	sscode += '			background-color: '+prefAid.selectColor+';\n';

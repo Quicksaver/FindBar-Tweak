@@ -19,6 +19,8 @@
 <!ENTITY OptuseCounter.label "Show hits counter in the Findbar">
 <!ENTITY OptfindInTabs.label "Enable 'Find in All Tabs'">
 <!ENTITY OptalwaysOpenFIT.label "Open 'Find in All Tabs' with the Findbar">
+<!ENTITY OptFITFull.label "Open 'Find in All Tabs' in its own separate window">
+<!ENTITY OptmultipleFITFull.label "Allow multiple instances of the 'Find in All Tabs' window">
 <!ENTITY OptmaxFIT.label "Don't find if the number of hits in a tab exceeds:">
 
 <!ENTITY Optcolor.label "Highlights Color">

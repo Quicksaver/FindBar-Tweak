@@ -1,9 +1,10 @@
-moduleAid.VERSION = '1.1.3';
+moduleAid.VERSION = '1.2.0';
 
 this.viewSource = false;
+this.FITFull = false;
 
 this.toggleCtrlF = function() {
-	moduleAid.loadIf('ctrlF', prefAid.ctrlFCloses);
+	moduleAid.loadIf('ctrlF', FITFull || prefAid.ctrlFCloses);
 };
 
 this.toggleBlurCloses = function() {
@@ -22,53 +23,68 @@ this.toggleRememberStartup = function() {
 };
 
 this.toggleFindInTabs = function() {
-	moduleAid.loadIf('findInTabs', !viewSource && prefAid.findInTabs);
+	moduleAid.loadIf('findInTabsMini', FITFull || prefAid.findInTabs);
 };
 
 moduleAid.LOADMODULE = function() {
 	if(document.documentElement.getAttribute('windowtype') == 'navigator:view-source') { viewSource = $('viewSource'); }
+	FITFull = $(objName+'-findInTabs');
 	toggleAttribute(document.documentElement, objName+'-FF25', perTabFB);
 	
 	moduleAid.load('initFindbar');
 	moduleAid.load('FindBarUI');
-	moduleAid.load('highlights');
+	if(!FITFull) { moduleAid.load('highlights'); }
 	moduleAid.load('compatibilityFix/windowFixes');
 	
-	prefAid.listen('ctrlFCloses', toggleCtrlF);
-	prefAid.listen('blurCloses', toggleBlurCloses);
-	prefAid.listen('perTab', togglePerTab);
-	prefAid.listen('blurCloses', togglePerTab);
-	prefAid.listen('onStartup', toggleRememberStartup);
-	prefAid.listen('perTab', toggleRememberStartup);
-	prefAid.listen('blurCloses', toggleRememberStartup);
 	prefAid.listen('findInTabs', toggleFindInTabs);
 	
-	toggleCtrlF();
-	toggleBlurCloses();
-	togglePerTab();
+	if(!FITFull) {
+		prefAid.listen('ctrlFCloses', toggleCtrlF);
+		prefAid.listen('blurCloses', toggleBlurCloses);
+		prefAid.listen('perTab', togglePerTab);
+		prefAid.listen('blurCloses', togglePerTab);
+		prefAid.listen('onStartup', toggleRememberStartup);
+		prefAid.listen('perTab', toggleRememberStartup);
+		prefAid.listen('blurCloses', toggleRememberStartup);
+	
+		toggleCtrlF();
+		toggleBlurCloses();
+		togglePerTab();
+	}
+	
 	toggleFindInTabs();
-	toggleRememberStartup(); // This should be the last thing to be initialized, as it can open the find bar
+	
+	if(!FITFull) {
+		toggleRememberStartup(); // This should be the last thing to be initialized, as it can open the find bar
+	}
 };
 
 moduleAid.UNLOADMODULE = function() {
-	moduleAid.unload('rememberStartup');
-	moduleAid.unload('findInTabs');
-	moduleAid.unload('perTab');
-	moduleAid.unload('globalFB');
-	moduleAid.unload('blurCloses');
-	moduleAid.unload('ctrlF');
+	if(!FITFull) {
+		moduleAid.unload('rememberStartup');
+	}
 	
-	prefAid.unlisten('ctrlFCloses', toggleCtrlF);
-	prefAid.unlisten('blurCloses', toggleBlurCloses);
-	prefAid.unlisten('perTab', togglePerTab);
-	prefAid.unlisten('blurCloses', togglePerTab);
-	prefAid.unlisten('onStartup', toggleRememberStartup);
-	prefAid.unlisten('perTab', toggleRememberStartup);
-	prefAid.unlisten('blurCloses', toggleRememberStartup);
 	prefAid.unlisten('findInTabs', toggleFindInTabs);
 	
+	moduleAid.unload('findInTabs');
+	
+	if(!FITFull) {
+		moduleAid.unload('ctrlF');
+		moduleAid.unload('perTab');
+		moduleAid.unload('globalFB');
+		moduleAid.unload('blurCloses');
+	
+		prefAid.unlisten('ctrlFCloses', toggleCtrlF);
+		prefAid.unlisten('blurCloses', toggleBlurCloses);
+		prefAid.unlisten('perTab', togglePerTab);
+		prefAid.unlisten('blurCloses', togglePerTab);
+		prefAid.unlisten('onStartup', toggleRememberStartup);
+		prefAid.unlisten('perTab', toggleRememberStartup);
+		prefAid.unlisten('blurCloses', toggleRememberStartup);
+	}
+	
 	moduleAid.unload('compatibilityFix/windowFixes');
-	moduleAid.unload('highlights');
+	if(!FITFull) { moduleAid.unload('highlights'); }
 	moduleAid.unload('FindBarUI');
 	moduleAid.unload('initFindbar');
 	

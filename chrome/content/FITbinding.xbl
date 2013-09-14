@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<bindings id="findbartweak-findInTabs-bindings"
+	xmlns="http://www.mozilla.org/xbl"
+	xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	xmlns:xbl="http://www.mozilla.org/xbl">
+	
+	<!-- Private binding -->
+	<binding id="FIT-textbox" extends="chrome://global/content/bindings/textbox.xml#textbox">
+		<implementation>
+			<field name="_findbar">null</field>
+			<property name="findbar" readonly="true">
+				<getter>
+					return this._findbar ?
+					this._findbar : this._findbar = document.getBindingParent(this);
+				</getter>
+			</property>
+		</implementation>
+		
+		<handlers>
+			<handler event="input"><![CDATA[
+				// We should do nothing during composition.  E.g., composing string
+				// before converting may matches a forward word of expected word.
+				// After that, even if user converts the composition string to the
+				// expected word, it may find second or later searching word in the
+				// document.
+				if (this.findbar._isIMEComposing) {
+					return;
+				}
+				this.findbar._find(this.value);
+			]]></handler>
+			
+			<handler event="dragover"><![CDATA[
+				if (event.dataTransfer.types.contains("text/plain"))
+					event.preventDefault();
+			]]></handler>
+			
+			<handler event="drop"><![CDATA[
+				var value = event.dataTransfer.getData("text/plain");
+				this.value = value;
+				this.findbar._find(value);
+				event.stopPropagation();
+				event.preventDefault();
+			]]></handler>
+		</handlers>
+	</binding>
+
+</bindings>

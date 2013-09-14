@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!DOCTYPE overlay SYSTEM "chrome://findbartweak/locale/findbar.dtd">
+<overlay id="findInTabs_overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	
+	<broadcasterset id="mainBroadcasterSet">
+		<broadcaster id="objName-findInTabs-broadcaster"
+			label="&FITbutton.label;"
+			tooltiptext="&FITbutton.tooltip.win;"
+			accesskey="&FITbutton.accesskey;"
+			type="checkbox"
+			autoCheck="false"
+			oncommand="objName.toggleFIT();" />
+	</broadcasterset>
+	
+	<window id="main-window">
+		<keyset id="objName-findInTabs-open-keyset">
+			<key id="objName-findInTabs-open-key"
+				keycode="VK_F3"
+				modifiers="accel"
+				oncommand="objName.toggleFIT();" />
+		</keyset>
+	</window>
+	
+	<!-- The view source window doesn't have any of these main elements -->
+	<window id="viewSource">
+		<broadcasterset id="objName-findInTabs-broadcasterSet">
+			<broadcaster id="objName-findInTabs-broadcaster"
+				label="&FITbutton.label;"
+				tooltiptext="&FITbutton.tooltip.win;"
+				accesskey="&FITbutton.accesskey;"
+				type="checkbox"
+				autoCheck="false"
+				oncommand="objName.toggleFIT();" />
+		</broadcasterset>
+		
+		<keyset id="objName-findInTabs-open-keyset">
+			<key id="objName-findInTabs-open-key"
+				keycode="VK_F3"
+				modifiers="accel"
+				oncommand="objName.toggleFIT();" />
+		</keyset>
+	</window>
+	
+</overlay>

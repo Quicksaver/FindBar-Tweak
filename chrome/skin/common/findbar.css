@@ -4,7 +4,8 @@
 @-moz-document
 	url("chrome://browser/content/browser.xul"),
 	url("chrome://global/content/viewSource.xul"),
-	url("chrome://global/content/viewPartialSource.xul") {
+	url("chrome://global/content/viewPartialSource.xul"),
+	url("chrome://findbartweak/content/findInTabsFull.xul") {
 
 	findbar[hideLabels] checkbox[anonid="find-case-sensitive"],
 	findbar[hideFindLabel] label[anonid="find-label"],
@@ -121,7 +122,7 @@
 	}
 	
 	/* Find Toolbar at the bottom in FF25 */
-	window[findbartweak-FF25] findbar:not([position="top"]) {
+	window:not(#findbartweak-findInTabs)[findbartweak-FF25] findbar:not([position="top"]) {
 		-moz-box-ordinal-group: 3;
 	}
 	window[findbartweak-FF25] resizer[anonid="findbartweak-findInTabs-resizer"][position="bottom"] {
@@ -162,10 +163,11 @@
 	}
 	
 	/* Textbox resizers */
-	findbar:not([hideLabels]) .findbar-textbox {
+	findbar:not([hideLabels]):not(.findInTabs-bar) .findbar-textbox {
 		max-width: 680px;
 	}
-	findbar[hideLabels] .findbar-textbox {
+	findbar[hideLabels] .findbar-textbox,
+	findbar.findInTabs-bar .findbar-textbox {
 		max-width: 1000px;
 	}
 	
@@ -287,7 +289,7 @@
 		display: none;
 	}
 	
-	findbar[noClose] .findbar-tabs-update {
+	window:not([findbartweak-FF25]) findbar[noClose] .findbar-tabs-update {
 		-moz-margin-start: 3px;
 	}
 	
@@ -374,5 +376,24 @@
 	
 	.findInTabs-list label[highlight]:hover {
 		cursor: pointer;
+	}
+	
+	/* Specific for the FIT standalone window */
+	.findInTabs-bar toolbarbutton[anonid="find-next"],
+	.findInTabs-bar toolbarbutton[anonid="find-previous"],
+	.findInTabs-bar toolbarbutton[anonid="find-closebutton"],
+	.findInTabs-bar toolbarbutton[anonid="highlight"],
+	.findInTabs-bar label[anonid="match-case-status"] {
+		display: none;
+	}
+	
+	.findInTabs-bar textbox {
+		/* Original binding has many handlers that don't work when the findbar has no browser associated */
+		-moz-binding: url("chrome://findbartweak/content/FITbinding.xbl#FIT-textbox");
+	}
+	
+	.findInTabs-bar,
+	.findInTabs-bar[hidden] {
+		transition: none;
 	}
 }

@@ -1,7 +1,7 @@
-moduleAid.VERSION = '1.1.6';
+moduleAid.VERSION = '1.1.7';
 
 moduleAid.LOADMODULE = function() {
-	if(!viewSource) {
+	if(!viewSource && !FITFull) {
 		AddonManager.getAddonByID('autopager@mozilla.org', function(addon) {
 			moduleAid.loadIf('compatibilityFix/autopager', (addon && addon.isActive));
 		});

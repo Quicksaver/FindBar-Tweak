@@ -1,7 +1,7 @@
-moduleAid.VERSION = '1.0.0';
+moduleAid.VERSION = '1.0.1';
 
 this.toggleMoveFITtoTop = function() {
-	if((perTabFB && !prefAid.movetoBottom) || prefAid.movetoTop) {
+	if((onTopFB && !prefAid.movetoBottom) || prefAid.movetoTop) {
 		overlayAid.overlayURI('chrome://'+objPathString+'/content/findInTabs.xul', 'movetoTop_FIT');
 	} else {
 		overlayAid.removeOverlayURI('chrome://'+objPathString+'/content/findInTabs.xul', 'movetoTop_FIT');

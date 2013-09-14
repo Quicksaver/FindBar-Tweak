@@ -1,4 +1,4 @@
-var defaultsVersion = '1.2.0';
+var defaultsVersion = '1.2.1';
 var objName = 'findbartweak';
 var objPathString = 'findbartweak';
 
@@ -84,6 +84,7 @@ var prefList = {
 };
 
 var perTabFB = false;
+var onTopFB = false;
 
 function startAddon(window) {
 	prepareObject(window);
@@ -106,6 +107,7 @@ function startConditions(aReason) {
 
 function onStartup(aReason) {
 	if(Services.vc.compare(Services.appinfo.platformVersion, "25.0a1") >= 0) { perTabFB = true; }
+	if(Services.vc.compare(Services.appinfo.platformVersion, "26.0a1") >= 0) { onTopFB = true; }
 	
 	moduleAid.load('builtinPrefs');
 	moduleAid.load('highlightColor');

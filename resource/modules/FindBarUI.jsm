@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.0';
+moduleAid.VERSION = '1.5.1';
 
 this.__defineGetter__('findCSButton', function() { return gFindBar.getElement(objName+'-find-cs-button'); });
 this.__defineGetter__('findCSCheckbox', function() { return gFindBar.getElement('find-case-sensitive'); });
@@ -161,8 +161,8 @@ this.toggleFindLabel = function() {
 };
 
 this.toggleMoveToTop = function() {
-	moduleAid.loadIf('moveToTop', prefAid.movetoTop && (!perTabFB || !prefAid.movetoBottom));
-	moduleAid.loadIf('moveToBottom', prefAid.movetoBottom && perTabFB);
+	moduleAid.loadIf('moveToTop', prefAid.movetoTop && (!onTopFB || !prefAid.movetoBottom));
+	moduleAid.loadIf('moveToBottom', prefAid.movetoBottom && onTopFB);
 };
 
 this.toggleMoveToRight = function(startup) {
@@ -190,7 +190,7 @@ this.toggleKeepButtons = function(startup) {
 };
 
 this.toggleFF25Tweaks = function() {
-	moduleAid.loadIf('FF25Tweaks', perTabFB && !viewSource && prefAid.FF25Tweaks && !prefAid.movetoTop && !prefAid.movetoBottom);
+	moduleAid.loadIf('FF25Tweaks', onTopFB && !viewSource && prefAid.FF25Tweaks && !prefAid.movetoTop && !prefAid.movetoBottom);
 };
 
 this.toolboxBorderCounter = { length: 0 };

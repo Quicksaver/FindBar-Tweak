@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.7';
+moduleAid.VERSION = '1.5.8';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -56,7 +56,7 @@ this.containerPDFResize = function(e) {
 };
 
 this.fixFindBarPosition = function() {
-	if(!perTabFB) { return; }
+	if(!onTopFB) { return; }
 	
 	// Bug 893446 sets these properties to relative and absolute, causing the findbar to jump around when toggling it.
 	gFindBar.style.position = '';

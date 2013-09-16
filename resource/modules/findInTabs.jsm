@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.7.0';
+moduleAid.VERSION = '1.7.1';
 
 this.__defineGetter__('FITresizer', function() { return gFindBar._FITresizer; });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -278,7 +278,7 @@ this.selectFIThit = function() {
 	}
 	
 	var inWindow = verifyFITselection();
-	if(!inWindow || !FITtabsList.currentItem.linkedHits.currentItem) { return; }
+	if(!inWindow) { return; }
 	
 	// Load the tab if it's unloaded
 	if(FITtabsList.currentItem.linkedHits.currentItem.isUnloadedTab) {
@@ -350,10 +350,10 @@ this.selectFIThit = function() {
 		return;
 	}
 	
-	var editableNode = inFindBar.browser._fastFind.foundEditable;
+	var editableNode = tweakFoundEditable(inFindBar);
 	var controller = (editableNode && editableNode.editor) ? editableNode.editor.selectionController : null;
 	if(!controller) {
-		controller = inFindBar._getSelectionController(FITtabsList.currentItem.linkedDocument.defaultView);
+		controller = tweakGetSelectionController(inFindBar, FITtabsList.currentItem.linkedDocument.defaultView);
 	}
 	var sel = controller.getSelection(gFindBar.nsISelectionController.SELECTION_NORMAL);
 	
@@ -381,17 +381,21 @@ this.selectFIThit = function() {
 	controller.scrollSelectionIntoView(gFindBar.nsISelectionController.SELECTION_NORMAL, gFindBar.nsISelectionController.SELECTION_WHOLE_SELECTION, gFindBar.nsISelectionController.SCROLL_CENTER_VERTICALLY);
 	
 	if(editableNode) {
-		try { inFindBar.browser._fastFind.foundEditable = null; } catch(ex) {}
+		if(!mFinder) {
+			try { tweakFoundEditable(inFindBar, null); } catch(ex) {}
+		}
 		try { inFindBar._foundEditable = null; } catch(ex) {}
 	}
 	
-	editableNode = inFindBar._getEditableNode(selectRange.startContainer);
+	editableNode = tweakGetEditableNode(inFindBar, selectRange.startContainer);
 	if(editableNode) {
-		inFindBar.browser._fastFind.foundEditable = editableNode;
+		if(!mFinder) {
+			tweakFoundEditable(inFindBar, editableNode);
+		}
 		inFindBar._foundEditable = editableNode;
 		var controller = editableNode.editor.selectionController;
 	} else {
-		var controller = inFindBar._getSelectionController(selectRange.startContainer.ownerDocument.defaultView);
+		var controller = tweakGetSelectionController(inFindBar, selectRange.startContainer.ownerDocument.defaultView);
 	}
 	sel = controller.getSelection(gFindBar.nsISelectionController.SELECTION_NORMAL);
 	
@@ -1049,18 +1053,14 @@ this.autoSelectFIThit = function(aDoc, aList) {
 			}
 		}
 	} else {
-		if(!FITFull) {
-			var editableNode = gFindBar.browser._fastFind.foundEditable;
-		} else {
-			var inWindow = getWindowForContent(aDoc);
-			var inFindBar = inWindow.document.getElementById('FindToolbar') || inWindow.gFindBar;
-			var editableNode = inFindBar.browser._fastFind.foundEditable;
-		}
+		var inWindow = getWindowForContent(aDoc);
+		var inFindBar = inWindow.document.getElementById('FindToolbar') || inWindow.gFindBar;
+		var editableNode = tweakFoundEditable(inFindBar);
 		var controller = (editableNode && editableNode.editor) ? editableNode.editor.selectionController : null;
 		if(controller) {
 			var sel = controller.getSelection(gFindBar.nsISelectionController.SELECTION_NORMAL);
 		} else {
-			var sel = gFindBar._getSelectionController(aDoc.defaultView).getSelection(gFindBar.nsISelectionController.SELECTION_NORMAL);
+			var sel = tweakGetSelectionController(inFindBar, aDoc.defaultView).getSelection(gFindBar.nsISelectionController.SELECTION_NORMAL);
 		}
 		if(sel.rangeCount != 1) { return; }
 		var selRange = sel.getRangeAt(0);
@@ -1128,10 +1128,9 @@ this.countFITinDoc = function(aWord, aWindow) {
 	endPt.collapse(false);
 	
 	var retRange = null;
-	var finder = Components.classes['@mozilla.org/embedcomp/rangefind;1'].createInstance().QueryInterface(Components.interfaces.nsIFind);
-	finder.caseSensitive = gFindBar._shouldBeCaseSensitive(aWord);
+	var finder = new tweakFindRange(gFindBar, aWord, gFindBar._shouldBeCaseSensitive(aWord));
 	
-	while((retRange = finder.Find(aWord, searchRange, startPt, endPt))) {
+	while((retRange = finder.Find(searchRange, startPt, endPt))) {
 		startPt = retRange.cloneRange();
 		startPt.collapse(false);
 		

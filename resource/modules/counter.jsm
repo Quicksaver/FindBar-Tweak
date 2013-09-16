@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.7';
+moduleAid.VERSION = '1.1.8';
 
 this.REDOINGHIGHLIGHTS = false;
 this.__defineGetter__('counter', function() { return gFindBar._findStatusDesc.textContent; });
@@ -61,13 +61,13 @@ this.fillHighlightCounter = function(e) {
 	
 	// Normal HTML files
 	if(!linkedPanel._counterHighlights || linkedPanel._counterHighlights.length == 0) { return; }
-		
-	var editableNode = gFindBar.browser._fastFind.foundEditable;
+	
+	var editableNode = tweakFoundEditable(gFindBar);
 	var controller = (editableNode && editableNode.editor) ? editableNode.editor.selectionController : null;
 	if(!controller) {
-		controller = gFindBar._getSelectionController(contentWindow);
+		controller = tweakGetSelectionController(gFindBar, contentWindow);
 	}
-	var sel = controller.getSelection(gFindBar.nsISelectionController.SELECTION_NORMAL);
+	var sel = controller.getSelection(Ci.nsISelectionController.SELECTION_NORMAL);
 	
 	var h = 0;
 	if(sel.rangeCount == 1) {
@@ -98,7 +98,7 @@ this.fillHighlightCounter = function(e) {
 			}
 		}
 		
-		if(!timerAid.delayHighlight && !REDOINGHIGHLIGHTS && h == 0 && linkedPanel._counterHighlights.length > 0) {
+		if(!timerAid.delayHighlight && !REDOINGHIGHLIGHTS && h == 0 && linkedPanel._counterHighlights.length > 0 && cRange.toString() == gFindBar._findField.value) {
 			REDOINGHIGHLIGHTS = true;
 			reHighlight(documentHighlighted);
 			REDOINGHIGHLIGHTS = false;

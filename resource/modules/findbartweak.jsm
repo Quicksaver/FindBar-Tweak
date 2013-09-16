@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.0';
+moduleAid.VERSION = '1.2.1';
 
 this.viewSource = false;
 this.FITFull = false;
@@ -32,6 +32,7 @@ moduleAid.LOADMODULE = function() {
 	toggleAttribute(document.documentElement, objName+'-FF25', perTabFB);
 	
 	moduleAid.load('initFindbar');
+	moduleAid.load('initFinder');
 	moduleAid.load('FindBarUI');
 	if(!FITFull) { moduleAid.load('highlights'); }
 	moduleAid.load('compatibilityFix/windowFixes');
@@ -86,6 +87,7 @@ moduleAid.UNLOADMODULE = function() {
 	moduleAid.unload('compatibilityFix/windowFixes');
 	if(!FITFull) { moduleAid.unload('highlights'); }
 	moduleAid.unload('FindBarUI');
+	moduleAid.unload('initFinder');
 	moduleAid.unload('initFindbar');
 	
 	removeAttribute(document.documentElement, objName+'-FF25');

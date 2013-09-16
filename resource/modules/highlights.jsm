@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.3';
+moduleAid.VERSION = '1.3.0';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -293,30 +293,44 @@ this.highlightsInit = function(bar) {
 		var suffix = (perTabFB && !viewSource && this.linkedPanel != gBrowser.mCurrentTab.linkedPanel) ? 'AnotherTab' : '';
 		
 		if(dispatch(this, { type: 'WillToggleHighlight'+suffix, detail: aHighlight })) {
-			this._toggleHighlight(aHighlight);
+			if(this._dispatchFindEvent && !this._dispatchFindEvent("highlightallchange")) {
+				dispatch(this, { type: 'ToggledHighlight'+suffix, detail: aHighlight, cancelable: false });
+				return;
+			}
+			
+			var word = this._findField.value;
+			
+			// Bug 429723. Don't attempt to highlight ""
+			if(aHighlight && !word)
+				return;
+			
+			// Initially I was going to change this in Finder.jsm's prototype, but that caused recursion errors, so I'm going around the Finder.jsm altogether.
+			if(mFinder) {
+				this.browser._lastSearchHighlight = aHighlight;
+				this.browser.finder._searchString = word;
+			}
+			
+			// We have to update the status because we might still have the status
+			// of another tab
+			var res = this.nsITypeAheadFind.FIND_NOTFOUND;
+			if(this._highlightDoc(aHighlight, word)) {
+				res = this.nsITypeAheadFind.FIND_FOUND;
+			}
+			
+			if(!mFinder) {
+				this._updateStatusUI(res);
+			} else {
+				this.browser.finder._notify(res);
+			}
 			dispatch(this, { type: 'ToggledHighlight'+suffix, detail: aHighlight, cancelable: false });
 		}
-	};
-	
-	bar.__findAgain = bar._findAgain;
-	bar._findAgain = function(aFindPrevious) {
-		var suffix = (perTabFB && !viewSource && this.linkedPanel != gBrowser.mCurrentTab.linkedPanel) ? 'AnotherTab' : '';
-		
-		if(dispatch(this, { type: 'WillFindAgain'+suffix, detail: { aFindPrevious: aFindPrevious } })) {
-			var ret = this.__findAgain(aFindPrevious);
-			dispatch(this, { type: 'FoundAgain'+suffix, cancelable: false, detail: { aFindPrevious: aFindPrevious, retValue: ret } });
-			return ret;
-		}
-		return null;
 	};
 };
 
 this.highlightsDeinit = function(bar) {
 	bar._setHighlightTimeout = bar.__setHighlightTimeout;
 	bar.toggleHighlight = bar._toggleHighlight;
-	bar._findAgain = bar.__findAgain;
 	delete bar.__setHighlightTimeout;
-	delete bar.__findAgain;
 	delete bar._toggleHighlight;
 };
 

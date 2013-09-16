@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.3.9';
+moduleAid.VERSION = '1.4.0';
 
 this.alwaysUpdateStatusUI = function(e) {
 	// toggleHighlight() doesn't update the UI in these conditions, we need it to, to update the counter (basically hide it)
@@ -14,6 +14,7 @@ this.alwaysToggleHighlight = function() {
 	}
 };
 
+// Updates our methods when there are new pdf matches (it's an aSync process)
 this.trackPDFMatches = function(e) {
 	if(e && e.detail && e.detail.res == gFindBar.nsITypeAheadFind.FIND_PENDING) { return; }
 	
@@ -60,6 +61,7 @@ this.trackPDFMatches = function(e) {
 	}
 };
 
+// Returns whether the amount of ranges in the array is below the set limit to show in the grid
 this.shouldFillGrid = function(toAdd) {
 	var count = toAdd.length;
 	for(var i=0; i<toAdd.length; i++) {
@@ -85,11 +87,11 @@ this.toggleSights = function() {
 };
 
 moduleAid.LOADMODULE = function() {
-	// Add found words to counter and grid arrays if needed,
-	// Modified to more accurately handle frames
 	initFindBar('highlightDoc',
 		function(bar) {
-			bar.__highlightDoc = bar._highlightDoc;
+			// Add found words to counter and grid arrays if needed,
+			// Modified to more accurately handle frames
+			if(!mFinder) { bar.__highlightDoc = bar._highlightDoc; }
 			bar._highlightDoc = function _highlightDoc(aHighlight, aWord, aWindow, aLevel, aSights, innerRanges) {
 				if(!aWindow) {
 					// Using the counter?
@@ -120,7 +122,8 @@ moduleAid.LOADMODULE = function() {
 					var thisLevel = aLevel.length -1;
 				}
 				
-				var win = aWindow || this.browser.contentWindow;
+				var win = aWindow || tweakGetWindow(this);
+				
 				var textFound = false;
 				for(var i = 0; win.frames && i < win.frames.length; i++) {
 					var nextLevel = null;
@@ -146,23 +149,21 @@ moduleAid.LOADMODULE = function() {
 					if(aLevel) { aLevel[thisLevel].levels = nextLevel; }
 				}
 				
-				var controller = this._getSelectionController(win);
-				if(!controller) {
+				var controller = tweakGetSelectionController(this, win);
+				var doc = win.document;
+				if(!controller || !doc || !doc.documentElement) {
 					// Without the selection controller,
 					// we are unable to (un)highlight any matches
 					return textFound;
 				}
 				
-				var doc = win.document;
-				if(!doc || !(doc instanceof window.HTMLDocument) || !doc.body) {
-					return textFound;
-				}
+				var body = (doc instanceof Ci.nsIDOMHTMLDocument && doc.body) ? doc.body : doc.documentElement;
 				
 				// Bugfix: when using neither the highlights nor the counter, toggling the highlights off would trigger the "Phrase not found" status
 				// because textFound would never have had the chance to be verified. This doesn't need to happen if a frame already triggered the found status.
 				if(aHighlight || aLevel || !textFound) {
 					var searchRange = doc.createRange();
-					searchRange.selectNodeContents(doc.body);
+					searchRange.selectNodeContents(body);
 					
 					var startPt = searchRange.cloneRange();
 					startPt.collapse(true);
@@ -171,10 +172,9 @@ moduleAid.LOADMODULE = function() {
 					endPt.collapse(false);
 					
 					var retRange = null;
-					var finder = Components.classes['@mozilla.org/embedcomp/rangefind;1'].createInstance().QueryInterface(Components.interfaces.nsIFind);
-					finder.caseSensitive = this._shouldBeCaseSensitive(aWord);
+					var finder = new tweakFindRange(this, aWord);
 					
-					while((retRange = finder.Find(aWord, searchRange, startPt, endPt))) {
+					while((retRange = finder.Find(searchRange, startPt, endPt))) {
 						textFound = true;
 						
 						// We can stop now if all we're looking for is the found status
@@ -184,10 +184,10 @@ moduleAid.LOADMODULE = function() {
 						startPt.collapse(false);
 						
 						if(aHighlight) {
-							this._highlight(retRange, controller);
-						
+							tweakHighlightRange(this, retRange, controller);
+							
 							if(!aWindow && fillGrid) {
-								var editableNode = this._getEditableNode(retRange.startContainer);
+								var editableNode = tweakGetEditableNode(this, retRange.startContainer);
 								if(editableNode) {
 									toAddtoGrid.push({ node: editableNode, pattern: true, rangeEdit: retRange });
 								} else {
@@ -228,27 +228,28 @@ moduleAid.LOADMODULE = function() {
 					
 					if(textFound) {
 						// Never take attention from current hit
-						var curSel = controller.getSelection(gFindBar.nsISelectionController.SELECTION_NORMAL);
+						var curSel = controller.getSelection(Ci.nsISelectionController.SELECTION_NORMAL);
 						if(curSel.rangeCount == 1) {
-							controller.setDisplaySelection(controller.SELECTION_ATTENTION);
+							controller.setDisplaySelection(Ci.nsISelectionController.SELECTION_ATTENTION);
 						}
 					}
 				}
 				
 				if(!aHighlight) {
 					// First, attempt to remove highlighting from main document
-					var sel = controller.getSelection(this._findSelection);
+					var sel = controller.getSelection(Ci.nsISelectionController.SELECTION_FIND);
 					sel.removeAllRanges();
 					
 					// Next, check our editor cache, for editors belonging to this
 					// document
-					if(this._editors) {
-						for(var x = this._editors.length - 1; x >= 0; --x) {
-							if(this._editors[x].document == doc) {
-								sel = this._editors[x].selectionController.getSelection(this._findSelection);
+					var editors = tweakGetEditors(this);
+					if(editors) {
+						for(var x = editors.length - 1; x >= 0; --x) {
+							if(editors[x].document == doc) {
+								sel = editors[x].selectionController.getSelection(Ci.nsISelectionController.SELECTION_FIND);
 								sel.removeAllRanges();
 								// We don't need to listen to this editor any more
-								this._unhookListenersAtIndex(x);
+								tweakUnhookListenersAtIndex(this, x);
 							}
 						}
 					}
@@ -258,11 +259,14 @@ moduleAid.LOADMODULE = function() {
 			};
 		},
 		function(bar) {
-			bar._highlightDoc = bar.__highlightDoc;
-			delete bar.__highlightDoc;
+			if(!mFinder) {
+				bar._highlightDoc = bar.__highlightDoc;
+				delete bar.__highlightDoc;
+			} else {
+				delete bar._highlightDoc;
+			}
 		}
 	);
-
 	
 	listenerAid.add(window, 'ToggledHighlight', alwaysUpdateStatusUI);
 	listenerAid.add(window, 'FoundFindBar', alwaysToggleHighlight);

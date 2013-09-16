@@ -1,13 +1,13 @@
-moduleAid.VERSION = '1.2.0';
+moduleAid.VERSION = '1.2.1';
 
 this.fillSelectedText = function() {
 	var selText = gFindBar._getInitialSelection();
 	if(selText && gFindBar._findField.value != selText && dispatch(gFindBar, { type: 'WillFillSelectedText' })) {
 		gFindBar._findField.value = selText;
-		doFastFind = false;
+		workAroundFind = true;
 		timerAid.init('fillSelectedText', function() {
-			try { gFindBar._find(); } catch(ex) { Cu.reportError(ex); } // ensure we reset doFastFind even if this errors for some reason, it shouldn't though
-			doFastFind = true;
+			try { gFindBar._find(); } catch(ex) { Cu.reportError(ex); } // ensure we reset workAroundFind even if this errors for some reason, it shouldn't though
+			workAroundFind = false;
 		}, 0);
 		
 		if(prefAid.fillTextShowFindBar && gFindBar.hidden) {

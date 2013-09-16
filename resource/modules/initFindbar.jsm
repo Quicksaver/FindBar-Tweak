@@ -1,13 +1,18 @@
-moduleAid.VERSION = '2.1.0';
+moduleAid.VERSION = '2.2.0';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return window.gFindBarInitialized; });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
 this.__defineGetter__('linkedPanel', function() { return (viewSource) ? $('appcontent') : $(gBrowser.mCurrentTab.linkedPanel); });
 this.__defineGetter__('contentDocument', function() { return (!viewSource) ? gBrowser.mCurrentBrowser.contentDocument : $('content').contentDocument; });
-this.__defineGetter__('contentWindow', function() { return gFindBar.browser._fastFind.currentWindow || gFindBar.browser.contentWindow; });
 this.__defineGetter__('browserPanel', function() { return $('browser-panel') || viewSource; });
 this.getComputedStyle = function(el) { return window.getComputedStyle(el); };
+
+if(mFinder) {
+	this.__defineGetter__('contentWindow', function() { return gFindBar.browser.finder._fastFind.currentWindow || gFindBar.browser.contentWindow; });
+} else {
+	this.__defineGetter__('contentWindow', function() { return gFindBar.browser._fastFind.currentWindow || gFindBar.browser.contentWindow; });
+}
 
 this.inPDFJS = function(aDoc) { return (aDoc && aDoc.contentType == 'application/pdf' && aDoc.baseURI == 'resource://pdf.js/web/'); };
 this.__defineGetter__('isPDFJS', function() { return inPDFJS(contentDocument); });
@@ -17,41 +22,6 @@ this.__defineGetter__('findBarHidden', function() { return _getFindBarHidden(); 
 this.__defineSetter__('findBarHidden', function(v) { return gFindBar.hidden = v; });
 
 this.currentTab = null;
-
-this.doFastFind = true;
-
-this.workAroundFastFind = function(aWord, aWindow) {
-	var win = aWindow || gFindBar.browser.contentWindow;
-	for(var i = 0; win.frames && i < win.frames.length; i++) {
-		if(workAroundFastFind(aWord, win.frames[i])) {
-			return gFindBar.nsITypeAheadFind.FIND_FOUND;
-		}
-	}
-	
-	var doc = win.document;
-	if(!doc || !(doc instanceof window.HTMLDocument) || !doc.body) {
-		return gFindBar.nsITypeAheadFind.FIND_NOTFOUND;
-	}
-	
-	var searchRange = doc.createRange();
-	searchRange.selectNodeContents(doc.body);
-	
-	var startPt = searchRange.cloneRange();
-	startPt.collapse(true);
-	
-	var endPt = searchRange.cloneRange();
-	endPt.collapse(false);
-	
-	var retRange = null;
-	var finder = Components.classes['@mozilla.org/embedcomp/rangefind;1'].createInstance().QueryInterface(Components.interfaces.nsIFind);
-	finder.caseSensitive = gFindBar._shouldBeCaseSensitive(aWord);
-	
-	while((retRange = finder.Find(aWord, searchRange, startPt, endPt))) {
-		return gFindBar.nsITypeAheadFind.FIND_FOUND;
-	}
-	
-	return gFindBar.nsITypeAheadFind.FIND_NOTFOUND;
-};
 
 this.compareRanges = function(aRange, bRange) {
 	if(aRange.nodeType || bRange.nodeType) { return false; } // Don't know if this could get here
@@ -132,71 +102,80 @@ this.baseInit = function(bar) {
 		}
 	}
 	
-	bar.___find = bar._find;
+	bar.__find = bar._find;
 	bar._find = function(aValue) {
 		var suffix = (!FITFull && perTabFB && !viewSource && this.linkedPanel != gBrowser.mCurrentTab.linkedPanel) ? 'AnotherTab' : '';
 		
 		if(dispatch(this, { type: 'WillFindFindBar'+suffix, detail: aValue })) {
-			var ret = this.__find(aValue);
-			dispatch(this, { type: 'FoundFindBar'+suffix, cancelable: false, detail: { aValue: aValue, retValue: ret } });
-			return ret;
+			if(FITFull || (this._dispatchFindEvent && !this._dispatchFindEvent(""))) {
+				dispatch(this, { type: 'FoundFindBar'+suffix, cancelable: false, detail: { aValue: aValue, retValue: this.nsITypeAheadFind.FIND_PENDING } });
+				return this.nsITypeAheadFind.FIND_PENDING;
+			}
+			
+			var val = aValue || this._findField.value;
+			var res = this.nsITypeAheadFind.FIND_NOTFOUND;
+			
+			// Only search on input if we don't have a last-failed string,
+			// or if the current search string doesn't start with it.
+			if(this._findFailedString == null || val.indexOf(this._findFailedString) != 0) {
+				this._enableFindButtons(val);
+				if(this.getElement("highlight").checked)
+					this._setHighlightTimeout();
+				
+				this._updateCaseSensitivity(val);
+				
+				res = tweakFastFind(this.browser, val, this._findMode == this.FIND_LINKS);
+				
+				if(!mFinder) {
+					this._updateFoundLink(res);
+					this._updateStatusUI(res, false);
+					
+					if (res == this.nsITypeAheadFind.FIND_NOTFOUND)
+						this._findFailedString = val;
+					else
+						this._findFailedString = null;
+				}
+			}
+			
+			if (this._findMode != this.FIND_NORMAL)
+				this._setFindCloseTimeout();
+			
+			if (this._findResetTimeout != -1)
+				window.clearTimeout(this._findResetTimeout);
+			
+			// allow a search to happen on input again after a second has
+			// expired since the previous input, to allow for dynamic
+			// content and/or page loading
+			this._findResetTimeout = window.setTimeout(function(self) {
+				self._findFailedString = null;
+				self._findResetTimeout = -1; },
+			1000, this);
+			
+			dispatch(this, { type: 'FoundFindBar'+suffix, cancelable: false, detail: { aValue: aValue, retValue: res } });
+			return res;
 		}
 		return null;
 	};
 	
-	// Selecting with the caret backwards would always reset the caret back to the end of the selection when calling _find(),
-	// we need to work around that so the selection doesn't keep resetting. This happens in the case of fillWithSelection.
-	bar.__find = function(aValue) {
-		if(FITFull)
-			return this.nsITypeAheadFind.FIND_FOUND;
+	bar.__findAgain = bar._findAgain;
+	bar._findAgain = function(aFindPrevious) {
+		var suffix = (perTabFB && !viewSource && this.linkedPanel != gBrowser.mCurrentTab.linkedPanel) ? 'AnotherTab' : '';
 		
-		if(this._dispatchFindEvent && !this._dispatchFindEvent(""))
-			return this.nsITypeAheadFind.FIND_PENDING;
-		
-		var val = aValue || this._findField.value;
-		var res = this.nsITypeAheadFind.FIND_NOTFOUND;
-		
-		// Only search on input if we don't have a last-failed string,
-		// or if the current search string doesn't start with it.
-		if(this._findFailedString == null || val.indexOf(this._findFailedString) != 0) {
-			this._enableFindButtons(val);
-			if(this.getElement("highlight").checked)
-				this._setHighlightTimeout();
+		if(dispatch(this, { type: 'WillFindAgain'+suffix, detail: { aFindPrevious: aFindPrevious } })) {
+			var res = tweakFindAgain(this.browser, aFindPrevious, this._findMode == this.FIND_LINKS);
 			
-			this._updateCaseSensitivity(val);
-			
-			if(doFastFind) {
-				// This is what resets the caret
-				var fastFind = this.browser.fastFind;
-				res = fastFind.find(val, this._findMode == this.FIND_LINKS);
-			} else {
-				res = workAroundFastFind(val);
+			if(!mFinder) {
+				this._updateFoundLink(res);
+				this._updateStatusUI(res, aFindPrevious);
+				
+				if (this._findMode != this.FIND_NORMAL && !this.hidden)
+					this._setFindCloseTimeout();
 			}
 			
-			this._updateFoundLink(res);
-			this._updateStatusUI(res, false);
-			
-			if (res == this.nsITypeAheadFind.FIND_NOTFOUND)
-				this._findFailedString = val;
-			else
-				this._findFailedString = null;
+			dispatch(this, { type: 'FoundAgain'+suffix, cancelable: false, detail: { aFindPrevious: aFindPrevious, retValue: res } });
+			return res;
 		}
-		
-		if (this._findMode != this.FIND_NORMAL)
-			this._setFindCloseTimeout();
-		
-		if (this._findResetTimeout != -1)
-			window.clearTimeout(this._findResetTimeout);
-		
-		// allow a search to happen on input again after a second has
-		// expired since the previous input, to allow for dynamic
-		// content and/or page loading
-		this._findResetTimeout = window.setTimeout(function(self) {
-			self._findFailedString = null;
-			self._findResetTimeout = -1; },
-		1000, this);
-		
-		return res;
+		return null;
 	};
 };
 
@@ -216,9 +195,10 @@ this.baseDeinit = function(bar) {
 		bar._findStatusIcon.hidden = false;
 	}
 	
-	bar._find = bar.___find;
-	delete bar.___find;
+	bar._find = bar.__find;
+	bar._findAgain = bar.__findAgain;
 	delete bar.__find;
+	delete bar.__findAgain;
 };
 
 this.cancelEvent = function(e) {

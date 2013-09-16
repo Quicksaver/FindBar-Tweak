@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.0';
+moduleAid.VERSION = '1.5.1';
 
 this.__defineGetter__('preferencesDialog', function() { return (typeof(inPreferences) != 'undefined' && inPreferences); });
 
@@ -32,7 +32,7 @@ this.positionSights = function(sGroup, range, scrollTop, scrollLeft, clientHeigh
 	var dimensions = range.node.getClientRects()[0];
 	if(!dimensions) { return sGroup; } // Something's wrong here, maybe the range has changed in the meantime
 	
-	var editableNode = (!isPDFJS) ? gFindBar._getEditableNode(range.node.startContainer) : null;
+	var editableNode = (!isPDFJS) ? tweakGetEditableNode(gFindBar, range.node.startContainer) : null;
 	var editableRect = (editableNode) ? editableNode.getClientRects()[0] : null;
 	
 	// We need to account for frames positions as well, as the ranges values are relative to them
@@ -444,12 +444,12 @@ this.currentSights = function(e) {
 		var scrollLeft = 0;
 	}
 	
-	var editableNode = gFindBar.browser._fastFind.foundEditable;
+	var editableNode = tweakFoundEditable(gFindBar);
 	var controller = (editableNode && editableNode.editor) ? editableNode.editor.selectionController : null;
 	if(controller) {
 		var sel = controller.getSelection(gFindBar.nsISelectionController.SELECTION_NORMAL);
 	} else {
-		var sel = gFindBar._getSelectionController(contentWindow).getSelection(gFindBar.nsISelectionController.SELECTION_NORMAL);
+		var sel = tweakGetSelectionController(gFindBar, contentWindow).getSelection(gFindBar.nsISelectionController.SELECTION_NORMAL);
 	}
 	
 	if(sel.rangeCount == 1) {

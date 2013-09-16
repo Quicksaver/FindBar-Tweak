@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.1';
+moduleAid.VERSION = '1.4.2';
 
 this.__defineGetter__('grid', function() {
 	var grids = (!viewSource) ? linkedPanel.querySelectorAll('[anonid="findGrid"]') : $$('[anonid="findGrid"]');
@@ -663,12 +663,12 @@ this.gridFollowCurrentHit = function(e) {
 	
 	// Normal HTML
 	else {
-		var editableNode = gFindBar.browser._fastFind.foundEditable;
+		var editableNode = tweakFoundEditable(gFindBar);
 		var controller = (editableNode && editableNode.editor) ? editableNode.editor.selectionController : null;
 		if(controller) {
 			var sel = controller.getSelection(gFindBar.nsISelectionController.SELECTION_NORMAL);
 		} else {
-			var sel = gFindBar._getSelectionController(contentWindow).getSelection(gFindBar.nsISelectionController.SELECTION_NORMAL);
+			var sel = tweakGetSelectionController(gFindBar, contentWindow).getSelection(gFindBar.nsISelectionController.SELECTION_NORMAL);
 		}
 		
 		var h = 0;

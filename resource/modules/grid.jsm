@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.2';
+moduleAid.VERSION = '1.4.3';
 
 this.__defineGetter__('grid', function() {
 	var grids = (!viewSource) ? linkedPanel.querySelectorAll('[anonid="findGrid"]') : $$('[anonid="findGrid"]');
@@ -438,6 +438,13 @@ this.placeHighlight = function(aGrid, node, scrollTop, fullHTMLHeight, pattern) 
 			var rect = node.getBoundingClientRect();
 			var absTop = (rect.top + scrollTop) / fullHTMLHeight;
 			var absBot = (rect.bottom + scrollTop) / fullHTMLHeight;
+			
+			// I have no idea why this happens sometimes, but we have to redo every row.
+			// Its rect.top and rect.bottom that are wrong sometimes.
+			if(absTop < 0 || absBot > 1) {
+				reHighlight(documentHighlighted);
+				return;
+			}
 			
 			setAttribute(row, 'highlight', 'true');
 			toggleAttribute(row, 'pattern', pattern);

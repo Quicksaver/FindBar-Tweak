@@ -226,10 +226,10 @@
 		position: fixed !important;
 	}
 	
-	#viewSource grid[anonid="findGrid"] {
+	#viewSource vbox[anonid="findGrid"] {
 		height: 100%;
 		position: relative;
-		top: -13px;
+		top: -13px; /* I have no idea why this happens... */
 	}
 
 	/* For the toolbar button */

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.7.5';
+moduleAid.VERSION = '1.7.6';
 
 this.__defineGetter__('FITresizer', function() { return gFindBar._FITresizer; });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -211,8 +211,11 @@ this.getTabForContent = function(aDoc) {
 	
 	if(!exists) {
 		windowMediator.callOnAll(function(aWindow) {
-			if(!exists && aWindow.document.getElementById('content').contentDocument == aDoc) {
-				exists = 'viewSource';
+			if(!exists) {
+				var content = aWindow.document.getElementById('content');
+				if(content.contentDocument == aDoc) {
+					exists = { linkedBrowser: content };
+				}
 			}
 		}, 'navigator:view-source');
 	}
@@ -222,7 +225,8 @@ this.getTabForContent = function(aDoc) {
 
 this.getPanelForContent = function(aDoc) {
 	var tab = getTabForContent(aDoc);
-	if(!tab || tab == 'viewSource') { return tab; }
+	if(!tab) { return tab; }
+	if(!tab.linkedPanel) { return 'viewSource'; } // View Source
 	
 	return tab.linkedPanel;
 };
@@ -364,7 +368,7 @@ this.selectFIThit = function() {
 		}
 	}
 	
-	var tab = inWindow.gBrowser._getTabForContentWindow(FITtabsList.currentItem.linkedDocument.defaultView);
+	var tab = getTabForContent(FITtabsList.currentItem.linkedDocument);
 	FITWorking = true;
 	
 	// First we select the tab if necessary
@@ -819,7 +823,7 @@ this.updateTabItem = function(item) {
 	// viewSource docs should never make it in this loop
 	if(docUnloaded(item.linkedDocument)) {
 		var inTab = getTabForContent(item.linkedDocument);
-		if(inTab && inTab.getAttribute('label')) {
+		if(inTab && inTab.getAttribute && inTab.getAttribute('label')) {
 			newTitle = inTab.getAttribute('label');
 		}
 	}

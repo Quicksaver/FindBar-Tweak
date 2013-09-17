@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.1';
+moduleAid.VERSION = '1.5.2';
 
 this.__defineGetter__('findCSButton', function() { return gFindBar.getElement(objName+'-find-cs-button'); });
 this.__defineGetter__('findCSCheckbox', function() { return gFindBar.getElement('find-case-sensitive'); });
@@ -73,7 +73,8 @@ this.triggerUIChange = function(bar) {
 
 // Handler for Ctrl+F, it closes the findbar if it is already opened
 this.toggleFindBar = function(event) {
-	if(!viewSource && window.TabView.isVisible()) {
+	// Pale Moon doesn't have TabView
+	if(!viewSource && window.TabView && window.TabView.isVisible()) {
 		window.TabView.enableSearch(event);
 	}
 	else {

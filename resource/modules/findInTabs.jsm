@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.7.2';
+moduleAid.VERSION = '1.7.3';
 
 this.__defineGetter__('FITresizer', function() { return gFindBar._FITresizer; });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -596,7 +596,8 @@ this.shouldFindAll = function() {
 	// We need all tab groups initialized in all windows, wait until all's ok
 	var allInitialized = true;
 	windowMediator.callOnAll(function(aWindow) {
-		if(!aWindow.TabView || !aWindow.TabView._window) {
+		// Pale Moon doesn't have TabView
+		if(aWindow.TabView && !aWindow.TabView._window) {
 			allInitialized = false;
 			aWindow.TabView._initFrame();
 		}
@@ -666,6 +667,8 @@ this.shouldFindAll = function() {
 	var itemCount = FITfilterList.length -1;
 	
 	windowMediator.callOnAll(function(aWindow) {
+		if(!aWindow.TabView) { return; } // Pale Moon does't have TabView
+		
 		for(var i in aWindow.TabView._window.GroupItems.groupItems) {
 			var groupItem = aWindow.TabView._window.GroupItems.groupItems[i];
 			if(groupItem.hidden) { continue; }

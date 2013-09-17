@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.2.1';
+moduleAid.VERSION = '2.2.2';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return window.gFindBarInitialized; });
@@ -23,26 +23,6 @@ this.__defineGetter__('findBarHidden', function() { return _getFindBarHidden(); 
 this.__defineSetter__('findBarHidden', function(v) { return gFindBar.hidden = v; });
 
 this.currentTab = null;
-
-this.cancelKeypressTextfield = function(e) {
-	switch(e.keyCode) {
-		case e.DOM_VK_RETURN:
-		case e.DOM_VK_TAB:
-			e.preventDefault();
-			break;
-		case e.DOM_VK_PAGE_UP:
-		case e.DOM_VK_PAGE_DOWN:
-			if(!event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
-				e.preventDefault();
-			}
-			break;
-		case e.DOM_VK_UP:
-		case e.DOM_VK_DOWN:
-			e.preventDefault();
-			break;
-		default: break;
-	}
-};
 
 this.baseInit = function(bar) {
 	if(!FITFull) {

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.2.0';
+moduleAid.VERSION = '2.2.1';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return window.gFindBarInitialized; });
@@ -9,10 +9,11 @@ this.__defineGetter__('browserPanel', function() { return $('browser-panel') || 
 this.getComputedStyle = function(el) { return window.getComputedStyle(el); };
 
 if(mFinder) {
-	this.__defineGetter__('contentWindow', function() { return gFindBar.browser.finder._fastFind.currentWindow || gFindBar.browser.contentWindow; });
+	this._getCurrentWindowForBrowser = function(browser) { return browser.finder._fastFind.currentWindow || browser.contentWindow; };
 } else {
-	this.__defineGetter__('contentWindow', function() { return gFindBar.browser._fastFind.currentWindow || gFindBar.browser.contentWindow; });
+	this._getCurrentWindowForBrowser = function(browser) { return browser._fastFind.currentWindow || browser.contentWindow; };
 }
+this.__defineGetter__('contentWindow', function() { return _getCurrentWindowForBrowser(gFindBar.browser); });
 
 this.inPDFJS = function(aDoc) { return (aDoc && aDoc.contentType == 'application/pdf' && aDoc.baseURI == 'resource://pdf.js/web/'); };
 this.__defineGetter__('isPDFJS', function() { return inPDFJS(contentDocument); });
@@ -22,17 +23,6 @@ this.__defineGetter__('findBarHidden', function() { return _getFindBarHidden(); 
 this.__defineSetter__('findBarHidden', function(v) { return gFindBar.hidden = v; });
 
 this.currentTab = null;
-
-this.compareRanges = function(aRange, bRange) {
-	if(aRange.nodeType || bRange.nodeType) { return false; } // Don't know if this could get here
-	if(aRange.startContainer == bRange.startContainer
-	&& aRange.endContainer == bRange.endContainer
-	&& aRange.startOffset == bRange.startOffset
-	&& aRange.endOffset == bRange.endOffset) {
-		return true;
-	}
-	return false;
-};
 
 this.cancelKeypressTextfield = function(e) {
 	switch(e.keyCode) {

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.7.1';
+moduleAid.VERSION = '1.7.2';
 
 this.__defineGetter__('FITresizer', function() { return gFindBar._FITresizer; });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -16,6 +16,7 @@ this.HITS_LENGTH = 150; // Length of preview text from preview items in find in 
 
 this.processingFITTab = false; // true means we are processing a tab currently, to ensure we only do one at a time to boost performance
 this.lastWindow = null;
+this.FITWorking = false;
 
 // All the different filters we can use for the FIT lists
 this.FITfilterList = [
@@ -304,7 +305,7 @@ this.selectFIThit = function() {
 		return;
 	}
 	
-	var inFindBar = inWindow.document.getElementById('FindToolbar') || inWindow.gFindBar;
+	var inFindBar = inWindow.document.getElementById('FindToolbar') || inWindow.gBrowser.getFindBar(getTabForContent(FITtabsList.currentItem.linkedDocument));
 	var ranges = FITtabsList.currentItem.linkedHits.currentItem.linkedRanges;
 	var rangeIdx = FITtabsList.currentItem.linkedHits.currentItem.rangeIdx;
 	if(rangeIdx > -1) {
@@ -329,8 +330,10 @@ this.selectFIThit = function() {
 			}
 		}
 		
+		FITWorking = true;
 		inWindow.focus();
 		inWindow.gBrowser.selectedTab = inWindow.gBrowser._getTabForContentWindow(FITtabsList.currentItem.linkedDocument.defaultView);
+		FITWorking = false;
 		
 		// Make sure we trigger a find event, so the pdf document renders our matches
 		if(!unWrap.PDFFindController.state
@@ -353,9 +356,10 @@ this.selectFIThit = function() {
 	var editableNode = tweakFoundEditable(inFindBar);
 	var controller = (editableNode && editableNode.editor) ? editableNode.editor.selectionController : null;
 	if(!controller) {
-		controller = tweakGetSelectionController(inFindBar, FITtabsList.currentItem.linkedDocument.defaultView);
+		var cWindow = _getCurrentWindowForBrowser(getTabForContent(FITtabsList.currentItem.linkedDocument).linkedBrowser);
+		controller = tweakGetSelectionController(inFindBar, cWindow);
 	}
-	var sel = controller.getSelection(gFindBar.nsISelectionController.SELECTION_NORMAL);
+	var sel = controller.getSelection(Ci.nsISelectionController.SELECTION_NORMAL);
 	
 	if(sel.rangeCount == 1) {
 		var selRange = sel.getRangeAt(0);
@@ -370,45 +374,47 @@ this.selectFIThit = function() {
 		}
 	}
 	
-	// This next double-controller hack, although ugly, is the only way I managed to get both the active selected element and the "green" background for the selected hit
-	// to go into the same place, when alternating between editable nodes and normal nodes.
-	// This method is still not perfect, a sometimes a green selection will linger when alternating between these types of nodes.
-	// However, this only happens sometimes and should be fine for most uses, it is also better than the alternative, which is how it was before where you wouldn't get
-	// a green background anywhere when alternating between these types of nodes.
+	var tab = inWindow.gBrowser._getTabForContentWindow(FITtabsList.currentItem.linkedDocument.defaultView);
+	FITWorking = true;
 	
-	sel.removeAllRanges();
-	sel.addRange(selectRange);
-	controller.scrollSelectionIntoView(gFindBar.nsISelectionController.SELECTION_NORMAL, gFindBar.nsISelectionController.SELECTION_WHOLE_SELECTION, gFindBar.nsISelectionController.SCROLL_CENTER_VERTICALLY);
-	
-	if(editableNode) {
-		if(!mFinder) {
-			try { tweakFoundEditable(inFindBar, null); } catch(ex) {}
-		}
-		try { inFindBar._foundEditable = null; } catch(ex) {}
-	}
-	
-	editableNode = tweakGetEditableNode(inFindBar, selectRange.startContainer);
-	if(editableNode) {
-		if(!mFinder) {
-			tweakFoundEditable(inFindBar, editableNode);
-		}
-		inFindBar._foundEditable = editableNode;
-		var controller = editableNode.editor.selectionController;
-	} else {
-		var controller = tweakGetSelectionController(inFindBar, selectRange.startContainer.ownerDocument.defaultView);
-	}
-	sel = controller.getSelection(gFindBar.nsISelectionController.SELECTION_NORMAL);
-	
-	sel.removeAllRanges();
-	sel.addRange(selectRange);
-	controller.scrollSelectionIntoView(gFindBar.nsISelectionController.SELECTION_NORMAL, gFindBar.nsISelectionController.SELECTION_WHOLE_SELECTION, gFindBar.nsISelectionController.SCROLL_CENTER_VERTICALLY);
-	controller.setDisplaySelection(controller.SELECTION_ATTENTION);
-	
-	inWindow.focus();
+	// First we select the tab if necessary
 	if(inWindow.gBrowser.selectedTab) { // view-source doesn't have or need this
-		inWindow.gBrowser.selectedTab = inWindow.gBrowser._getTabForContentWindow(FITtabsList.currentItem.linkedDocument.defaultView);
+		inWindow.gBrowser.selectedTab = tab;
 	}
 	
+	// Then, after we've made our selection, we use fastFind until it finds our range.
+	// This is the only way I found to also update the browser._fastFind object, manually setting the range in the controllers doesn't do this,
+	// because of that, we often end up with multiple selections on screen, and the cursor position wouldn't seem to update.
+	var aCompare = {
+		range: selectRange,
+		currentWindow: selectRange.startContainer.ownerDocument.defaultView,
+		foundEditable: tweakGetEditableNode(inFindBar, selectRange.startContainer),
+		//foundLink: null, // We can't rely on foundLink for this as we don't check this in our ranges
+		bar: inFindBar,
+		limit: FITtabsList.currentItem.linkedHits.rangesCount
+	};
+	
+	// Which is faster, search forward or backwards? We do an approximation based on the last selected row
+	var lastI = FITtabsList.currentItem.linkedHits._lastSelected;
+	var curI = FITtabsList.currentItem.linkedHits.selectedIndex;
+	var allI = FITtabsList.currentItem.linkedHits.itemCount;
+	var aFindPrevious = false;
+	if(lastI < curI) {
+		aFindPrevious = ((allI -curI +lastI) < (curI -lastI));
+	} else {
+		aFindPrevious = ((lastI -curI) < (allI -lastI +curI));
+	}
+	aCompare.aFindPrevious = aFindPrevious;
+	
+	tweakFastFindNormal(tab.linkedBrowser, gFindBar._findField.value, false, aCompare);
+	if(!mFinder) {
+		inFindBar._updateFoundLink(inFindBar.nsITypeAheadFind.FIND_FOUND);
+	}
+	
+	// Now we bring focus to the browser window
+	inWindow.focus();
+		
+	FITWorking = false;
 	dispatch(inFindBar, { type: 'SelectedFIThit', cancelable: false });
 };
 
@@ -801,6 +807,7 @@ this.resetTabHits = function(item) {
 	newHits.onselect = selectFIThit;
 	newHits.hidden = (item != FITtabsList.currentItem); // Keep the hits list visible
 	newHits._currentLabel = null;
+	newHits._lastSelected = -1;
 	item.linkedHits = FIThits.appendChild(newHits);
 };
 
@@ -990,14 +997,13 @@ this.countFITinTab = function(aWindow, item, word) {
 		FITtabsHeader.childNodes[1].minWidth = (item.linkedCount.clientWidth +8)+'px';
 	}
 	
-	var cWindow = lastWindow || contentWindow;
-	if(!cWindow || levels === null) { return; } // Usually triggered when a selection is on a frame and the frame closes
+	if(!lastWindow || levels === null) { return; } // Usually triggered when a selection is on a frame and the frame closes
 	
-	if(cWindow.document == item.linkedDocument) {
+	if(lastWindow.document == item.linkedDocument) {
 		FITtabsList.selectItem(item);
 		FITtabsList.ensureSelectedElementIsVisible();
 		
-		autoSelectFIThit(cWindow.document, item.linkedHits);
+		autoSelectFIThit(lastWindow.document, item.linkedHits);
 	}
 };
 
@@ -1033,6 +1039,7 @@ this.autoSelectFITtab = function(contentDoc) {
 this.autoSelectFIThit = function(aDoc, aList) {
 	removeAttribute(aList._currentLabel, 'current');
 	aList._currentLabel = null;
+	aList._lastSelected = -1;
 	
 	if(inPDFJS(aDoc)) {
 		// We need this to access protected properties, hidden from privileged code
@@ -1058,9 +1065,10 @@ this.autoSelectFIThit = function(aDoc, aList) {
 		var editableNode = tweakFoundEditable(inFindBar);
 		var controller = (editableNode && editableNode.editor) ? editableNode.editor.selectionController : null;
 		if(controller) {
-			var sel = controller.getSelection(gFindBar.nsISelectionController.SELECTION_NORMAL);
+			var sel = controller.getSelection(Ci.nsISelectionController.SELECTION_NORMAL);
 		} else {
-			var sel = tweakGetSelectionController(inFindBar, aDoc.defaultView).getSelection(gFindBar.nsISelectionController.SELECTION_NORMAL);
+			var cWindow = _getCurrentWindowForBrowser(getTabForContent(aDoc).linkedBrowser);
+			var sel = tweakGetSelectionController(inFindBar, cWindow).getSelection(Ci.nsISelectionController.SELECTION_NORMAL);
 		}
 		if(sel.rangeCount != 1) { return; }
 		var selRange = sel.getRangeAt(0);
@@ -1070,6 +1078,7 @@ this.autoSelectFIThit = function(aDoc, aList) {
 				if(compareRanges(selRange, aList.childNodes[i].linkedRanges[r].range)) {
 					aList.selectItem(aList.childNodes[i]);
 					aList.ensureSelectedElementIsVisible();
+					aList._lastSelected = aList.selectedIndex;
 					
 					aList._currentLabel = aList.childNodes[i].linkedRanges[r].label;
 					setAttribute(aList._currentLabel, 'current', 'true');
@@ -1163,6 +1172,7 @@ this.countFITinLevels = function(list, hitsList, aWindow) {
 	
 	var lastEndContainer = null;
 	var lastEndOffset = null;
+	hitsList.rangesCount = 0;
 	
 	for(var h=0; h<list.length; h++) {
 		var range = list[h];
@@ -1500,6 +1510,7 @@ this.countFITinLevels = function(list, hitsList, aWindow) {
 				setAttribute(label, 'onclick', objName+'.selectFIThit();');
 				label.rangeIdx = hit.linkedRanges.length;
 				hit.linkedRanges.push({ range: itemStrings[s].highlight, label: label });
+				hitsList.rangesCount++;
 			}
 		}
 		hit.appendChild(labelBox);
@@ -1870,11 +1881,13 @@ this.FITobserver = function(aSubject, aTopic, aData) {
 		switch(aData) {
 			case 'autoSelectFITtabFoundFindBar':
 				if(!FITFull) { return; } // This will be done in FIT's own search when it ends
+				if(FITWorking) { return; } // No redundant multiple calls are necessary
 				lastWindow = aSubject.defaultView;
 				autoSelectFITtab(aSubject);
 				return;
 				
 			case 'autoSelectFITtab':
+				if(FITWorking) { return; } // No redundant multiple calls are necessary
 				if(FITFull) {
 					lastWindow = aSubject.defaultView;
 				}
@@ -2026,6 +2039,8 @@ this.loadFindInTabs = function() {
 		prefAid.listen('alwaysOpenFIT', alwaysOpenFIT);
 		
 		alwaysOpenFIT();
+		
+		lastWindow = contentDocument.defaultView;
 	}
 	
 	// Update FIT lists as needed

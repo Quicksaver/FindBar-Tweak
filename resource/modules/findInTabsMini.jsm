@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.0';
+moduleAid.VERSION = '1.0.1';
 
 this.toggleFIT = function() {
 	if(FITFull) {
@@ -17,7 +17,7 @@ this.toggleFIT = function() {
 				&& !gFindBar.hidden
 				&& gFindBar._findField.value
 				&& aWindow.document.readyState != 'uninitialized'
-				&& aWindow[objName].lastWindow == contentWindow
+				&& aWindow[objName].lastWindow == contentDocument.defaultView
 				&& gFindBar._findField.value != aWindow.document.getElementById('FindToolbar')._findField.value) {
 					aWindow.document.getElementById('FindToolbar')._findField.value = gFindBar._findField.value;
 					aWindow[objName].shouldFindAll();
@@ -53,10 +53,10 @@ this.carryDataToFITFull = function(aWindow) {
 	}
 	if(typeof(aWindow[objName].lastWindow) == 'undefined') {
 		listenerAid.add(aWindow, 'FITLoaded', function() {
-			aWindow[objName].lastWindow = contentWindow;
+			aWindow[objName].lastWindow = contentDocument.defaultView;
 		}, false, true);
 	} else {
-		aWindow[objName].lastWindow = contentWindow;
+		aWindow[objName].lastWindow = contentDocument.defaultView;
 	}
 };
 

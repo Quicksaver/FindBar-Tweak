@@ -1,4 +1,15 @@
-moduleAid.VERSION = '1.0.0';
+moduleAid.VERSION = '1.1.0';
+
+this.compareRanges = function(aRange, bRange) {
+	if(aRange.nodeType || bRange.nodeType) { return false; } // Don't know if this could get here
+	if(aRange.startContainer == bRange.startContainer
+	&& aRange.endContainer == bRange.endContainer
+	&& aRange.startOffset == bRange.startOffset
+	&& aRange.endOffset == bRange.endOffset) {
+		return true;
+	}
+	return false;
+};
 
 // Selecting with the caret backwards would always reset the caret back to the end of the selection when calling _find() (using the fastFind object),
 // we need to work around that so the selection doesn't keep resetting. This happens in the case of fillWithSelection.
@@ -7,8 +18,35 @@ this.workAroundFind = false;
 
 // By doing it this way, we actually only check for mFinder once, if we did this inside each method, we would be checking multiple times unnecessarily.
 if(mFinder) {
-	this.tweakFastFindNormal = function(browser, val, onlyLinks) {
-		return browser.finder.fastFind(val, onlyLinks);
+	this.tweakFastFindNormal = function(browser, val, onlyLinks, aCompare) {
+		if(!aCompare) { return browser.finder.fastFind(val, onlyLinks); }
+		
+		// This doesn't need to be in the loop
+		var controller = (aCompare.foundEditable && aCompare.foundEditable.editor) ? aCompare.foundEditable.editor.selectionController : null;
+		if(!controller) {
+			controller = tweakGetSelectionController(aCompare.bar, aCompare.currentWindow);
+		}
+		
+		var loops = 0;
+		var res = browser.finder.fastFind(val, onlyLinks);
+		while(loops < aCompare.limit) {
+			if(res == browser.finder._fastFind.FIND_NOTFOUND) {
+				break;
+			}
+			
+			if(browser.finder._fastFind.currentWindow == aCompare.currentWindow
+			// && browser.fastFind.foundLink == aCompare.foundLink // Not a good idea to filter for this
+			&& browser.finder._fastFind.foundEditable == aCompare.foundEditable) {
+				var sel = controller.getSelection(Ci.nsISelectionController.SELECTION_NORMAL);
+				if(sel.rangeCount == 1 && compareRanges(aCompare.range, sel.getRangeAt(0))) {
+					return res;
+				}
+			}
+			
+			loops++; // We can't rely on FIND_WRAPPED status for pages with frames
+			res = tweakFindAgain(browser, aCompare.aFindPrevious);
+		}
+		return browser.finder._fastFind.FIND_NOTFOUND;
 	};
 	this.tweakFindAgain = function(browser, aFindPrevious, onlyLinks) {
 		return browser.finder.findAgain(aFindPrevious, onlyLinks);
@@ -37,8 +75,35 @@ if(mFinder) {
 	};
 }
 else {
-	this.tweakFastFindNormal = function(browser, val, onlyLinks) {
-		return browser.fastFind.find(val, onlyLinks);
+	this.tweakFastFindNormal = function(browser, val, onlyLinks, aCompare) {
+		if(!aCompare) { return browser.fastFind.find(val, onlyLinks); }
+		
+		// This doesn't need to be in the loop
+		var controller = (aCompare.foundEditable && aCompare.foundEditable.editor) ? aCompare.foundEditable.editor.selectionController : null;
+		if(!controller) {
+			controller = tweakGetSelectionController(aCompare.bar, aCompare.currentWindow);
+		}
+		
+		var loops = 0;
+		var res = browser.fastFind.find(val, onlyLinks);
+		while(loops < aCompare.limit) {
+			if(res == browser._fastFind.FIND_NOTFOUND) {
+				break;
+			}
+			
+			if(browser.fastFind.currentWindow == aCompare.currentWindow
+			// && browser.fastFind.foundLink == aCompare.foundLink // Not a good idea to filter for this
+			&& browser.fastFind.foundEditable == aCompare.foundEditable) {
+				var sel = controller.getSelection(Ci.nsISelectionController.SELECTION_NORMAL);
+				if(sel.rangeCount == 1 && compareRanges(aCompare.range, sel.getRangeAt(0))) {
+					return res;
+				}
+			}
+			
+			loops++; // We can't rely on FIND_WRAPPED status for pages with frames
+			res = tweakFindAgain(browser, aCompare.aFindPrevious);
+		}
+		return browser._fastFind.FIND_NOTFOUND;
 	};
 	this.tweakFindAgain = function(browser, aFindPrevious, onlyLinks) {
 		return browser.fastFind.findAgain(aFindPrevious, onlyLinks);

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.0';
+moduleAid.VERSION = '1.1.1';
 
 this.compareRanges = function(aRange, bRange) {
 	if(aRange.nodeType || bRange.nodeType) { return false; } // Don't know if this could get here
@@ -142,6 +142,16 @@ this.tweakFindRange = function(bar, aWord, caseSensitive) {
 	this.word = aWord;
 	if(typeof(caseSensitive) == 'undefined') { this.setCaseSensitive(bar); }
 	else { this._finder.caseSensitive = caseSensitive; }
+};
+
+this.getLinkElement = function(aNode) {
+	while(aNode) {
+		if(aNode instanceof Ci.nsIDOMHTMLAnchorElement) {
+			return aNode;
+		}
+		aNode = aNode.parentNode;
+	}
+	return null;
 };
 
 moduleAid.LOADMODULE = function() {

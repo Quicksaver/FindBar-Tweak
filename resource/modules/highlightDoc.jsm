@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.0';
+moduleAid.VERSION = '1.4.1';
 
 this.alwaysUpdateStatusUI = function(e) {
 	// toggleHighlight() doesn't update the UI in these conditions, we need it to, to update the counter (basically hide it)
@@ -175,13 +175,19 @@ moduleAid.LOADMODULE = function() {
 					var finder = new tweakFindRange(this, aWord);
 					
 					while((retRange = finder.Find(searchRange, startPt, endPt))) {
+						startPt = retRange.cloneRange();
+						startPt.collapse(false);
+						
+						// Links Only search should update at least the counter accordingly
+						if(this._findMode == this.FIND_LINKS
+						&& (retRange.startContainer != retRange.endContainer || !getLinkElement(retRange.startContainer))) {
+							continue;
+						}
+						
 						textFound = true;
 						
 						// We can stop now if all we're looking for is the found status
 						if(!aHighlight && !aLevel) { break; }
-						
-						startPt = retRange.cloneRange();
-						startPt.collapse(false);
 						
 						if(aHighlight) {
 							tweakHighlightRange(this, retRange, controller);

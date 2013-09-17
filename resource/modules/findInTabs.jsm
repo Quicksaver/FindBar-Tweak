@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.7.3';
+moduleAid.VERSION = '1.7.4';
 
 this.__defineGetter__('FITresizer', function() { return gFindBar._FITresizer; });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -7,8 +7,6 @@ this.__defineGetter__('FITtabsList', function() { return FITtabs.firstChild; });
 this.__defineGetter__('FITtabsGroups', function() { return FITtabsList.nextSibling; });
 this.__defineGetter__('FITtabsHeader', function() { return FITtabsList.firstChild; });
 this.__defineGetter__('FIThits', function() { return $(objName+'-findInTabs-hits'); });
-this.__defineGetter__('FITbroadcaster', function() { return $(objName+'-findInTabs-broadcaster'); });
-this.__defineGetter__('FITbutton', function() { return gFindBar._FITtoggle; });
 this.__defineGetter__('FITupdate', function() { return gFindBar._FITupdate; });
 this.__defineGetter__('FITfilter', function() { return $(objName+'-findInTabs-filter'); });
 

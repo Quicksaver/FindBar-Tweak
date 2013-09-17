@@ -1,4 +1,6 @@
-moduleAid.VERSION = '1.0.1';
+moduleAid.VERSION = '1.0.2';
+
+this.__defineGetter__('FITbroadcaster', function() { return $(objName+'-findInTabs-broadcaster'); });
 
 this.toggleFIT = function() {
 	if(FITFull) {
@@ -146,7 +148,11 @@ this.loadFindInTabsMini = function() {
 };
 
 this.loadFITmodule = function() {
-	moduleAid.loadIf('findInTabs', FITFull || (!prefAid.FITFull && !viewSource));
+	var load = FITFull || (!prefAid.FITFull && !viewSource);
+	moduleAid.loadIf('findInTabs', load);
+	if(!load) {
+		removeAttribute(FITbroadcaster, 'checked');
+	}
 };
 
 moduleAid.LOADMODULE = function() {

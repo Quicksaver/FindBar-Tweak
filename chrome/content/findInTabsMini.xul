@@ -13,11 +13,11 @@
 	</broadcasterset>
 	
 	<window id="main-window">
-		<keyset id="objName-findInTabs-open-keyset">
-			<key id="objName-findInTabs-open-key"
+		<keyset id="objName-findInTabs-keyset">
+			<key id="objName-findInTabs-key"
 				keycode="VK_F3"
-				modifiers="accel"
-				oncommand="objName.toggleFIT();" />
+				modifiers="alt"
+				oncommand="objName.commandUpdateFIT();" />
 		</keyset>
 	</window>
 	
@@ -33,11 +33,11 @@
 				oncommand="objName.toggleFIT();" />
 		</broadcasterset>
 		
-		<keyset id="objName-findInTabs-open-keyset">
-			<key id="objName-findInTabs-open-key"
+		<keyset id="objName-findInTabs-keyset">
+			<key id="objName-findInTabs-key"
 				keycode="VK_F3"
-				modifiers="accel"
-				oncommand="objName.toggleFIT();" />
+				modifiers="alt"
+				oncommand="objName.commandUpdateFIT();" />
 		</keyset>
 	</window>
 	

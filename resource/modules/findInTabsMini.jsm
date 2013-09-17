@@ -1,6 +1,17 @@
-moduleAid.VERSION = '1.0.2';
+moduleAid.VERSION = '1.0.3';
 
 this.__defineGetter__('FITbroadcaster', function() { return $(objName+'-findInTabs-broadcaster'); });
+
+this.commandUpdateFIT = function() {
+	if(!FITFull && (viewSource || prefAid.FITFull || FITbox.hidden)) {
+		toggleFIT();
+		return;
+	}
+	
+	if(FITFull || (!viewSource && !prefAid.FITFull && !FITbox.hidden)) {
+		shouldFindAll();
+	}
+};
 
 this.toggleFIT = function() {
 	if(FITFull) {

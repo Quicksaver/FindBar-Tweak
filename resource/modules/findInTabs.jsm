@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.7.4';
+moduleAid.VERSION = '1.7.5';
 
 this.__defineGetter__('FITresizer', function() { return gFindBar._FITresizer; });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -87,14 +87,6 @@ this.autoSelectFITGroup = function() {
 	FITtabsGroups.ensureSelectedElementIsVisible();
 	
 	updateFITgroupNames();
-};
-
-this.commandUpdateFIT = function() {
-	if(FITbox.hidden) {
-		toggleFIT();
-		return;
-	}
-	shouldFindAll();
 };
 
 this.addFITElements = function(bar) {

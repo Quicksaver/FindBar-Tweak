@@ -19,14 +19,10 @@
 	</popupset>
 	
 	<keyset id="objName-findInTabs-keyset">
-		<key id="objName-findInTabs-update-key"
+		<key id="objName-findInTabs-key"
 			keycode="VK_F3"
 			modifiers="alt"
 			oncommand="objName.commandUpdateFIT();" />
-		<key id="objName-findInTabs-open-key"
-			keycode="VK_F3"
-			modifiers="accel"
-			oncommand="objName.toggleFIT();" />
 		<key id="cmd_find"
 			key="F"
 			modifiers="accel"

@@ -2,15 +2,6 @@
 <!DOCTYPE overlay SYSTEM "chrome://findbartweak/locale/findbar.dtd">
 <overlay id="findInTabs_overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 	
-	<window id="main-window">
-		<keyset id="objName-findInTabs-update-keyset">
-			<key id="objName-findInTabs-update-key"
-				keycode="VK_F3"
-				modifiers="alt"
-				oncommand="objName.commandUpdateFIT();" />
-		</keyset>
-	</window>
-	
 	<vbox id="browser-bottombox">
 		<hbox id="objName-findInTabs-box"
 			insertafter="FindToolbar"

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.8';
+moduleAid.VERSION = '1.1.9';
 
 this.REDOINGHIGHLIGHTS = false;
 this.__defineGetter__('counter', function() { return gFindBar._findStatusDesc.textContent; });
@@ -48,9 +48,9 @@ this.fillHighlightCounter = function(e) {
 		if(total == 0) { return; }
 		
 		if(selected > 0) {
-			counter = stringsAid.get('counter', 'counterFormat', [ ["$hit$", selected], ["$total$", total] ]);
+			counter = stringsAid.get('counter', 'counterFormat', [ ["$hit$", selected], ["$total$", total] ], total);
 		} else {
-			counter = stringsAid.get('counter', 'counterSimple', [ ["$total$", total] ]);
+			counter = stringsAid.get('counter', 'counterSimple', [ ["$total$", total] ], total);
 		}
 		gFindBar._findStatusDesc.hidden = false;
 		gFindBar._findStatusIcon.hidden = false;
@@ -107,9 +107,9 @@ this.fillHighlightCounter = function(e) {
 	}
 	
 	if(h > 0) {
-		counter = stringsAid.get('counter', 'counterFormat', [ ["$hit$", h], ["$total$", linkedPanel._counterHighlights.length] ]);
+		counter = stringsAid.get('counter', 'counterFormat', [ ["$hit$", h], ["$total$", linkedPanel._counterHighlights.length] ], linkedPanel._counterHighlights.length);
 	} else {
-		counter = stringsAid.get('counter', 'counterSimple', [ ["$total$", linkedPanel._counterHighlights.length] ]);
+		counter = stringsAid.get('counter', 'counterSimple', [ ["$total$", linkedPanel._counterHighlights.length] ], linkedPanel._counterHighlights.length);
 	}
 	gFindBar._findStatusDesc.hidden = false;
 	gFindBar._findStatusIcon.hidden = false;

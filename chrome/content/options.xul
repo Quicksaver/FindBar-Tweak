@@ -97,7 +97,7 @@
 		</groupbox>
 		<groupbox align="start">
 			<caption label="&OptButtonAndLabels.label;"/>
-			<checkbox label="&OptuseCounter.label;" preference="pref-useCounter"/>
+			<checkbox label="&OptuseCounterNew.label;" preference="pref-useCounter"/>
 			<checkbox label="&OpthideClose.label;" preference="pref-hideClose"/>
 			<checkbox id="hideLabels" label="&OpthideLabels.label;" preference="pref-hideLabels"/>
 			<checkbox id="hideFindLabelCheckbox" label="&OpthideFindLabel.label;" preference="pref-hideFindLabel"/>

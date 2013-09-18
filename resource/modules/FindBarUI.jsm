@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.2';
+moduleAid.VERSION = '1.5.3';
 
 this.__defineGetter__('findCSButton', function() { return gFindBar.getElement(objName+'-find-cs-button'); });
 this.__defineGetter__('findCSCheckbox', function() { return gFindBar.getElement('find-case-sensitive'); });
@@ -8,19 +8,8 @@ this.doOpenOptions = function() {
 };
 
 this.alwaysFindNormal = function(e) {
-	// When opening FIT, enforce normal findbar mode
-	if(prefAid.findInTabs && typeof(FITbox) != 'undefined' && FITbox && !FITbox.hidden) {
-		if((!e.detail && gFindBar._findMode != gFindBar.FIND_NORMAL) || e.detail == gFindBar.FIND_TYPEAHEAD) {
-			e.preventDefault();
-			e.stopPropagation();
-			gFindBar._findMode = gFindBar.FIND_NORMAL;
-			gFindBar.open(gFindBar.FIND_NORMAL);
-		}
-		return;
-	}
-	
 	// If opening normal Find bar when quick find is already opened, make sure we trigger the change
-	if(!gFindBar.hidden && e.detail != gFindBar.FIND_TYPEAHEAD && gFindBar._findMode == gFindBar.FIND_TYPEAHEAD && prefAid.FAYTmode != 'alwaysquick') {
+	if(!gFindBar.hidden && e.detail == gFindBar.FIND_NORMAL && gFindBar._findMode != gFindBar.FIND_NORMAL && prefAid.FAYTmode != 'alwaysquick') {
 		e.preventDefault();
 		e.stopPropagation();
 		gFindBar._findMode = gFindBar.FIND_NORMAL;
@@ -29,14 +18,14 @@ this.alwaysFindNormal = function(e) {
 	}
 	
 	// If typing when Find bar is already opened in normal mode, use that instead of "reopening" as quick find mode
-	if(!gFindBar.hidden && e.detail == gFindBar.FIND_TYPEAHEAD) {
+	if(!gFindBar.hidden && gFindBar._findMode == gFindBar.FIND_NORMAL && e.detail == gFindBar.FIND_TYPEAHEAD) {
 		e.preventDefault();
 		e.stopPropagation();
 		return;
 	}
 	
-	// If opening findbar when QuickFind bar is already opened and we're supposed to keep QuickFind
-	if(!gFindBar.hidden && ((!e.detail && gFindBar._findMode != gFindBar.FIND_TYPEAHEAD) || e.detail != gFindBar.FIND_TYPEAHEAD) && prefAid.FAYTmode == 'alwaysquick') {
+	// If opening findbar when QuickFind bar is already opened and we're supposed to keep QuickFind, make sure we do
+	if(!gFindBar.hidden && prefAid.FAYTmode == 'alwaysquick' && (!e.detail || e.detail == gFindBar.FIND_NORMAL)) {
 		e.preventDefault();
 		e.stopPropagation();
 		gFindBar.open(gFindBar.FIND_TYPEAHEAD);
@@ -57,7 +46,7 @@ this.alwaysFindNormal = function(e) {
 	}
 	
 	// Option to force quick find mode over normal mode
-	if(e.detail != gFindBar.FIND_TYPEAHEAD && prefAid.FAYTmode == 'alwaysquick') {
+	if((!e.detail || e.detail == gFindBar.FIND_NORMAL) && prefAid.FAYTmode == 'alwaysquick') {
 		e.preventDefault();
 		e.stopPropagation();
 		gFindBar.open(gFindBar.FIND_TYPEAHEAD);

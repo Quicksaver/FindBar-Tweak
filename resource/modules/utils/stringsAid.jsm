@@ -7,7 +7,8 @@ moduleAid.LAZY = true;
 //	string - (string) name of the string to retrieve from bundle
 //	(optional) replace - (array) [ [original, new] x n ] retrieves the string with the occurences of original replaced with new
 //	(optional) aNumber - 	(int) if set will choose the corresponding Plural Form from the string returned based on it;
-//				see https://developer.mozilla.org/en-US/docs/Localization_and_Plurals
+//				expects string "PluralRule" defined in the same bundle representing a number.
+//				See https://developer.mozilla.org/en-US/docs/Localization_and_Plurals
 //	(dont set) alt - don't set this variable, it is for internal use so the method know it needs to look in a special location for en locales, like in the case of
 //			 untranslated strings, this should be set in chrome.manifest as objPathString-en to the en-US locale.
 this.stringsAid = {

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.2.2';
+moduleAid.VERSION = '2.2.3';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return window.gFindBarInitialized; });
@@ -147,6 +147,16 @@ this.baseInit = function(bar) {
 		}
 		return null;
 	};
+	
+	bar._onFindAgainCommand = bar.onFindAgainCommand;
+	bar.onFindAgainCommand = function(aFindPrevious) {
+		var suffix = (perTabFB && !viewSource && this.linkedPanel != gBrowser.mCurrentTab.linkedPanel) ? 'AnotherTab' : '';
+		
+		if(dispatch(this, { type: 'WillFindAgainCommand'+suffix, detail: { aFindPrevious: aFindPrevious } })) {
+			this._onFindAgainCommand(aFindPrevious);
+			dispatch(this, { type: 'FoundAgainCommand'+suffix, cancelable: false, detail: { aFindPrevious: aFindPrevious } });
+		}
+	};
 };
 
 this.baseDeinit = function(bar) {
@@ -167,8 +177,10 @@ this.baseDeinit = function(bar) {
 	
 	bar._find = bar.__find;
 	bar._findAgain = bar.__findAgain;
+	bar.onFindAgainCommand = bar._onFindAgainCommand;
 	delete bar.__find;
 	delete bar.__findAgain;
+	delete bar._onFindAgainCommand;
 };
 
 this.cancelEvent = function(e) {

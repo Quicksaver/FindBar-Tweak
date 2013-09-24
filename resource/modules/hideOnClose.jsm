@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.1';
+moduleAid.VERSION = '1.2.2';
 
 this.hideTabSelected = function() {
 	if(!perTabFB || gFindBarInitialized) {
@@ -8,7 +8,7 @@ this.hideTabSelected = function() {
 
 this.hideFindBarClosed = function() {
 	if(findBarHidden && (documentHighlighted || documentReHighlight)) {
-		gFindBar.toggleHighlight(false);
+		highlightsOff();
 	}
 };
 

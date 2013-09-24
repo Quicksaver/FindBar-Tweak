@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.3.0';
+moduleAid.VERSION = '1.3.1';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -30,7 +30,7 @@ this.keepStatusUI = function(e) {
 
 this.escHighlights = function(e) {
 	if(e.keyCode == e.DOM_VK_ESCAPE) {
-		gFindBar.toggleHighlight(false);
+		highlightsOff();
 	}
 };
 
@@ -43,12 +43,27 @@ this.highlightOnClose = function(e) {
 	
 	// To remove the grid and the esc key listener if there are no highlights
 	if(documentHighlighted && (!gFindBar._findField.value || linkedPanel._notFoundHighlights)) {
-		gFindBar.toggleHighlight(false);
+		highlightsOff();
 	}
 };
 
 this.highlightsOnToggling = function(e) {
 	var aHighlight = e.detail;
+	
+	// Bugfix: sometimes when hitting F3 on a new value (i.e. globalFB, input one value in one tab, switch tab, hit F3 to use the same value)
+	// it would highlight all, we should make sure it doesn't.
+	if(!aHighlight && documentHighlighted && linkedPanel._highlightedWord && linkedPanel._highlightedWord == gFindBar._findField.value) {
+		gFindBar._highlightAnyway = true;
+	}
+	if(aHighlight) {
+		if(!prefAid.highlightOnFindAgain && gFindBar.hidden && !documentHighlighted && !gFindBar._highlightAnyway) {
+			aHighlight = false;
+			e.preventDefault();
+		}
+		gFindBar._highlightAnyway = false;
+	}
+	linkedPanel._highlightedWord = (aHighlight) ? gFindBar._findField.value : '';
+	
 	// Remove highlights when hitting Esc
 	if(aHighlight) {
 		listenerAid.add(contentDocument, 'keyup', escHighlights);
@@ -218,7 +233,16 @@ this.reHighlight = function(reDo) {
 	gFindBar.toggleHighlight(false);
 	if(reDo && dispatch(gFindBar, { type: 'WillReHighlight' })) {
 		gFindBar.toggleHighlight(true);
+	} else {
+		gFindBar._highlightedWord = '';
+		gFindBar._highlightAnyway = false;
 	}
+};
+
+this.highlightsOff = function() {
+	gFindBar.toggleHighlight(false);
+	gFindBar._highlightedWord = '';
+	gFindBar._highlightAnyway = false;
 };
 
 // Add the reHighlight attribute to all tabs
@@ -253,7 +277,7 @@ this.highlightsInit = function(bar) {
 		
 		// Just reset any highlights and the counter if it's not supposed to highlight
 		if(!this.getElement("highlight").checked || !this._findField.value) {
-			this.toggleHighlight(false);
+			highlightsOff();
 			return;
 		}
 		
@@ -293,16 +317,14 @@ this.highlightsInit = function(bar) {
 		var suffix = (perTabFB && !viewSource && this.linkedPanel != gBrowser.mCurrentTab.linkedPanel) ? 'AnotherTab' : '';
 		
 		if(dispatch(this, { type: 'WillToggleHighlight'+suffix, detail: aHighlight })) {
-			if(this._dispatchFindEvent && !this._dispatchFindEvent("highlightallchange")) {
+			var word = this._findField.value;
+			
+			if((this._dispatchFindEvent && !this._dispatchFindEvent("highlightallchange"))
+			// Bug 429723. Don't attempt to highlight ""
+			|| (aHighlight && !word)) {
 				dispatch(this, { type: 'ToggledHighlight'+suffix, detail: aHighlight, cancelable: false });
 				return;
 			}
-			
-			var word = this._findField.value;
-			
-			// Bug 429723. Don't attempt to highlight ""
-			if(aHighlight && !word)
-				return;
 			
 			// Initially I was going to change this in Finder.jsm's prototype, but that caused recursion errors, so I'm going around the Finder.jsm altogether.
 			if(mFinder) {
@@ -322,6 +344,7 @@ this.highlightsInit = function(bar) {
 			} else {
 				this.browser.finder._notify(res);
 			}
+			
 			dispatch(this, { type: 'ToggledHighlight'+suffix, detail: aHighlight, cancelable: false });
 		}
 	};
@@ -332,6 +355,7 @@ this.highlightsDeinit = function(bar) {
 	bar.toggleHighlight = bar._toggleHighlight;
 	delete bar.__setHighlightTimeout;
 	delete bar._toggleHighlight;
+	delete bar._highlightAnyway;
 };
 
 this.toggleHighlightByDefault = function() {
@@ -397,6 +421,7 @@ moduleAid.UNLOADMODULE = function() {
 			delete panel._findWord;
 			delete panel._statusUI;
 			delete panel._neverCurrent;
+			delete panel._highlightedWord;
 			
 			if(panel.linkedBrowser && panel.linkedBrowser.contentDocument) {
 				listenerAid.remove(panel.linkedBrowser.contentDocument, 'keyup', escHighlights);

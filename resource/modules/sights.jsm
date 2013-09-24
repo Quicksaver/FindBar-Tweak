@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.1';
+moduleAid.VERSION = '1.5.2';
 
 this.__defineGetter__('preferencesDialog', function() { return (typeof(inPreferences) != 'undefined' && inPreferences); });
 
@@ -219,7 +219,7 @@ this.buildSights = function(sGroup, x, y, detail) {
 					// Remove the sight when it gets too small
 					if(newSize < 40) {
 						this.fullCycles++;
-						if(this.fullCycles == this.maxRepeat) {
+						if(this.fullCycles >= this.maxRepeat) {
 							this.selfRemove();
 							return;
 						}
@@ -241,7 +241,7 @@ this.buildSights = function(sGroup, x, y, detail) {
 						// Remove when we finish animating
 						if(this.phase > 720) {
 							this.fullCycles++;
-							if(this.fullCycles == this.maxRepeat) {
+							if(this.fullCycles >= this.maxRepeat) {
 								this.selfRemove();
 								return;
 							}

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.7.7';
+moduleAid.VERSION = '1.7.8';
 
 this.__defineGetter__('FITresizer', function() { return gFindBar._FITresizer; });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -400,7 +400,7 @@ this.selectFIThit = function() {
 	}
 	aCompare.aFindPrevious = aFindPrevious;
 	
-	tweakFastFindNormal(tab.linkedBrowser, gFindBar._findField.value, false, aCompare);
+	tweakFastFindNormal(tab.linkedBrowser, gFindBar._findField.value, false, false, aCompare);
 	if(!mFinder) {
 		inFindBar._updateFoundLink(inFindBar.nsITypeAheadFind.FIND_FOUND);
 	}

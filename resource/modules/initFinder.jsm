@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.1';
+moduleAid.VERSION = '1.1.2';
 
 this.compareRanges = function(aRange, bRange) {
 	if(aRange.nodeType || bRange.nodeType) { return false; } // Don't know if this could get here
@@ -18,8 +18,8 @@ this.workAroundFind = false;
 
 // By doing it this way, we actually only check for mFinder once, if we did this inside each method, we would be checking multiple times unnecessarily.
 if(mFinder) {
-	this.tweakFastFindNormal = function(browser, val, onlyLinks, aCompare) {
-		if(!aCompare) { return browser.finder.fastFind(val, onlyLinks); }
+	this.tweakFastFindNormal = function(browser, val, aLinksOnly, aDrawOutline, aCompare) {
+		if(!aCompare) { return browser.finder.fastFind(val, aLinksOnly, aDrawOutline); }
 		
 		// This doesn't need to be in the loop
 		var controller = (aCompare.foundEditable && aCompare.foundEditable.editor) ? aCompare.foundEditable.editor.selectionController : null;
@@ -28,7 +28,7 @@ if(mFinder) {
 		}
 		
 		var loops = 0;
-		var res = browser.finder.fastFind(val, onlyLinks);
+		var res = browser.finder.fastFind(val);
 		while(loops < aCompare.limit) {
 			if(res == browser.finder._fastFind.FIND_NOTFOUND) {
 				break;
@@ -48,8 +48,8 @@ if(mFinder) {
 		}
 		return browser.finder._fastFind.FIND_NOTFOUND;
 	};
-	this.tweakFindAgain = function(browser, aFindPrevious, onlyLinks) {
-		return browser.finder.findAgain(aFindPrevious, onlyLinks);
+	this.tweakFindAgain = function(browser, aFindPrevious, aLinksOnly, aDrawOutline) {
+		return browser.finder.findAgain(aFindPrevious, aLinksOnly, aDrawOutline);
 	};
 	this.tweakGetSelectionController = function(bar, win) {
 		return bar.browser.finder._getSelectionController(win);
@@ -75,8 +75,8 @@ if(mFinder) {
 	};
 }
 else {
-	this.tweakFastFindNormal = function(browser, val, onlyLinks, aCompare) {
-		if(!aCompare) { return browser.fastFind.find(val, onlyLinks); }
+	this.tweakFastFindNormal = function(browser, val, aLinksOnly, aCompare) {
+		if(!aCompare) { return browser.fastFind.find(val, aLinksOnly); }
 		
 		// This doesn't need to be in the loop
 		var controller = (aCompare.foundEditable && aCompare.foundEditable.editor) ? aCompare.foundEditable.editor.selectionController : null;
@@ -85,7 +85,7 @@ else {
 		}
 		
 		var loops = 0;
-		var res = browser.fastFind.find(val, onlyLinks);
+		var res = browser.fastFind.find(val);
 		while(loops < aCompare.limit) {
 			if(res == browser._fastFind.FIND_NOTFOUND) {
 				break;
@@ -105,8 +105,8 @@ else {
 		}
 		return browser._fastFind.FIND_NOTFOUND;
 	};
-	this.tweakFindAgain = function(browser, aFindPrevious, onlyLinks) {
-		return browser.fastFind.findAgain(aFindPrevious, onlyLinks);
+	this.tweakFindAgain = function(browser, aFindPrevious, aLinksOnly) {
+		return browser.fastFind.findAgain(aFindPrevious, aLinksOnly);
 	};
 	this.tweakGetSelectionController = function(bar, win) {
 		return bar._getSelectionController(win);
@@ -132,9 +132,9 @@ else {
 	};
 }
 
-this.tweakFastFind = function(browser, val, onlyLinks) {
+this.tweakFastFind = function(browser, val, aLinksOnly, aDrawOutline) {
 	if(workAroundFind) { return Ci.nsITypeAheadFind.FIND_FOUND; }
-	return tweakFastFindNormal(browser, val, onlyLinks);
+	return tweakFastFindNormal(browser, val, aLinksOnly, aDrawOutline);
 };
 
 this.tweakFindRange = function(bar, aWord, caseSensitive) {

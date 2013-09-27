@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.2.3';
+moduleAid.VERSION = '2.2.4';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return window.gFindBarInitialized; });
@@ -94,7 +94,7 @@ this.baseInit = function(bar) {
 				
 				this._updateCaseSensitivity(val);
 				
-				res = tweakFastFind(this.browser, val, this._findMode == this.FIND_LINKS);
+				res = tweakFastFind(this.browser, val, this._findMode == this.FIND_LINKS, this._findMode != this.FIND_NORMAL);
 				
 				if(!mFinder) {
 					this._updateFoundLink(res);
@@ -132,7 +132,7 @@ this.baseInit = function(bar) {
 		var suffix = (perTabFB && !viewSource && this.linkedPanel != gBrowser.mCurrentTab.linkedPanel) ? 'AnotherTab' : '';
 		
 		if(dispatch(this, { type: 'WillFindAgain'+suffix, detail: { aFindPrevious: aFindPrevious } })) {
-			var res = tweakFindAgain(this.browser, aFindPrevious, this._findMode == this.FIND_LINKS);
+			var res = tweakFindAgain(this.browser, aFindPrevious, this._findMode == this.FIND_LINKS, this._findMode != this.FIND_NORMAL);
 			
 			if(!mFinder) {
 				this._updateFoundLink(res);

@@ -1,4 +1,4 @@
-var defaultsVersion = '1.2.3';
+var defaultsVersion = '1.2.4';
 var objName = 'findbartweak';
 var objPathString = 'findbartweak';
 
@@ -109,7 +109,7 @@ function startConditions(aReason) {
 function onStartup(aReason) {
 	if(Services.vc.compare(Services.appinfo.platformVersion, "25.0a1") >= 0) { perTabFB = true; }
 	//if(Services.vc.compare(Services.appinfo.platformVersion, "26.0a1") >= 0) { onTopFB = true; } // Backed out of Trunk until further notice
-	if(Services.vc.compare(Services.appinfo.platformVersion, "26.0a1") >= 0) { mFinder = true; }
+	if(Services.vc.compare(Services.appinfo.platformVersion, "27.0a1") >= 0) { mFinder = true; }
 	
 	moduleAid.load('builtinPrefs');
 	moduleAid.load('highlightColor');

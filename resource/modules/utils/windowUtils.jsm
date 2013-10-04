@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.0.6';
+moduleAid.VERSION = '2.1.0';
 moduleAid.LAZY = true;
 
 // listenerAid - Object to aid in setting and removing all kinds of event listeners to an object;
@@ -24,11 +24,36 @@ this.loadWindowTools = function() {
 	moduleAid.load('utils/windowTools');
 };
 
+// alwaysRunOnClose[] - array of methods to be called when a window is unloaded. Each entry expects function(aWindow) where
+// 	aWindow - (object) the window that has been unloaded
+this.alwaysRunOnClose = [];
+
 moduleAid.LOADMODULE = function() {
+	// overlayAid stuff, no need to load the whole module if it's not needed.
+	// This will be run after removeObject(), so this is just to prevent any leftovers
+	alwaysRunOnClose.push(function(aWindow) {
+		delete aWindow['_OVERLAYS_'+objName];
+		
+		try {
+			var attr = aWindow.document.documentElement.getAttribute('Bootstrapped_Overlays').split(' ');
+			if(attr.indexOf(objName) == -1) { return; }
+			
+			attr.splice(attr.indexOf(objName), 1);
+			if(attr.length > 0) {
+				aWindow.document.documentElement.setAttribute('Bootstrapped_Overlays', attr.join(' '));
+			} else {
+				aWindow.document.documentElement.removeAttribute('Bootstrapped_Overlays');
+			}
+		}
+		catch(ex) {} // Prevent some unforeseen error here
+	});
+	alwaysRunOnClose.push(removeObject);
+	
+	// This will not happen when quitting the application (on a restart for example), it's not needed in this case
 	listenerAid.add(window, 'unload', function(e) {
 		window.willClose = true; // window.closed is not reliable in some cases
-		for(var i=0; i<fullClean.length; i++) {
-			fullClean[i](window);
+		while(alwaysRunOnClose.length > 0) {
+			alwaysRunOnClose.pop()(window);
 		}
 		delete window.willClose;
 	}, false, true);

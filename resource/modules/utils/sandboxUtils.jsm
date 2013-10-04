@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.1.2';
+moduleAid.VERSION = '2.1.3';
 moduleAid.LAZY = true;
 
 // window - Similarly to windowMediator.callOnMostRecent, the window property returns the most recent navigator:browser window object
@@ -112,13 +112,6 @@ this.loadAttributesTools = function() {
 	delete this.trueAttribute;
 	moduleAid.load('utils/attributes');
 };
-
-// fullClean[] - array of methods to be called when a window is unloaded. Each entry expects function(aWindow) where
-// 	aWindow - (object) the window that has been unloaded
-this.fullClean = [];
-this.fullClean.push(function(aWindow) {
-	removeObject(aWindow, objName);
-});
 
 moduleAid.UNLOADMODULE = function() {
 	moduleAid.clean();

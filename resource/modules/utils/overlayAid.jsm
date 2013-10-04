@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.2.12';
+moduleAid.VERSION = '2.2.14';
 moduleAid.LAZY = true;
 
 // overlayAid - to use overlays in my bootstraped add-ons. The behavior is as similar to what is described in https://developer.mozilla.org/en/XUL_Tutorial/Overlays as I could manage.
@@ -1113,15 +1113,15 @@ this.overlayAid = {
 					if(addExternal) {
 						toolbox.externalToolbars.push(node);
 					}
-					
-					var palette = aWindow.document.getElementById(node.getAttribute('toolboxid')).palette;
-					this.traceBack(aWindow, {
-						action: 'addToolbar',
-						node: node,
-						toolboxid: node.getAttribute('toolboxid'),
-						palette: palette
-					});
 				}
+				
+				var palette = toolbox.palette;
+				this.traceBack(aWindow, {
+					action: 'addToolbar',
+					node: node,
+					toolboxid: node.getAttribute('toolboxid'),
+					palette: palette
+				});
 			}
 		}
 		
@@ -1132,23 +1132,21 @@ this.overlayAid = {
 	
 	removeToolbars: function(aWindow, node) {
 		if(node.nodeName == 'toolbar' && node.id && (node.getAttribute('toolboxid') || node.parentNode.nodeName == 'toolbox')) {
-			if(node.getAttribute('toolboxid') && node.parentNode && node.parentNode.nodeName != 'toolbox') {
-				var toolbox = aWindow.document.getElementById(node.getAttribute('toolboxid'));
-				if(toolbox) {
-					for(var et=0; et<toolbox.externalToolbars.length; et++) {
-						if(toolbox.externalToolbars[et] == node) {
-							toolbox.externalToolbars.splice(et, 1);
-							break;
-						}
+			var toolbox = node.getAttribute('toolboxid') ? aWindow.document.getElementById(node.getAttribute('toolboxid')) : node.parentNode;
+			if(toolbox) {
+				for(var et=0; et<toolbox.externalToolbars.length; et++) {
+					if(toolbox.externalToolbars[et] == node) {
+						toolbox.externalToolbars.splice(et, 1);
+						break;
 					}
 				}
+				
+				this.traceBack(aWindow, {
+					action: 'removeToolbar',
+					node: node,
+					toolboxid: toolbox.id
+				});
 			}
-			
-			this.traceBack(aWindow, {
-				action: 'removeToolbar',
-				node: node,
-				toolboxid: node.getAttribute('toolboxid') || node.parentNode.id
-			});
 		}
 		
 		for(var nc=0; nc<node.childNodes.length; nc++) {
@@ -1522,24 +1520,6 @@ moduleAid.LOADMODULE = function() {
 	browserMediator.register(overlayAid.closedBrowser, 'pagehide');
 	browserMediator.register(overlayAid.closedBrowser, 'SidebarClosed');
 	observerAid.add(overlayAid.observingSchedules, 'window-overlayed');
-	
-	// Ensure that closed windows are clean of our objects to prevent ZCs
-	fullClean.push(function(aWindow) {
-		delete aWindow['_OVERLAYS_'+objName];
-		
-		try {
-			var attr = aWindow.document.documentElement.getAttribute('Bootstrapped_Overlays').split(' ');
-			if(attr.indexOf(objName) == -1) { return; }
-			
-			attr.splice(attr.indexOf(objName), 1);
-			if(attr.length > 0) {
-				aWindow.document.documentElement.setAttribute('Bootstrapped_Overlays', attr.join(' '));
-			} else {
-				aWindow.document.documentElement.removeAttribute('Bootstrapped_Overlays');
-			}
-		}
-		catch(ex) {} // Prevent some unforeseen error here
-	});
 };
 
 moduleAid.UNLOADMODULE = function() {

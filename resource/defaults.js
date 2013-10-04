@@ -1,4 +1,4 @@
-var defaultsVersion = '1.2.4';
+var defaultsVersion = '1.2.5';
 var objName = 'findbartweak';
 var objPathString = 'findbartweak';
 
@@ -109,7 +109,17 @@ function startConditions(aReason) {
 function onStartup(aReason) {
 	if(Services.vc.compare(Services.appinfo.platformVersion, "25.0a1") >= 0) { perTabFB = true; }
 	//if(Services.vc.compare(Services.appinfo.platformVersion, "26.0a1") >= 0) { onTopFB = true; } // Backed out of Trunk until further notice
-	if(Services.vc.compare(Services.appinfo.platformVersion, "27.0a1") >= 0) { mFinder = true; }
+	
+	// After https://bugzilla.mozilla.org/show_bug.cgi?id=916536 lands, I can change this to a more simple check
+	if(Services.vc.compare(Services.appinfo.platformVersion, "26.0a1") >= 0) {
+		try {
+			let FinderModule = {};
+			Cu.import("resource://gre/modules/Finder.jsm", FinderModule);
+			delete FinderModule;
+			mFinder = true;
+		}
+		catch(ex) {}
+	}
 	
 	moduleAid.load('builtinPrefs');
 	moduleAid.load('highlightColor');

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.2';
+moduleAid.VERSION = '1.1.3';
 
 this.compareRanges = function(aRange, bRange) {
 	if(aRange.nodeType || bRange.nodeType) { return false; } // Don't know if this could get here
@@ -75,7 +75,7 @@ if(mFinder) {
 	};
 }
 else {
-	this.tweakFastFindNormal = function(browser, val, aLinksOnly, aCompare) {
+	this.tweakFastFindNormal = function(browser, val, aLinksOnly, aDrawOutline, aCompare) {
 		if(!aCompare) { return browser.fastFind.find(val, aLinksOnly); }
 		
 		// This doesn't need to be in the loop
@@ -105,7 +105,7 @@ else {
 		}
 		return browser._fastFind.FIND_NOTFOUND;
 	};
-	this.tweakFindAgain = function(browser, aFindPrevious, aLinksOnly) {
+	this.tweakFindAgain = function(browser, aFindPrevious, aLinksOnly, aDrawOutline) {
 		return browser.fastFind.findAgain(aFindPrevious, aLinksOnly);
 	};
 	this.tweakGetSelectionController = function(bar, win) {

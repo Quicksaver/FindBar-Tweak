@@ -2,5 +2,6 @@
 <!ENTITY ToolbarButton.label "Växla söklisten">
 <!ENTITY ToolbarButton.tooltip "Öppna/stäng söklisten">
 <!ENTITY FITbutton.label "Sök i alla flikar">
-<!ENTITY FITbutton.tooltip "Sök efter frasen i alla öppnade flikar">
+<!ENTITY FITbutton.tooltip.win "Sök efter frasen i alla öppnade flikar (Ctrl+F3)">
+<!ENTITY FITbutton.tooltip.mac "Sök efter frasen i alla öppnade flikar (Cmd+F3)">
 <!ENTITY FITbutton.accesskey "f">

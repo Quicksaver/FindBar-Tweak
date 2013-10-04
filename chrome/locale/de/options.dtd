@@ -13,9 +13,11 @@
 <!ENTITY OpthighlightByDefault.label "Automatisch alle Vorkommen des gesuchten Begriffs hervorheben">
 <!ENTITY OpthideWhenFinderHidden.label "Hervorhebungen entfernen, wenn die Suchleiste geschlossen wird">
 <!ENTITY OptgridInScrollbar.label "Hervorhebungsbalken innerhalb der Bildlaufleiste anzeigen">
-<!ENTITY OptuseCounter.label "Trefferanzahl in der Suchleiste anzeigen">
+<!ENTITY OptuseCounterNew.label "Zähler der Suchtreffer in der Suchleiste anzeigen">
 <!ENTITY OptfindInTabs.label "„In allen Tabs suchen“ aktivieren">
 <!ENTITY OptalwaysOpenFIT.label "„In allen Tabs suchen“ mit der Suchleiste öffnen">
+<!ENTITY OptFITFull.label "„In allen Tabs suchen“ in einem eigenen Fenster öffnen">
+<!ENTITY OptmultipleFITFull.label "Mehrere Instanzen des Fensters „In allen Tabs suchen“ erlauben">
 <!ENTITY OptmaxFIT.label "Nicht suchen, wenn die Zahl der Treffer in einem Tab größer ist als:">
 <!ENTITY Optcolor.label "Markierungsfarbe">
 <!ENTITY OptselectColor.label "Farbe des aktuellen Treffers">
@@ -43,6 +45,7 @@
 <!ENTITY OptsightsColor.label "Farbe der kreisförmigen Hervorhebung">
 <!ENTITY OptsightsSameColor.label "Identische Farbe wie bei den Hervorhebungen verwenden">
 <!ENTITY OptsightsSameColorCurrent.label "Gleiche Farbe wie beim aktuellen Treffer verwenden">
+<!ENTITY OptsightsLimit.label "Maximale Anzahl der angezeigten Hervorhebungen:">
 <!ENTITY OpthideLabels.label "Schaltflächentext ausblenden">
 <!ENTITY OpthideLabels.labelFF25 "Symbole der Schaltflächen anstelle der Beschriftung anzeigen">
 <!ENTITY OpthideFindLabel.label "Text „Suchen:“ ausblenden">

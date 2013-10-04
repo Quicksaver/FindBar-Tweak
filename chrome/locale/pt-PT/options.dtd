@@ -13,9 +13,11 @@
 <!ENTITY OpthighlightByDefault.label "Realçar todas as ocorrências por defeito">
 <!ENTITY OpthideWhenFinderHidden.label "Remover os realces quando a barra de procura é fechada">
 <!ENTITY OptgridInScrollbar.label "Mostrar a grelha de realces na barra de rolagem">
-<!ENTITY OptuseCounter.label "Mostrar número de ocorrências na barra de procura">
+<!ENTITY OptuseCounterNew.label "Mostrar o contador de ocorrências na barra de procura">
 <!ENTITY OptfindInTabs.label "Utilizar 'Procura em todos os Separadores'">
 <!ENTITY OptalwaysOpenFIT.label "Abrir a procura em todos os separadores com a barra de procura">
+<!ENTITY OptFITFull.label "Abrir a &quot;Procura em Todos os Separadores&quot; na sua própria janela">
+<!ENTITY OptmultipleFITFull.label "Permitir várias janelas distintas da &quot;Procura em Todos os Separadores&quot;">
 <!ENTITY OptmaxFIT.label "Não procurar se o número de ocorrências no separador exceder as:">
 <!ENTITY Optcolor.label "Cor dos realces">
 <!ENTITY OptselectColor.label "Cor da ocorrência atual">
@@ -43,6 +45,7 @@
 <!ENTITY OptsightsColor.label "Cor das Miras">
 <!ENTITY OptsightsSameColor.label "Usar a mesma cor dos realces">
 <!ENTITY OptsightsSameColorCurrent.label "Usar a mesma cor da ocorrência atual">
+<!ENTITY OptsightsLimit.label "Número máximo de Miras no ecrã:">
 <!ENTITY OpthideLabels.label "Esconder o texto dos botões">
 <!ENTITY OpthideLabels.labelFF25 "Mostrar ícones nos botões em vez de texto">
 <!ENTITY OpthideFindLabel.label "Esconder a legenda &quot;Procurar:&quot;">

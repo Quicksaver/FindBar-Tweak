@@ -13,9 +13,11 @@
 <!ENTITY OpthighlightByDefault.label "Färgmarkera alla träffar som standard">
 <!ENTITY OpthideWhenFinderHidden.label "Ta bort färgmarkeringar när söklisten stängs">
 <!ENTITY OptgridInScrollbar.label "Visa markeringspositionslinjalen i rullningslisten">
-<!ENTITY OptuseCounter.label "Visa antalet träffar i söklisten">
+<!ENTITY OptuseCounterNew.label "Visa träffräknare i söklisten">
 <!ENTITY OptfindInTabs.label "Aktivera &quot;Sök i alla flikar&quot;">
 <!ENTITY OptalwaysOpenFIT.label "Öppna &quot;Sök i alla flikar&quot; med söklisten">
+<!ENTITY OptFITFull.label "Öppna &quot;Sök i alla flikar&quot; i ett eget, separat fönster">
+<!ENTITY OptmultipleFITFull.label "Tillåt flera instanser av Sök i alla flikar-fönstret">
 <!ENTITY OptmaxFIT.label "Avbryt sökningen om antalet träffar i en flik överstiger:">
 <!ENTITY Optcolor.label "Markeringsfärg">
 <!ENTITY OptselectColor.label "Färg för aktuell träff">
@@ -35,7 +37,7 @@
 <!ENTITY OptsightsAllHighlights.label "Alla färgmarkeringar">
 <!ENTITY OptsightsCurrent.label "Visa fokuseringssikte för den aktuella sökträffen">
 <!ENTITY OptsightsHighlights.label "Visa fokuseringssikten för alla färgmarkerade sökträffar">
-<!ENTITY OptsightsHighlights.warning "Varning: Detta kan vara mycket resurskrävande! Rendering och sidrullning kan bli långsam!">
+<!ENTITY OptsightsHighlights.warning "Varning: Detta kan vara mycket resurskrävande! Rendering och sidrullning kan bli långsammare!">
 <!ENTITY OptsightsStyle.label "Format för sikten (klicka för förhandsvisning)">
 <!ENTITY OptsightsStyle.focus "Fokuseringens plats">
 <!ENTITY OptsightsStyle.circle "Cirkelns plats">
@@ -43,6 +45,7 @@
 <!ENTITY OptsightsColor.label "Färg på sikten">
 <!ENTITY OptsightsSameColor.label "Använd samma färg som vid färgmarkering">
 <!ENTITY OptsightsSameColorCurrent.label "Använd samma färg som för den aktuella träffen">
+<!ENTITY OptsightsLimit.label "Högsta tillåtna antal sikten på skärmen:">
 <!ENTITY OpthideLabels.label "Dölj knappetiketter">
 <!ENTITY OpthideLabels.labelFF25 "Visa knappikoner istället för etiketter">
 <!ENTITY OpthideFindLabel.label "Dölj etiketten &quot;Sök:&quot;">

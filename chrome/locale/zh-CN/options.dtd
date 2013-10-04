@@ -13,9 +13,11 @@
 <!ENTITY OpthighlightByDefault.label "默认高亮所有匹配项">
 <!ENTITY OpthideWhenFinderHidden.label "关闭查找栏时移除高亮">
 <!ENTITY OptgridInScrollbar.label "在滚动条上显示高亮网格">
-<!ENTITY OptuseCounter.label "在查找栏上显示匹配项计数器">
+<!ENTITY OptuseCounterNew.label "在查找栏上显示匹配计数器">
 <!ENTITY OptfindInTabs.label "启用“查找所有标签页”">
 <!ENTITY OptalwaysOpenFIT.label "默认开启“查找所有标签页”">
+<!ENTITY OptFITFull.label "在独立窗口中打开“查找所有标签页”">
+<!ENTITY OptmultipleFITFull.label "允许出现多个“查找所有标签页”窗口">
 <!ENTITY OptmaxFIT.label "不再查找，如果某个标签页中匹配次数超过：">
 <!ENTITY Optcolor.label "高亮颜色">
 <!ENTITY OptselectColor.label "当前匹配颜色">
@@ -43,6 +45,7 @@
 <!ENTITY OptsightsColor.label "聚焦颜色">
 <!ENTITY OptsightsSameColor.label "使用与高亮相同的颜色">
 <!ENTITY OptsightsSameColorCurrent.label "从当前的匹配使用相同颜色">
+<!ENTITY OptsightsLimit.label "屏幕上聚焦视点的最大数量:">
 <!ENTITY OpthideLabels.label "隐藏按钮的说明文字">
 <!ENTITY OpthideLabels.labelFF25 "显示按钮图标而不是文字">
 <!ENTITY OpthideFindLabel.label "隐藏“查找：”字样">
@@ -67,7 +70,7 @@
 <!ENTITY OptFAYTmode.alwaysQuick "总是使用快速查找栏">
 <!ENTITY OptkeyboardShortcut.label "键盘快捷键">
 <!ENTITY OptctrlFCloses.win "Ctrl+F也可关闭查找栏">
-<!ENTITY OptctrlFCloses.mac "Command+F 也可关闭查找栏">
+<!ENTITY OptctrlFCloses.mac "Command+F也可关闭查找栏">
 <!ENTITY OptctrlFprefill.label "打开时将选中文本填写到查找栏">
 <!ENTITY OptctrlFOnValue.label "仅在搜索词与选中文本相同时关闭">
 <!ENTITY OptSelectingText.label "选择文本时">

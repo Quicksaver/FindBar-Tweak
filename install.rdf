@@ -66,7 +66,7 @@
 			<Description>
 				<em:locale>zh-CN</em:locale>
 				<em:name>FindBar Tweak</em:name>
-				<em:description>任何简单而又重要的调整，如调整查找栏位置到右上角、强大的“查找所有标签页”工具等，FindBar Tweak 将给您带来恰到好处的查找栏！</em:description>
+				<em:description>任何简单而又重要的调整，如调整查找栏的位置到右上角、强大的“查找所有标签页”工具等，FindBar Tweak 将给您带来恰到好处的查找栏。</em:description>
 				<em:homepageURL>https://addons.mozilla.org/zh-CN/firefox/addon/findbar-tweak/</em:homepageURL>
 				<em:translator>http://t.qq.com/HeartBlade, YFdyh000</em:translator>
 			</Description>

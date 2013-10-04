@@ -13,9 +13,11 @@
 <!ENTITY OpthighlightByDefault.label "Podświetlaj automatycznie wszystkie znalezione frazy">
 <!ENTITY OpthideWhenFinderHidden.label "Czyść podświetlenia po zamknięciu paska wyszukiwania">
 <!ENTITY OptgridInScrollbar.label "Zaznaczaj kolorem lokalizacje wyników na pasku przewijania">
-<!ENTITY OptuseCounter.label "Wyświetlaj ilość wyników na pasku">
+<!ENTITY OptuseCounterNew.label "Pokazuj ilość wystąpień in pasku wyszukiwania">
 <!ENTITY OptfindInTabs.label "Włącz &quot;Znajdź w kartach&quot;">
 <!ENTITY OptalwaysOpenFIT.label "Otwieraj &quot;Znajdź w kartach&quot; razem z paskiem wyszukiwania">
+<!ENTITY OptFITFull.label "Otwieraj &quot;Znajdź w kartach&quot; w oddzielnym oknie">
+<!ENTITY OptmultipleFITFull.label "Pozwalaj na wiele okien &quot;Znajdź w kartach&quot; jednocześnie">
 <!ENTITY OptmaxFIT.label "Nie wyszukuj, jeśli ilość wystąpień przewyższa:">
 <!ENTITY Optcolor.label "Kolor podświetlania">
 <!ENTITY OptselectColor.label "Kolor aktualnego wystąpienia">
@@ -43,6 +45,7 @@
 <!ENTITY OptsightsColor.label "Kolor sygnalizowania">
 <!ENTITY OptsightsSameColor.label "Ten sam kolor co podświetlenia">
 <!ENTITY OptsightsSameColorCurrent.label "Ten sam kolor co aktualne wystąpienie">
+<!ENTITY OptsightsLimit.label "Maks. ilość sygnalizatorów na ekranie:">
 <!ENTITY OpthideLabels.label "Ukryj etykiety przycisków">
 <!ENTITY OpthideLabels.labelFF25 "Show button icons instead of labels">
 <!ENTITY OpthideFindLabel.label "Ukryj napis &quot;Znajdź&quot;">

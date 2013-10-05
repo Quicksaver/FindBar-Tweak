@@ -1,9 +1,15 @@
-moduleAid.VERSION = '1.2.0';
+moduleAid.VERSION = '1.2.1';
 
 this.highlightByDefault = function() {
 	if(!perTabFB || viewSource || gFindBarInitialized) {
 		gFindBar.getElement("highlight").checked = true;
 	}
+};
+
+this.highlightByDefaultOnOpening = function(e) {
+	if(e.defaultPrevented || !gFindBar.hidden) { return; }
+	
+	highlightByDefault();
 };
 
 this.highlightByDefaultOnContentLoaded = function(e) {
@@ -38,7 +44,7 @@ this.highlightByDefaultProgressListener = {
 };
 
 moduleAid.LOADMODULE = function() {
-	listenerAid.add(window, 'OpenedFindBar', highlightByDefault);
+	listenerAid.add(window, 'WillOpenFindBar', highlightByDefaultOnOpening);
 	
 	// Always highlight all by default when selecting text and filling the findbar with it
 	listenerAid.add(window, 'WillFillSelectedText', highlightByDefault);
@@ -54,7 +60,7 @@ moduleAid.LOADMODULE = function() {
 };
 
 moduleAid.UNLOADMODULE = function() {
-	listenerAid.remove(window, 'OpenedFindBar', highlightByDefault);
+	listenerAid.remove(window, 'WillOpenFindBar', highlightByDefaultOnOpening);
 	listenerAid.remove(window, 'WillFillSelectedText', highlightByDefault);
 	
 	if(!viewSource) {

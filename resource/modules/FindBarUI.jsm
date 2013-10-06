@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.3';
+moduleAid.VERSION = '1.5.4';
 
 this.__defineGetter__('findCSButton', function() { return gFindBar.getElement(objName+'-find-cs-button'); });
 this.__defineGetter__('findCSCheckbox', function() { return gFindBar.getElement('find-case-sensitive'); });
@@ -151,6 +151,9 @@ this.toggleFindLabel = function() {
 };
 
 this.toggleMoveToTop = function() {
+	// Because fb on top was backed out, let's ensure pref movetoBottom is disabled and stays that way
+	if(prefAid.movetoBottom) { prefAid.movetoBottom = false; }
+	
 	moduleAid.loadIf('moveToTop', prefAid.movetoTop && (!onTopFB || !prefAid.movetoBottom));
 	moduleAid.loadIf('moveToBottom', prefAid.movetoBottom && onTopFB);
 };

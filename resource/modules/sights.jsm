@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.2';
+moduleAid.VERSION = '1.5.3';
 
 this.__defineGetter__('preferencesDialog', function() { return (typeof(inPreferences) != 'undefined' && inPreferences); });
 
@@ -453,7 +453,11 @@ this.currentSights = function(e) {
 	}
 	
 	if(sel.rangeCount == 1) {
-		positionSights(null, { node: sel.getRangeAt(0) }, scrollTop, scrollLeft);
+		// Don't sight emptiness
+		var range = sel.getRangeAt(0);
+		if(range.startContainer == range.endContainer && range.startOffset == range.endOffset) { return; }
+		
+		positionSights(null, { node: range }, scrollTop, scrollLeft);
 	}
 };
 

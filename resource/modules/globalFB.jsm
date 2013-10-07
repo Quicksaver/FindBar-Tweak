@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.3';
+moduleAid.VERSION = '1.0.4';
 
 this.findBarHiddenState = true;
 
@@ -53,10 +53,10 @@ this.globalFBTabSelect = function() {
 	}
 	
 	// Copy the values of the findField from one tab to another if there hasn't been a search run in that tab yet
-	if(currentTab && (!linkedPanel._findWord || (gFindBar.hidden && !documentHighlighted) || gFindBar._keepCurrentValue)) {
+	if(currentTab && currentTab._findBar && (!linkedPanel._findWord || (gFindBar.hidden && !documentHighlighted) || gFindBar._keepCurrentValue)) {
 		gFindBar._findField.value = currentTab._findBar._findField.value;
 		gFindBar.getElement('highlight').checked = currentTab._findBar.getElement('highlight').checked;
-		gFindBar.getElement('find-case-sensitive').checked = currentTab._findBar.getElement('find-case-sensitive').checked;
+		gFindBar._buttonMode.updateMatchMode(currentTab._findBar._matchMode);
 	}
 };
 

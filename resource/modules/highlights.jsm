@@ -3,19 +3,6 @@ moduleAid.VERSION = '1.3.1';
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
 
-this.__defineGetter__('documentHighlighted', function() {
-	return (contentDocument && trueAttribute(contentDocument.documentElement, 'highlighted'));
-});
-this.__defineSetter__('documentHighlighted', function(v) {
-	if(contentDocument) { toggleAttribute(contentDocument.documentElement, 'highlighted', v); }
-});
-this.__defineGetter__('documentReHighlight', function() {
-	return (contentDocument && trueAttribute(contentDocument.documentElement, 'reHighlight'));
-});
-this.__defineSetter__('documentReHighlight', function(v) {
-	if(contentDocument) { toggleAttribute(contentDocument.documentElement, 'reHighlight', v); }
-});
-
 this.emptyNoFindUpdating = function(e) {
 	if(e.detail.res == gFindBar.nsITypeAheadFind.FIND_NOTFOUND && !gFindBar._findField.value) {
 		e.preventDefault();
@@ -108,24 +95,30 @@ this.highlightsTabSelected = function(e) {
 			
 			if(documentReHighlight) {
 				var originalValue = null;
+				var originalMode = null;
 				if(gFindBar._keepCurrentValue && linkedPanel._findWord != gFindBar._findField.value) {
 					originalValue = gFindBar._findField.value;
+					originalMode = gFindBar._matchMode;
 					gFindBar._findField.value = linkedPanel._findWord;
+					gFindBar._buttonMode.updateMatchMode(linkedPanel._matchMode);
 				}
 				
 				reHighlight(documentHighlighted);
 				
 				if(originalValue) {
 					gFindBar._findField.value = originalValue;
+					gFindBar._buttonMode.updateMatchMode(originalMode);
 				}
 			}
 			return;
 		}
 		
 		var originalValue = gFindBar._findField.value;
+		var originalMode = gFindBar._matchMode;
 		
 		if(linkedPanel._findWord && (documentHighlighted || documentReHighlight)) {
 			gFindBar._findField.value = linkedPanel._findWord;
+			gFindBar._buttonMode.updateMatchMode(linkedPanel._matchMode);
 			gFindBar._enableFindButtons(gFindBar._findField.value);
 			if(linkedPanel._statusUI != undefined) {
 				gFindBar._updateStatusUI(linkedPanel._statusUI);
@@ -144,6 +137,7 @@ this.highlightsTabSelected = function(e) {
 		
 		if(gFindBar._keepCurrentValue) {
 			gFindBar._findField.value = originalValue;
+			gFindBar._buttonMode.updateMatchMode(originalMode);
 		}
 	}, 0);
 };
@@ -234,14 +228,14 @@ this.reHighlight = function(reDo) {
 	if(reDo && dispatch(gFindBar, { type: 'WillReHighlight' })) {
 		gFindBar.toggleHighlight(true);
 	} else {
-		gFindBar._highlightedWord = '';
+		linkedPanel._highlightedWord = '';
 		gFindBar._highlightAnyway = false;
 	}
 };
 
 this.highlightsOff = function() {
 	gFindBar.toggleHighlight(false);
-	gFindBar._highlightedWord = '';
+	linkedPanel._highlightedWord = '';
 	gFindBar._highlightAnyway = false;
 };
 
@@ -274,6 +268,7 @@ this.highlightsInit = function(bar) {
 	bar._setHighlightTimeout = function() {
 		// We want this to be updated regardless of what happens
 		linkedPanel._findWord = this._findField.value;
+		linkedPanel._matchMode = this._matchMode;
 		
 		// Just reset any highlights and the counter if it's not supposed to highlight
 		if(!this.getElement("highlight").checked || !this._findField.value) {
@@ -438,6 +433,7 @@ moduleAid.UNLOADMODULE = function() {
 	}
 	else {
 		delete linkedPanel._findWord;
+		delete linkedPanel._matchMode;
 		delete linkedPanel._statusUI;
 		listenerAid.remove(contentDocument, 'keyup', escHighlights);
 		removeAttribute(contentDocument.documentElement, 'highlighted');

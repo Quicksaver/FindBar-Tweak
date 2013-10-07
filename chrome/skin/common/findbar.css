@@ -7,7 +7,7 @@
 	url("chrome://global/content/viewPartialSource.xul"),
 	url("chrome://findbartweak/content/findInTabsFull.xul") {
 
-	findbar[hideLabels] checkbox[anonid="find-case-sensitive"],
+	findbar [anonid="find-case-sensitive"],
 	findbar[hideFindLabel] label[anonid="find-label"],
 	findbar[noClose] .findbar-closebutton,
 	findbar[inNotification] {
@@ -95,6 +95,15 @@
 	
 	window:not([findbartweak-FF25]) .findbar-cs-button {
 		-moz-margin-end: 3px;
+	}
+	
+	findbar panel[anonid="findbartweak-mode-popup"] {
+		-moz-appearance: menupopup;
+	}
+	
+	/* for now this has no image */
+	findbar toolbarbutton[anonid="findbartweak-match-mode"] image {
+		display: none;
 	}
 	
 	/* Rounded inner corners */

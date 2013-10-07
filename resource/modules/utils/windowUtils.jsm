@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.1.0';
+moduleAid.VERSION = '2.1.1';
 moduleAid.LAZY = true;
 
 // listenerAid - Object to aid in setting and removing all kinds of event listeners to an object;
@@ -15,6 +15,9 @@ if(Services.vc.compare(Services.appinfo.platformVersion, "20.0") >= 0) {
 
 // toCode - allows me to modify a function quickly and safely from within my scripts
 this.__defineGetter__('toCode', function() { delete this.toCode; moduleAid.load('utils/toCode'); return toCode; });
+
+// keydownPanel - Panel elements don't support keyboard navigation by default; this object fixes that.
+this.__defineGetter__('keydownPanel', function() { delete this.keydownPanel; moduleAid.load('utils/keydownPanel'); return keydownPanel; });
 
 // aSync() - lets me run aFunc asynchronously, basically it's a one shot timer with a delay of aDelay msec
 this.aSync = function(aFunc, aDelay) { loadWindowTools(); return aSync(aFunc, aDelay); };
@@ -51,6 +54,9 @@ moduleAid.LOADMODULE = function() {
 	
 	// This will not happen when quitting the application (on a restart for example), it's not needed in this case
 	listenerAid.add(window, 'unload', function(e) {
+		// I'm not sure exactly why this happens, but it doesn't break anything so, I'm just preventing the error from being thrown to the console
+		if(typeof(alwaysRunOnClose) == 'undefined') { return; }
+		
 		window.willClose = true; // window.closed is not reliable in some cases
 		while(alwaysRunOnClose.length > 0) {
 			alwaysRunOnClose.pop()(window);

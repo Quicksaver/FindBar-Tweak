@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.4';
+moduleAid.VERSION = '1.0.5';
 
 this.findBarHiddenState = true;
 
@@ -83,8 +83,8 @@ moduleAid.UNLOADMODULE = function() {
 	for(var t=0; t<gBrowser.mTabs.length; t++) {
 		if(gBrowser.mTabs[t] == gBrowser.mCurrentTab) { continue; }
 		
-		if(gBrowser.mTabs[t]._findbar && !$(gBrowser.mTabs[t].linkedPanel)._findWord) {
-			var bar = gBrowser.mTabs[t]._findbar;
+		if(gBrowser.mTabs[t]._findBar && !$(gBrowser.mTabs[t].linkedPanel)._findWord) {
+			var bar = gBrowser.mTabs[t]._findBar;
 			bar.close();
 		}
 	}

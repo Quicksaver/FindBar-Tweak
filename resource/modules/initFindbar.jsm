@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.2.5';
+moduleAid.VERSION = '2.2.6';
 
 // Some globals we use everywhere
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
@@ -103,7 +103,8 @@ this.baseInit = function(bar) {
 			
 			// Only search on input if we don't have a last-failed string,
 			// or if the current search string doesn't start with it.
-			if(this._findFailedString == null || val.indexOf(this._findFailedString) != 0) {
+			// https://bugzilla.mozilla.org/show_bug.cgi?id=926033
+			if(!this._findFailedString || val.indexOf(this._findFailedString) != 0) {
 				this._enableFindButtons(val);
 				if(this.getElement("highlight").checked)
 					this._setHighlightTimeout();

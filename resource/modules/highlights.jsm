@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.3.1';
+moduleAid.VERSION = '1.4.0';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -154,14 +154,11 @@ this.highlightsContentLoaded = function(e) {
 			doc = doc.defaultView.frameElement.ownerDocument;
 		}
 		
+		setAttribute(doc.documentElement, 'reHighlight', 'true');
+		
 		if(doc == contentDocument) {
 			// Bugfix: don't do immediately! Pages with lots of frames will trigger this each time a frame is loaded, can slowdown page load
-			timerAid.init('highlightsContentLoaded', function() {
-				if(doc == contentDocument) { reHighlight(documentHighlighted); }
-				else { setAttribute(doc.documentElement, 'reHighlight', 'true'); }
-			}, 1000);
-		} else {
-			setAttribute(doc.documentElement, 'reHighlight', 'true');
+			delayReHighlight(doc);
 		}
 	}
 };
@@ -174,12 +171,14 @@ this.highlightsProgressListener = {
 		// This isn't a problem in firefox, and it is probably better because new content also doesn't trigger a re-highlight,
 		// but since we do trigger a re-highlight in that case, it's better if we try to keep the button state as well.
 		// I'm using the same conditioning as in the original browser's onLocationChange handler.
-		if(gFindBarInitialized && webProgress.isTopLevel) {
+		if((!perTabFB || gFindBarInitialized) && webProgress.isTopLevel) {
 			gFindBar.getElement("highlight").checked = documentHighlighted;
 		}
 		
 		// Frames don't need to trigger this
-		if(webProgress.DOMWindow == browser.contentWindow) {
+		if(webProgress.DOMWindow == browser.contentWindow && browser.contentDocument) {
+			setAttribute(browser.contentDocument.documentElement, 'reHighlight', 'true');
+			
 			// No need to call if there is nothing to find
 			if(browser == gBrowser.mCurrentBrowser) {
 				// Bugfix: This used to be (request && !request.isPending()),
@@ -187,7 +186,7 @@ this.highlightsProgressListener = {
 				// But by also reHighlighting when !request, we successfully reHighlight when there is dynamic content loaded (e.g. AJAX)
 				// e.g. "Show more" button in deviantart
 				if(!request || !request.isPending()) {
-					reHighlight(documentHighlighted);
+					delayReHighlight(browser.contentDocument);
 				}
 				
 				// Bugfix issue #42: when opening an image file, highlights from previous loaded document would remain
@@ -195,9 +194,12 @@ this.highlightsProgressListener = {
 					reHighlight(false);
 				}
 			}
-			else if(browser.contentDocument) {
-				setAttribute(browser.contentDocument.documentElement, 'reHighlight', 'true');
-			}
+		}
+	},
+	
+	onStateChange: function(browser, webProgress, request, aStateFlags, aStatus) {
+		if(!webProgress.isLoadingDocument && browser == gBrowser.mCurrentBrowser && browser.contentDocument && webProgress.DOMWindow == browser.contentWindow) {
+			delayReHighlight(browser.contentDocument);
 		}
 	}
 };
@@ -209,9 +211,15 @@ this.highlightsFindAgain = function() {
 	}
 };
 
+this.delayReHighlight = function(doc) {
+	timerAid.init('reHighlight', function() {
+		if(doc == contentDocument) { reHighlight(documentHighlighted, true); }
+	}, 500);
+};
+
 // This always calls toggleHighlight() at least once with a false argument, then with a true argument if reDo is true.
 // This way we ensure the old highlights are removed before adding new ones.
-this.reHighlight = function(reDo) {
+this.reHighlight = function(reDo, toUpdate) {
 	// If there's no need to even call toggleHighlight(false) if we shouldn't, this can save a few ms when selecting tabs or loading documents
 	if(!documentHighlighted && ((perTabFB && !gFindBarInitialized) || gFindBar.hidden || !gFindBar._findField.value)) {
 		documentReHighlight = false;
@@ -221,6 +229,11 @@ this.reHighlight = function(reDo) {
 			dispatch(gFindBar, { type: 'CleanUpHighlights', cancelable: false });
 		}
 		
+		return;
+	}
+	
+	// When the page is changed (mostly AJAX stuff), don't update the highlights if it's not needed
+	if(toUpdate && linkedPanel._highlightedText == linkedPanel.innerTextDeep) {
 		return;
 	}
 	
@@ -237,6 +250,14 @@ this.highlightsOff = function() {
 	gFindBar.toggleHighlight(false);
 	linkedPanel._highlightedWord = '';
 	gFindBar._highlightAnyway = false;
+};
+
+this.highlightsOnToggled = function() {
+	if(!documentHighlighted && (!gFindBar._findField.value || gFindBar.hidden)) {
+		linkedPanel._highlightedText = '';
+	} else {
+		linkedPanel._highlightedText = linkedPanel.innerTextDeep;
+	}
 };
 
 // Add the reHighlight attribute to all tabs
@@ -372,6 +393,7 @@ moduleAid.LOADMODULE = function() {
 	listenerAid.add(window, 'ClosedFindBar', highlightOnClose);
 	listenerAid.add(window, 'ClosedFindBarAnotherTab', highlightOnClose);
 	listenerAid.add(window, 'WillToggleHighlight', highlightsOnToggling);
+	listenerAid.add(window, 'ToggledHighlight', highlightsOnToggled);
 	listenerAid.add(window, 'WillFindAgain', highlightsFindAgain);
 	listenerAid.add(window, 'FoundAgain', highlightOnFindAgain);
 	observerAid.add(reHighlightAll, 'ReHighlightAll');
@@ -417,11 +439,12 @@ moduleAid.UNLOADMODULE = function() {
 			delete panel._statusUI;
 			delete panel._neverCurrent;
 			delete panel._highlightedWord;
+			delete panel._highlightedText;
 			
-			if(panel.linkedBrowser && panel.linkedBrowser.contentDocument) {
-				listenerAid.remove(panel.linkedBrowser.contentDocument, 'keyup', escHighlights);
-				removeAttribute(panel.linkedBrowser.contentDocument.documentElement, 'highlighted');
-				removeAttribute(panel.linkedBrowser.contentDocument.documentElement, 'reHighlight');
+			if(gBrowser.mTabs[t].linkedBrowser && gBrowser.mTabs[t].linkedBrowser.contentDocument) {
+				listenerAid.remove(gBrowser.mTabs[t].linkedBrowser.contentDocument, 'keyup', escHighlights);
+				removeAttribute(gBrowser.mTabs[t].linkedBrowser.contentDocument.documentElement, 'highlighted');
+				removeAttribute(gBrowser.mTabs[t].linkedBrowser.contentDocument.documentElement, 'reHighlight');
 			}
 		}
 		
@@ -435,6 +458,8 @@ moduleAid.UNLOADMODULE = function() {
 		delete linkedPanel._findWord;
 		delete linkedPanel._matchMode;
 		delete linkedPanel._statusUI;
+		delete linkedPanel._highlightedWord;
+		delete linkedPanel._highlightedText;
 		listenerAid.remove(contentDocument, 'keyup', escHighlights);
 		removeAttribute(contentDocument.documentElement, 'highlighted');
 		removeAttribute(contentDocument.documentElement, 'reHighlight');
@@ -445,6 +470,7 @@ moduleAid.UNLOADMODULE = function() {
 	listenerAid.remove(window, 'ClosedFindBar', highlightOnClose);
 	listenerAid.remove(window, 'ClosedFindBarAnotherTab', highlightOnClose);
 	listenerAid.remove(window, 'WillToggleHighlight', highlightsOnToggling);
+	listenerAid.remove(window, 'ToggledHighlight', highlightsOnToggled);
 	listenerAid.remove(window, 'WillFindAgain', highlightsFindAgain);
 	listenerAid.remove(window, 'FoundAgain', highlightOnFindAgain);
 	

@@ -1,12 +1,28 @@
-moduleAid.VERSION = '1.0.0';
+moduleAid.VERSION = '1.1.0';
 
 // Handler for when autoPage inserts something into the document
 this.autoPagerInserted = function(e) {
-	if(contentDocument == e.originalTarget.ownerDocument) {
+	// First get the root document	
+	var doc = e.originalTarget.ownerDocument;
+	while(doc.defaultView.frameElement) {
+		doc = doc.defaultView.frameElement.ownerDocument;
+	}
+	
+	// Reset innerText properties of panl
+	var panel = gBrowser._getTabForContentWindow(doc.defaultView);
+	if(panel && panel.linkedPanel) {
+		panel = $(panel.linkedPanel);
+	}
+	resetInnerText(panel);
+	
+	// Trigger a reHighlight
+	setAttribute(doc.documentElement, 'reHighlight', 'true');
+	
+	if(doc == contentDocument) {
 		if(prefAid.movetoTop) { hideOnChrome(); }
-		reHighlight(documentHighlighted);
-	} else {
-		setAttribute(e.originalTarget.ownerDocument.documentElement, 'reHighlight', 'true');
+		
+		// Do the reHighlight now if it's the current tab
+		delayReHighlight(doc);
 	}
 };
 

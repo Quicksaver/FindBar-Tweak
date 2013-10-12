@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.4';
+moduleAid.VERSION = '1.2.0';
 
 this.compareRanges = function(aRange, bRange) {
 	if(aRange.nodeType || bRange.nodeType) { return false; } // Don't know if this could get here
@@ -9,6 +9,88 @@ this.compareRanges = function(aRange, bRange) {
 		return true;
 	}
 	return false;
+};
+
+// The following innerText update methods are for properly updating the highlights and the findbar only when it is changed.
+
+// This is a very fast step (can do this 40-50x ~= 0ms), so it shouldn't affect browser performance at all to do it in every onStateChange
+this.resetInnerText = function(panel) {
+	if(!panel) { return; }
+	
+	delete panel.innerText;
+	delete panel.innerTextDeep;
+	
+	panel.__defineGetter__('innerText', function() {
+		delete this.innerText;
+		var browser = this.querySelectorAll('browser')[0];
+		var doc = (browser && browser.contentDocument && !inPDFJS(browser.contentDocument)) ? browser.contentDocument : null;
+		var body = (doc && doc instanceof Ci.nsIDOMHTMLDocument && doc.body) ? doc.body : doc.documentElement;
+		this.innerText = innerText(body);
+		return this.innerText;
+	});
+	
+	panel.__defineGetter__('innerTextDeep', function() {
+		delete this.innerTextDeep;
+		this.innerTextDeep = this.innerText;
+		
+		var browser = this.querySelectorAll('browser')[0];
+		if(browser && browser.contentDocument && !inPDFJS(browser.contentDocument)) {
+			this.innerTextDeep += getInnerTextFrames(browser.contentWindow);
+		}
+		
+		return this.innerTextDeep;
+	});
+};
+
+this.getInnerTextFrames = function(aWindow) {
+	var text = '';
+	for(var i=0; aWindow.frames && i<aWindow.frames.length; i++) {
+		var doc = (aWindow.frames[i]) ? aWindow.frames[i].document : null;
+		if(!doc) { continue; }
+		var body = (doc instanceof Ci.nsIDOMHTMLDocument && doc.body) ? doc.body : doc.documentElement;
+		text += innerText(body);
+		text += getInnerTextFrames(aWindow.frames[i]);
+	}
+	return text;
+};
+
+// Most of the update work fall either here or in onStateChange events, which seem to be the most reliable to track for;
+// onLocationChange doesn't always work for dynamically loaded pages.
+this.innerTextContentLoaded = function(e) {
+	// this is the content document of the loaded page.
+	var doc = e.originalTarget;
+	if(doc instanceof window.HTMLDocument) {
+		// is this an inner frame?
+		// Find the root document:
+		while(doc.defaultView.frameElement) {
+			doc = doc.defaultView.frameElement.ownerDocument;
+		}
+		
+		var panel = gBrowser._getTabForContentWindow(doc.defaultView);
+		if(panel && panel.linkedPanel) {
+			panel = $(panel.linkedPanel);
+		}
+		
+		resetInnerText(panel);
+	}
+};
+
+this.innerTextProgressListener = {
+	onStateChange: function(browser, webProgress, request, aStateFlags, aStatus) {
+		if(!webProgress.isLoadingDocument && webProgress.DOMWindow == browser.contentWindow && browser.contentDocument) {
+			var doc = browser.contentDocument;
+			while(doc.defaultView.frameElement) {
+				doc = doc.defaultView.frameElement.ownerDocument;
+			}
+			
+			var panel = gBrowser._getTabForContentWindow(doc.defaultView);
+			if(panel && panel.linkedPanel) {
+				panel = $(panel.linkedPanel);
+			}
+			
+			resetInnerText(panel);
+		}
+	}
 };
 
 // Selecting with the caret backwards would always reset the caret back to the end of the selection when calling _find() (using the fastFind object),
@@ -161,4 +243,34 @@ moduleAid.LOADMODULE = function() {
 	tweakFindRange.prototype.Find = function(searchRange, startPt, endPt) {
 		return this._finder.Find(this.word, searchRange, startPt, endPt);
 	};
+	
+	if(!viewSource && !FITFull) {
+		for(var t=0; t<gBrowser.mTabs.length; t++) {
+			resetInnerText($(gBrowser.mTabs[t].linkedPanel));
+		}
+		
+		listenerAid.add(gBrowser, "DOMContentLoaded", innerTextContentLoaded);
+		gBrowser.addTabsProgressListener(innerTextProgressListener);
+	}
+	else if(viewSource) {
+		resetInnerText(linkedPanel);
+	}
+};
+
+moduleAid.UNLOADMODULE = function() {
+	if(!viewSource && !FITFull) {
+		listenerAid.remove(gBrowser, "DOMContentLoaded", innerTextContentLoaded);
+		gBrowser.removeTabsProgressListener(innerTextProgressListener);
+		
+		// Clean up everything this module may have added to tabs and panels and documents
+		for(var t=0; t<gBrowser.mTabs.length; t++) {
+			var panel = $(gBrowser.mTabs[t].linkedPanel);
+			delete panel.innerText;
+			delete panel.innerTextDeep;
+		}
+	}
+	else if(viewSource) {
+		delete linkedPanel.innerText;
+		delete linkedPanel.innerTextDeep;
+	}
 };

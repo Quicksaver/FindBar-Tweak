@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.1.3';
+moduleAid.VERSION = '2.1.4';
 moduleAid.LAZY = true;
 
 // window - Similarly to windowMediator.callOnMostRecent, the window property returns the most recent navigator:browser window object
@@ -92,6 +92,9 @@ this.toggleAttribute = function(obj, attr, condition, trueval, falseval) { loadA
 // trueAttribute() - checks if attr on obj has value 'true'; once again, I'm uber lazy
 this.trueAttribute = function(obj, attr) { loadAttributesTools(); return trueAttribute(obj, attr); };
 
+// innerText() - returns the equivalent of IE's .innerText property of node; essentially returns .textContent without the script tags
+this.innerText = function(node) { loadHTMLElementsTools(); return innerText(node); };
+
 this.loadSandboxTools = function() {
 	delete this.xmlHttpRequest;
 	delete this.aSync;
@@ -111,6 +114,11 @@ this.loadAttributesTools = function() {
 	delete this.toggleAttribute;
 	delete this.trueAttribute;
 	moduleAid.load('utils/attributes');
+};
+
+this.loadHTMLElementsTools = function() {
+	delete this.innerText;
+	moduleAid.load('utils/HTMLElements');
 };
 
 moduleAid.UNLOADMODULE = function() {

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.0';
+moduleAid.VERSION = '1.2.1';
 
 this.compareRanges = function(aRange, bRange) {
 	if(aRange.nodeType || bRange.nodeType) { return false; } // Don't know if this could get here
@@ -112,7 +112,7 @@ if(mFinder) {
 		}
 		
 		var loops = 0;
-		var res = browser.finder.fastFind(val);
+		var res = browser.finder.fastFind(val, aLinksOnly, false);
 		while(loops < aCompare.limit) {
 			if(res == browser.finder._fastFind.FIND_NOTFOUND) {
 				break;
@@ -171,7 +171,7 @@ else {
 		}
 		
 		var loops = 0;
-		var res = browser.fastFind.find(val);
+		var res = browser.fastFind.find(val, aLinksOnly);
 		while(loops < aCompare.limit) {
 			if(res == browser._fastFind.FIND_NOTFOUND) {
 				break;

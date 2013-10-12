@@ -101,6 +101,10 @@
 		-moz-appearance: menupopup;
 	}
 	
+	window:not([findbartweak-FF25]) findbar[movetotop] toolbarbutton:last-of-type {
+		-moz-margin-end: 3px;
+	}
+	
 	/* for now this has no image */
 	findbar toolbarbutton[anonid="findbartweak-match-mode"] image {
 		display: none;

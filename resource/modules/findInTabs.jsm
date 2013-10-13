@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.7.9';
+moduleAid.VERSION = '1.7.8';
 
 this.__defineGetter__('FITresizer', function() { return gFindBar._FITresizer; });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -1134,7 +1134,7 @@ this.countFITinDoc = function(aWord, aWindow) {
 	endPt.collapse(false);
 	
 	var retRange = null;
-	var finder = new tweakFindRange(gFindBar, aWord);
+	var finder = new tweakFindRange(gFindBar, aWord, gFindBar._shouldBeCaseSensitive(aWord));
 	
 	while((retRange = finder.Find(searchRange, startPt, endPt))) {
 		startPt = retRange.cloneRange();

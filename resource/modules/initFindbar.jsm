@@ -1,5 +1,6 @@
-moduleAid.VERSION = '2.2.4';
+moduleAid.VERSION = '2.2.6';
 
+// Some globals we use everywhere
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return window.gFindBarInitialized; });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -18,9 +19,24 @@ this.__defineGetter__('contentWindow', function() { return _getCurrentWindowForB
 this.inPDFJS = function(aDoc) { return (aDoc && aDoc.contentType == 'application/pdf' && aDoc.baseURI == 'resource://pdf.js/web/'); };
 this.__defineGetter__('isPDFJS', function() { return inPDFJS(contentDocument); });
 
+// Find bar hidden state, so I can modify the criteria without having to modify the whole code
 this._getFindBarHidden = function() { return gFindBar.hidden; };
 this.__defineGetter__('findBarHidden', function() { return _getFindBarHidden(); });
 this.__defineSetter__('findBarHidden', function(v) { return gFindBar.hidden = v; });
+
+// Document highlight status, this was previously in highlights.jsm but I need these in initMatchMode.jsm too
+this.__defineGetter__('documentHighlighted', function() {
+	return (contentDocument && trueAttribute(contentDocument.documentElement, 'highlighted'));
+});
+this.__defineSetter__('documentHighlighted', function(v) {
+	if(contentDocument) { toggleAttribute(contentDocument.documentElement, 'highlighted', v); }
+});
+this.__defineGetter__('documentReHighlight', function() {
+	return (contentDocument && trueAttribute(contentDocument.documentElement, 'reHighlight'));
+});
+this.__defineSetter__('documentReHighlight', function(v) {
+	if(contentDocument) { toggleAttribute(contentDocument.documentElement, 'reHighlight', v); }
+});
 
 this.currentTab = null;
 
@@ -92,8 +108,6 @@ this.baseInit = function(bar) {
 				this._enableFindButtons(val);
 				if(this.getElement("highlight").checked)
 					this._setHighlightTimeout();
-				
-				this._updateCaseSensitivity(val);
 				
 				res = tweakFastFind(this.browser, val, this._findMode == this.FIND_LINKS, this._findMode != this.FIND_NORMAL);
 				

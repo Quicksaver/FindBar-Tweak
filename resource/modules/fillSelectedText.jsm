@@ -1,8 +1,18 @@
-moduleAid.VERSION = '1.2.2';
+moduleAid.VERSION = '1.2.3';
 
 this.fillSelectedText = function() {
 	var selText = gFindBar._getInitialSelection();
 	if(selText && gFindBar._findField.value != selText && dispatch(gFindBar, { type: 'WillFillSelectedText' })) {
+		if(prefAid.fillTextShowFindBar && gFindBar.hidden) {
+			gFindBar.open(gFindBar.FIND_TYPEAHEAD);
+			if(gFindBar._quickFindTimeout) { window.clearTimeout(gFindBar._quickFindTimeout); }
+			gFindBar._quickFindTimeout = window.setTimeout(function(aSelf) { if(aSelf._findMode != aSelf.FIND_NORMAL) aSelf.close(); }, gFindBar._quickFindTimeoutLength, gFindBar);
+		}
+		
+		if(gFindBar.hidden) {
+			matchModeOnOpen();
+		}
+		
 		gFindBar._findField.value = selText;
 		linkedPanel._highlightedWord = selText; // Make sure we highlight it if needed
 		workAroundFind = true;
@@ -10,12 +20,6 @@ this.fillSelectedText = function() {
 			try { gFindBar._find(); } catch(ex) { Cu.reportError(ex); } // ensure we reset workAroundFind even if this errors for some reason, it shouldn't though
 			workAroundFind = false;
 		}, 0);
-		
-		if(prefAid.fillTextShowFindBar && gFindBar.hidden) {
-			gFindBar.open(gFindBar.FIND_TYPEAHEAD);
-			if(gFindBar._quickFindTimeout) { window.clearTimeout(gFindBar._quickFindTimeout); }
-			gFindBar._quickFindTimeout = window.setTimeout(function(aSelf) { if(aSelf._findMode != aSelf.FIND_NORMAL) aSelf.close(); }, gFindBar._quickFindTimeoutLength, gFindBar);
-		}
 	}
 };
 

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.1.0';
+moduleAid.VERSION = '2.1.2';
 moduleAid.LAZY = true;
 
 // listenerAid - Object to aid in setting and removing all kinds of event listeners to an object;
@@ -15,6 +15,9 @@ if(Services.vc.compare(Services.appinfo.platformVersion, "20.0") >= 0) {
 
 // toCode - allows me to modify a function quickly and safely from within my scripts
 this.__defineGetter__('toCode', function() { delete this.toCode; moduleAid.load('utils/toCode'); return toCode; });
+
+// keydownPanel - Panel elements don't support keyboard navigation by default; this object fixes that.
+this.__defineGetter__('keydownPanel', function() { delete this.keydownPanel; moduleAid.load('utils/keydownPanel'); return keydownPanel; });
 
 // aSync() - lets me run aFunc asynchronously, basically it's a one shot timer with a delay of aDelay msec
 this.aSync = function(aFunc, aDelay) { loadWindowTools(); return aSync(aFunc, aDelay); };

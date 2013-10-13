@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.7.9';
+moduleAid.VERSION = '1.7.10';
 
 this.__defineGetter__('FITresizer', function() { return gFindBar._FITresizer; });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -52,6 +52,14 @@ this.toggleFITBox = function() {
 		timerAid.init('toggleFIT', function() {
 			if(toggle) {
 				moduleAid.load('globalFB');
+			} else {
+				togglePerTab();
+			}
+		}, 0);
+	} else {
+		timerAid.init('toggleFIT', function() {
+			if(toggle) {
+				moduleAid.unload('perTab');
 			} else {
 				togglePerTab();
 			}

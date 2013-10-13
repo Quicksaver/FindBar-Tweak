@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.2.14';
+moduleAid.VERSION = '2.3.0';
 moduleAid.LAZY = true;
 
 // overlayAid - to use overlays in my bootstraped add-ons. The behavior is as similar to what is described in https://developer.mozilla.org/en/XUL_Tutorial/Overlays as I could manage.
@@ -223,6 +223,14 @@ this.overlayAid = {
 			overlay.persist[node.id]['currentset'] = true;
 		}
 		
+		if(node.parentNode && node.parentNode.nodeName == 'toolbarpalette') {
+			if(!overlay.persist[node.id]) {
+				overlay.persist[node.id] = {};
+			}
+			overlay.persist[node.id]['insertInToolbar'] = true;
+			overlay.persist[node.id]['_toolbarSet'] = true;
+		}
+		
 		if(node.nodeName == 'xml-stylesheet') {
 			replaceObjStrings(node, 'textContent');
 		}
@@ -301,11 +309,52 @@ this.overlayAid = {
 		
 		var uri = aWindow.document.baseURI;
 		if(!allRes[uri]) { return; }
+		var toolboxes = aWindow.document.querySelectorAll('toolbox');
+		
+		for(var id in overlay.persist) {
+			if(overlay.persist[id]['insertInToolbar'] && (!allRes[uri][id] || !allRes[uri][id]['insertInToolbar'])) {
+				var node = aWindow.document.getElementById(id);
+				if(!node) {
+					toolboxes_loop: for(var t=0; t<toolboxes.length; t++) {
+						if(!toolboxes[t].palette) { continue; }
+						
+						for(var c=0; c<toolboxes[t].palette.childNodes.length; c++) {
+							if(toolboxes[t].palette.childNodes[c].id == id) {
+								node = toolboxes[t].palette.childNodes[c];
+								break toolboxes_loop;
+							}
+						}
+					}
+				}
+				
+				if(!allRes[uri][id]) {
+					allRes[uri][id] = {};
+				}
+				allRes[uri][id]['insertInToolbar'] = (node && node.getAttribute('insertInToolbar')) ? node.getAttribute('insertInToolbar') : '__empty';
+				allRes[uri][id]['_toolbarSet'] = (node && node.getAttribute('_toolbarSet')) ? node.getAttribute('_toolbarSet') : '__empty';
+			}
+		}
+		
 		for(var id in allRes[uri]) {
 			var node = aWindow.document.getElementById(id);
-			if(!node) { continue; }
 			
 			if(this.isPersist(overlay, id)) {
+				if(!node) {
+					if(!this.isPersist(overlay, id, 'insertInToolbar')) { continue; }
+					toolboxes_loop: for(var t=0; t<toolboxes.length; t++) {
+						if(!toolboxes[t].palette) { continue; }
+						
+						for(var c=0; c<toolboxes[t].palette.childNodes.length; c++) {
+							if(toolboxes[t].palette.childNodes[c].id == id) {
+								node = toolboxes[t].palette.childNodes[c];
+								break toolboxes_loop;
+							}
+						}
+					}
+				}
+				
+				if(!node) { continue; }
+				
 				for(var attr in allRes[uri][id]) {
 					if(this.isPersist(overlay, id, attr)) {
 						if(allRes[uri][id][attr] == '__empty') {
@@ -379,10 +428,134 @@ this.overlayAid = {
 								}
 							}
 						}
+						
+						else if(attr == 'insertInToolbar') {
+							if(node.parentNode.nodeName == 'toolbarpalette' && node.getAttribute(attr)) {
+								var toolbar = aWindow.document.getElementById(node.getAttribute(attr));
+								if(toolbar) {
+									var b4 = null;
+									var shift = -1;
+									var toolbarSet = allRes[uri][id]['_toolbarSet'] || node.getAttribute('_toolbarSet');
+									if(toolbarSet) {
+										toolbarSet = toolbarSet.split(',');
+										for(var s=0; s<toolbarSet.length; s++) {
+											if(shift == -1) {
+												if(toolbarSet[s] == id) { shift = 0; }
+												continue;
+											}
+											
+											if(toolbarSet[s] == 'separator' || toolbarSet[s] == 'spring' || toolbarSet[s] == 'spacer') {
+												shift++;
+												continue;
+											}
+											
+											b4 = aWindow.document.getElementById(toolbarSet[s]);
+											if(b4 && b4.parentNode != toolbar) { b4 = null; }
+											
+											if(b4) { break; }
+										}
+									}
+									
+									while(shift > 0) {
+										if(!b4) {
+											b4 = toolbar.lastChild;
+											if(!b4) { break; }
+											shift--;
+											continue;
+										}
+										
+										if(!b4.previousSibling) {
+											shift = 0;
+											break;
+										}
+										
+										if(b4.previousSibling.nodeName == 'toolbarseparator'
+										|| b4.previousSibling.nodeName == 'toolbarspring'
+										|| b4.previousSibling.nodeName == 'toolbarspacer') {
+											b4 = b4.previousSibling;
+											shift--;
+										}
+									}
+									
+									var updateListButton = this.updateOverlayedNodes(aWindow, node);
+									// insertItem doesn't seem to be defined until the toolbar becomes visible
+									if(b4) {
+										if(toolbar.insertItem) { toolbar.insertItem(node.id, b4); }
+										else { node = toolbar.insertBefore(node, b4); }
+									} else {
+										if(toolbar.insertItem) { toolbar.insertItem(node.id); }
+										else { node = toolbar.appendChild(node); }
+									}
+									this.updateOverlayedNodes(aWindow, node, updateListButton);
+									
+									setAttribute(toolbar, 'currentset', toolbar.currentSet);
+									aWindow.document.persist(toolbar.id, 'currentset');
+								}
+							}
+							
+							this.persistToolbarButton(aWindow, node);
+						}
 					}
 				}
 			}
 		}
+	},
+	
+	persistToolbarButton: function(aWindow, aNode) {
+		var aNodeID = aNode.id;
+		
+		var persistListener = function() {
+			var node = aWindow.document.getElementById(aNodeID);
+			var testNode = node;
+			if(!node) {
+				var toolboxes = aWindow.document.querySelectorAll('toolbox');
+				toolboxes_loop: for(var t=0; t<toolboxes.length; t++) {
+					if(!toolboxes[t].palette) { continue; }
+					
+					for(var c=0; c<toolboxes[t].palette.childNodes.length; c++) {
+						if(toolboxes[t].palette.childNodes[c].id == aNodeID) {
+							node = toolboxes[t].palette.childNodes[c];
+							break toolboxes_loop;
+						}
+					}
+				}
+			}
+			if(!node) { return; } // Fail-safe
+			
+			if(node.parentNode.nodeName == 'toolbarpalette') {
+				setAttribute(node, 'insertInToolbar', '');
+				setAttribute(node, '_toolbarSet', '');
+			} else {
+				setAttribute(node, 'insertInToolbar', node.parentNode.id);
+				setAttribute(node, '_toolbarSet', node.parentNode.getAttribute('currentset'));
+			}
+			
+			if(!testNode) {
+				var tempNode = aWindow.document.createElement('toolbarbutton'); // most common will be toolbarbutton, even though element type doesn't really matter here
+				tempNode.id = aNodeID;
+				tempNode.hidden = true;
+				tempNode = aWindow.document.documentElement.appendChild(tempNode);
+			}
+			
+			aWindow.document.persist(aNodeID, 'insertInToolbar');
+			aWindow.document.persist(aNodeID, '_toolbarSet');
+			
+			if(!testNode) {
+				tempNode.parentNode.removeChild(tempNode);
+			}
+		};
+		
+		aNode._removePersistListener = function() {
+			aWindow.removeEventListener('aftercustomization', persistListener);
+		};
+		
+		aWindow.addEventListener('aftercustomization', persistListener);
+		persistListener();
+		
+		this.traceBack(aWindow, {
+			action: 'persistToolbarButton',
+			node: aNode
+		});
 	},
 	
 	observingSchedules: function(aSubject, aTopic) {
@@ -605,6 +778,8 @@ this.overlayAid = {
 			return;
 		}
 		
+		var toolboxes = aWindow.document.querySelectorAll('toolbox');
+		
 		for(var j = aWindow[x][i].traceBack.length -1; j >= 0; j--) {
 			var action = aWindow[x][i].traceBack[j];
 			if(action.nodeID) { action.node = action.node || aWindow.document.getElementById(action.nodeID); }
@@ -636,6 +811,7 @@ this.overlayAid = {
 								action.node = action.originalParent.insertBefore(action.node, sibling);
 								if(action.originalParent.nodeName == 'toolbar') {
 									setAttribute(action.originalParent, 'currentset', action.originalParent.currentSet);
+									aWindow.document.persist(action.originalParent.id, 'currentset');
 								}
 							} else if(action.node.parentNode) {
 								action.node = action.node.parentNode.removeChild(action.node);
@@ -662,6 +838,7 @@ this.overlayAid = {
 							}
 							if(action.originalParent.nodeName == 'toolbar') {
 								setAttribute(action.originalParent, 'currentset', action.originalParent.currentSet);
+								aWindow.document.persist(action.originalParent.id, 'currentset');
 							}
 						}
 						break;
@@ -801,6 +978,26 @@ this.overlayAid = {
 									}
 								}
 							}
+						}
+						break;
+					
+					case 'persistToolbarButton':
+						if(!action.node) {
+							toolboxes_loop: for(var t=0; t<toolboxes.length; t++) {
+								if(!toolboxes[t].palette) { continue; }
+								
+								for(var c=0; c<toolboxes[t].palette.childNodes.length; c++) {
+									if(toolboxes[t].palette.childNodes[c].id == action.nodeID) {
+										action.node = toolboxes[t].palette.childNodes[c];
+										var updateList = this.updateOverlayedNodes(aWindow, action.node);
+										break toolboxes_loop;
+									}
+								}
+							}
+						}
+						
+						if(action.node && action.node._removePersistListener) {
+							action.node._removePersistListener();
 						}
 						break;
 								
@@ -1075,7 +1272,7 @@ this.overlayAid = {
 				// Add the node to the correct place
 				node = this.moveAround(aWindow, node, overlayNode, aWindow.document.getElementById(overlayNode.parentNode.id));
 				
-				// Check if we are adding any sidebars so we remove it later from the toolbox
+				// Check if we are adding any toolbars so we remove it later from the toolbox
 				this.addToolbars(aWindow, node);
 				
 				// Get Children of an Element's ID into this node
@@ -1190,8 +1387,9 @@ this.overlayAid = {
 					}
 					
 					ret = this.insertBefore(aWindow, node, parent, beforeEl);
-					if(ret && originalParent && originalParent.nodeName == 'toolbar') {
+					if(ret && originalParent && originalParent.id && originalParent.nodeName == 'toolbar') {
 						setAttribute(originalParent, 'currentset', originalParent.currentSet);
+						aWindow.document.persist(originalParent.id, 'currentset');
 					}
 					return ret;
 				}
@@ -1271,7 +1469,7 @@ this.overlayAid = {
 		var originalParent = node.parentNode;
 		var updateList = this.updateOverlayedNodes(aWindow, node);
 		
-		try { node = parent.appendChild(node); } catch(ex) { node = null; }
+		try { node = parent.appendChild(node); } catch(ex) { Cu.reportError(ex); node = null; }
 		
 		this.updateOverlayedNodes(aWindow, node, updateList);
 		this.traceBack(aWindow, {
@@ -1328,7 +1526,7 @@ this.overlayAid = {
 			}
 		}
 		
-		try { node = node.parentNode.removeChild(node); } catch(ex) { node = null; }
+		try { node = node.parentNode.removeChild(node); } catch(ex) { Cu.reportError(ex); node = null; }
 		
 		this.updateOverlayedNodes(aWindow, node, updateList);
 		this.traceBack(aWindow, {

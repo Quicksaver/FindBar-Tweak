@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.3';
+moduleAid.VERSION = '1.4.4';
 
 this.__defineGetter__('grid', function() {
 	var grids = (!viewSource) ? linkedPanel.querySelectorAll('[anonid="findGrid"]') : $$('[anonid="findGrid"]');
@@ -209,6 +209,7 @@ this.resetHighlightGrid = function() {
 	
 	removeAttribute(aGrid, 'gridSpacers');
 	listenerAid.remove(browserPanel, 'resize', delayResizeGridSpacers);
+	aGrid.parentNode.style.paddingTop = '';
 	
 	if(viewSource) {
 		aGrid.parentNode.style.top = '';
@@ -217,8 +218,12 @@ this.resetHighlightGrid = function() {
 	}
 	else if(isPDFJS) {
 		var offsetY = contentDocument.querySelectorAll('div.toolbar')[0].clientHeight;
-		var gridBox = aGrid.parentNode;
-		gridBox.style.paddingTop = offsetY +'px';
+		aGrid.parentNode.style.paddingTop = offsetY +'px';
+	}
+	// Special case for GMail
+	else if(contentDocument.baseURI.indexOf('https://mail.google.com/mail/') === 0) {
+		var offsetY = contentDocument.querySelectorAll('div.AO')[0].offsetTop;
+		aGrid.parentNode.style.paddingTop = offsetY +'px';
 	}
 	else {
 		var f=0;
@@ -241,6 +246,20 @@ this.resetHighlightGrid = function() {
 
 this.fillHighlightGrid = function(toAdd) {
 	var aGrid = grid; // Let's not overuse the querySelectorAll queries, could seriously slow down the process...
+	
+	// Special case for GMail
+	var ao = null;
+	if(!viewSource && !isPDFJS && contentDocument.baseURI.indexOf('https://mail.google.com/mail/') === 0) {
+		ao = contentDocument.querySelectorAll('div.AO')[0];
+		if(ao) {
+			for(var i=0; i<toAdd.length; i++) {
+				if(!isAncestor(toAdd[i].node.startContainer, ao)) {
+					toAdd.splice(i, 1);
+					i--;
+				}
+			}
+		}
+	}
 	
 	// For PDF files
 	if(isPDFJS) {
@@ -286,8 +305,13 @@ this.fillHighlightGrid = function(toAdd) {
 	// For normal HTML pages
 	else {
 		try {
-			var scrollTop = contentDocument.getElementsByTagName('html')[0].scrollTop || contentDocument.getElementsByTagName('body')[0].scrollTop;
-			var fullHTMLHeight = contentDocument.getElementsByTagName('html')[0].scrollHeight || contentDocument.getElementsByTagName('body')[0].scrollHeight;
+			if(ao) {
+				var scrollTop = ao.firstChild.scrollTop;
+				var fullHTMLHeight = ao.firstChild.scrollHeight;
+			} else {
+				var scrollTop = contentDocument.getElementsByTagName('html')[0].scrollTop || contentDocument.getElementsByTagName('body')[0].scrollTop;
+				var fullHTMLHeight = contentDocument.getElementsByTagName('html')[0].scrollHeight || contentDocument.getElementsByTagName('body')[0].scrollHeight;
+			}
 		}
 		catch(ex) {
 			if(contentDocument.getElementsByTagName('frameset').length == 0) { return; }
@@ -298,7 +322,7 @@ this.fillHighlightGrid = function(toAdd) {
 			
 			if(fullHTMLHeight > 0) {
 				var aRange = toAdd[i].node;
-				rowList.push(placeHighlight(aGrid, aRange, scrollTop, fullHTMLHeight, toAdd[i].pattern));
+				rowList.push(placeHighlight(aGrid, aRange, scrollTop, fullHTMLHeight, toAdd[i].pattern, ao));
 			}
 			
 			// This is an editable node, add it directly
@@ -418,7 +442,7 @@ this.fillHighlightGrid = function(toAdd) {
 	listenerAid.add(browserPanel, 'resize', delayResizeGridSpacers);
 };
 
-this.placeHighlight = function(aGrid, node, scrollTop, fullHTMLHeight, pattern) {
+this.placeHighlight = function(aGrid, node, scrollTop, fullHTMLHeight, pattern, ao) {
 	var rows = aGrid.childNodes[1];
 	
 	aGrid._lastUsedRow++;
@@ -436,8 +460,16 @@ this.placeHighlight = function(aGrid, node, scrollTop, fullHTMLHeight, pattern) 
 			if(!row.highlight || row.highlight.node != node) { return; }
 			
 			var rect = node.getBoundingClientRect();
-			var absTop = (rect.top + scrollTop) / fullHTMLHeight;
-			var absBot = (rect.bottom + scrollTop) / fullHTMLHeight;
+			var absTop = rect.top;
+			var absBot = rect.bottom;
+			
+			if(ao) {
+				absTop -= ao.offsetTop;
+				absBot -= ao.offsetTop;
+			}
+			
+			absTop = (absTop + scrollTop) / fullHTMLHeight;
+			absBot = (absBot + scrollTop) / fullHTMLHeight;
 			
 			// I have no idea why this happens sometimes, but we have to redo every row.
 			// Its rect.top and rect.bottom that are wrong sometimes.

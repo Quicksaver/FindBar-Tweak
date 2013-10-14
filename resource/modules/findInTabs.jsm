@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.7.10';
+moduleAid.VERSION = '1.7.11';
 
 this.__defineGetter__('FITresizer', function() { return gFindBar._FITresizer; });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -1923,12 +1923,20 @@ this.FITobserver = function(aSubject, aTopic, aData) {
 							
 			case 'load':
 			case 'location-change':
+			case 'state-change':
 				doc = aSubject;
 				var panel = getPanelForContent(aSubject);
 				for(var i=0; i<FITtabsList.childNodes.length; i++) {
 					if(FITtabsList.childNodes[i].linkedPanel == panel) {
 						item = FITtabsList.childNodes[i];
-						break;
+						if(item.delayFITProcess) {
+							item.delayFITProcess.cancel();
+						}
+						item.linkedDocument = doc;
+						item.delayFITProcess = aSync(function() {
+							aSyncSetTab(doc.defaultView, item, gFindBar._findField.value);
+						}, 500);
+						return;
 					}
 				}
 				break;

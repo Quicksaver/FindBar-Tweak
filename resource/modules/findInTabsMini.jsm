@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.3';
+moduleAid.VERSION = '1.0.4';
 
 this.__defineGetter__('FITbroadcaster', function() { return $(objName+'-findInTabs-broadcaster'); });
 
@@ -88,7 +88,7 @@ this.removeFITMainButton = function(bar) {
 	delete bar._FITtoggle;
 };
 
-this.FITtabLoaded = function(e) {
+this.FITtabContentLoaded = function(e) {
 	// this is the content document of the loaded page.
 	var doc = e.originalTarget;
 	if(doc instanceof window.HTMLDocument) {
@@ -98,7 +98,7 @@ this.FITtabLoaded = function(e) {
 			doc = doc.defaultView.frameElement.ownerDocument;
 		}
 		
-		observerAid.notify('FIT-update-doc', doc, e.type);
+		observerAid.notify('FIT-update-doc', doc, 'load');
 	}
 };
 
@@ -107,10 +107,16 @@ this.FITtabClosed = function(e) {
 };
 
 this.FITProgressListener = {
-	onLocationChange: function(aBrowser, webProgress, request, location) {
+	onLocationChange: function(browser, webProgress, request, location) {
 		// Frames don't need to trigger this
-		if(webProgress.DOMWindow == aBrowser.contentWindow) {
-			observerAid.notify('FIT-update-doc', aBrowser.contentDocument, 'location-change');
+		if(webProgress.DOMWindow == browser.contentWindow && browser.contentDocument) {
+			observerAid.notify('FIT-update-doc', browser.contentDocument, 'location-change');
+		}
+	},
+	
+	onStateChange: function(browser, webProgress, request, aStateFlags, aStatus) {
+		if(!webProgress.isLoadingDocument && browser.contentDocument && webProgress.DOMWindow == browser.contentWindow) {
+			observerAid.notify('FIT-update-doc', browser.contentDocument, 'state-change');
 		}
 	}
 };
@@ -148,8 +154,8 @@ this.loadFindInTabsMini = function() {
 	if(!viewSource) {
 		// Update FIT lists as needed
 		listenerAid.add(window, 'UpdatedStatusFindBar', autoSelectOnUpdateStatus);
-		listenerAid.add(gBrowser, 'load', FITtabLoaded, true);
-		listenerAid.add(gBrowser.tabContainer, 'TabClose', FITtabClosed, false);
+		listenerAid.add(gBrowser, 'DOMContentLoaded', FITtabContentLoaded);
+		listenerAid.add(gBrowser.tabContainer, 'TabClose', FITtabClosed);
 		listenerAid.add(gBrowser.tabContainer, 'TabSelect', sendToAutoSelectFITtab);
 		gBrowser.addTabsProgressListener(FITProgressListener);
 	}
@@ -189,8 +195,8 @@ moduleAid.UNLOADMODULE = function() {
 	
 	if(!viewSource) {
 		listenerAid.remove(window, 'UpdatedStatusFindBar', autoSelectOnUpdateStatus);
-		listenerAid.remove(gBrowser, 'load', FITtabLoaded, true);
-		listenerAid.remove(gBrowser.tabContainer, 'TabClose', FITtabClosed, false);
+		listenerAid.remove(gBrowser, 'DOMContentLoaded', FITtabContentLoaded);
+		listenerAid.remove(gBrowser.tabContainer, 'TabClose', FITtabClosed);
 		listenerAid.remove(gBrowser.tabContainer, 'TabSelect', sendToAutoSelectFITtab);
 		gBrowser.removeTabsProgressListener(FITProgressListener);
 		

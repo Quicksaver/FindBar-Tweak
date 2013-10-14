@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.7.11';
+moduleAid.VERSION = '1.7.12';
 
 this.__defineGetter__('FITresizer', function() { return gFindBar._FITresizer; });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -899,6 +899,16 @@ this.processFITTab = function(aWindow, item, word) {
 	// Because this method can be called with a delay, we should make sure the findword still exists
 	if(!gFindBar._findField.value || gFindBar._findField.value != word) { return; }
 	
+	// We should only update the item if it needs to be updated
+	var panel = getTabForContent(aWindow.document);
+	if(!panel) { return; }
+	else if(panel.linkedBrowser.ownerDocument.documentElement.getAttribute('windowtype') == 'navigator:view-source') {
+		panel = panel.linkedBrowser.ownerDocument.getElementById('appcontent');
+	} else {
+		panel = panel.ownerDocument.getElementById(panel.linkedPanel);
+	}
+	if(!panel || (item.innerText && item.innerText == panel.innerTextDeep)) { return; }
+	
 	// We try to process one tab at a time, to boost performance when searching with multiple tabs open
 	if(processingFITTab) {
 		aSync(function() { processFITTab(aWindow, item, word); }, 10);
@@ -906,6 +916,7 @@ this.processFITTab = function(aWindow, item, word) {
 	}
 	
 	processingFITTab = true;
+	item.innerText = panel.innerTextDeep;
 	try { countFITinTab(aWindow, item, word); }
 	catch(ex) {
 		Cu.reportError(ex);

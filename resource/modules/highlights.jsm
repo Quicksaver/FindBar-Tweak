@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.0';
+moduleAid.VERSION = '1.4.1';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -22,6 +22,9 @@ this.escHighlights = function(e) {
 };
 
 this.highlightOnClose = function(e) {
+	// If the quickfind bar is auto-closing, it should still highlight the results
+	if(e.type == 'ClosedFindBar' && gFindBar._findMode != gFindBar.FIND_NORMAL && timerAid.delayHighlight) { return; }
+	
 	// Cancel a delayed highlight when closing the find bar
 	timerAid.cancel('delayHighlight');
 	

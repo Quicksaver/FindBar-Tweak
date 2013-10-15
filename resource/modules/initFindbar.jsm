@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.2.6';
+moduleAid.VERSION = '2.2.7';
 
 // Some globals we use everywhere
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
@@ -172,6 +172,11 @@ this.baseInit = function(bar) {
 			dispatch(this, { type: 'FoundAgainCommand'+suffix, cancelable: false, detail: { aFindPrevious: aFindPrevious } });
 		}
 	};
+	
+	// Changing the pref doesn't automatically update this value
+	bar.__quickFindTimeoutLength = bar._quickFindTimeoutLength;
+	delete bar._quickFindTimeoutLength;
+	bar.__defineGetter__('_quickFindTimeoutLength', function() { return prefAid.FAYTtimeout; });
 };
 
 this.baseDeinit = function(bar) {
@@ -189,6 +194,10 @@ this.baseDeinit = function(bar) {
 		bar._findStatusDesc.hidden = false;
 		bar._findStatusIcon.hidden = false;
 	}
+	
+	delete bar._quickFindTimeoutLength;
+	bar._quickFindTimeoutLength = bar.__quickFindTimeoutLength;
+	delete bar.__quickFindTimeoutLength;
 	
 	bar._find = bar.__find;
 	bar._findAgain = bar.__findAgain;

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.7.13';
+moduleAid.VERSION = '1.7.14';
 
 this.__defineGetter__('FITresizer', function() { return gFindBar._FITresizer; });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -1936,6 +1936,9 @@ this.FITobserver = function(aSubject, aTopic, aData) {
 			case 'load':
 			case 'location-change':
 			case 'state-change':
+				// 1 child means it's still processing (only has the listheader element); it should never be 0 children but better safe than sorry
+				if(FITtabsList.childNodes.length < 2) { return; }
+				
 				doc = aSubject;
 				var panel = getPanelForContent(aSubject);
 				for(var i=0; i<FITtabsList.childNodes.length; i++) {

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.7.12';
+moduleAid.VERSION = '1.7.13';
 
 this.__defineGetter__('FITresizer', function() { return gFindBar._FITresizer; });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -65,6 +65,9 @@ this.toggleFITBox = function() {
 			}
 		}, 0);
 	}
+	
+	// Make sure we have the lastWindow reference updated right from the start
+	lastWindow = contentDocument.defaultView;
 	
 	shouldFindAll();
 };
@@ -1896,17 +1899,15 @@ this.FITobserver = function(aSubject, aTopic, aData) {
 	try {
 		switch(aData) {
 			case 'autoSelectFITtabFoundFindBar':
-				if(!FITFull) { return; } // This will be done in FIT's own search when it ends
 				if(FITWorking) { return; } // No redundant multiple calls are necessary
 				lastWindow = aSubject.defaultView;
+				if(!FITFull) { return; } // This will be done in FIT's own search when it ends
 				autoSelectFITtab(aSubject);
 				return;
 				
 			case 'autoSelectFITtab':
 				if(FITWorking) { return; } // No redundant multiple calls are necessary
-				if(FITFull) {
-					lastWindow = aSubject.defaultView;
-				}
+				lastWindow = aSubject.defaultView;
 				autoSelectFITtab(aSubject);
 				return;
 				
@@ -2063,8 +2064,6 @@ this.loadFindInTabs = function() {
 		prefAid.listen('alwaysOpenFIT', alwaysOpenFIT);
 		
 		alwaysOpenFIT();
-		
-		lastWindow = contentDocument.defaultView;
 	}
 	
 	// Update FIT lists as needed

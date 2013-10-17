@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.0';
+moduleAid.VERSION = '1.0.1';
 
 this.MATCH_MODE_NORMAL = 0;
 this.MATCH_MODE_CASE_SENSITIVE = 1;
@@ -95,8 +95,9 @@ this.matchModeOnOpen = function() {
 	gFindBar._buttonMode.updateMatchMode(mode);
 };
 
-this.showMatchModeStatus = function() {
-	gFindBar.getElement('match-case-status').hidden = (gFindBar._findMode == gFindBar.FIND_NORMAL || prefAid.keepButtons || gFindBar._matchMode == MATCH_MODE_NORMAL);
+this.showMatchModeStatus = function(e) {
+	var bar = e.originalTarget;
+	bar.getElement('match-case-status').hidden = (bar._findMode == bar.FIND_NORMAL || prefAid.keepButtons || bar._matchMode == MATCH_MODE_NORMAL);
 };
 
 this.modeInit = function(bar) {
@@ -247,6 +248,7 @@ this.followModeAccesskey = function(e) {
 moduleAid.LOADMODULE = function() {
 	initFindBar('matchMode', modeInit, modeDeinit);
 	
+	listenerAid.add(window, 'OpenedFindBarAnotherTab', showMatchModeStatus);
 	listenerAid.add(window, 'OpenedFindBar', showMatchModeStatus);
 	
 	// Mac keys are behaving differently, I think altKey should fire when I hit option, but ctrlKey is firing (only in this handler!)
@@ -264,6 +266,7 @@ moduleAid.LOADMODULE = function() {
 };
 
 moduleAid.UNLOADMODULE = function() {
+	listenerAid.remove(window, 'OpenedFindBarAnotherTab', showMatchModeStatus);
 	listenerAid.remove(window, 'OpenedFindBar', showMatchModeStatus);
 	listenerAid.remove(window, 'keydown', followModeAccesskey, true);
 	

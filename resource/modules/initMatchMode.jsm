@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.1';
+moduleAid.VERSION = '1.0.2';
 
 this.MATCH_MODE_NORMAL = 0;
 this.MATCH_MODE_CASE_SENSITIVE = 1;
@@ -101,8 +101,22 @@ this.showMatchModeStatus = function(e) {
 };
 
 this.modeInit = function(bar) {
+	// This method is not needed with our system
 	bar.__updateCaseSensitivity = bar._updateCaseSensitivity;
 	bar._updateCaseSensitivity = function() { return; };
+	
+	// Ensure we send the correct value for caseSensitivity search
+	bar.__dispatchFindEvent = bar._dispatchFindEvent;
+	bar._dispatchFindEvent = function(aType, aFindPrevious) {
+		let event = document.createEvent("CustomEvent");
+		event.initCustomEvent("find" + aType, true, true, {
+			query: this._findField.value,
+			caseSensitive: this._matchMode == MATCH_MODE_CASE_SENSITIVE,
+			highlightAll: this.getElement("highlight").checked,
+			findPrevious: aFindPrevious
+		});
+		return this.dispatchEvent(event);
+	};
 	
 	bar.getElement('find-case-sensitive').disabled = true;
 	
@@ -216,7 +230,9 @@ this.modeDeinit = function(bar) {
 	}
 	
 	bar._updateCaseSensitivity = bar.__updateCaseSensitivity;
+	bar._dispatchFindEvent = bar.__dispatchFindEvent;
 	delete bar.__updateCaseSensitivity;
+	delete bar._dispatchFindEvent;
 };
 
 this.followModeAccesskey = function(e) {

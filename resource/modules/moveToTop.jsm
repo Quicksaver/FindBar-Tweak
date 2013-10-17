@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.8';
+moduleAid.VERSION = '1.5.9';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -16,6 +16,11 @@ this.shouldReMoveTop = function(newStyle) {
 	if(!lastTopStyle) { return true; }
 	
 	if(!newStyle) {
+		if(isPDFJS) {
+			var loadingBar = contentDocument.getElementById('loadingBar');
+			loadingBar = (loadingBar && loadingBar.clientHeight > 0);
+			if(loadingBar != lastTopStyle.PDFJSloadingBar) { return true; }
+		}
 		return (gFindBar.clientWidth != lastTopStyle.clientWidth);
 	}
 	else if(newStyle.top != lastTopStyle.top
@@ -94,6 +99,7 @@ this.moveTop = function() {
 		clientWidth: gFindBar.clientWidth,
 		left: MIN_LEFT,
 		right: MIN_RIGHT,
+		PDFJSloadingBar: false,
 		top: -1 // Move the find bar one pixel up so it covers the toolbox borders, giving it a more seamless look
 	};
 	
@@ -131,6 +137,27 @@ this.moveTop = function() {
 			var sidebarContainer = contentDocument.getElementById('sidebarContainer');
 			if(outerContainer.classList.contains('sidebarOpen')) {
 				moveTopStyle.left += sidebarContainer.clientWidth;
+			}
+			var loadingBar = contentDocument.getElementById('loadingBar');
+			if(loadingBar && loadingBar.clientHeight) {
+				moveTopStyle.top += loadingBar.clientHeight;
+				moveTopStyle.PDFJSloadingBar = true;
+				
+				// don't cover the loading bar
+				moveTopStyle.top++;
+				
+				// Make sure we move the find bar back to its place when the loading bar is hidden
+				timerAid.init('moveTopPDFJSLoadingBar', function() {
+					try {
+						if(loadingBar.clientHeight == 0) {
+							timerAid.cancel('moveTopPDFJSLoadingBar');
+							moveTopAsNeeded({ type: 'FindBarUIChanged' });
+						}
+					}
+					catch(ex) {
+						timerAid.cancel('moveTopPDFJSLoadingBar');
+					}
+				}, 50, 'slack');
 			}
 			listenerAid.add(contentDocument.defaultView, 'resize', containerPDFResize, true);
 		}

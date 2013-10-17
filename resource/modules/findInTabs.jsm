@@ -1156,7 +1156,7 @@ this.countFITinDoc = function(aWord, aWindow) {
 	endPt.collapse(false);
 	
 	var retRange = null;
-	var finder = new tweakFindRange(gFindBar, aWord);
+	var finder = new tweakFindRange(gFindBar, aWord, gFindBar._shouldBeCaseSensitive(aWord));
 	
 	while((retRange = finder.Find(searchRange, startPt, endPt))) {
 		startPt = retRange.cloneRange();

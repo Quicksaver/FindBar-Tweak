@@ -1,4 +1,4 @@
-var defaultsVersion = '1.2.7';
+var defaultsVersion = '1.2.6';
 var objName = 'findbartweak';
 var objPathString = 'findbartweak';
 
@@ -49,7 +49,6 @@ var prefList = {
 	perTab: (Services.vc.compare(Services.appinfo.platformVersion, "25.0a1") >= 0),
 	onStartup: false,
 	findbarHidden: true,
-	matchMode: 0,
 	
 	movetoTop: false,
 	movetoBottom: false,

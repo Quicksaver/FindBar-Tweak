@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.1';
+moduleAid.VERSION = '1.2.2';
 
 this.compareRanges = function(aRange, bRange) {
 	if(aRange.nodeType || bRange.nodeType) { return false; } // Don't know if this could get here
@@ -23,9 +23,19 @@ this.resetInnerText = function(panel) {
 	panel.__defineGetter__('innerText', function() {
 		delete this.innerText;
 		var browser = this.querySelectorAll('browser')[0];
-		var doc = (browser && browser.contentDocument && !inPDFJS(browser.contentDocument)) ? browser.contentDocument : null;
-		var body = (doc && doc instanceof Ci.nsIDOMHTMLDocument && doc.body) ? doc.body : doc.documentElement;
-		this.innerText = innerText(body);
+		
+		var doc = (browser && browser.contentDocument) ? browser.contentDocument : null;
+		if(inPDFJS(browser.contentDocument)) {
+			this.innerText = 'PDF.JS '+browser.contentDocument.URL;
+		}
+		else if(!doc) {
+			this.innerText = '';
+		}
+		else {		
+			var body = (doc instanceof Ci.nsIDOMHTMLDocument && doc.body) ? doc.body : doc.documentElement;
+			this.innerText = innerText(body);
+		}
+		
 		return this.innerText;
 	});
 	

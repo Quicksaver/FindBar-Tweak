@@ -1,6 +1,4 @@
-moduleAid.VERSION = '1.1.1';
-
-this._getFindBarHidden = function() { return !linkedPanel._findBarOpen; };
+moduleAid.VERSION = '1.1.2';
 
 this.reopenPerTabSelected = function() {
 	if(linkedPanel._findBarOpen) {
@@ -49,6 +47,8 @@ moduleAid.LOADMODULE = function() {
 		listenerAid.add(window, 'FoundAgain', updateLastFindValueOnQuickFind);
 		return;
 	}
+	
+	_getFindBarHidden = function() { return !linkedPanel._findBarOpen; };
 	
 	listenerAid.add(gBrowser.tabContainer, "TabSelect", reopenPerTabSelected);
 	

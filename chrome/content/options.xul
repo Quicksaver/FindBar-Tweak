@@ -9,7 +9,6 @@
 			
 	<prefpane id="generalPane" label="&OptGeneral.label;" style="&Optwindow.style;">
 		<preferences>
-			<preference id="pref-hideWhenFinderHidden" name="extensions.findbartweak.hideWhenFinderHidden" type="bool"/>
 			<preference id="pref-findInTabs" name="extensions.findbartweak.findInTabs" type="bool"/>
 			<preference id="pref-alwaysOpenFIT" name="extensions.findbartweak.alwaysOpenFIT" type="bool"/>
 			<preference id="pref-FITFull" name="extensions.findbartweak.FITFull" type="bool"/>

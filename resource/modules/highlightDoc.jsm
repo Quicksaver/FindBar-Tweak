@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.1';
+moduleAid.VERSION = '1.4.2';
 
 this.alwaysUpdateStatusUI = function(e) {
 	// toggleHighlight() doesn't update the UI in these conditions, we need it to, to update the counter (basically hide it)
@@ -23,41 +23,65 @@ this.trackPDFMatches = function(e) {
 	// Cancel another possible timer if it was scheduled before
 	timerAid.cancel('trackPDFMatches');
 	
-	if(typeof(linkedPanel._matchesPDFtotal) == 'undefined') {
-		linkedPanel._matchesPDFtotal = 0;
-	}
-	
 	// We need this to access protected properties, hidden from privileged code
 	var unWrap = XPCNativeWrapper.unwrap(contentWindow);
 	
 	// This usually means the matches are still being retrieved, however if this isn't true it still doesn't mean it's fully finished.
 	// So later we set a timer to update itself after a while.
-	if(!unWrap.PDFFindController.active || unWrap.PDFFindController.resumeCallback) {
+	if(!unWrap.PDFFindController || !unWrap.PDFFindController.active || unWrap.PDFFindController.resumeCallback) {
+		linkedPanel._matchesPDFtotal = 0;
 		timerAid.init('trackPDFMatches', trackPDFMatches, 0);
 		return;
 	}
 	
+	documentHighlighted = (unWrap.PDFFindController.state && unWrap.PDFFindController.state.caseSensitive);
+	
 	// No matches
-	if(!unWrap.PDFFindController.hadMatch) {
-		if(linkedPanel._matchesPDFtotal > 0) {
-			linkedPanel._matchesPDFtotal = 0;
-			dispatch(gFindBar, { type: 'UpdatedPDFMatches', cancelable: false }); // We should still dispatch this
-			return;
+	var total = 0;
+	
+	if(unWrap.PDFFindController.hadMatch) {
+		var matches = unWrap.PDFFindController.pageMatches;
+		for(var p=0; p<matches.length; p++) {
+			total += matches[p].length;
 		}
 	}
 	
-	var matches = unWrap.PDFFindController.pageMatches;
-	var total = 0;
-	for(var p=0; p<matches.length; p++) {
-		total += matches[p].length;
-	}
-	
-	if(linkedPanel._matchesPDFtotal != total) {
+	var doAgain = false;
+	if(linkedPanel._matchesPDFtotal !== total) {
 		linkedPanel._matchesPDFtotal = total;
 		dispatch(gFindBar, { type: 'UpdatedPDFMatches', cancelable: false });
-		
+		doAgain = true;
+	}
+	
+	if(doAgain || unWrap.PDFFindController.pageContents.length != unWrap.PDFView.pages.length) {
+		tempPendingStatus(true);
 		// Because it might still not be finished, we should update later
 		timerAid.init('trackPDFMatches', trackPDFMatches, 250);
+	} else {
+		tempPendingStatus();
+	}
+};
+
+this.tempPendingStatus = function(isPending) {
+	var icon = gFindBar.getElement('find-status-icon');
+	if(isPending) {
+		setAttribute(icon, 'status', 'pending');
+		if(icon._tempPendingTimer) {
+			icon._tempPendingTimer.cancel();
+		}
+		icon._tempPendingTimer = aSync(function() {
+			try {
+				delete icon._tempPendingTimer;
+				removeAttribute(icon, 'status');
+			}
+			catch(ex) {}
+		}, 500);
+	} else {
+		removeAttribute(icon, 'status');
+		if(icon._tempPendingTimer) {
+			icon._tempPendingTimer.cancel();
+			delete icon._tempPendingTimer;
+		}
 	}
 };
 
@@ -270,6 +294,13 @@ moduleAid.LOADMODULE = function() {
 				delete bar.__highlightDoc;
 			} else {
 				delete bar._highlightDoc;
+			}
+			
+			var icon = bar.getElement('find-status-icon');
+			if(icon._tempPendingTimer) {
+				removeAttribute(icon, 'status');
+				icon._tempPendingTimer.cancel();
+				delete icon._tempPendingTimer;
 			}
 		}
 	);

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.4';
+moduleAid.VERSION = '1.4.5';
 
 this.__defineGetter__('grid', function() {
 	var grids = (!viewSource) ? linkedPanel.querySelectorAll('[anonid="findGrid"]') : $$('[anonid="findGrid"]');
@@ -473,7 +473,7 @@ this.placeHighlight = function(aGrid, node, scrollTop, fullHTMLHeight, pattern, 
 			
 			// I have no idea why this happens sometimes, but we have to redo every row.
 			// Its rect.top and rect.bottom that are wrong sometimes.
-			if(absTop < 0 || absBot > 1) {
+			if(!isPDFJS && (absTop < 0 || absBot > 1)) {
 				reHighlight(documentHighlighted);
 				return;
 			}
@@ -682,7 +682,7 @@ this.gridFollowCurrentHit = function(e) {
 	
 	// Special routine for PDF.JS
 	if(isPDFJS) {
-		if(contentDocument.readyState != 'complete') { return; }
+		if(contentDocument.readyState != 'complete' && contentDocument.readyState != 'interactive') { return; }
 		
 		// We need this to access protected properties, hidden from privileged code
 		var unWrap = XPCNativeWrapper.unwrap(contentWindow);

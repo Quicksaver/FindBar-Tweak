@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.2';
+moduleAid.VERSION = '1.2.3';
 
 this.compareRanges = function(aRange, bRange) {
 	if(aRange.nodeType || bRange.nodeType) { return false; } // Don't know if this could get here
@@ -26,7 +26,7 @@ this.resetInnerText = function(panel) {
 		
 		var doc = (browser && browser.contentDocument) ? browser.contentDocument : null;
 		if(inPDFJS(browser.contentDocument)) {
-			this.innerText = 'PDF.JS '+browser.contentDocument.URL;
+			this.innerText = 'PDF.JS '+browser.contentDocument.URL+' '+(new Date().getTime());
 		}
 		else if(!doc) {
 			this.innerText = '';

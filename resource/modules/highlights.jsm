@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.1';
+moduleAid.VERSION = '1.4.2';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -220,6 +220,11 @@ this.highlightsFindAgain = function() {
 	}
 };
 
+this.cleanUpHighlights = function() {
+	dispatch(gFindBar, { type: 'CleanUpHighlights', cancelable: false });
+	gFindBar._updateStatusUI(gFindBar.nsITypeAheadFind.FIND_FOUND);
+};
+
 this.delayReHighlight = function(doc) {
 	timerAid.init('reHighlight', function() {
 		if(doc == contentDocument) { reHighlight(documentHighlighted, true); }
@@ -235,7 +240,7 @@ this.reHighlight = function(reDo, toUpdate) {
 		
 		// Clean-up any leftover highlights stuff
 		if(!perTabFB || gFindBarInitialized) {
-			dispatch(gFindBar, { type: 'CleanUpHighlights', cancelable: false });
+			cleanUpHighlights();
 		}
 		
 		return;
@@ -252,6 +257,9 @@ this.reHighlight = function(reDo, toUpdate) {
 	} else {
 		linkedPanel._highlightedWord = '';
 		gFindBar._highlightAnyway = false;
+		if(isPDFJS) {
+			cleanUpHighlights();
+		}
 	}
 };
 

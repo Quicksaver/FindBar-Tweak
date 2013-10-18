@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.7.14';
+moduleAid.VERSION = '1.7.15';
 
 this.__defineGetter__('FITresizer', function() { return gFindBar._FITresizer; });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -273,7 +273,7 @@ this.selectFITtab = function() {
 // When the user selects an item in the hits list
 this.selectFIThit = function() {
 	// Adding these checks prevents various error messages from showing in the console (even though they actually made no difference)
-	if(!FITtabsList.currentItem || !FITtabsList.currentItem.linkedHits.currentItem) { return; }
+	if(!FITtabsList.currentItem || !FITtabsList.currentItem.linkedHits.currentItem || FITtabsList.currentItem.linkedHits.currentItem.doNothing) { return; }
 	
 	// Multiple clicks on the same item shouldn't re-trigger tab load
 	if(FITtabsList.currentItem.linkedHits.currentItem.loadingTab) {
@@ -504,7 +504,7 @@ this.shouldUseFITWithGrid = function() {
 		if(!documentHighlighted || documentReHighlight || linkedPanel._findWord != gFindBar._findField.value) { return false; }
 	} else {
 		var unWrap = XPCNativeWrapper.unwrap(contentWindow);
-		if(unWrap.PDFFindController.state.query != gFindBar._findField.value) { return false; }
+		if(!unWrap.PDFFindController || !unWrap.PDFFindController.state || unWrap.PDFFindController.state.query != gFindBar._findField.value) { return false; }
 	}
 	
 	return true;
@@ -927,28 +927,66 @@ this.processFITTab = function(aWindow, item, word) {
 	}
 	processingFITTab = false;
 };
-	
+
 this.countFITinTab = function(aWindow, item, word) {
 	if(inPDFJS(aWindow.document)) {
 		// We need this to access protected properties, hidden from privileged code
-		if(!aWindow.PDFFindController) { aWindow = XPCNativeWrapper.unwrap(aWindow); }
+		// We also can't return it to processFITTab() again because it won't be the same object and the operation will stop there because of it
+		var unWrap = aWindow;
+		if(!unWrap.PDFFindController) { unWrap = XPCNativeWrapper.unwrap(aWindow); }
 		
 		// If the document has just loaded, this might take a while to populate, it would throw an error and stop working altogether
-		if(!aWindow.PDFView || !aWindow.PDFView.pdfDocument) {
+		if(!unWrap.PDFView
+		|| !unWrap.PDFView.pdfDocument
+		|| (unWrap.PDFView.loadingBar.percent > 0 && unWrap.PDFView.loadingBar.percent < 100)) {
+			delete item.innerText;
+			
+			if(item.linkedHits && item.linkedHits.childNodes.length > 0) {
+				resetTabHits(item);
+			}
+			
 			item.reScheduled = timerAid.create(function() { processFITTab(aWindow, item, word); }, 250);
 			return;
 		}
 		
-		aWindow.PDFFindController.extractText();
+		unWrap.PDFFindController.extractText();
 		// This takes time to build apparently
-		if(aWindow.PDFFindController.pageContents.length != aWindow.PDFView.pages.length) {
+		if(unWrap.PDFFindController.pageContents.length != unWrap.PDFView.pages.length) {
+			delete item.innerText;
+			
+			var label = stringsAid.get('findInTabs', 'loadingPDFJS', [
+				['$partial$', unWrap.PDFFindController.pageContents.length],
+				['$total$', unWrap.PDFView.pages.length]
+			]);
+			if(!item.linkedHits || item.linkedHits.childNodes.length !== 1) {
+				resetTabHits(item);
+				var hit = document.createElement('richlistitem');
+				hit.doNothing = true;
+				var hitLabel = document.createElement('label');
+				hitLabel.setAttribute('flex', '1');
+				hitLabel.setAttribute('unloaded', 'true');
+				hitLabel.setAttribute('value', label);
+				hit.appendChild(hitLabel);
+				item.linkedHits.appendChild(hit);
+				
+				if(lastWindow.document == item.linkedDocument) {
+					FITtabsList.selectItem(item);
+					FITtabsList.ensureSelectedElementIsVisible();
+				}
+			} else {
+				setAttribute(item.linkedHits.childNodes[0].childNodes[0], 'value', label);
+			}
+			
 			item.reScheduled = timerAid.create(function() { processFITTab(aWindow, item, word); }, 100);
 			return;
 		}
+		
+		aWindow = unWrap;
 	}
 	
 	// If it's not completely loaded yet, don't search it, the other handlers should call it when it finishes loading
-	if(aWindow.document.readyState != 'complete' && !docUnloaded(aWindow.document)) { return; }
+	// Some PDF.JS instances use readyState interactive instead of complete. For example: http://www.selab.isti.cnr.it/ws-mate/example.pdf (this is a very buggy example btw)
+	if(aWindow.document.readyState != 'complete' && !docUnloaded(aWindow.document) && (!inPDFJS(aWindow.document) || aWindow.document.readyState != 'interactive')) { return; }
 	
 	// If the new content isn't possible to be searched through, remove this entry from the lists
 	if(!inPDFJS(aWindow.document)

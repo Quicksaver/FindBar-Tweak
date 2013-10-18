@@ -101,6 +101,10 @@
 		-moz-margin-end: 3px;
 	}
 	
+	window[findbartweak-FF25] image[anonid="find-status-icon"][status="pending"] {
+		-moz-padding-start: 8px;
+	}
+	
 	/* Rounded inner corners */
 	findbar[movetotop]:before {
 		content: "";

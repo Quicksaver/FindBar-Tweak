@@ -1,10 +1,12 @@
-moduleAid.VERSION = '1.0.3';
+moduleAid.VERSION = '1.0.4';
 
 this.MATCH_MODE_NORMAL = 0;
 this.MATCH_MODE_CASE_SENSITIVE = 1;
 
 this.modePopupMouse = { x: 0, y: 0 };
 this.modePopupDims = {};
+
+this.lastFocusedElement = null;
 
 this.openModePopup = function(e) {
 	// I can use gFindBar directly, mouseover means it needs the find bar to mouse over
@@ -14,6 +16,8 @@ this.openModePopup = function(e) {
 		timerAid.cancel('shouldHideModePopup');
 		return;
 	}
+	
+	lastFocusedElement = Services.focus.focusedElement;
 	
 	var isFBonTop = trueAttribute(gFindBar, 'movetotop') || gFindBar.getAttribute('position') == 'top' || gFindBar.classList.contains('findInTabs-bar');
 	gFindBar._popupMode.openPopup(gFindBar._buttonMode, (isFBonTop) ? 'after_end' : 'before_end');
@@ -32,7 +36,14 @@ this.hideModePopup = function() {
 	if(!FITFull && perTabFB && !gFindBarInitialized) { return; } // We could have changed tabs meanwhile
 	if(gFindBar._popupMode.state == 'open') {
 		gFindBar._popupMode.hidePopup();
-		if(!gFindBar.hidden) {
+		
+		if(lastFocusedElement) {
+			if(Services.focus.activeWindow == window) {
+				Services.focus.setFocus(lastFocusedElement, Services.focus.FLAG_NOSCROLL);
+			}
+			lastFocusedElement = null;
+		}
+		else if(!gFindBar.hidden) {
 			gFindBar._findField.focus();
 		}
 	}

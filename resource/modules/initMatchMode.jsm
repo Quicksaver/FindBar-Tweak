@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.4';
+moduleAid.VERSION = '1.0.5';
 
 this.MATCH_MODE_NORMAL = 0;
 this.MATCH_MODE_CASE_SENSITIVE = 1;
@@ -8,7 +8,15 @@ this.modePopupDims = {};
 
 this.lastFocusedElement = null;
 
-this.openModePopup = function(e) {
+this.delayOpenModePopup = function() {
+	timerAid.init('openModePopup', openModePopup, 150);
+};
+
+this.cancelDelayOpenModePopup = function() {
+	timerAid.cancel('openModePopup');
+};
+
+this.openModePopup = function() {
 	// I can use gFindBar directly, mouseover means it needs the find bar to mouse over
 	
 	// Cancel the hiding timer if it exists, so we don't close it when we don't want to
@@ -30,22 +38,26 @@ this.openModePopup = function(e) {
 	listenerAid.add(window, 'mousemove', delayShouldHideModePopup);
 };
 
-this.hideModePopup = function() {
+this.onHideModePopup = function () {
 	listenerAid.remove(window, 'mousemove', delayShouldHideModePopup);
 	
-	if(!FITFull && perTabFB && !gFindBarInitialized) { return; } // We could have changed tabs meanwhile
+	if(!FITFull && !viewSource && perTabFB && !gFindBarInitialized) { return; } // We could have changed tabs meanwhile
+		
+	if(lastFocusedElement) {
+		if(Services.focus.activeWindow == window) {
+			Services.focus.setFocus(lastFocusedElement, Services.focus.FLAG_NOSCROLL);
+		}
+		lastFocusedElement = null;
+	}
+	else if(!gFindBar.hidden) {
+		gFindBar._findField.focus();
+	}
+};
+
+this.hideModePopup = function() {
+	if(!FITFull && !viewSource && perTabFB && !gFindBarInitialized) { return; } // We could have changed tabs meanwhile
 	if(gFindBar._popupMode.state == 'open') {
 		gFindBar._popupMode.hidePopup();
-		
-		if(lastFocusedElement) {
-			if(Services.focus.activeWindow == window) {
-				Services.focus.setFocus(lastFocusedElement, Services.focus.FLAG_NOSCROLL);
-			}
-			lastFocusedElement = null;
-		}
-		else if(!gFindBar.hidden) {
-			gFindBar._findField.focus();
-		}
 	}
 };
 
@@ -211,7 +223,9 @@ this.modeInit = function(bar) {
 	normalItem._modeValue = MATCH_MODE_NORMAL;
 	normalItem = popup.appendChild(normalItem);
 	
-	listenerAid.add(modeBtn, 'mouseover', openModePopup);
+	listenerAid.add(modeBtn, 'mouseover', delayOpenModePopup);
+	listenerAid.add(modeBtn, 'mouseout', cancelDelayOpenModePopup);
+	listenerAid.add(popup, 'popuphidden', onHideModePopup);
 	keydownPanel.setupPanel(popup);
 	
 	bar._popupMode = popup;
@@ -222,7 +236,9 @@ this.modeInit = function(bar) {
 };
 
 this.modeDeinit = function(bar) {
-	listenerAid.remove(bar._buttonMode, 'mouseover', openModePopup);
+	listenerAid.remove(bar._buttonMode, 'mouseover', delayOpenModePopup);
+	listenerAid.remove(bar._buttonMode, 'mouseout', cancelDelayOpenModePopup);
+	listenerAid.remove(bar._popupMode, 'popuphidden', onHideModePopup);
 	listenerAid.remove(window, 'mousemove', delayShouldHideModePopup);
 	keydownPanel.unsetPanel(bar._popupMode);
 	

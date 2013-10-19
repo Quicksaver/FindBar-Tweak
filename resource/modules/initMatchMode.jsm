@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.2';
+moduleAid.VERSION = '1.0.3';
 
 this.MATCH_MODE_NORMAL = 0;
 this.MATCH_MODE_CASE_SENSITIVE = 1;
@@ -14,8 +14,9 @@ this.openModePopup = function(e) {
 		timerAid.cancel('shouldHideModePopup');
 		return;
 	}
-		
-	gFindBar._popupMode.openPopup(gFindBar._buttonMode, (trueAttribute(gFindBar, 'movetotop') || gFindBar.getAttribute('position') == 'top') ? 'after_end' : 'before_end');
+	
+	var isFBonTop = trueAttribute(gFindBar, 'movetotop') || gFindBar.getAttribute('position') == 'top' || gFindBar.classList.contains('findInTabs-bar');
+	gFindBar._popupMode.openPopup(gFindBar._buttonMode, (isFBonTop) ? 'after_end' : 'before_end');
 	gFindBar._popupMode._neverOpened = false;
 	
 	modePopupDims.popup = gFindBar._popupMode.getBoundingClientRect();
@@ -28,7 +29,7 @@ this.openModePopup = function(e) {
 this.hideModePopup = function() {
 	listenerAid.remove(window, 'mousemove', delayShouldHideModePopup);
 	
-	if(perTabFB && !gFindBarInitialized) { return; } // We could have changed tabs meanwhile
+	if(!FITFull && perTabFB && !gFindBarInitialized) { return; } // We could have changed tabs meanwhile
 	if(gFindBar._popupMode.state == 'open') {
 		gFindBar._popupMode.hidePopup();
 		if(!gFindBar.hidden) {

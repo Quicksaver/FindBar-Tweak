@@ -1,4 +1,21 @@
-moduleAid.VERSION = '1.4.2';
+moduleAid.VERSION = '1.4.3';
+
+this.getDocProperty = function(doc, prop, min) {
+	try {
+		if(inPDFJS(doc)) {
+			var cWindow = (doc.defaultView.PDFView) ? doc.defaultView : XPCNativeWrapper.unwrap(doc.defaultView);
+			return cWindow.PDFView.container[prop];
+		}
+		
+		if(doc instanceof Ci.nsIDOMHTMLDocument && doc.body) {
+			if(min) { return Math.min(doc.documentElement[prop], doc.body[prop]); }
+			return doc.documentElement[prop] || doc.body[prop];
+		}
+		
+		return doc.documentElement[prop];
+	}
+	catch(ex) { return 0; }
+};
 
 this.alwaysUpdateStatusUI = function(e) {
 	// toggleHighlight() doesn't update the UI in these conditions, we need it to, to update the counter (basically hide it)

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.5';
+moduleAid.VERSION = '1.5.0';
 
 this.__defineGetter__('grid', function() {
 	var grids = (!viewSource) ? linkedPanel.querySelectorAll('[anonid="findGrid"]') : $$('[anonid="findGrid"]');
@@ -109,11 +109,6 @@ this.placeGridOnFrame = function(aGrid) {
 	
 	var frameStyle = getComputedStyle(aGrid.linkedFrame);
 	
-	// Get the current height of the frame
-	aGrid._fullHTMLHeight =
-		aGrid.linkedFrame.contentDocument.getElementsByTagName('html')[0].scrollHeight
-		|| aGrid.linkedFrame.contentDocument.getElementsByTagName('body')[0].scrollHeight;
-	
 	var top = placement.top +parseInt(frameStyle.getPropertyValue('border-top-width')) +parseInt(frameStyle.getPropertyValue('padding-top'));
 	var left = placement.left +parseInt(frameStyle.getPropertyValue('border-left-width')) +parseInt(frameStyle.getPropertyValue('padding-left'));
 	var width = placement.right
@@ -130,13 +125,16 @@ this.placeGridOnFrame = function(aGrid) {
 		-parseInt(frameStyle.getPropertyValue('padding-bottom'));
 	
 	try {
-		top += (aGrid.linkedFrame.ownerDocument.getElementsByTagName('html')[0].scrollTop || aGrid.linkedFrame.ownerDocument.getElementsByTagName('body')[0].scrollTop);
-		left += (aGrid.linkedFrame.ownerDocument.getElementsByTagName('html')[0].scrollLeft || aGrid.linkedFrame.ownerDocument.getElementsByTagName('body')[0].scrollLeft);
+		top += getDocProperty(aGrid.linkedFrame.ownerDocument, 'scrollTop');
+		left += getDocProperty(aGrid.linkedFrame.ownerDocument, 'scrollLeft');
 	}
 	catch(ex) {}
 	
 	// Frame content can be smaller than actual frame size
-	height = Math.min(height, aGrid._fullHTMLHeight);
+	// Note that the scrollbars size isn't taken into account here, so we ignore the width difference.
+	// The real life examples where doing this may actually be detimental should be very reduced.
+	//width = Math.min(width, getDocProperty(aGrid.linkedFrame.contentDocument, 'scrollWidth'));
+	height = Math.min(height, getDocProperty(aGrid.linkedFrame.contentDocument, 'scrollHeight'));
 	
 	aGrid.parentNode.style.top = top+'px';
 	aGrid.parentNode.style.left = left+'px';
@@ -207,6 +205,8 @@ this.resetHighlightGrid = function() {
 	cleanHighlightGrid(aGrid);
 	positionGrid(aGrid);
 	
+	aGrid.linkedAO = null;
+	
 	removeAttribute(aGrid, 'gridSpacers');
 	listenerAid.remove(browserPanel, 'resize', delayResizeGridSpacers);
 	aGrid.parentNode.style.paddingTop = '';
@@ -247,32 +247,9 @@ this.resetHighlightGrid = function() {
 this.fillHighlightGrid = function(toAdd) {
 	var aGrid = grid; // Let's not overuse the querySelectorAll queries, could seriously slow down the process...
 	
-	// Special case for GMail
-	var ao = null;
-	if(!viewSource && !isPDFJS && contentDocument.baseURI.indexOf('https://mail.google.com/mail/') === 0) {
-		ao = contentDocument.querySelectorAll('div.AO')[0];
-		if(ao) {
-			for(var i=0; i<toAdd.length; i++) {
-				if(!isAncestor(toAdd[i].node.startContainer, ao)) {
-					toAdd.splice(i, 1);
-					i--;
-				}
-			}
-		}
-	}
-	
 	// For PDF files
 	if(isPDFJS) {
 		if(linkedPanel._matchesPDFtotal > prefAid.gridLimit) { return; }
-		
-		try {
-			var scrollTop = contentDocument.getElementById('viewerContainer').scrollTop;
-			var fullHTMLHeight = contentDocument.getElementById('viewer').clientHeight;
-		}
-		catch(ex) { return; }
-		
-		// Don't think this can happen but I better make sure
-		if(fullHTMLHeight == 0) { return; }
 		
 		// We need this to access protected properties, hidden from privileged code
 		var unWrap = XPCNativeWrapper.unwrap(contentWindow);
@@ -288,12 +265,15 @@ this.fillHighlightGrid = function(toAdd) {
 			if(unWrap.PDFView.pages[p].textLayer
 			&& unWrap.PDFView.pages[p].textLayer.renderingDone
 			&& unWrap.PDFView.pages[p].renderingState == 3) {
-				fillGridWithPDFPage(aGrid, p, unWrap, scrollTop, fullHTMLHeight);
+				fillGridWithPDFPage(aGrid, p, unWrap);
 			}
 			
 			// If the page isn't rendered yet, use a placeholder for the page with a pattern
 			else {
-				var row = placeHighlight(aGrid, contentDocument.getElementById('pageContainer'+unWrap.PDFView.pages[p].id), scrollTop, fullHTMLHeight, true);
+				var row = placeHighlight(aGrid, {
+					unWrap: unWrap,
+					p: p
+				}, true);
 				row._pdfPage = p;
 				aGrid._pdfPageRows.push(row);
 			}
@@ -304,25 +284,37 @@ this.fillHighlightGrid = function(toAdd) {
 	
 	// For normal HTML pages
 	else {
-		try {
-			if(ao) {
-				var scrollTop = ao.firstChild.scrollTop;
-				var fullHTMLHeight = ao.firstChild.scrollHeight;
-			} else {
-				var scrollTop = contentDocument.getElementsByTagName('html')[0].scrollTop || contentDocument.getElementsByTagName('body')[0].scrollTop;
-				var fullHTMLHeight = contentDocument.getElementsByTagName('html')[0].scrollHeight || contentDocument.getElementsByTagName('body')[0].scrollHeight;
+		var ao = null;
+		var frameset = false;
+		if(!viewSource) {
+			// Special case for GMail
+			// We only place the highlights that are from the main "frame", and use this element's relative position and dimensions to position them.
+			if(contentDocument.baseURI.indexOf('https://mail.google.com/mail/') === 0) {
+				ao = contentDocument.querySelectorAll('div.AO')[0];
+				if(ao) {
+					aGrid.linkedAO = ao;
+					for(var i=0; i<toAdd.length; i++) {
+						if(!isAncestor(toAdd[i].node.startContainer, ao)) {
+							toAdd.splice(i, 1);
+							i--;
+						}
+					}
+				}
 			}
-		}
-		catch(ex) {
-			if(contentDocument.getElementsByTagName('frameset').length == 0) { return; }
+			
+			// Special case for framesets
+			// We don't add the main grid in the documentElement, as that never has content, we only use frame grids in here.
+			else if(contentDocument.getElementsByTagName('frameset')[0]) {
+				frameset = true;
+			}
 		}
 		
 		for(var i=0; i<toAdd.length; i++) {
 			var rowList = new Array();
 			
-			if(fullHTMLHeight > 0) {
-				var aRange = toAdd[i].node;
-				rowList.push(placeHighlight(aGrid, aRange, scrollTop, fullHTMLHeight, toAdd[i].pattern, ao));
+			var aRange = toAdd[i].node;
+			if(!frameset) {
+				rowList.push(placeHighlight(aGrid, aRange, toAdd[i].pattern));
 			}
 			
 			// This is an editable node, add it directly
@@ -412,14 +404,8 @@ this.fillHighlightGrid = function(toAdd) {
 							frameGrid = bGrid;
 						}
 						
-						if(frameGrid._scrollTop === undefined) {
-							frameGrid._scrollTop =
-								frameGrid.linkedFrame.contentDocument.getElementsByTagName('html')[0].scrollTop
-								|| frameGrid.linkedFrame.contentDocument.getElementsByTagName('body')[0].scrollTop;
-						}
-						
 						var bRange = toAdd[i].ranges[r];
-						var frameRowList = new Array(placeHighlight(frameGrid, bRange, frameGrid._scrollTop, frameGrid._fullHTMLHeight));
+						var frameRowList = new Array(placeHighlight(frameGrid, bRange));
 						aGrid._allHits.push({ range: bRange, rows: rowList.concat(frameRowList) });
 						
 						setAttribute(frameGrid.parentNode, 'unHide', 'true');
@@ -432,19 +418,12 @@ this.fillHighlightGrid = function(toAdd) {
 		}
 	}
 	
-	// Reset this value after we've added all ranges
-	for(var f=0; f<aGrid._frames.length; f++) {
-		delete aGrid._frames[f]._scrollTop;
-	}
-	
 	gridFollowCurrentHit();
 	gridResizeSpacers();
 	listenerAid.add(browserPanel, 'resize', delayResizeGridSpacers);
 };
 
-this.placeHighlight = function(aGrid, node, scrollTop, fullHTMLHeight, pattern, ao) {
-	var rows = aGrid.childNodes[1];
-	
+this.placeHighlight = function(aGrid, node, pattern) {
 	aGrid._lastUsedRow++;
 	if(aGrid._lastUsedRow == aGrid.childNodes[1].childNodes.length) { aGrid._lastUsedRow = 0; }
 	while(aGrid.childNodes[1].childNodes[aGrid._lastUsedRow].highlight) {
@@ -459,24 +438,40 @@ this.placeHighlight = function(aGrid, node, scrollTop, fullHTMLHeight, pattern, 
 		timer: aSync(function() {
 			if(!row.highlight || row.highlight.node != node) { return; }
 			
-			var rect = node.getBoundingClientRect();
+			if(aGrid.linkedAO) {
+				var scrollTop = aGrid.linkedAO.firstChild.scrollTop;
+				var scrollHeight = aGrid.linkedAO.firstChild.scrollHeight;
+			} else if(aGrid.linkedFrame) {
+				var scrollTop = getDocProperty(aGrid.linkedFrame.contentDocument, 'scrollTop');
+				var scrollHeight = getDocProperty(aGrid.linkedFrame.contentDocument, 'scrollHeight');
+			} else {
+				var scrollTop = getDocProperty(contentDocument, 'scrollTop');
+				var scrollHeight = getDocProperty(contentDocument, 'scrollHeight');
+			}
+			
+			var placeNode = node;
+			if(node.unWrap) {
+				if(pattern) {
+					placeNode = node.unWrap.document.getElementById('pageContainer'+node.unWrap.PDFView.pages[node.p].id);
+				} else {
+					placeNode = node.unWrap.PDFView.pages[node.p].textLayer.textDivs[node.dIdx].childNodes[node.childIdx];
+				}
+			}
+			
+			var rect = placeNode.getBoundingClientRect();
 			var absTop = rect.top;
 			var absBot = rect.bottom;
 			
-			if(ao) {
-				absTop -= ao.offsetTop;
-				absBot -= ao.offsetTop;
+			if(aGrid.linkedAO) {
+				absTop -= aGrid.linkedAO.offsetTop;
+				absBot -= aGrid.linkedAO.offsetTop;
 			}
 			
-			absTop = (absTop + scrollTop) / fullHTMLHeight;
-			absBot = (absBot + scrollTop) / fullHTMLHeight;
+			absTop = (absTop + scrollTop) / scrollHeight;
+			absBot = (absBot + scrollTop) / scrollHeight;
 			
-			// I have no idea why this happens sometimes, but we have to redo every row.
-			// Its rect.top and rect.bottom that are wrong sometimes.
-			if(!isPDFJS && (absTop < 0 || absBot > 1)) {
-				reHighlight(documentHighlighted);
-				return;
-			}
+			// Sometimes, on hidden nodes for example, these would be placed outside the normal boundaries of the grid, which just would make them look weird
+			if(!isPDFJS && (absBot < 0 || absTop > 1)) { return; }
 			
 			setAttribute(row, 'highlight', 'true');
 			toggleAttribute(row, 'pattern', pattern);
@@ -497,12 +492,13 @@ this.removeHighlight = function(row) {
 	row.highlight = null;
 };
 
-this.fillGridWithPDFPage = function(aGrid, p, unWrap, scrollTop, fullHTMLHeight) {
+this.fillGridWithPDFPage = function(aGrid, p, unWrap) {
 	var matches = unWrap.PDFFindController.pageMatches[p];
 	
 	// We need to associate the highlighted nodes with the matches, since PDF.JS doesn't actually do that
 	for(var m=0; m<matches.length; m++) {
-		var highlights = new Array();
+		var rowList = new Array();
+		
 		var offset = 0;
 		for(var dIdx=unWrap.PDFView.pages[p].textLayer.matches[m].begin.divIdx; dIdx<=unWrap.PDFView.pages[p].textLayer.matches[m].end.divIdx; dIdx++) {
 			var beginOffset = unWrap.PDFView.pages[p].textLayer.matches[m].begin.offset;
@@ -512,7 +508,12 @@ this.fillGridWithPDFPage = function(aGrid, p, unWrap, scrollTop, fullHTMLHeight)
 				var curChild = unWrap.PDFView.pages[p].textLayer.textDivs[dIdx].childNodes[childIdx];
 				if(curChild.nodeType == 1) {
 					if(curChild.classList.contains('highlight') && offset >= beginOffset) {
-						highlights.push(curChild);
+						rowList.push(placeHighlight(aGrid, {
+							unWrap: unWrap,
+							p: p,
+							dIdx: dIdx,
+							childIdx: childIdx
+						}, false));
 					}
 					offset += curChild.textContent.length;
 				}
@@ -523,13 +524,6 @@ this.fillGridWithPDFPage = function(aGrid, p, unWrap, scrollTop, fullHTMLHeight)
 				if(offset >= endOffset) { break; }
 				childIdx++;
 			}
-		}
-		
-		var allRows = new Array();
-		var rowList = new Array();
-		// Use these highlighted nodes to fill the grid
-		for(var h=0; h<highlights.length; h++) {
-			rowList.push(placeHighlight(aGrid, highlights[h], scrollTop, fullHTMLHeight, false));
 		}
 		
 		aGrid._allHits.push({ p: p, m: m, rows: rowList });
@@ -550,12 +544,6 @@ this.delayUpdatePDFGrid = function() {
 this.updatePDFGrid = function() {
 	if(!isPDFJS) { return; }
 	var aGrid = grid; // Let's not overuse the querySelectorAll queries, could seriously slow down the process...
-	
-	try {
-		var scrollTop = contentDocument.getElementById('viewerContainer').scrollTop;
-		var fullHTMLHeight = contentDocument.getElementById('viewer').clientHeight;
-	}
-	catch(ex) { return; } // if we return let's return before we do anything
 	
 	// We need this to access protected properties, hidden from privileged code
 	var unWrap = XPCNativeWrapper.unwrap(contentWindow);
@@ -580,7 +568,7 @@ this.updatePDFGrid = function() {
 	var updatedPages = {};
 	for(var p=0; p<updatePages.length; p++) {
 		if(!updatedPages[p]) {
-			fillGridWithPDFPage(aGrid, updatePages[p], unWrap, scrollTop, fullHTMLHeight);	
+			fillGridWithPDFPage(aGrid, updatePages[p], unWrap);	
 			updatedPages[p] = true;
 		}
 	}
@@ -604,16 +592,8 @@ this.gridResizeSpacers = function(aGrid) {
 	
 	// Lets make sure contentDocument and its elements exist before trying to access them
 	var doc = (aGrid.linkedFrame) ? aGrid.linkedFrame.contentDocument: contentDocument;
-	try {
-		if(!isPDFJS) {
-			var scrollTopMax = doc.getElementsByTagName('html')[0].scrollTopMax || doc.getElementsByTagName('body')[0].scrollTopMax;
-			var scrollLeftMax = doc.getElementsByTagName('html')[0].scrollLeftMax || doc.getElementsByTagName('body')[0].scrollLeftMax;
-		} else {
-			var scrollTopMax = doc.getElementById('viewerContainer').scrollTopMax;
-			var scrollLeftMax = doc.getElementById('viewerContainer').scrollLeftMax;
-		}
-	}
-	catch(ex) { return; }
+	var scrollTopMax = getDocProperty(doc, 'scrollTopMax');
+	var scrollLeftMax = getDocProperty(doc, 'scrollLeftMax');
 	
 	if(scrollTopMax == 0 && scrollLeftMax == 0) {
 		setAttribute(aGrid, 'gridSpacers', 'none');

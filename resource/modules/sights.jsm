@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.3';
+moduleAid.VERSION = '1.6.0';
 
 this.__defineGetter__('preferencesDialog', function() { return (typeof(inPreferences) != 'undefined' && inPreferences); });
 
@@ -26,7 +26,7 @@ this.__defineGetter__('sights', function() {
 });
 
 // We pass it scrollLeft and scrollTop because it's much lighter when just getting them once and passing them along instead of getting them every position cycle
-this.positionSights = function(sGroup, range, scrollTop, scrollLeft, clientHeight, clientWidth, toOwn, PDFtoolbarHeight) {
+this.positionSights = function(sGroup, range, clientHeight, clientWidth, toOwn, PDFtoolbarHeight) {
 	// If these aren't set, we just assume the range is visible and should be always sighted, such as in FindAgain (F3) which scrolls to the search hit
 	var current = (!clientHeight && !clientWidth);
 	var dimensions = range.node.getClientRects()[0];
@@ -70,15 +70,6 @@ this.positionSights = function(sGroup, range, scrollTop, scrollLeft, clientHeigh
 			var frameElementRect = frame.getClientRects()[0];
 			xMod += frameElementRect.left;
 			yMod += frameElementRect.top;
-			
-			// If the text is inside a frame, we take into account its scrollTop and scrollLeft values as well
-			try {
-				var frameScrollTop = ownDoc.getElementsByTagName('html')[0].scrollTop || ownDoc.getElementsByTagName('body')[0].scrollTop;
-				var frameScrollLeft = ownDoc.getElementsByTagName('html')[0].scrollLeft || ownDoc.getElementsByTagName('body')[0].scrollLeft;
-				scrollTop += frameScrollTop;
-				scrollLeft += frameScrollLeft;
-			}
-			catch(ex) {}
 			
 			ownDoc = ownDoc.defaultView.parent.document;
 		}
@@ -140,8 +131,6 @@ this.positionSights = function(sGroup, range, scrollTop, scrollLeft, clientHeigh
 	}
 	
 	var detail = {
-		scrollLeft: scrollLeft,
-		scrollTop: scrollTop,
 		current: current
 	};
 	if(!sameDoc) {
@@ -158,6 +147,24 @@ this.buildSights = function(sGroup, x, y, detail) {
 	var style = detail.style;
 	
 	if(!sGroup) {
+		var scrollTop = 0;
+		var scrollLeft = 0;
+		if(!preferencesDialog) {
+			scrollTop = getDocProperty(contentDocument, 'scrollTop');
+			scrollLeft = getDocProperty(contentDocument, 'scrollLeft');
+			
+			if(detail.ownDoc) {
+				var ownDoc = detail.ownDoc;
+				while(ownDoc != detail.toOwn) {
+					// If the text is inside a frame, we take into account its scrollTop and scrollLeft values as well
+					scrollTop += getDocProperty(ownDoc, 'scrollTop');
+					scrollLeft += getDocProperty(ownDoc, 'scrollLeft');
+					
+					ownDoc = ownDoc.defaultView.parent.document;
+				}
+			}
+		}
+		
 		sGroup = {
 			allSights: new Array(),
 			timer: null,
@@ -169,10 +176,12 @@ this.buildSights = function(sGroup, x, y, detail) {
 			hold: 0,
 			ownDoc: (detail.ownDoc) ? detail.ownDoc : null,
 			toOwn: (detail.toOwn) ? detail.toOwn : null,
-			scrollTop: detail.scrollTop,
-			scrollLeft: detail.scrollLeft,
+			scrollTop: scrollTop,
+			scrollLeft: scrollLeft,
 			
 			selfRemove: function() {
+				if(typeof(sights) == 'undefined') { return; } // Fail-safe for when closing the window while sights are being placed
+				
 				var allGroups = sights._groups;
 				for(var g=0; g<allGroups.length; g++) {
 					if(allGroups[g] == this) {
@@ -266,33 +275,19 @@ this.buildSights = function(sGroup, x, y, detail) {
 					if(preferencesDialog) {
 						var scrollTop = this.scrollTop;
 						var scrollLeft = this.scrollLeft;
-					} else if(isPDFJS) {
-						var scrollTop = contentDocument.getElementById('viewerContainer').scrollTop;
-						var scrollLeft = contentDocument.getElementById('viewerContainer').scrollLeft;
-					} else if(!this.ownDoc) {
-						var scrollTop = contentDocument.getElementsByTagName('html')[0].scrollTop || contentDocument.getElementsByTagName('body')[0].scrollTop;
-						var scrollLeft = contentDocument.getElementsByTagName('html')[0].scrollLeft || contentDocument.getElementsByTagName('body')[0].scrollLeft;
 					} else {
-						try {
-							var scrollTop = contentDocument.getElementsByTagName('html')[0].scrollTop || contentDocument.getElementsByTagName('body')[0].scrollTop;
-							var scrollLeft = contentDocument.getElementsByTagName('html')[0].scrollLeft || contentDocument.getElementsByTagName('body')[0].scrollLeft;
-						} catch(exx) {
-							var scrollTop = 0;
-							var scrollLeft = 0;
-						}
+						var scrollTop = getDocProperty(contentDocument, 'scrollTop');
+						var scrollLeft = getDocProperty(contentDocument, 'scrollLeft');
 						
-						var ownDoc = this.ownDoc;
-						while(ownDoc != this.toOwn) {
-							// If the text is inside a frame, we take into account its scrollTop and scrollLeft values as well
-							try {
-								var frameScrollTop = ownDoc.getElementsByTagName('html')[0].scrollTop || ownDoc.getElementsByTagName('body')[0].scrollTop;
-								var frameScrollLeft = ownDoc.getElementsByTagName('html')[0].scrollLeft || ownDoc.getElementsByTagName('body')[0].scrollLeft;
-								scrollTop += frameScrollTop;
-								scrollLeft += frameScrollLeft;
+						if(this.ownDoc) {
+							var ownDoc = this.ownDoc;
+							while(ownDoc != this.toOwn) {
+								// If the text is inside a frame, we take into account its scrollTop and scrollLeft values as well
+								scrollTop += getDocProperty(ownDoc, 'scrollTop');
+								scrollLeft += getDocProperty(ownDoc, 'scrollLeft');;
+								
+								ownDoc = ownDoc.defaultView.parent.document;
 							}
-							catch(exx) {}
-							
-							ownDoc = ownDoc.defaultView.parent.document;
 						}
 					}
 				}
@@ -347,9 +342,7 @@ this.buildSights = function(sGroup, x, y, detail) {
 	
 	box._sights = {
 		top: y,
-		left: x,
-		ownDoc: (detail.ownDoc) ? detail.ownDoc : null,
-		toOwn: (detail.toOwn) ? detail.toOwn : null
+		left: x
 	};
 	toggleAttribute(box, 'current', sGroup.current);
 	
@@ -400,12 +393,6 @@ this.currentSights = function(e) {
 	
 	// For pdf in PDF.JS
 	if(isPDFJS) {
-		try {
-			var scrollTop = contentDocument.getElementById('viewerContainer').scrollTop;
-			var scrollLeft = contentDocument.getElementById('viewerContainer').scrollLeft;
-		}
-		catch(ex) { return; }
-		
 		// We need this to access protected properties, hidden from privileged code
 		var unWrap = XPCNativeWrapper.unwrap(contentWindow);
 		if(unWrap.PDFFindController.selected.matchIdx == -1 || unWrap.PDFFindController.selected.pageIdx == -1) { return; }
@@ -426,24 +413,11 @@ this.currentSights = function(e) {
 		if(sel[0]._findWord && gFindBar._findField.value != sel[0]._findWord) { return; }
 		sel[0]._findWord = gFindBar._findField.value;
 		
-		positionSights(null, { node: sel[0] }, scrollTop, scrollLeft, null, null, unWrap.document);
+		positionSights(null, { node: sel[0] }, null, null, unWrap.document);
 		return;
 	}
 	
 	// Normal HTML files
-	// Let's make sure the document actually exists
-	try {
-		var scrollTop = contentDocument.getElementsByTagName('html')[0].scrollTop || contentDocument.getElementsByTagName('body')[0].scrollTop;
-		var scrollLeft = contentDocument.getElementsByTagName('html')[0].scrollLeft || contentDocument.getElementsByTagName('body')[0].scrollLeft;
-	}
-	catch(ex) {
-		// Framesets fail here, but we can still place sights in them
-		if(!contentDocument.getElementsByTagName('frameset')[0]) { return; }
-		
-		var scrollTop = 0;
-		var scrollLeft = 0;
-	}
-	
 	var editableNode = tweakFoundEditable(gFindBar);
 	var controller = (editableNode && editableNode.editor) ? editableNode.editor.selectionController : null;
 	if(controller) {
@@ -457,7 +431,7 @@ this.currentSights = function(e) {
 		var range = sel.getRangeAt(0);
 		if(range.startContainer == range.endContainer && range.startOffset == range.endOffset) { return; }
 		
-		positionSights(null, { node: range }, scrollTop, scrollLeft);
+		positionSights(null, { node: range });
 	}
 };
 
@@ -544,22 +518,10 @@ this.sightsOnVisibleHighlights = function(aHighlights) {
 	}
 	else if(!sights._highlights || !documentHighlighted || gFindBar._findField.value != sights._findWord) { return; }
 	
-	// Let's make sure the document actually exists
-	try {
-		if(!isPDFJS) {
-			var scrollTop = contentDocument.getElementsByTagName('html')[0].scrollTop || contentDocument.getElementsByTagName('body')[0].scrollTop;
-			var scrollLeft = contentDocument.getElementsByTagName('html')[0].scrollLeft || contentDocument.getElementsByTagName('body')[0].scrollLeft;
-			var clientHeight = Math.min(contentDocument.getElementsByTagName('html')[0].clientHeight, contentDocument.getElementsByTagName('body')[0].clientHeight);
-			var clientWidth = Math.min(contentDocument.getElementsByTagName('html')[0].clientWidth, contentDocument.getElementsByTagName('body')[0].clientWidth);
-		} else {
-			var scrollTop = contentDocument.getElementById('viewerContainer').scrollTop;
-			var scrollLeft = contentDocument.getElementById('viewerContainer').scrollLeft;
-			var clientHeight = contentDocument.getElementById('viewerContainer').clientHeight;
-			var clientWidth = contentDocument.getElementById('viewerContainer').clientWidth;
-			var toolbarHeight = contentDocument.querySelectorAll('div.toolbar')[0].clientHeight;
-		}
-	}
-	catch(ex) { return; }
+	var toOwn = (isPDFJS) ? unWrap.document : contentDocument;
+	var clientHeight = getDocProperty(toOwn, 'clientHeight', true);
+	var clientWidth = getDocProperty(toOwn, 'clientWidth', true);
+	var toolbarHeight = (isPDFJS) ? contentDocument.querySelectorAll('div.toolbar')[0].clientHeight : null;
 	
 	// We use one sights group for each doc at least
 	var previousDoc = null;
@@ -571,7 +533,7 @@ this.sightsOnVisibleHighlights = function(aHighlights) {
 			previousDoc = doc;
 		}
 		
-		toGroup = positionSights(toGroup, sights._highlights[i], scrollTop, scrollLeft, clientHeight, clientWidth, (isPDFJS) ? unWrap.document : contentDocument, (isPDFJS) ? toolbarHeight : null);
+		toGroup = positionSights(toGroup, sights._highlights[i], clientHeight, clientWidth, toOwn, toolbarHeight);
 	}
 };
 

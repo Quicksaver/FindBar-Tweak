@@ -7,6 +7,7 @@ locale    findbartweak      pl            chrome/locale/pl/
 locale    findbartweak      pt-PT         chrome/locale/pt-PT/
 locale    findbartweak      sv-SE         chrome/locale/sv-SE/
 locale    findbartweak      zh-CN         chrome/locale/zh-CN/
+locale    findbartweak      zh-TW         chrome/locale/zh-TW/
 
 skin      findbartweak      classic/1.0   chrome/skin/common/
 skin      findbartweak-os   classic/1.0   chrome/skin/linux/

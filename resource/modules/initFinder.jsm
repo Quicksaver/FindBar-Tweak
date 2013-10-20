@@ -111,6 +111,8 @@ this.workAroundFind = false;
 // By doing it this way, we actually only check for mFinder once, if we did this inside each method, we would be checking multiple times unnecessarily.
 if(mFinder) {
 	this.tweakFastFindNormal = function(browser, val, aLinksOnly, aDrawOutline, aCompare) {
+		// I don't think _find() or _findAgain() are ever called on other tabs. If they are, I need to change this line
+		browser.finder.caseSensitive = (gFindBar._matchMode == MATCH_MODE_CASE_SENSITIVE);
 		if(!aCompare) { return browser.finder.fastFind(val, aLinksOnly, aDrawOutline); }
 		
 		// This doesn't need to be in the loop
@@ -168,6 +170,8 @@ if(mFinder) {
 }
 else {
 	this.tweakFastFindNormal = function(browser, val, aLinksOnly, aDrawOutline, aCompare) {
+		// I don't think _find() or _findAgain() are ever called on other tabs. If they are, I need to change this line
+		browser.fastFind.caseSensitive = (gFindBar._matchMode == MATCH_MODE_CASE_SENSITIVE);
 		if(!aCompare) { return browser.fastFind.find(val, aLinksOnly); }
 		
 		// This doesn't need to be in the loop
@@ -229,11 +233,10 @@ this.tweakFastFind = function(browser, val, aLinksOnly, aDrawOutline) {
 	return tweakFastFindNormal(browser, val, aLinksOnly, aDrawOutline);
 };
 
-this.tweakFindRange = function(bar, aWord, caseSensitive) {
+this.tweakFindRange = function(bar, aWord) {
 	this._finder = Cc["@mozilla.org/embedcomp/rangefind;1"].createInstance().QueryInterface(Ci.nsIFind);
+	this._finder.caseSensitive = (bar._matchMode == MATCH_MODE_CASE_SENSITIVE);
 	this.word = aWord;
-	if(typeof(caseSensitive) == 'undefined') { this.setCaseSensitive(bar); }
-	else { this._finder.caseSensitive = caseSensitive; }
 };
 
 this.getLinkElement = function(aNode) {
@@ -247,18 +250,6 @@ this.getLinkElement = function(aNode) {
 };
 
 moduleAid.LOADMODULE = function() {
-	// By doing it this way, we actually only check for mFinder once, if we did this inside each method, we would be checking multiple times unnecessarily.
-	if(mFinder) {
-		tweakFindRange.prototype.setCaseSensitive = function(bar) {
-			this._finder.caseSensitive = bar.browser.finder._fastFind.caseSensitive;
-		};
-	}
-	else {
-		tweakFindRange.prototype.setCaseSensitive = function(bar) {
-			this._finder.caseSensitive = bar._shouldBeCaseSensitive(this.word);
-		};
-	}
-	
 	tweakFindRange.prototype.Find = function(searchRange, startPt, endPt) {
 		return this._finder.Find(this.word, searchRange, startPt, endPt);
 	};

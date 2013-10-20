@@ -71,5 +71,14 @@
 				<em:translator>http://t.qq.com/HeartBlade, YFdyh000</em:translator>
 			</Description>
 		</em:localized>
+		<em:localized>
+			<Description>
+				<em:locale>zh-TW</em:locale>
+				<em:name>FindBar Tweak</em:name>
+				<em:description>所有簡單而重要的調整，如將搜尋欄放到右上角、提供有用的「尋找所有分頁」工具等，FindBar Tweak將為你帶來恰到處的尋找欄</em:description>
+				<em:homepageURL>https://addons.mozilla.org/zh-TW/firefox/addon/findbar-tweak/</em:homepageURL>
+				<em:translator>Justincheng12345 aka JC1</em:translator>
+			</Description>
+		</em:localized>
 	</Description>
 </RDF>

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.7';
+moduleAid.VERSION = '1.1.8';
 
 moduleAid.LOADMODULE = function() {
 	if(!viewSource && !FITFull) {
@@ -20,9 +20,14 @@ moduleAid.LOADMODULE = function() {
 	AddonManager.getAddonByID('findlist@fewlinx.com', function(addon) {
 		moduleAid.loadIf('compatibilityFix/findlist', (addon && addon.isActive));
 	});
+	
+	AddonManager.getAddonByID('{73a6fe31-595d-460b-a920-fcc0f8843232}', function(addon) {
+		moduleAid.loadIf('compatibilityFix/noScript', (addon && addon.isActive));
+	});
 };
 
 moduleAid.UNLOADMODULE = function() {
+	moduleAid.unload('compatibilityFix/noScript');
 	moduleAid.unload('compatibilityFix/findlist');
 	moduleAid.unload('compatibilityFix/ClearFields');
 	

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.9';
+moduleAid.VERSION = '1.5.10';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -304,7 +304,13 @@ this.stylePersonaFindBar = function() {
 };
 
 this.toggleNotificationState = function() {
-	toggleAttribute(gFindBar, 'inNotification', !viewSource && gBrowser.getNotificationBox().currentNotification && !gBrowser.getNotificationBox().notificationsHidden);
+	var inNotification =
+		!viewSource
+		&& gBrowser.getNotificationBox().currentNotification
+		&& !gBrowser.getNotificationBox().notificationsHidden
+		&& dispatch(gFindBar, { type: 'HideFindBarInNotification' }); // If something preventDefault()s this, it means the find bar can be shown
+	
+	toggleAttribute(gFindBar, 'inNotification', inNotification);
 };
 
 this.changeLook = function() {

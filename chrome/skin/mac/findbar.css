@@ -6,16 +6,6 @@
 	url("chrome://findbartweak/content/findInTabsFull.xul") {
 	
 	/* Rounded inner corners */
-	findbar[movetotop]:before {
-		-moz-margin-start: -18px;
-	}
-	findbar[movetotop]:after {
-		-moz-margin-start: 2px;
-	}
-	findbar[movetotop]:before,
-	findbar[movetotop]:after {
-		margin-top: -4px;
-	}
 	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
 	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
 		box-shadow:	2px -2px 0 -2px rgba(0,0,0,0.57),
@@ -61,11 +51,11 @@
 		-moz-border-left-colors: rgba(0,0,0,0.32);
 	}
 	
-	window[findbartweak-FF25] .browserContainer findbar:not([position="top"]) {
+	window[findbartweak-FF25] .browserContainer findbar:not([position="top"]):not:([movetotop]) {
 		border-bottom: none;
 	}
 	
-	window[findbartweak-FF25] findbar:not([position="top"]):-moz-lwtheme {
+	window[findbartweak-FF25] findbar:not([position="top"]):not:([movetotop]):-moz-lwtheme {
 		border-top: 1px solid #888;
 	}
 	

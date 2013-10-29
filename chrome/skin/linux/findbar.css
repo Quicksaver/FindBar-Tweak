@@ -6,21 +6,6 @@
 	url("chrome://findbartweak/content/findInTabsFull.xul") {
 
 	/* Rounded inner corners */
-	window:not([findbartweak-FF25]) findbar[movetotop]:before {
-		-moz-margin-start: -16px;
-	}
-	
-	window[findbartweak-FF25] findbar[movetotop]:before {
-		-moz-margin-start: -24px;
-	}
-	window[findbartweak-FF25] findbar[movetotop]:after {
-		-moz-margin-start: 8px;
-	}
-	window[findbartweak-FF25] findbar[movetotop]:before,
-	window[findbartweak-FF25] findbar[movetotop]:after {
-		margin-top: -4px;
-	}
-	
 	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
 	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
 		box-shadow: 	2px -2px 0 -2px ThreeDShadow,

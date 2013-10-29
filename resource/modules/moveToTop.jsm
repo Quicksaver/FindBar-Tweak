@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.10';
+moduleAid.VERSION = '1.6.0';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -7,6 +7,10 @@ this.__defineGetter__('appcontent', function() { return $('appcontent'); });
 
 this.moveTopStyle = {};
 this.lwthemeImage = null;
+
+this.findBarMaxHeight = 0;
+this.findBarPaddingStart = 0;
+this.findBarPaddingEnd = 0;
 
 this.__defineGetter__('MIN_LEFT', function() { return 20; });
 this.__defineGetter__('MIN_RIGHT', function() { return 30; });
@@ -193,15 +197,22 @@ this.moveTop = function() {
 	
 	styleAid.load('topFindBar_'+_UUID, sscode, true);
 	
-	if(gFindBar.scrollLeftMax > 0 && !perTabFB) {
-		var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
-		sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
-		sscode += '@-moz-document url("'+document.baseURI+'") {\n';
-		// !important tag necessary for OSX, CSS stylesheet sets this one
-		sscode += '	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:after { margin-left: -' + gFindBar.scrollLeftMax + 'px !important; }\n';
-		sscode += '}';
-		styleAid.load('topFindBarCorners_'+_UUID, sscode, true);
-	}
+	// We also need to properly place the corners, these vary with OS, FF version, theme...
+	var barStyle = getComputedStyle(gFindBar);
+	var baseCornerWidth = 16;
+	var container = gFindBar.getElement('findbar-container');
+	
+	var beforeStart = -baseCornerWidth -findBarPaddingStart;
+	var afterStart = gFindBar.clientWidth -container.clientWidth -findBarPaddingStart;
+	
+	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
+	sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
+	sscode += '@-moz-document url("'+document.baseURI+'") {\n';
+	sscode += '	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:before { -moz-margin-start: ' + beforeStart + 'px !important; }\n';
+	sscode += '	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:after { -moz-margin-start: ' + afterStart + 'px !important; }\n';
+	sscode += '}';
+	
+	styleAid.load('topFindBarCorners_'+_UUID, sscode, true);
 	
 	forceCornerRedraw();
 	if(!viewSource) { findPersonaPosition(); }
@@ -393,37 +404,60 @@ this.hideOnChromeAttrWatcher = function(obj, prop, oldVal, newVal) {
 
 this.setOnTop = function(e) {
 	if(!e || !e.defaultPrevented) {
+		// Bugfix: in windows 8 the findbar's bottom border will jump clicking a button if we are showing the icons instead of the labels.
+		// I have no idea why this happens as none of its children elements increase heights or margins.
+		// But at least the findbar itself increases its height by 1px.
+		// We only need to do this once, the findbar's height doesn't (or shouldn't) change
+		var container = gFindBar.getElement('findbar-container');
+		var height = container.clientHeight || gFindBar.clientHeight;
+		
+		// if !container.clientHeight means findbar is hidden, we can use bar.clientHeight because it takes the desired value in this case.
+		// Sometimes, with the the bar closed, the height value is lower than it should be, so we check for that.
+		if(findBarMaxHeight && findBarMaxHeight >= height) { return; }
+		
+		findBarMaxHeight = height;
+		
+		var containerStyle = getComputedStyle(container);
+		var barStyle = getComputedStyle(gFindBar);
+		
+		height += parseInt(containerStyle.getPropertyValue('margin-bottom')) + parseInt(containerStyle.getPropertyValue('margin-top'));
+		height += parseInt(barStyle.getPropertyValue('padding-bottom')) + parseInt(barStyle.getPropertyValue('padding-top'));
+		height += parseInt(barStyle.getPropertyValue('border-bottom-width')) + parseInt(barStyle.getPropertyValue('border-top-width'));
+		
 		initFindBar('movetotop',
 			function(bar) {
 				setAttribute(bar, 'movetotop', 'true');
-				
-				// Bugfix: in windows 8 the findbar's bottom border will jump clicking a button if we are showing the icons instead of the labels.
-				// I have no idea why this happens as none of its children elements increase heights or margins.
-				// But at least the findbar itself increases its height by 1px.
-				// We only need to do this once, the findbar's height doesn't (or shouldn't) change
-				var container = bar.getElement('findbar-container');
-				var height = container.clientHeight || bar.clientHeight;
-				// if !container.clientHeight means findbar is hidden, we can use bar.clientHeight because it takes the desired value in this case.
-				// Sometimes, with the the bar closed, the height value is lower than it should be, so we check for that.
-				if(!bar._calcHeight || bar._calcHeight < height) {
-					bar._calcHeight = height;
-					
-					var containerStyle = getComputedStyle(container);
-					var barStyle = getComputedStyle(bar);
-					
-					height += parseInt(containerStyle.getPropertyValue('margin-bottom')) + parseInt(containerStyle.getPropertyValue('margin-top'));
-					height += parseInt(barStyle.getPropertyValue('padding-bottom')) + parseInt(barStyle.getPropertyValue('padding-top'));
-					height += parseInt(barStyle.getPropertyValue('border-bottom-width')) + parseInt(barStyle.getPropertyValue('border-top-width'));
-					bar.style.maxHeight = height+'px';
-				}
+				bar.style.maxHeight = height+'px';
 			},
 			function(bar) {
 				removeAttribute(bar, 'movetotop');
 				bar.style.maxHeight = '';
-				delete bar._calcHeight;
 			},
 			true
 		);
+		
+		// We also need to properly place the rounder corners, as their position can vary with themes
+		var cornerMarginTop = -parseInt(barStyle.getPropertyValue('padding-top'));
+		
+		var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
+		sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
+		sscode += '@-moz-document url("'+document.baseURI+'") {\n';
+		sscode += '	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:before,\n';
+		sscode += '	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:after {\n';
+		sscode += '	  margin-top: ' + cornerMarginTop + 'px !important;\n';
+		sscode += '	}\n';
+		sscode += '}';
+		
+		styleAid.load('placeCornersFindBar_'+_UUID, sscode, true);
+		
+		// These values will be used in moveTop(), but they shouldn't change between sessions, so it's better to just save them once here
+		if(barStyle.getPropertyValue('direction') == 'ltr') {
+			findBarPaddingStart = parseInt(barStyle.getPropertyValue('padding-left'));
+			findBarPaddingEnd = parseInt(barStyle.getPropertyValue('padding-right'));
+		} else {
+			findBarPaddingStart = parseInt(barStyle.getPropertyValue('padding-right'));
+			findBarPaddingEnd = parseInt(barStyle.getPropertyValue('padding-left'));
+		}
 	}
 };
 
@@ -513,4 +547,5 @@ moduleAid.UNLOADMODULE = function() {
 	styleAid.unload('topFindBar_'+_UUID);
 	styleAid.unload('topFindBarCorners_'+_UUID);
 	styleAid.unload('tempRedrawCorners_'+_UUID);
+	styleAid.unload('placeCornersFindBar_'+_UUID);
 };

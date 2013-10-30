@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.6.0';
+moduleAid.VERSION = '1.6.1';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -281,15 +281,22 @@ this.stylePersonaFindBar = function() {
 	styleAid.unload('personaFindBar_'+_UUID);
 	
 	if(prefAid.lwthemebgImage != '') {
-		var computedStyle = {
-			window: getComputedStyle(mainWindow)
-		};
+		var windowStyle = getComputedStyle(mainWindow);
 		
 		// Another personas in OSX tweak
 		var offsetPersonaY = -moveTopStyle.top;
-		var offsetWindowPadding = computedStyle.window.getPropertyValue('background-position');
+		var offsetWindowPadding = windowStyle.getPropertyValue('background-position');
 		if(offsetWindowPadding.indexOf(' ') > -1 && offsetWindowPadding.indexOf('px', offsetWindowPadding.indexOf(' ') +1) > -1) {
 			offsetPersonaY += parseInt(offsetWindowPadding.substr(offsetWindowPadding.indexOf(' ') +1, offsetWindowPadding.indexOf('px', offsetWindowPadding.indexOf(' ') +1)));
+		}
+		
+		// I have no idea where does the -1 come from, it's not the findbars own border
+		if(!prefAid.movetoRight) {
+			var offsetPersonaXSide = 'left';
+			var offsetPersonaX = -moveTopStyle.left -(prefAid.lwthemebgWidth - mainWindow.clientWidth) -1;
+		} else {
+			var offsetPersonaXSide = 'right';
+			var offsetPersonaX = -moveTopStyle.right -1;
 		}
 		
 		var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
@@ -299,8 +306,7 @@ this.stylePersonaFindBar = function() {
 		sscode += '	  background-image: ' + prefAid.lwthemebgImage + ' !important;\n';
 		sscode += '	  background-color: ' + prefAid.lwthemecolor + ' !important;\n';
 		sscode += '	  color: ' + prefAid.lwthemecolor + ' !important;\n';
-		// I have no idea where does the -1 come from, it's not the findbars own border
-		sscode += '	  background-position: ' + (-moveTopStyle.left - (prefAid.lwthemebgWidth - mainWindow.clientWidth) -1) + 'px ' +offsetPersonaY+ 'px !important;\n';
+		sscode += '	  background-position: '+offsetPersonaXSide+' '+offsetPersonaX+'px top '+offsetPersonaY+'px !important;\n';
 		sscode += '	  background-repeat: repeat !important;\n';
 		sscode += '	  background-size: auto auto !important;\n';
 		sscode += '	}\n';

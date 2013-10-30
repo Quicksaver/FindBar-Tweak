@@ -134,7 +134,7 @@
 	
 	/* FF25 Tweaks */
 	window[findbartweak-FF25Tweaks] findbar:-moz-lwtheme,
-	window[findbartweak-FF25] #content:-moz-lwtheme {
+	window[findbartweak-FF25Tweaks] #content:-moz-lwtheme {
 		background-color: transparent !important; /* !important tag needed to override style attr of #content in WinXP */
 	}
 	

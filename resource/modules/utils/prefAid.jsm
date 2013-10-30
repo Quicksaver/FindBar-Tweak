@@ -1,7 +1,9 @@
-moduleAid.VERSION = '2.0.4';
+moduleAid.VERSION = '2.1.0';
 moduleAid.LAZY = true;
 
-// prefAid - Object to contain and manage all preferences related to the add-on (and others if necessary)
+// prefAid -	Object to contain and manage all preferences related to the add-on (and others if necessary)
+// 		All default preferences of the add-on ('extensions.objPathString.*') are sync'ed by Firefox Sync by default,
+//		to prevent a specific preference "pref" from sync'ing, add in prefList a property "NoSync_pref" set to (bool) true.
 // setDefaults(prefList, branch, trunk) - sets the add-on's preferences default values
 //	prefList - (object) { prefName: defaultValue }, looks for 'trunk.branch.prefName'
 //	(optional) branch - (string) defaults to objPathString
@@ -28,11 +30,11 @@ this.prefAid = {
 			trunk = 'extensions';
 		}
 		
-		var readyList = [];
-		
 		var branchString = ((trunk) ? trunk+'.' : '') +branch+'.';
 		var defaultBranch = Services.prefs.getDefaultBranch(branchString);
 		for(var pref in prefList) {
+			if(pref.indexOf('NoSync_') == 0) { continue; }
+			
 			// When updating from a version with prefs of same name but different type would throw an error and stop.
 			// In this case, we need to clear it before we can set its default value again.
 			var savedPrefType = defaultBranch.getPrefType(pref);
@@ -68,28 +70,21 @@ this.prefAid = {
 					Cu.reportError('Preferece '+pref+' is of unrecognizeable type!');
 					break;
 			}
+		}
+		
+		// We do this separate from the process above because we would get errors sometimes:
+		// setting a pref that has the same string name initially (e.g. "something" and "somethingElse"), it would trigger a change event for "something"
+		// when set*Pref()'ing "somethingElse"
+		var syncBranch = Services.prefs.getDefaultBranch('services.sync.prefs.sync.');
+		for(var pref in prefList) {
+			if(pref.indexOf('NoSync_') == 0) { continue; }
 			
-			readyList.push(pref);
-		}
-		
-		this.ready(readyList, branch, trunk);
-	},
-	
-	ready: function(prefList, branch, trunk) {
-		if(!branch) {
-			branch = objPathString;
-		}
-		if(!trunk && trunk !== '') {
-			trunk = 'extensions';
-		}
-		
-		if(typeof(prefList) == 'string') {
-			prefList = [prefList];
-		}
-		
-		for(var i=0; i<prefList.length; i++) {
-			if(!this._prefObjects[prefList[i]]) {
-				this._setPref(prefList[i], branch, trunk);
+			if(!this._prefObjects[pref]) {
+				this._setPref(pref, branch, trunk);
+			}
+			
+			if(trunk == 'extensions' && branch == objPathString && !prefList['NoSync_'+pref]) {
+				syncBranch.setBoolPref(trunk+'.'+objPathString+'.'+pref, true);
 			}
 		}
 	},

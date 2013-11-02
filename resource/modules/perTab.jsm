@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.2';
+moduleAid.VERSION = '1.1.3';
 
 this.reopenPerTabSelected = function() {
 	if(linkedPanel._findBarOpen) {
@@ -25,7 +25,7 @@ this.assumeLastFindValue = function(e) {
 };
 
 this.assumeLastFindAgainCommandValue = function(e) {
-	if(!e.defaultPrevented && gFindBar.hidden && !documentHighlighted) {
+	if(!e.defaultPrevented && !viewSource && gFindBar.hidden && !documentHighlighted && gBrowser._lastFindValue) {
 		gFindBar._findField.value = gBrowser._lastFindValue;
 	}
 };

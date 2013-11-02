@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.2.7';
+moduleAid.VERSION = '2.2.8';
 
 // Some globals we use everywhere
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
@@ -100,6 +100,17 @@ this.baseInit = function(bar) {
 			
 			var val = aValue || this._findField.value;
 			var res = this.nsITypeAheadFind.FIND_NOTFOUND;
+			
+			if(perTabFB && !viewSource) {
+				gBrowser._lastFindValue = val;
+			}
+			
+			if(mFinder) {
+				// We have to carry around an explicit version of this,
+				// because finder.searchString doesn't update on failed
+				// searches.
+				this.browser._lastSearchString = val;
+			}
 			
 			// Only search on input if we don't have a last-failed string,
 			// or if the current search string doesn't start with it.

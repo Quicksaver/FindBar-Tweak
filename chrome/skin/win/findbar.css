@@ -60,6 +60,7 @@
 	
 	window[findbartweak-FF25] findbar[movetotop] {
 		box-shadow: none;
+		padding: 1px 4px;
 	}
 	
 	/* FF25 Tweaks */

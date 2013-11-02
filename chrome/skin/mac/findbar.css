@@ -59,6 +59,10 @@
 		border-top: 1px solid #888;
 	}
 	
+	window[findbartweak-FF25] findbar[movetotop] {
+		padding: 3px 1px;
+	}
+	
 	/* FF25 Tweaks */
 	window[noToolboxBorder] #navigator-toolbox toolbar,
 	window[findbartweak-FF25Tweaks] #navigator-toolbox toolbar,

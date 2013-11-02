@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.3';
+moduleAid.VERSION = '1.4.4';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -291,6 +291,7 @@ this.reHighlightAll = function() {
 // Trigger highlights when hitting Find Again
 this.highlightOnFindAgain = function(e) {
 	if(!prefAid.highlightOnFindAgain || isPDFJS || (documentHighlighted && linkedPanel._findWord && linkedPanel._findWord == gFindBar._findField.value)) { return; }
+	if(gFindBar.hidden && prefAid.hideWhenFinderHidden) { return; } // Don't highlight if it's not supposed to when the findbar is hidden
 	
 	gFindBar._setHighlightTimeout();
 };

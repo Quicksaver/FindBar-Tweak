@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.2';
+moduleAid.VERSION = '1.4.3';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -82,7 +82,7 @@ this.highlightsTabOpened = function(e) {
 this.highlightsTabSelected = function(e) {
 	// Bugfix: it would call highlights on new tabs always, because the tab would have a "rehighlight" attribute (all lowercase) which I can't find out where I'm setting!
 	// This could cause a noticeable slowdown when switching to new tabs for the first time.
-	if(!perTabFB && linkedPanel._neverCurrent) {
+	if(linkedPanel._neverCurrent) {
 		delete linkedPanel._neverCurrent;
 		linkedPanel._statusUI = gFindBar.nsITypeAheadFind.FIND_FOUND; // Simulate an empty search, to clear the find bar when switching to the new tab
 		documentReHighlight = false;
@@ -99,7 +99,7 @@ this.highlightsTabSelected = function(e) {
 			if(documentReHighlight) {
 				var originalValue = null;
 				var originalMode = null;
-				if(gFindBar._keepCurrentValue && linkedPanel._findWord != gFindBar._findField.value) {
+				if(gFindBar._keepCurrentValue && linkedPanel._findWord != undefined && linkedPanel._findWord != gFindBar._findField.value) {
 					originalValue = gFindBar._findField.value;
 					originalMode = gFindBar._matchMode;
 					gFindBar._findField.value = linkedPanel._findWord;
@@ -412,12 +412,9 @@ moduleAid.LOADMODULE = function() {
 	if(!viewSource) {
 		listenerAid.add(window, 'UpdatedStatusFindBar', keepStatusUI);
 		listenerAid.add(gBrowser.tabContainer, "TabSelect", highlightsTabSelected);
+		listenerAid.add(gBrowser.tabContainer, "TabOpen", highlightsTabOpened);
 		listenerAid.add(gBrowser, "DOMContentLoaded", highlightsContentLoaded);
 		gBrowser.addTabsProgressListener(highlightsProgressListener);
-		
-		if(!perTabFB) {
-			listenerAid.add(gBrowser.tabContainer, "TabOpen", highlightsTabOpened);
-		}
 	}
 	
 	moduleAid.load('highlightDoc');

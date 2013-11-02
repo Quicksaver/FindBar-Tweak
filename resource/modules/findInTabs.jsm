@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.7.15';
+moduleAid.VERSION = '1.7.16';
 
 this.__defineGetter__('FITresizer', function() { return gFindBar._FITresizer; });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -270,6 +270,13 @@ this.selectFITtab = function() {
 	}
 };
 
+// We shouldn't auto close the find bar if we're switching tabs from within FIT
+this.FITnoBlurCloseTabSelect = function(aWindow) {
+	if(FITFull || !prefAid.blurCloses) { return; }
+	
+	listenerAid.add(aWindow, 'ClosingFindbarOnBlurTabSelect', function(e) { e.preventDefault(); e.stopPropagation(); }, true, true);
+};
+
 // When the user selects an item in the hits list
 this.selectFIThit = function() {
 	// Adding these checks prevents various error messages from showing in the console (even though they actually made no difference)
@@ -336,6 +343,7 @@ this.selectFIThit = function() {
 		}
 		
 		FITWorking = true;
+		FITnoBlurCloseTabSelect(inWindow);
 		inWindow.focus();
 		inWindow.gBrowser.selectedTab = inWindow.gBrowser._getTabForContentWindow(FITtabsList.currentItem.linkedDocument.defaultView);
 		FITWorking = false;
@@ -384,6 +392,7 @@ this.selectFIThit = function() {
 	
 	// First we select the tab if necessary
 	if(inWindow.gBrowser.selectedTab) { // view-source doesn't have or need this
+		FITnoBlurCloseTabSelect(inWindow);
 		inWindow.gBrowser.selectedTab = tab;
 	}
 	
@@ -2073,6 +2082,14 @@ this.FITtoErrorConsole = function() {
 	});
 };
 
+// Don't autoclose the findbar when it loses focus
+this.FITcloseBlur = function(e) {
+	if(isAncestor(e.detail, FITbox)) {
+		e.preventDefault();
+		e.stopPropagation();
+	}
+};
+
 this.loadFindInTabs = function() {
 	initFindBar('findInTabs', addFITElements, removeFITElements);
 	
@@ -2096,6 +2113,7 @@ this.loadFindInTabs = function() {
 	if(!FITFull) {
 		listenerAid.add(window, 'OpenedFindBar', alwaysOpenFIT);
 		listenerAid.add(window, 'ClosedFindBar', closeFITWithFindBar);
+		listenerAid.add(window, 'ClosingFindbarOnBlur', FITcloseBlur, true);
 		listenerAid.add(window, 'UpdatedUIFindBar', updateFITElements, false);
 		listenerAid.add(gBrowser.tabContainer, 'TabSelect', FITTabSelect);
 		
@@ -2147,6 +2165,7 @@ moduleAid.UNLOADMODULE = function() {
 		
 		listenerAid.remove(window, 'OpenedFindBar', alwaysOpenFIT);
 		listenerAid.remove(window, 'ClosedFindBar', closeFITWithFindBar);
+		listenerAid.remove(window, 'ClosingFindbarOnBlur', FITcloseBlur, true);
 		listenerAid.remove(window, 'UpdatedUIFindBar', updateFITElements, false);
 		listenerAid.remove(gBrowser.tabContainer, 'TabSelect', FITTabSelect);
 		

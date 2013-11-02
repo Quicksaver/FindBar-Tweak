@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.0';
+moduleAid.VERSION = '1.1.1';
 
 this.blurClosesAdd = function() {
 	listenerAid.add(window, 'focus', delayBlurCloses, true);
@@ -15,16 +15,23 @@ this.delayBlurCloses = function(e) {
 
 this.blurCloses = function(e) {
 	var focusedNode = document.commandDispatcher.focusedElement || e.target;
-	if(!isAncestor(focusedNode, gFindBar) && !isAncestor(focusedNode, $(objPathString+'_findbarMenu'))) {
+	if(!isAncestor(focusedNode, gFindBar)
+	&& !isAncestor(focusedNode, $(objPathString+'_findbarMenu'))
+	&& dispatch(gFindBar, { type: 'ClosingFindbarOnBlur', detail: focusedNode })) {
 		gFindBar.close();
 	}
 };
 
 this.blurClosesTabSelect = function(e) {
+	if(!dispatch(currentTab._findBar, { type: 'ClosingFindbarOnBlurTabSelect' })) { return; }
+	
 	if(e.type == 'TabSelect') {
 		gFindBar.close();
 	} else if(currentTab && currentTab._findBar) {
 		currentTab._findBar.close();
+		if(gFindBarInitialized) {
+			gFindBar.close();
+		}
 	}
 };
 

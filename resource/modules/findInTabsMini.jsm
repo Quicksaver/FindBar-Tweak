@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.5';
+moduleAid.VERSION = '1.0.4';
 
 this.__defineGetter__('FITbroadcaster', function() { return $(objName+'-findInTabs-broadcaster'); });
 
@@ -80,7 +80,7 @@ this.addFITMainButton = function(bar) {
 	setAttribute(toggleButton, 'anonid', objName+'-find-tabs');
 	setAttribute(toggleButton, 'class', 'findbar-highlight findbar-tabs tabbable findbar-no-find-fast');
 	setAttribute(toggleButton, 'observes', objName+'-findInTabs-broadcaster');
-	bar._FITtoggle = container.insertBefore(toggleButton, bar.getElement('highlight'));
+	bar._FITtoggle = container.insertBefore(toggleButton, bar.getElement('find-case-sensitive').nextSibling);
 };
 
 this.removeFITMainButton = function(bar) {

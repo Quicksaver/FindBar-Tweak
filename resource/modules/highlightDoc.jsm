@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.3';
+moduleAid.VERSION = '1.4.4';
 
 this.getDocProperty = function(doc, prop, min) {
 	try {
@@ -45,7 +45,9 @@ this.trackPDFMatches = function(e) {
 	
 	// This usually means the matches are still being retrieved, however if this isn't true it still doesn't mean it's fully finished.
 	// So later we set a timer to update itself after a while.
-	if(!unWrap.PDFFindController || !unWrap.PDFFindController.active || unWrap.PDFFindController.resumeCallback) {
+	// Bugfix: https://github.com/Quicksaver/FindBar-Tweak/issues/65 : I used to also check for PDFFindController.active, but that caused high CPU sometimes,
+	// as that would never be set if the find bar was empty on load, so it kept setting the timer here.
+	if(!unWrap.PDFFindController || unWrap.PDFFindController.resumeCallback) {
 		linkedPanel._matchesPDFtotal = 0;
 		timerAid.init('trackPDFMatches', trackPDFMatches, 0);
 		return;

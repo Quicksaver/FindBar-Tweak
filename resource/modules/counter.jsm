@@ -4,6 +4,21 @@ this.REDOINGHIGHLIGHTS = false;
 this.__defineGetter__('counter', function() { return gFindBar._findStatusDesc.textContent; });
 this.__defineSetter__('counter', function(v) { return gFindBar._findStatusDesc.textContent = v; });
 
+this.moveHighlightsArray = function(level, highlights) {
+	if(!prefAid.useCounter) { return; }
+	
+	for(var l=0; l<level.length; l++) {
+		if(typeof(level[l].highlights) != 'undefined') {
+			for(var i=0; i<level[l].highlights.length; i++) {
+				highlights.push(level[l].highlights[i]);
+			}
+		}
+		if(typeof(level[l].levels) != 'undefined') {
+			moveHighlightsArray(level[l].levels, highlights);
+		}
+	}
+};
+
 this.fillHighlightCounter = function(e) {
 	if(e && e.detail && e.detail.res && e.detail.res == gFindBar.nsITypeAheadFind.FIND_NOTFOUND) {
 		return;

@@ -420,7 +420,7 @@ this.selectFIThit = function() {
 	}
 	aCompare.aFindPrevious = aFindPrevious;
 	
-	tweakFastFindUntil(tab.linkedBrowser, gFindBar._findField.value, aCompare);
+	tweakFastFindNormal(tab.linkedBrowser, gFindBar._findField.value, false, false, aCompare);
 	if(!mFinder) {
 		inFindBar._updateFoundLink(inFindBar.nsITypeAheadFind.FIND_FOUND);
 	}

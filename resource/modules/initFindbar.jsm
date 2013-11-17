@@ -119,7 +119,6 @@ this.baseInit = function(bar) {
 			var val = aValue || this._findField.value;
 			var res = this.nsITypeAheadFind.FIND_NOTFOUND;
 			
-			// Let's make sure we keep this updated
 			if(perTabFB && !viewSource) {
 				gBrowser._lastFindValue = val;
 			}
@@ -134,7 +133,7 @@ this.baseInit = function(bar) {
 			// Only search on input if we don't have a last-failed string,
 			// or if the current search string doesn't start with it.
 			// https://bugzilla.mozilla.org/show_bug.cgi?id=926033
-			if(!this._findFailedString || val.indexOf(this._findFailedString) != 0 || this._matchMode <= MATCH_MODE_REGEX) {
+			if(!this._findFailedString || val.indexOf(this._findFailedString) != 0) {
 				this._enableFindButtons(val);
 				if(this.getElement("highlight").checked)
 					this._setHighlightTimeout();
@@ -198,30 +197,7 @@ this.baseInit = function(bar) {
 		var suffix = (perTabFB && !viewSource && this.linkedPanel != gBrowser.mCurrentTab.linkedPanel) ? 'AnotherTab' : '';
 		
 		if(dispatch(this, { type: 'WillFindAgainCommand'+suffix, detail: { aFindPrevious: aFindPrevious } })) {
-			var findString = this._browser.finder.searchString || this._findField.value;
-			if(!findString) {
-				this.startFind();
-				return;
-			}
-			
-			// We dispatch the findAgain event here instead of in _findAgain since
-			// if there is a find event handler that prevents the default then
-			// finder.searchString will never get updated which in turn means
-			// there would never be findAgain events because of the logic below.
-			if(!this._dispatchFindEvent("again", aFindPrevious))
-				return;
-			
-			// user explicitly requested another search, so do it even if we think it'll fail
-			this._findFailedString = null;
-			
-			// Ensure the stored SearchString is in sync with what we want to find
-			if(this._findField.value != this._browser.finder.searchString
-			|| (this._matchMode <= MATCH_MODE_REGEX && (!linkedPanel.RegexMatches || linkedPanel.RegexMatches.innerText != linkedPanel.innerTextDeep))) {
-				this._find(this._findField.value);
-			} else {
-				this._findAgain(aFindPrevious);
-			}
-			
+			this._onFindAgainCommand(aFindPrevious);
 			dispatch(this, { type: 'FoundAgainCommand'+suffix, cancelable: false, detail: { aFindPrevious: aFindPrevious } });
 		}
 	};

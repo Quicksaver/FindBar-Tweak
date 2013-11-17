@@ -2,8 +2,13 @@ moduleAid.VERSION = '1.2.3';
 
 this.compareRanges = function(aRange, bRange) {
 	if(aRange.nodeType || bRange.nodeType) { return false; } // Don't know if this could get here
-	if(aRange.startContainer.ownerDocument != bRange.startContainer.ownerDocument) { return false; }
-	return (aRange.compareBoundaryPoints(aRange.START_TO_START, bRange) === 0 && aRange.compareBoundaryPoints(aRange.END_TO_END, bRange) === 0);
+	if(aRange.startContainer == bRange.startContainer
+	&& aRange.endContainer == bRange.endContainer
+	&& aRange.startOffset == bRange.startOffset
+	&& aRange.endOffset == bRange.endOffset) {
+		return true;
+	}
+	return false;
 };
 
 // The following innerText update methods are for properly updating the highlights and the findbar only when it is changed.
@@ -98,202 +103,17 @@ this.innerTextProgressListener = {
 	}
 };
 
-// This moves ranges from frames to the end of the results array
-this.moveFrameRanges = function(level) {
-	var newOrder = [];
-	
-	for(var l=0; l<level.length; l++) {
-		if(typeof(level[l].highlights) != 'undefined') {
-			for(var i=0; i<level[l].highlights.length; i++) {
-				newOrder.push(level[l].highlights[i]);
-			}
-		}
-		if(typeof(level[l].levels) != 'undefined') {
-			newOrder = newOrder.concat(moveFrameRanges(level[l].levels));
-		}
-	}
-	
-	return newOrder;
-};
-
-// Taken from https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions
-this.escapeRegExp = function(str) {
-	return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
-};
-
-this.getAllRegExpOccurencesOf = function(bar, wordList, aWindow) {
-	var ranges = [];
-	var levels = [];
-	var win = aWindow || tweakGetWindow(bar);
-	
-	for(var i = 0; win.frames && i < win.frames.length; i++) {
-		levels.push(getAllRegExpOccurencesOf(bar, wordList, win.frames[i]));
-	}
-	
-	var doc = win.document;
-	if(!tweakGetSelectionController(bar, win) || !doc || !doc.documentElement) {
-		return;
-	}
-	
-	var body = (doc instanceof Ci.nsIDOMHTMLDocument && doc.body) ? doc.body : doc.documentElement;
-	
-	for(var w=0; w<wordList.length; w++) {
-		var i = 0;
-		
-		var searchRange = doc.createRange();
-		searchRange.selectNodeContents(body);
-		
-		var startPt = searchRange.cloneRange();
-		startPt.collapse(true);
-		
-		var endPt = searchRange.cloneRange();
-		endPt.collapse(false);
-		
-		var retRange = null;
-		var finder = new tweakFindRange(bar, wordList[w]);
-		
-		ranges_loop: while((retRange = finder.Find(searchRange, startPt, endPt))) {
-			startPt = retRange.cloneRange();
-			startPt.collapse(false);
-			
-			while(i<ranges.length) {
-				// No point in adding duplicate ranges, although this should rarely be triggered, if ever
-				if(compareRanges(retRange, ranges[i])) { continue ranges_loop; }
-				
-				var compare = ranges[i].compareBoundaryPoints(retRange.START_TO_START, retRange);
-				if(compare >= 0) {
-					if(compare > 0 || ranges[i].compareBoundaryPoints(retRange.END_TO_END, retRange) < 0) {
-						break;
-					}
-				}
-				
-				i++;
-			}
-			
-			ranges.splice(i, 0, retRange);
-			i++;
-			continue;
-		}
-	}
-	
-	return { highlights: ranges, levels: levels };
-};
-
 // Selecting with the caret backwards would always reset the caret back to the end of the selection when calling _find() (using the fastFind object),
 // we need to work around that so the selection doesn't keep resetting. This happens in the case of fillWithSelection.
 // We always return FIND_FOUND in this case because, if the user is selecting in a page, it's obvious the search string exists in it.
 this.workAroundFind = false;
-this.test = null;
+
 // By doing it this way, we actually only check for mFinder once, if we did this inside each method, we would be checking multiple times unnecessarily.
 if(mFinder) {
 	this.tweakFastFindNormal = function(browser, val, aLinksOnly, aDrawOutline, aCompare) {
-		// Our own Regex search implementation
-		if(gFindBar._matchMode <= MATCH_MODE_REGEX) {
-			if(!linkedPanel.RegexMatches) {
-				linkedPanel.RegexMatches = {
-					innerText: '',
-					query: '',
-					matches: null,
-					current: -1,
-					mode: MATCH_MODE_REGEX
-				};
-			}
-			
-			// We don't need to re-do everything all the time
-			if(linkedPanel.RegexMatches.innerText != linkedPanel.innerTextDeep
-			|| linkedPanel.RegexMatches.query != val
-			|| linkedPanel.RegexMatches.mode != gFindBar._matchMode) {
-				linkedPanel.RegexMatches = {
-					innerText: linkedPanel.innerTextDeep,
-					query: val,
-					current: -1,
-					mode: gFindBar._matchMode
-				};
-				
-				if(val.search('/[gimy]{0,4}$') > -1) { // has custom flags
-					var regex = new RegExp('^/?(.*)/([gimy]{0,4})$');
-					var expression = val.replace(regex, '$1');
-					var flags = 'gm' + ((val.replace(regex, '$2').search('i') > -1) ? 'i' : ''); // 'g' and 'm' flags are always set, 'i' is checked, 'y' is ignored
-				} else {
-					var regex = new RegExp('^/?(.*)');
-					var expression = val.replace(regex, '$1');
-					var flags = 'gm';
-				}
-				
-				var regex = new RegExp(expression, flags);
-				
-				// If it has no matches, let's escape from here now
-				if(regex.test(linkedPanel.innerTextDeep)) {
-					var matches = linkedPanel.innerTextDeep.match(regex);
-					var wordList = [];
-					
-					match_loop: for(var m=0; m<matches.length; m++) {
-						for(var w=0; w<wordList.length; w++) {
-							if(!matches[m] || wordList[w] == matches[m]) {
-								continue match_loop;
-							}
-						}
-						
-						// This match hasn't been done yet
-						wordList.push(matches[m]);
-					}
-					
-					linkedPanel.RegexMatches.matches = moveFrameRanges([getAllRegExpOccurencesOf(gFindBar, wordList)]);
-				}
-			}
-			
-			// There are no results for this search
-			var matches = linkedPanel.RegexMatches.matches;
-			if(matches.length == 0) {
-				return gFindBar.nsITypeAheadFind.FIND_NOTFOUND;
-			}
-			
-			// Let's try to start from the current cursor position
-			var editableNode = tweakFoundEditable(gFindBar);
-			var controller = (editableNode && editableNode.editor) ? editableNode.editor.selectionController : null;
-			if(!controller) {
-				controller = tweakGetSelectionController(gFindBar, contentWindow);
-			}
-			var sel = controller.getSelection(Ci.nsISelectionController.SELECTION_NORMAL);
-			sel.collapseToStart();
-			
-			var m = 0;
-			if(sel.anchorNode) {
-				while(m < matches.length) {
-					if(matches[m].startContainer.ownerDocument == sel.anchorNode.ownerDocument
-					&& matches[m].comparePoint(sel.anchorNode, sel.anchorOffset) == -1) {
-						break;
-					}
-				}
-			}
-			m = Math.min(m, matches.length);
-			
-			var aCompare = {
-				aFindPrevious: false,
-				range: matches[m],
-				currentWindow: matches[m].startContainer.ownerDocument.defaultView,
-				foundEditable: tweakGetEditableNode(gFindBar, selectRange.startContainer),
-				//foundLink: null, // We can't rely on foundLink for this as we don't check this in our ranges
-				bar: gFindBar,
-				limit: matches.length
-			};
-			
-			return tweakFastFindUntil(browser, matches[m].toString(), aCompare);
-		}
-		
-		// Avoid keeping results in memory when they're not needed anymore
-		delete linkedPanel.RegexMatches;
-		
 		// I don't think _find() or _findAgain() are ever called on other tabs. If they are, I need to change this line
 		browser.finder.caseSensitive = (gFindBar._matchMode == MATCH_MODE_CASE_SENSITIVE);
-		return browser.finder.fastFind(val, aLinksOnly, aDrawOutline);
-	};
-	this.tweakFindAgain = function(browser, aFindPrevious, aLinksOnly, aDrawOutline) {
-		return browser.finder.findAgain(aFindPrevious, aLinksOnly, aDrawOutline);
-	};
-	this.tweakFastFindUntil = function(browser, val, aCompare) {
-		// I don't think _find() or _findAgain() are ever called on other tabs. If they are, I need to change this line
-		browser.finder.caseSensitive = (gFindBar._matchMode == MATCH_MODE_CASE_SENSITIVE);
+		if(!aCompare) { return browser.finder.fastFind(val, aLinksOnly, aDrawOutline); }
 		
 		// This doesn't need to be in the loop
 		var controller = (aCompare.foundEditable && aCompare.foundEditable.editor) ? aCompare.foundEditable.editor.selectionController : null;
@@ -302,7 +122,7 @@ if(mFinder) {
 		}
 		
 		var loops = 0;
-		var res = browser.finder.fastFind(val, false, false);
+		var res = browser.finder.fastFind(val, aLinksOnly, false);
 		while(loops < aCompare.limit) {
 			if(res == browser.finder._fastFind.FIND_NOTFOUND) {
 				break;
@@ -321,6 +141,9 @@ if(mFinder) {
 			res = tweakFindAgain(browser, aCompare.aFindPrevious);
 		}
 		return browser.finder._fastFind.FIND_NOTFOUND;
+	};
+	this.tweakFindAgain = function(browser, aFindPrevious, aLinksOnly, aDrawOutline) {
+		return browser.finder.findAgain(aFindPrevious, aLinksOnly, aDrawOutline);
 	};
 	this.tweakGetSelectionController = function(bar, win) {
 		return bar.browser.finder._getSelectionController(win);
@@ -454,12 +277,10 @@ moduleAid.UNLOADMODULE = function() {
 			var panel = $(gBrowser.mTabs[t].linkedPanel);
 			delete panel.innerText;
 			delete panel.innerTextDeep;
-			delete panel.RegexMatches;
 		}
 	}
 	else if(viewSource) {
 		delete linkedPanel.innerText;
 		delete linkedPanel.innerTextDeep;
-		delete linkedPanel.RegexMatches;
 	}
 };

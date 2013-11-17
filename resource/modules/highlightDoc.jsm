@@ -262,7 +262,9 @@ moduleAid.LOADMODULE = function() {
 				
 				if(!aWindow) {
 					if(aLevel && aLevel == counterLevels) {
-						linkedPanel._counterHighlights = moveFrameRanges(counterLevels);
+						var counterHighlights = [];
+						moveHighlightsArray(counterLevels, counterHighlights);
+						linkedPanel._counterHighlights = counterHighlights;
 					}
 					
 					if(aHighlight && fillGrid) {

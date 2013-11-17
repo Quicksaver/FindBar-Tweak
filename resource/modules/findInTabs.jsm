@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.7.16';
+moduleAid.VERSION = '1.7.17';
 
 this.__defineGetter__('FITresizer', function() { return gFindBar._FITresizer; });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -1931,7 +1931,7 @@ this.replaceLineBreaks = function(str) {
 };
 
 this.alwaysOpenFIT = function() {
-	if(prefAid.alwaysOpenFIT && (!perTabFB || gFindBarInitialized) && !gFindBar.hidden && FITbox.hidden) {
+	if(prefAid.alwaysOpenFIT && (!perTabFB || gFindBarInitialized) && !gFindBar.hidden && FITbox.hidden && gFindBar._findMode == gFindBar.FIND_NORMAL) {
 		toggleFITBox();
 	}
 };

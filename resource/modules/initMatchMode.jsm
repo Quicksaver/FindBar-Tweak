@@ -2,6 +2,7 @@ moduleAid.VERSION = '1.0.5';
 
 this.MATCH_MODE_NORMAL = 0;
 this.MATCH_MODE_CASE_SENSITIVE = 1;
+this.MATCH_MODE_REGEX = -1;
 
 this.modePopupMouse = { x: 0, y: 0 };
 this.modePopupDims = {};
@@ -184,6 +185,9 @@ this.modeInit = function(bar) {
 			case MATCH_MODE_CASE_SENSITIVE:
 				label = stringsAid.get('matchMode', 'caseSensitive');
 				break;
+			case MATCH_MODE_REGEX:
+				label = stringsAid.get('matchMode', 'regex');
+				break;
 			default: break;
 		}
 		
@@ -222,6 +226,12 @@ this.modeInit = function(bar) {
 	setAttribute(normalItem, 'accesskey', stringsAid.get('matchMode', 'normalFindAccesskey'));
 	normalItem._modeValue = MATCH_MODE_NORMAL;
 	normalItem = popup.appendChild(normalItem);
+	
+	var regexItem = item.cloneNode(true);
+	setAttribute(regexItem, 'label', stringsAid.get('matchMode', 'regex'));
+	setAttribute(regexItem, 'accesskey', stringsAid.get('matchMode', 'regexAccesskey'));
+	regexItem._modeValue = MATCH_MODE_REGEX;
+	regexItem = popup.appendChild(regexItem);
 	
 	listenerAid.add(modeBtn, 'mouseover', delayOpenModePopup);
 	listenerAid.add(modeBtn, 'mouseout', cancelDelayOpenModePopup);

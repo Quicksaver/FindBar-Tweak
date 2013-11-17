@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.5';
+moduleAid.VERSION = '1.0.6';
 
 this.findBarHiddenState = true;
 
@@ -57,6 +57,7 @@ this.globalFBTabSelect = function() {
 		gFindBar._findField.value = currentTab._findBar._findField.value;
 		gFindBar.getElement('highlight').checked = currentTab._findBar.getElement('highlight').checked;
 		gFindBar.getElement('find-case-sensitive').checked = currentTab._findBar.getElement('find-case-sensitive').checked;
+		gFindBar._enableFindButtons(gFindBar._findField.value);
 	}
 };
 

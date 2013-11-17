@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.4';
+moduleAid.VERSION = '1.4.5';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -370,7 +370,7 @@ this.highlightsInit = function(bar) {
 			if(!mFinder) {
 				this._updateStatusUI(res);
 			} else {
-				this.browser.finder._notify(res);
+				this.browser.finder._notify(word, res);
 			}
 			
 			dispatch(this, { type: 'ToggledHighlight'+suffix, detail: aHighlight, cancelable: false });

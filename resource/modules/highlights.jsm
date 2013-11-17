@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.5';
+moduleAid.VERSION = '1.4.6';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -80,6 +80,8 @@ this.highlightsTabOpened = function(e) {
 
 // Handler for when switching tabs
 this.highlightsTabSelected = function(e) {
+	if(!isBrowserValid(gBrowser.mCurrentBrowser)) { return; }
+	
 	// Bugfix: it would call highlights on new tabs always, because the tab would have a "rehighlight" attribute (all lowercase) which I can't find out where I'm setting!
 	// This could cause a noticeable slowdown when switching to new tabs for the first time.
 	if(linkedPanel._neverCurrent) {

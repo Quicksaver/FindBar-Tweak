@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.2.8';
+moduleAid.VERSION = '2.2.9';
 
 // Some globals we use everywhere
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
@@ -37,6 +37,24 @@ this.__defineGetter__('documentReHighlight', function() {
 this.__defineSetter__('documentReHighlight', function(v) {
 	if(contentDocument) { toggleAttribute(contentDocument.documentElement, 'reHighlight', v); }
 });
+
+this.__defineGetter__('isCurrentBrowserValid', function() {
+	// this one is obvious
+	if(trueAttribute($('cmd_find'), 'disabled')) { return false; }
+	
+	return isBrowserValid(gBrowser.mCurrentBrowser);
+});
+
+this.isBrowserValid = function(browser) {
+	// Let's try to do as less checks as possible to boost performance
+	if(!browser) { return false; }
+	
+	// we should always be able to use the find bar in a normal webpage
+	if(browser.currentURI.spec.indexOf('about:') != 0
+	&& browser.currentURI.spec.indexOf('chrome://') != 0) { return true; }
+	
+	return browser.currentURI.spec != 'about:config' && dispatch(browser, { type: 'IsBrowserValid' });
+};
 
 this.currentTab = null;
 

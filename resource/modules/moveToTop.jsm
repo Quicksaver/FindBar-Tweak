@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.6.1';
+moduleAid.VERSION = '1.6.2';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -346,13 +346,7 @@ this.hideOnChrome = function() {
 		if(perTabFB && !gFindBarInitialized) { return; }
 		
 		var beforeState = gFindBar.collapsed;
-		hideIt(gFindBar, 
-			!trueAttribute($('cmd_find'), 'disabled')
-			// Need to set this separately apparently, the find bar would only hide when switching to this tab after having been loaded, not upon loading the tab
-			&& gBrowser.mCurrentBrowser.currentURI.spec != 'about:config'
-			// No need to show the findbar in Speed Dial's window, it already had a display bug at startup which I already fixed, I'm preventing more bugs this way
-			&& gBrowser.mCurrentBrowser.currentURI.spec != 'chrome://speeddial/content/speeddial.xul'
-		);
+		hideIt(gFindBar, isCurrentBrowserValid);
 		
 		// Sometimes switching to the add-ons manager and then back to another tab, the find bar would be poorly positioned
 		if(gFindBar.collapsed != beforeState) {

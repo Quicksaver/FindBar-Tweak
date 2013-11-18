@@ -57,6 +57,17 @@ this.globalFBTabSelect = function() {
 		gFindBar._findField.value = currentTab._findBar._findField.value;
 		gFindBar.getElement('highlight').checked = currentTab._findBar.getElement('highlight').checked;
 		gFindBar._buttonMode.updateMatchMode(currentTab._findBar._matchMode);
+
+		// enable the buttons
+		var prev = document.getAnonymousElementByAttribute(gFindBar, "anonid", "find-previous");
+		if(prev) {
+			prev.removeAttribute('disabled');
+		}
+
+		var next = document.getAnonymousElementByAttribute(gFindBar, "anonid", "find-next");
+		if(next) {
+			next.removeAttribute('disabled');
+		}
 	}
 };
 

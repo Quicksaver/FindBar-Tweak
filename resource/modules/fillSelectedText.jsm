@@ -1,6 +1,8 @@
-moduleAid.VERSION = '1.2.2';
+moduleAid.VERSION = '1.2.3';
 
 this.fillSelectedText = function() {
+	if(!isCurrentBrowserValid) { return; }
+	
 	var selText = gFindBar._getInitialSelection();
 	if(selText && gFindBar._findField.value != selText && dispatch(gFindBar, { type: 'WillFillSelectedText' })) {
 		gFindBar._findField.value = selText;

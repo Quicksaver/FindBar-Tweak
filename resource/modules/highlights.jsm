@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.6';
+moduleAid.VERSION = '1.4.7';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -92,8 +92,13 @@ this.highlightsTabOpened = function(e) {
 };
 
 // Handler for when switching tabs
-this.highlightsTabSelected = function(e) {
-	if(!isBrowserValid(gBrowser.mCurrentBrowser)) { return; }
+this.highlightsTabSelected = function() {
+	// https://github.com/Quicksaver/FindBar-Tweak/issues/79 - accessing document.documentElement too early in chrome pages screws them up
+	if(contentDocument.readyState == 'uninitialized') {
+		timerAid.init('delayHighlightsTabSelected', highlightsTabSelected, 100);
+		return;
+	}
+	timerAid.cancel('delayHighlightsTabSelected');
 	
 	// Bugfix: it would call highlights on new tabs always, because the tab would have a "rehighlight" attribute (all lowercase) which I can't find out where I'm setting!
 	// This could cause a noticeable slowdown when switching to new tabs for the first time.
@@ -322,7 +327,7 @@ this.highlightsInit = function(bar) {
 		if(this._findField.value && prefAid.minNoDelay > 0 && this._findField.value.length < prefAid.minNoDelay) {
 			delay = LONG_DELAY;
 		}
-			
+		
 		// Remove highlights when hitting Esc
 		// Needs to be both in here and in toggleHighlight() because the delay could prevent it from being set
 		if(!documentHighlighted) {

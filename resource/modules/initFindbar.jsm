@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.2.9';
+moduleAid.VERSION = '2.2.10';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return window.gFindBarInitialized; });
@@ -33,11 +33,8 @@ this.isBrowserValid = function(browser) {
 	// Let's try to do as less checks as possible to boost performance
 	if(!browser) { return false; }
 	
-	// we should always be able to use the find bar in a normal webpage
-	if(browser.currentURI.spec.indexOf('about:') != 0
-	&& browser.currentURI.spec.indexOf('chrome://') != 0) { return true; }
-	
-	return browser.currentURI.spec != 'about:config' && dispatch(browser, { type: 'IsBrowserValid' });
+	// This should be a very good approximation of where we should be able to use the find bar
+	return (browser.contentDocument instanceof Ci.nsIDOMHTMLDocument);
 };
 
 this.currentTab = null;

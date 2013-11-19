@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.7';
+moduleAid.VERSION = '1.4.8';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -7,13 +7,19 @@ this.__defineGetter__('documentHighlighted', function() {
 	return (contentDocument && trueAttribute(contentDocument.documentElement, 'highlighted'));
 });
 this.__defineSetter__('documentHighlighted', function(v) {
-	if(contentDocument) { toggleAttribute(contentDocument.documentElement, 'highlighted', v); }
+	if(contentDocument) {
+		if(contentDocument instanceof Ci.nsIDOMXMLDocument) { return; }
+		toggleAttribute(contentDocument.documentElement, 'highlighted', v);
+	}
 });
 this.__defineGetter__('documentReHighlight', function() {
 	return (contentDocument && trueAttribute(contentDocument.documentElement, 'reHighlight'));
 });
 this.__defineSetter__('documentReHighlight', function(v) {
-	if(contentDocument) { toggleAttribute(contentDocument.documentElement, 'reHighlight', v); }
+	if(contentDocument) {
+		if(contentDocument instanceof Ci.nsIDOMXMLDocument) { return; }
+		toggleAttribute(contentDocument.documentElement, 'reHighlight', v);
+	}
 });
 
 this.emptyNoFindUpdating = function(e) {
@@ -170,6 +176,8 @@ this.highlightsContentLoaded = function(e) {
 			doc = doc.defaultView.frameElement.ownerDocument;
 		}
 		
+		if(doc instanceof Ci.nsIDOMXMLDocument) { return; }
+		
 		setAttribute(doc.documentElement, 'reHighlight', 'true');
 		
 		if(doc == contentDocument) {
@@ -193,6 +201,8 @@ this.highlightsProgressListener = {
 		
 		// Frames don't need to trigger this
 		if(webProgress.DOMWindow == browser.contentWindow && browser.contentDocument) {
+			if(browser.contentDocument instanceof Ci.nsIDOMXMLDocument) { return; }
+			
 			setAttribute(browser.contentDocument.documentElement, 'reHighlight', 'true');
 			
 			// No need to call if there is nothing to find
@@ -293,6 +303,7 @@ this.reHighlightAll = function() {
 		
 		if(!viewSource) {
 			for(var i=0; i<gBrowser.tabContainer.childNodes.length; i++) {
+				if(gBrowser.tabContainer.childNodes[i].linkedBrowser.contentDocument instanceof Ci.nsIDOMXMLDocument) { continue; }
 				setAttribute(gBrowser.tabContainer.childNodes[i].linkedBrowser.contentDocument.documentElement, 'reHighlight', 'true');
 			}
 		}
@@ -464,6 +475,8 @@ moduleAid.UNLOADMODULE = function() {
 			
 			if(gBrowser.mTabs[t].linkedBrowser && gBrowser.mTabs[t].linkedBrowser.contentDocument) {
 				listenerAid.remove(gBrowser.mTabs[t].linkedBrowser.contentDocument, 'keyup', escHighlights);
+				
+				if(gBrowser.mTabs[t].linkedBrowser.contentDocument instanceof Ci.nsIDOMXMLDocument) { continue; }
 				removeAttribute(gBrowser.mTabs[t].linkedBrowser.contentDocument.documentElement, 'highlighted');
 				removeAttribute(gBrowser.mTabs[t].linkedBrowser.contentDocument.documentElement, 'reHighlight');
 			}

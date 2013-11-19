@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.3.0';
+moduleAid.VERSION = '2.3.1';
 moduleAid.LAZY = true;
 
 // overlayAid - to use overlays in my bootstraped add-ons. The behavior is as similar to what is described in https://developer.mozilla.org/en/XUL_Tutorial/Overlays as I could manage.
@@ -1028,7 +1028,7 @@ this.overlayAid = {
 			for(var i=0; i<this.overlays.length; i++) {
 				if(this.overlays[i].ready
 				&& this.loadedWindow(aWindow, this.overlays[i].overlay) === false
-				&& (this.overlays[i].uri == aWindow.document.baseURI || this.loadedWindow(aWindow, this.overlays[i].uri, true) !== false)) {
+				&& (aWindow.document.baseURI.indexOf(this.overlays[i].uri) == 0 || this.loadedWindow(aWindow, this.overlays[i].uri, true) !== false)) {
 					// Ensure the window is rescheduled if needed
 					if(aWindow._BEING_OVERLAYED == undefined) {
 						observerAid.notify('window-overlayed', aWindow);
@@ -1089,7 +1089,7 @@ this.overlayAid = {
 		for(var i=0; i<this.overlays.length; i++) {
 			if(this.overlays[i].ready
 			&& this.loadedWindow(aWindow, this.overlays[i].overlay) === false
-			&& (this.overlays[i].uri == aWindow.document.baseURI || this.loadedWindow(aWindow, this.overlays[i].uri, true) !== false)) {
+			&& (aWindow.document.baseURI.indexOf(this.overlays[i].uri) == 0 || this.loadedWindow(aWindow, this.overlays[i].uri, true) !== false)) {
 				aWindow._BEING_OVERLAYED = aWindow['_OVERLAYS_'+objName].push({
 					uri: this.overlays[i].overlay,
 					traceBack: [],

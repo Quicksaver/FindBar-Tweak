@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.0';
+moduleAid.VERSION = '1.5.1';
 
 this.__defineGetter__('grid', function() {
 	var grids = (!viewSource) ? linkedPanel.querySelectorAll('[anonid="findGrid"]') : $$('[anonid="findGrid"]');
@@ -18,6 +18,7 @@ this.__defineGetter__('grid', function() {
 });
 
 this.templateGrid = null;
+this.lastAdjustGrid = '';
 
 // Creates a new grid
 this.createGrid = function(doc, html) {
@@ -304,7 +305,9 @@ this.fillHighlightGrid = function(toAdd) {
 			
 			// Special case for framesets
 			// We don't add the main grid in the documentElement, as that never has content, we only use frame grids in here.
-			else if(contentDocument.getElementsByTagName('frameset')[0]) {
+			// https://github.com/Quicksaver/FindBar-Tweak/issues/86 - we use the same frameset rationale for Update Scanner's diff page
+			else if(contentDocument.getElementsByTagName('frameset')[0]
+			|| contentDocument.baseURI.indexOf('chrome://updatescan/') == 0) {
 				frameset = true;
 			}
 		}
@@ -381,13 +384,21 @@ this.fillHighlightGrid = function(toAdd) {
 						
 						if(!frameGrid) {
 							// Still no grid for this frame, so we create a new one
-							var boxNode = createGrid(frame.ownerDocument, true);
+							var divFrame = true;
+							if(contentDocument.baseURI.indexOf('chrome://updatescan/') == 0) { divFrame = false; }
+							var boxNode = createGrid(frame.ownerDocument, divFrame);
 							
 							// We need to ensure specificity
 							// and that if the grid remains when the add-on is disabled, it doesn't affect the webpage it is placed into.
-							setAttribute(boxNode, 'hidden', 'true');
 							setAttribute(boxNode, 'ownedByFindBarTweak', _UUID);
-							boxNode.style.position = 'absolute';
+							
+							if(divFrame) {
+								setAttribute(boxNode, 'hidden', true);
+								boxNode.style.position = 'absolute';
+							} else {
+								removeAttribute(boxNode, 'hidden');
+								boxNode.style.position = 'fixed';
+							}
 							
 							// ok we should be able to safely add it to the document now
 							boxNode = frame.ownerDocument.documentElement.appendChild(boxNode);
@@ -621,14 +632,16 @@ this.adjustGrid = function() {
 	var defaultPadding = (Services.appinfo.OS == 'WINNT') ? 2 : 0;
 	var defaultWidth = (Services.appinfo.OS == 'WINNT') ? 13 : (Services.appinfo.OS == 'Darwin') ? 14 : 12;
 	
+	lastAdjustGrid = '	-moz-margin-start: '+(defaultPadding +prefAid.gridAdjustPadding)+'px;\n';
+	lastAdjustGrid += '	width: '+(defaultWidth +prefAid.gridAdjustWidth)+'px;\n';
+	
 	styleAid.unload('adjustGrid_'+_UUID);
 	
 	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 	sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 	sscode += '@-moz-document url("'+document.baseURI+'") {\n';
 	sscode += '	window['+objName+'_UUID="'+_UUID+'"] vbox[anonid="findGrid"] {\n';
-	sscode += '		-moz-margin-start: '+(defaultPadding +prefAid.gridAdjustPadding)+'px;\n';
-	sscode += '		width: '+(defaultWidth +prefAid.gridAdjustWidth)+'px;\n';
+	sscode += lastAdjustGrid;
 	sscode += '	}\n';
 	sscode += '}';
 	
@@ -640,11 +653,13 @@ this.adjustGrid = function() {
 	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 	sscode += '@namespace url(http://www.w3.org/1999/xhtml);\n';
 	sscode += 'div[ownedByFindBarTweak="'+_UUID+'"][anonid="gridBox"] div[anonid="findGrid"] {\n';
-	sscode += '	-moz-margin-start: '+(defaultPadding +prefAid.gridAdjustPadding)+'px;\n';
-	sscode += '	width: '+(defaultWidth +prefAid.gridAdjustWidth)+'px;\n';
+	sscode += lastAdjustGrid;
 	sscode += '}\n';
 	
 	styleAid.load('adjustFrameGrid_'+_UUID, sscode, true);
+	
+	// For hbox frame grids
+	dispatch(window, { type: 'FBTAdjustFrameGrid', cancelable: false });
 };
 
 this.gridFollowCurrentHit = function(e) {

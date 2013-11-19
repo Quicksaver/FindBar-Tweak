@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://findbartweak/skin/findbar.css" type="text/css"?>
+<?xml-stylesheet href="chrome://findbartweak-os/skin/findbar.css" type="text/css"?>
+<overlay id="FBT_updateScaner" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" />

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.2.10';
+moduleAid.VERSION = '2.2.11';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return window.gFindBarInitialized; });
@@ -34,7 +34,8 @@ this.isBrowserValid = function(browser) {
 	if(!browser) { return false; }
 	
 	// This should be a very good approximation of where we should be able to use the find bar
-	return (browser.contentDocument instanceof Ci.nsIDOMHTMLDocument);
+	// Listeners should preventDefault IsBrowserValid event if it is a valid webpage
+	return (browser.contentDocument instanceof Ci.nsIDOMHTMLDocument) || !dispatch(browser, { type: 'IsBrowserValid' });
 };
 
 this.currentTab = null;

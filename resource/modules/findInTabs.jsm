@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.7.17';
+moduleAid.VERSION = '1.7.18';
 
 this.__defineGetter__('FITresizer', function() { return gFindBar._FITresizer; });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -2077,8 +2077,6 @@ this.FITtoErrorConsole = function() {
 			var uri = (addon && addon.isActive) ? "chrome://console2/content/console2.xul" : "chrome://global/content/console.xul";
 			window.open(uri, "_blank", "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar");
 		}
-		
-		if(addon && addon.isActive);
 	});
 };
 

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.1.4';
+moduleAid.VERSION = '2.1.5';
 moduleAid.LAZY = true;
 
 // window - Similarly to windowMediator.callOnMostRecent, the window property returns the most recent navigator:browser window object
@@ -78,6 +78,15 @@ this.openOptions = function() {
 this.closeOptions = function() {
 	if(!Addon.optionsURL) { return; }
 	windowMediator.callOnAll(function(aWindow) { try { aWindow.close(); } catch(ex) {} }, null, Addon.optionsURL);
+};
+
+// fillVersion() - to automatically fill in the version information in the about tab of the preferences dialog
+// 	box - (xul element) where the version number is supposed to appear
+this.fillVersion = function(box) {
+	if(!box || !Addon || !Addon.version) { return; }
+	
+	box.textContent = Addon.version;
+	box.hidden = false;
 };
 
 // setAttribute() - helper me that saves me the trouble of checking if the obj exists first everywhere in my scripts; yes I'm that lazy

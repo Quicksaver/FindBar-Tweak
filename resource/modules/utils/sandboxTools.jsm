@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.1.3';
+moduleAid.VERSION = '2.1.4';
 moduleAid.LAZY = true;
 
 // xmlHttpRequest(url, callback, method, async) - aid for quickly using the nsIXMLHttpRequest interface
@@ -111,6 +111,15 @@ this.trim = function(str) {
 
 // closeCustomize() - useful for when you want to close the customize toolbar dialogs for whatever reason
 this.closeCustomize = function() {
+	if(Australis) {
+		windowMediator.callOnAll(function(aWindow) {
+			if(aWindow.gCustomizeMode) {
+				aWindow.gCustomizeMode.exit();
+			}
+		}, 'navigator:browser');
+		return;
+	}
+	
 	windowMediator.callOnAll(function(aWindow) { try { aWindow.close(); } catch(ex) {} }, null, "chrome://global/content/customizeToolbar.xul");
 	windowMediator.callOnAll(function(aWindow) {
 		if(!aWindow.gBrowser) { return; }

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.0.4';
+moduleAid.VERSION = '2.0.5';
 moduleAid.LAZY = true;
 
 // browserMediator - Aid object to track and perform tasks on all document browsers across the windows
@@ -159,9 +159,11 @@ this.browserMediator = {
 			// Also listen for the sidebars
 			aWindow.addEventListener('SidebarFocused', browserMediator.sidebarLoaded, true);
 			aWindow.addEventListener('SidebarClosed', browserMediator.sidebarLoaded, true);
-			// Customize Toolbar Screen is a popup panel in OSX
-			aWindow.document.getElementById('customizeToolbarSheetPopup').addEventListener('load', browserMediator.iframeLoaded, true);
-			//aWindow.document.getElementById('customizeToolbarSheetPopup').addEventListener('unload', browserMediator.iframeLoaded, true);
+			if(!Australis) {
+				// Customize Toolbar Screen is a popup panel in OSX
+				aWindow.document.getElementById('customizeToolbarSheetPopup').addEventListener('load', browserMediator.iframeLoaded, true);
+				//aWindow.document.getElementById('customizeToolbarSheetPopup').addEventListener('unload', browserMediator.iframeLoaded, true);
+			}
 		}
 	},
 	
@@ -172,8 +174,10 @@ this.browserMediator = {
 			aWindow.gBrowser.tabContainer.removeEventListener('TabClose', browserMediator.tabClosed, true);
 			aWindow.removeEventListener('SidebarFocused', browserMediator.sidebarLoaded, true);
 			aWindow.removeEventListener('SidebarClosed', browserMediator.sidebarLoaded, true);
-			aWindow.document.getElementById('customizeToolbarSheetPopup').removeEventListener('load', browserMediator.iframeLoaded, true);
-			//aWindow.document.getElementById('customizeToolbarSheetPopup').removeEventListener('unload', browserMediator.iframeLoaded, true);
+			if(!Australis) {
+				aWindow.document.getElementById('customizeToolbarSheetPopup').removeEventListener('load', browserMediator.iframeLoaded, true);
+				//aWindow.document.getElementById('customizeToolbarSheetPopup').removeEventListener('unload', browserMediator.iframeLoaded, true);
+			}
 		}
 	}
 };

@@ -1,7 +1,26 @@
-moduleAid.VERSION = '1.5.4';
+moduleAid.VERSION = '1.5.5';
 
 this.__defineGetter__('findCSButton', function() { return gFindBar.getElement(objName+'-find-cs-button'); });
 this.__defineGetter__('findCSCheckbox', function() { return gFindBar.getElement('find-case-sensitive'); });
+this.__defineGetter__('findButton', function() {
+	var node = $('find-button');
+	
+	// If the node is in the menu-panel for instance, it won't be found on startup, until the panel is opened once so it is built
+	if(!node) {
+		// Because of https://bugzilla.mozilla.org/show_bug.cgi?id=952963 this needs to be in a try block for now,
+		// this can be changed once that bug is fixed.
+		try {
+			var widget = window.CustomizableUI.getWidget('find-button');
+			if(widget.areaType) {
+				node = widget.forWindow(window).node;
+			}
+		} catch(ex) {}
+	}
+	
+	return node;
+});
+
+this.customizing = false;
 
 this.doOpenOptions = function() {
 	openOptions();
@@ -93,7 +112,42 @@ this.csButtonCommand = function(e) {
 };
 
 this.toggleButtonState = function() {
-	toggleAttribute($(objName+'-button'), 'checked', ((!perTabFB || gFindBarInitialized) && !findBarHidden));
+	toggleAttribute(((!Australis) ? $(objName+'-button') : findButton), 'checked', ((!perTabFB || gFindBarInitialized) && !findBarHidden));
+};
+
+this.overrideButtonCommand = function(e) {
+	if(e.originalTarget && e.originalTarget.id == 'find-button' && !e.defaultPrevented) {
+		e.preventDefault(); // Don't do the default command
+		e.stopPropagation();
+		toggleFindBar();
+	}
+};
+
+this.setFindButton = function() {
+	customizing = false;
+	
+	if(findButton) {
+		// I really don't like setting this listener on window, but setting it on findButton the event will be at phase AT_TARGET, and can't be
+		// cancelled there.
+		listenerAid.add(window, 'command', overrideButtonCommand, true);
+		toggleButtonState();
+	}
+};
+
+this.unsetFindButton = function() {
+	customizing = true;
+	
+	if(findButton) {
+		listenerAid.remove(window, 'command', overrideButtonCommand, true);
+		removeAttribute(findButton, 'checked');
+	}
+};
+
+// This is in case the button is added when a toolbar is created for example
+this.setButtonListener = {
+	onWidgetAdded: function(aId) {
+		if(!customizing && aId == 'find-button') { setFindButton(); }
+	}
 };
 
 this.toggleClose = function() {
@@ -212,6 +266,10 @@ moduleAid.LOADMODULE = function() {
 	overlayAid.overlayURI('chrome://global/content/viewSource.xul', 'findbar');
 	overlayAid.overlayURI('chrome://global/content/viewPartialSource.xul', 'findbar');
 	
+	if(!Australis) {
+		overlayAid.overlayURI('chrome://browser/content/browser.xul', 'findbarButton');
+	}
+	
 	if(!perTabFB) {
 		prefAid.listen('hideFindLabel', toggleFindLabel);
 		toggleFindLabel();
@@ -228,6 +286,14 @@ moduleAid.LOADMODULE = function() {
 	toggleMoveToRight();
 	
 	if(!FITFull) {
+		if(Australis && !viewSource) {
+			listenerAid.add(window, 'beforecustomization', unsetFindButton);
+			listenerAid.add(window, 'aftercustomization', setFindButton);
+			window.CustomizableUI.addListener(setButtonListener);
+			
+			setFindButton();
+		}
+		
 		if(perTabFB) {
 			initFindBar('contextMenu', function(bar) { setAttribute(bar, 'context', objPathString+'_findbarMenu'); }, function(bar) { removeAttribute(bar, 'context'); });
 		}
@@ -278,6 +344,14 @@ moduleAid.UNLOADMODULE = function() {
 			}
 			deinitFindBar('contextMenu');
 		}
+	
+		if(Australis && !viewSource) {
+			listenerAid.remove(window, 'beforecustomization', unsetFindButton);
+			listenerAid.remove(window, 'aftercustomization', setFindButton);
+			window.CustomizableUI.removeListener(setButtonListener);
+			
+			unsetFindButton();
+		}
 	}
 		
 	prefAid.unlisten('hideClose', toggleClose);
@@ -299,5 +373,9 @@ moduleAid.UNLOADMODULE = function() {
 		overlayAid.removeOverlayURI('chrome://browser/content/browser.xul', 'findbar');
 		overlayAid.removeOverlayURI('chrome://global/content/viewSource.xul', 'findbar');
 		overlayAid.removeOverlayURI('chrome://global/content/viewPartialSource.xul', 'findbar');
+		
+		if(!Australis) {
+			overlayAid.removeOverlayURI('chrome://browser/content/browser.xul', 'findbarButton');
+		}
 	}
 };

@@ -10,15 +10,6 @@
 		</menupopup>
 	</popupset>
 	
-	<toolbarpalette id="BrowserToolbarPalette">
-		<toolbarbutton id="objName-button"
-			class="toolbarbutton-1 chromeclass-toolbar-additional"
-			label="&ToolbarButton.label;"
-			tooltiptext="&ToolbarButton.tooltip;"
-			onload="if(typeof(objName) == 'undefined') { this.removeAttribute('checked'); } else { objName.toggleButtonState(); }"
-			oncommand="objName.toggleFindBar(event);" />
-	</toolbarpalette>
-	
 	<findbar id="FindToolbar" context="objPathString_findbarMenu"/>
 	
 	<!-- for the View Source window -->

@@ -11,7 +11,8 @@
 	findbar[hideLabels] checkbox[anonid="find-case-sensitive"],
 	findbar[hideFindLabel] label[anonid="find-label"],
 	findbar[noClose] .findbar-closebutton,
-	findbar[inNotification] {
+	findbar[inNotification],
+	findbar[fixCloseButton] .findbar-closebutton:not([anonid]) {
 		display: none;
 	}
 	
@@ -134,8 +135,8 @@
 	window:not(#findbartweak-findInTabs)[findbartweak-FF25] findbar:not([position="top"]) {
 		-moz-box-ordinal-group: 3;
 	}
-	window[findbartweak-FF25] resizer[anonid="findbartweak-findInTabs-resizer"][position="bottom"] {
-		-moz-box-ordinal-group: 2;
+	window[findbartweak-FF25] resizer[anonid="findbartweak-findInTabs-resizer"][position="top"] {
+		-moz-box-ordinal-group: 0;
 	}
 	
 	/* Find Toolbar styled for PDF.JS documents */
@@ -261,7 +262,7 @@
 	}
 	
 	/* Find In Tabs */
-	#main-window[findbartweak-FITopen] #browser-bottombox[lwthemefooter="true"],
+	#main-window[findbartweak-FITopen]:not([findbartweak-FF25]) #browser-bottombox[lwthemefooter="true"],
 	#main-window[findbartweak-FITopen]:-moz-lwtheme {
 		background-repeat: repeat-y;
 	}

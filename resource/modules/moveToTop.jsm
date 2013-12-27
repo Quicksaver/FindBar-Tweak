@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.6.2';
+moduleAid.VERSION = '1.6.3';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -9,8 +9,6 @@ this.moveTopStyle = {};
 this.lwthemeImage = null;
 
 this.findBarMaxHeight = 0;
-this.findBarPaddingStart = 0;
-this.findBarPaddingEnd = 0;
 
 this.__defineGetter__('MIN_LEFT', function() { return 20; });
 this.__defineGetter__('MIN_RIGHT', function() { return 30; });
@@ -202,8 +200,20 @@ this.moveTop = function() {
 	var baseCornerWidth = 16;
 	var container = gFindBar.getElement('findbar-container');
 	
-	var beforeStart = -baseCornerWidth -findBarPaddingStart;
-	var afterStart = gFindBar.clientWidth -container.clientWidth -findBarPaddingStart;
+	if(barStyle.getPropertyValue('direction') == 'ltr') {
+		var findBarPaddingStart = parseInt(barStyle.getPropertyValue('padding-left'));
+		var findBarPaddingEnd = parseInt(barStyle.getPropertyValue('padding-right'));
+		var findBarBorderStart = parseInt(barStyle.getPropertyValue('border-left-width'));
+		var findBarBorderEnd = parseInt(barStyle.getPropertyValue('border-right-width'));
+	} else {
+		var findBarPaddingStart = parseInt(barStyle.getPropertyValue('padding-right'));
+		var findBarPaddingEnd = parseInt(barStyle.getPropertyValue('padding-left'));
+		var findBarBorderStart = parseInt(barStyle.getPropertyValue('border-right-width'));
+		var findBarBorderEnd = parseInt(barStyle.getPropertyValue('border-left-width'));
+	}
+	
+	var beforeStart = -baseCornerWidth -findBarPaddingStart -(findBarBorderStart -1);
+	var afterStart = gFindBar.clientWidth -container.clientWidth -findBarPaddingEnd +(findBarBorderEnd -1);
 	
 	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 	sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
@@ -290,13 +300,23 @@ this.stylePersonaFindBar = function() {
 			offsetPersonaY += parseInt(offsetWindowPadding.substr(offsetWindowPadding.indexOf(' ') +1, offsetWindowPadding.indexOf('px', offsetWindowPadding.indexOf(' ') +1)));
 		}
 		
+		var barStyle = getComputedStyle(gFindBar);
+		if(barStyle.getPropertyValue('direction') == 'ltr') {
+			var findBarBorderStart = parseInt(barStyle.getPropertyValue('border-left-width'));
+			var findBarBorderEnd = parseInt(barStyle.getPropertyValue('border-right-width'));
+		} else {
+			var findBarBorderStart = parseInt(barStyle.getPropertyValue('border-right-width'));
+			var findBarBorderEnd = parseInt(barStyle.getPropertyValue('border-left-width'));
+		}
+		
 		// I have no idea where does the -1 come from, it's not the findbars own border
+		// or maybe it is, I'm using that for now.
 		if(!prefAid.movetoRight) {
 			var offsetPersonaXSide = 'left';
-			var offsetPersonaX = -moveTopStyle.left -(prefAid.lwthemebgWidth - mainWindow.clientWidth) -1;
+			var offsetPersonaX = -moveTopStyle.left -(prefAid.lwthemebgWidth - mainWindow.clientWidth) -findBarBorderStart;
 		} else {
 			var offsetPersonaXSide = 'right';
-			var offsetPersonaX = -moveTopStyle.right -1;
+			var offsetPersonaX = -moveTopStyle.right -findBarBorderEnd;
 		}
 		
 		var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
@@ -304,7 +324,7 @@ this.stylePersonaFindBar = function() {
 		sscode += '@-moz-document url("'+document.baseURI+'") {\n';
 		sscode += '	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:not([inPDFJS])  {\n';
 		sscode += '	  background-image: ' + prefAid.lwthemebgImage + ' !important;\n';
-		sscode += '	  background-color: ' + prefAid.lwthemecolor + ' !important;\n';
+		sscode += '	  background-color: ' + prefAid.lwthemebgColor + ' !important;\n';
 		sscode += '	  color: ' + prefAid.lwthemecolor + ' !important;\n';
 		sscode += '	  background-position: '+offsetPersonaXSide+' '+offsetPersonaX+'px top '+offsetPersonaY+'px !important;\n';
 		sscode += '	  background-repeat: repeat !important;\n';
@@ -449,15 +469,6 @@ this.setOnTop = function(e) {
 		sscode += '}';
 		
 		styleAid.load('placeCornersFindBar_'+_UUID, sscode, true);
-		
-		// These values will be used in moveTop(), but they shouldn't change between sessions, so it's better to just save them once here
-		if(barStyle.getPropertyValue('direction') == 'ltr') {
-			findBarPaddingStart = parseInt(barStyle.getPropertyValue('padding-left'));
-			findBarPaddingEnd = parseInt(barStyle.getPropertyValue('padding-right'));
-		} else {
-			findBarPaddingStart = parseInt(barStyle.getPropertyValue('padding-right'));
-			findBarPaddingEnd = parseInt(barStyle.getPropertyValue('padding-left'));
-		}
 	}
 };
 

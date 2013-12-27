@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.5';
+moduleAid.VERSION = '1.5.6';
 
 this.__defineGetter__('findCSButton', function() { return gFindBar.getElement(objName+'-find-cs-button'); });
 this.__defineGetter__('findCSCheckbox', function() { return gFindBar.getElement('find-case-sensitive'); });
@@ -258,6 +258,8 @@ this.noToolboxBorder = function(name, incr) {
 };
 
 moduleAid.LOADMODULE = function() {
+	toggleAttribute(document.documentElement, objName+'-Australis', Australis);
+	
 	// For the case-sensitive button
 	prefAid.setDefaults({ casesensitive: 0 }, 'typeaheadfind', 'accessibility');
 	
@@ -368,6 +370,8 @@ moduleAid.UNLOADMODULE = function() {
 		prefAid.unlisten('hideFindLabel', toggleFindLabel);
 		removeAttribute(gFindBar, 'hideFindLabel');
 	}
+	
+	removeAttribute(window, objName+'-Australis');
 	
 	if(UNLOADED) {
 		overlayAid.removeOverlayURI('chrome://browser/content/browser.xul', 'findbar');

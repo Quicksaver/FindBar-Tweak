@@ -31,9 +31,18 @@
 		-moz-border-left-colors: ThreeDShadow;
 	}
 	
-	window[findbartweak-FF25] findbar[movetotop] {
+	window[findbartweak-FF25] findbar[movetotop]:not([fixCloseButton]) {
 		padding: 1px 3px;
 	}
+	findbar[movetotop][fixCloseButton] .findbar-container {
+		-moz-padding-start: 3px;
+		padding-top: 1px;
+		padding-bottom: 1px;
+	}
+	findbar[movetotop][fixCloseButton] .findbar-closebutton {
+		-moz-margin-end: 3px;
+	}
+	
 	window[findbartweak-FF25] findbar[movetotop] textbox {
 		padding: 3px 5px;
 	}
@@ -97,7 +106,8 @@
 	}
 	
 	/* Find in Tabs */
-	#findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme) {
+	window:not([findbartweak-FF25]) #findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme),
+	window[findbartweak-FF25] #findbartweak-findInTabs-box:not([movetotop]):-moz-lwtheme {
 		background-color: -moz-dialog;
 	}
 	

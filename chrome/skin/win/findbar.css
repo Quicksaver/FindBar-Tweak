@@ -61,7 +61,21 @@
 	
 	window[findbartweak-FF25] findbar[movetotop] {
 		box-shadow: none;
+	}
+	
+	window[findbartweak-FF25] findbar[movetotop]:not([fixCloseButton]) {
 		padding: 1px 4px;
+	}
+	findbar[movetotop][fixCloseButton] .findbar-container {
+		-moz-padding-start: 4px;
+		padding-top: 1px;
+		padding-bottom: 1px;
+	}
+	
+	findbar[movetotop][fixCloseButton] .findbar-closebutton {
+		-moz-padding-end: 4px;
+		padding-top: 0.4em;
+		padding-bottom: 0.4em;
 	}
 	
 	/* FF25 Tweaks */
@@ -145,7 +159,8 @@
 	}
 	
 	/* Find in Tabs */
-	#findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme) {
+	#findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme),
+	window[findbartweak-FF25] #findbartweak-findInTabs-box:not([movetotop]):-moz-lwtheme {
 		background-color: -moz-dialog;
 	}
 	
@@ -155,8 +170,9 @@
 	
 	@media not all and (-moz-windows-classic) {
 		@media (-moz-windows-default-theme) {
-			#findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme) {
-				background-color: rgb(219,234,249);
+			#findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme),
+			window[findbartweak-FF25] #findbartweak-findInTabs-box:not([movetotop]):-moz-lwtheme {
+				background-color: hsl(210,75%,92%);
 			}
 			
 			window:not([findbartweak-FF25Tweaks]) #findbartweak-findInTabs-box[movetotop] {
@@ -183,7 +199,7 @@
 	@media not all and (-moz-windows-classic) {
 		@media (-moz-windows-default-theme) {
 			window#findbartweak-findInTabs #contentBox {
-				background-color: rgb(219,234,249);
+				background-color: hsl(210,75%,92%);
 			}
 		}
 	}

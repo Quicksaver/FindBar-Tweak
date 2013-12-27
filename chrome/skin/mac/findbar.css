@@ -7,33 +7,33 @@
 	url-prefix("chrome://updatescan/") {
 	
 	/* Rounded inner corners */
-	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
-	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
+	window:not([findbartweak-Australis]) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
+	window:not([findbartweak-Australis]) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
 		box-shadow:	2px -2px 0 -2px rgba(0,0,0,0.57),
 				7px -4px 0px -4px -moz-mac-chrome-active,
 				6px -4px 0px -4px -moz-mac-chrome-active;
 	}
-	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
-	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
+	window:not([findbartweak-Australis]) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
+	window:not([findbartweak-Australis]) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
 		box-shadow: 	-2px -2px 0 -2px rgba(0,0,0,0.57),
 				-7px -4px 0px -4px -moz-mac-chrome-active,
 				-6px -4px 0px -4px -moz-mac-chrome-active;
 	}
-	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):-moz-window-inactive:before,
-	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):-moz-window-inactive:after {
+	window:not([findbartweak-Australis]) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):-moz-window-inactive:before,
+	window:not([findbartweak-Australis]) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):-moz-window-inactive:after {
 		box-shadow: 	2px -2px 0 -2px rgba(0,0,0,0.32),
 				7px -4px 0px -4px -moz-mac-chrome-inactive,
 				6px -4px 0px -4px -moz-mac-chrome-inactive;
 	}
-	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):-moz-window-inactive:after,
-	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):-moz-window-inactive:before {
+	window:not([findbartweak-Australis]) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):-moz-window-inactive:after,
+	window:not([findbartweak-Australis]) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):-moz-window-inactive:before {
 		box-shadow: 	-2px -2px 0 -2px rgba(0,0,0,0.32),
 				-7px -4px 0px -4px -moz-mac-chrome-inactive,
 				-6px -4px 0px -4px -moz-mac-chrome-inactive;
 	}
 	
 	/* Find Bar */
-	findbar[movetotop]:not([inPDFJS]) {
+	window:not([findbartweak-Australis]) findbar[movetotop]:not([inPDFJS]) {
 		background-color: -moz-mac-chrome-active;
 		border-bottom: 1px solid rgba(0,0,0,0.57);
 		border-right: 1px solid rgba(0,0,0,0.57);
@@ -42,7 +42,7 @@
 		-moz-border-right-colors: rgba(0,0,0,0.57);
 		-moz-border-left-colors: rgba(0,0,0,0.57);
 	}
-	findbar[movetotop]:not([inPDFJS]):-moz-window-inactive {
+	window:not([findbartweak-Australis]) findbar[movetotop]:not([inPDFJS]):-moz-window-inactive {
 		background-color: -moz-mac-chrome-inactive;
 		border-bottom: 1px solid rgba(0,0,0,0.32);
 		border-right: 1px solid rgba(0,0,0,0.32);
@@ -52,16 +52,94 @@
 		-moz-border-left-colors: rgba(0,0,0,0.32);
 	}
 	
-	window[findbartweak-FF25] .browserContainer findbar:not([position="top"]):not:([movetotop]) {
+	window[findbartweak-FF25] .browserContainer findbar:not([position="top"]):not([movetotop]) {
 		border-bottom: none;
 	}
 	
-	window[findbartweak-FF25] findbar:not([position="top"]):not:([movetotop]):-moz-lwtheme {
+	window[findbartweak-FF25] findbar:not([position="top"]):not([movetotop]):-moz-lwtheme {
 		border-top: 1px solid #888;
 	}
 	
-	window[findbartweak-FF25] findbar[movetotop] {
+	window[findbartweak-FF25] findbar[movetotop]:not([fixCloseButton]) {
 		padding: 3px 1px;
+	}
+	findbar[movetotop][fixCloseButton] .findbar-container {
+		-moz-padding-end: 1px;
+		padding-top: 3px;
+		padding-bottom: 3px;
+	}
+	
+	findbar[movetotop][fixCloseButton] .findbar-closebutton {
+		-moz-padding-start: 1px;
+		padding-top: 5px;
+		padding-bottom: 5px;
+	}
+	
+	window[findbartweak-Australis] findbar[movetotop] {
+		z-index: 50;
+	}
+
+	window[findbartweak-Australis] findbar[movetotop]:not([inPDFJS]) {
+		-moz-appearance: none !important;
+		border-right: 2px solid hsla(0,0%,0%,.15);
+		border-left: 2px solid hsla(0,0%,0%,.15);
+		-moz-border-right-colors: hsla(0,0%,0%,.15) hsla(0,0%,100%,.15);
+		-moz-border-left-colors: hsla(0,0%,0%,.15) hsla(0,0%,100%,.15);
+	}
+
+	window[findbartweak-Australis] findbar[movetotop]:not([inPDFJS]),
+	window[findbartweak-Australis] #findbartweak-findInTabs-box[movetotop] {
+		background: url(chrome://browser/skin/Toolbar-background-noise.png) hsl(0,0%,83%);
+		border-bottom: 2px solid hsla(0,0%,0%,.15);
+		-moz-border-bottom-colors: hsla(0,0%,0%,.15) hsla(0,0%,100%,.15);
+	}
+	
+	window[findbartweak-Australis] findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
+	window[findbartweak-Australis] findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
+		box-shadow:	2px -2px 0 -2px hsla(0,0%,0%,.15),
+				7px -4px 0px -4px hsl(0,0%,83%),
+				6px -4px 0px -4px hsl(0,0%,83%);
+	}
+	window[findbartweak-Australis] findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
+	window[findbartweak-Australis] findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
+		box-shadow: 	-2px -2px 0 -2px hsla(0,0%,0%,.15),
+				-7px -4px 0px -4px hsl(0,0%,83%),
+				-6px -4px 0px -4px hsl(0,0%,83%);
+	}
+	
+	/* these are in the stylesheets, but for some reason aren't actually applied to the toolbars, so I'm not applying them either */
+	/*
+	window[findbartweak-Australis] findbar[movetotop]:not([inPDFJS]):not(:-moz-lwtheme):-moz-window-inactive,
+	window[findbartweak-Australis] #findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme):-moz-window-inactive {
+		background-color: -moz-mac-chrome-inactive;
+	}
+	window[findbartweak-Australis] findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):not(:-moz-lwtheme):-moz-window-inactive:before,
+	window[findbartweak-Australis] findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):not(:-moz-lwtheme):-moz-window-inactive:after {
+		box-shadow:	2px -2px 0 -2px hsla(0,0%,0%,.15),
+				7px -4px 0px -4px -moz-mac-chrome-inactive,
+				6px -4px 0px -4px -moz-mac-chrome-inactive;
+	}
+	window[findbartweak-Australis] findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):not(:-moz-lwtheme):-moz-window-inactive:after,
+	window[findbartweak-Australis] findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):not(:-moz-lwtheme):-moz-window-inactive:before {
+		box-shadow: 	-2px -2px 0 -2px hsla(0,0%,0%,.15),
+				-7px -4px 0px -4px -moz-mac-chrome-inactive,
+				-6px -4px 0px -4px -moz-mac-chrome-inactive;
+	}
+	*/
+	
+	window[findbartweak-Australis] findbar[movetotop]:not([inPDFJS]):-moz-lwtheme,
+	window[findbartweak-Australis] #findbartweak-findInTabs-box[movetotop]:-moz-lwtheme {
+		-moz-border-bottom-colors: hsla(0,0%,50%,.45) hsla(0,0%,100%,.45);
+		-moz-border-right-colors: hsla(0,0%,50%,.45) hsla(0,0%,100%,.45);
+		-moz-border-left-colors: hsla(0,0%,50%,.45) hsla(0,0%,100%,.45);
+	}
+	window[findbartweak-Australis] findbar[movetotop]:not([inPDFJS]) .findbar-container:-moz-lwtheme,
+	window[findbartweak-Australis] #findbartweak-findInTabs-box[movetotop]:-moz-lwtheme {
+		background-color: rgba(253,253,253,0.45);
+	}
+	
+	window[findbartweak-Australis][noToolboxBorder] #navigator-toolbox:after {
+		display: none;
 	}
 	
 	/* FF25 Tweaks */
@@ -179,24 +257,25 @@
 	}
 	
 	/* Find in Tabs */
-	#findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme) {
+	window:not([findbartweak-Australis]) #findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme) {
 		background-color: -moz-mac-chrome-active;
 	}
-	#findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme):-moz-window-inactive {
+	window:not([findbartweak-Australis]) #findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme):-moz-window-inactive {
 		background-color: -moz-mac-chrome-inactive;
 	}
 	
-	window:not([findbartweak-FF25Tweaks]) #findbartweak-findInTabs-box[movetotop] {
+	window:not([findbartweak-FF25Tweaks]):not([findbartweak-Australis]) #findbartweak-findInTabs-box[movetotop] {
 		border-bottom: 1px solid rgba(0,0,0,0.57);
 		-moz-border-bottom-colors: rgba(0,0,0,0.57);
 	}
-	window:not([findbartweak-FF25Tweaks]) #findbartweak-findInTabs-box[movetotop]:-moz-window-inactive {
+	window:not([findbartweak-FF25Tweaks]):not([findbartweak-Australis]) #findbartweak-findInTabs-box[movetotop]:-moz-window-inactive {
 		border-bottom: 1px solid rgba(0,0,0,0.32);
 		-moz-border-bottom-colors: rgba(0,0,0,0.32);
 	}
 	
-	#findbartweak-findInTabs-box:not([movetotop]):not(:-moz-lwtheme) {
-		background-image: -moz-linear-gradient(50% 0%, rgb(208, 208, 208), rgb(232, 232, 232));
+	window:not([findbartweak-FF25]) #findbartweak-findInTabs-box:not([movetotop]):not(:-moz-lwtheme),
+	window[findbartweak-FF25] #findbartweak-findInTabs-box:not([movetotop]) {
+		background-image: -moz-linear-gradient(50% 0%, rgb(208,208,208), rgb(232,232,232));
 	}
 	
 	window:not(#findbartweak-findInTabs)[findbartweak-FF25] #findbartweak-findInTabs-box:not([movetotop]) {

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.0';
+moduleAid.VERSION = '1.0.1';
 
 // This will probably need to be changed/remove once https://bugzilla.mozilla.org/show_bug.cgi?id=939523 is addressed
 
@@ -10,6 +10,7 @@ this.fixCloseButton = function() {
 				
 				bar._mainCloseButton = bar.getElement('find-closebutton');
 				bar._topCloseButton = bar.getElement('findbar-container').appendChild(bar._mainCloseButton.cloneNode(true));
+				setAttribute(bar._topCloseButton, 'oncommand', 'gFindBar.close();');
 				
 				removeAttribute(bar._mainCloseButton, 'anonid');
 			},

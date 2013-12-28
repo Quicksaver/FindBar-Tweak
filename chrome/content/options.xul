@@ -324,7 +324,10 @@
 		</hbox>
 		
 		<vbox align="end">
-			<description class="closer">&findbartweakabout.name;</description>
+			<hbox>
+				<description class="closer">&findbartweakabout.name;</description>
+				<description id="addonVersion" hidden="true" class="closer"></description>
+			</hbox>
 			<description>&findbartweakabout.by;</description>
 			<description class="justify">&findbartweakabout.desc;</description>
 			<label class="text-link closer" href="https://addons.mozilla.org/UserAgentLocale/firefox/addon/findbar-tweak/" value="&findbartweakabout.home;"/>

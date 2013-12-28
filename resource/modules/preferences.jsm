@@ -34,6 +34,10 @@ this.resetNativePrefs = function() {
 	$('pref-selectColor').value = $('pref-selectColor').valueFromPreferences;
 };
 
+moduleAid.LOADMODULE = function() {
+	fillVersion($('addonVersion'));
+};
+
 moduleAid.UNLOADMODULE = function() {
 	moduleAid.unload('sights');
 };

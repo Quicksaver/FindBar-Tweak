@@ -1,10 +1,12 @@
-moduleAid.VERSION = '1.2.3';
+moduleAid.VERSION = '1.2.4';
 
 this.fillSelectedText = function() {
 	if(!isCurrentBrowserValid) { return; }
 	
 	var selText = gFindBar._getInitialSelection();
-	if(selText && gFindBar._findField.value != selText && dispatch(gFindBar, { type: 'WillFillSelectedText' })) {
+	if(selText
+	&& (gFindBar._findField.value != selText || (prefAid.highlightByDefault && !documentHighlighted))
+	&& dispatch(gFindBar, { type: 'WillFillSelectedText' })) {
 		gFindBar._findField.value = selText;
 		linkedPanel._highlightedWord = selText; // Make sure we highlight it if needed
 		workAroundFind = true;

@@ -1,8 +1,15 @@
-moduleAid.VERSION = '1.1.9';
+moduleAid.VERSION = '1.1.10';
 
 this.REDOINGHIGHLIGHTS = false;
 this.__defineGetter__('counter', function() { return gFindBar._findStatusDesc.textContent; });
-this.__defineSetter__('counter', function(v) { return gFindBar._findStatusDesc.textContent = v; });
+this.__defineSetter__('counter', function(v) {
+	setCounterStatus(true);
+	return gFindBar._findStatusDesc.textContent = v;
+});
+
+this.setCounterStatus = function(isCounter) {
+	toggleAttribute(gFindBar._findStatusDesc, 'counter', isCounter);
+};
 
 this.moveHighlightsArray = function(level, highlights) {
 	if(!prefAid.useCounter) { return; }
@@ -20,6 +27,8 @@ this.moveHighlightsArray = function(level, highlights) {
 };
 
 this.fillHighlightCounter = function(e) {
+	setCounterStatus(false);
+	
 	if(e && e.detail && e.detail.res && e.detail.res == gFindBar.nsITypeAheadFind.FIND_NOTFOUND) {
 		return;
 	}
@@ -127,6 +136,8 @@ moduleAid.LOADMODULE = function() {
 	listenerAid.add(window, 'UpdatedPDFMatches', fillHighlightCounter);
 	listenerAid.add(window, 'CleanUpHighlights', cleanHighlightCounter);
 	
+	initFindBar('counterStatus', function() {}, function(bar) { removeAttribute(bar._findStatusDesc, 'counter'); });
+	
 	observerAid.notify('ReHighlightAll');
 };
 
@@ -135,6 +146,8 @@ moduleAid.UNLOADMODULE = function() {
 	listenerAid.remove(window, 'UpdatedStatusFindBar', fillHighlightCounter);
 	listenerAid.remove(window, 'UpdatedPDFMatches', fillHighlightCounter);
 	listenerAid.remove(window, 'CleanUpHighlights', cleanHighlightCounter);
+	
+	deinitFindBar('counterStatus');
 	
 	if(!UNLOADED && !window.closed && !window.willClose) {
 		observerAid.notify('ReHighlightAll');

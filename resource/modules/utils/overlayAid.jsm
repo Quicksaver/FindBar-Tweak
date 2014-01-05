@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.4.4';
+moduleAid.VERSION = '2.4.5';
 moduleAid.LAZY = true;
 
 // overlayAid - to use overlays in my bootstraped add-ons. The behavior is as similar to what is described in https://developer.mozilla.org/en/XUL_Tutorial/Overlays as I could manage.
@@ -989,7 +989,16 @@ this.overlayAid = {
 							}
 							
 							if(Australis) {
+								// see note in runRegisterToolbar()
+								if(!action.node._init) {
+									this.tempAppendToolbar(aWindow, action.node);
+								}
+								
 								aWindow.CustomizableUI.unregisterArea(action.node.id);
+								
+								if(this.tempAppend) {
+									this.tempRestoreToolbar();
+								}
 								break;
 							}
 						
@@ -1138,8 +1147,11 @@ this.overlayAid = {
 			};
 			
 			// unregisterArea()'ing the toolbar can nuke the nodes, we need to make sure ours are moved to the palette
-			data.onWidgetAfterDOMChange = function(aNode, aNextNode, aContainer) {
-				if(aNode.id == this.id && !aNode.parentNode && this.palette) {
+			data.onWidgetAfterDOMChange = function(aNode) {
+				if(aNode.id == this.id
+				&& !aNode.parentNode
+				&& !trueAttribute(aNode.ownerDocument.documentElement, 'customizing') // here's to hoping we never unregister a toolbar while in customziation mode
+				&& this.palette) {
 					this.palette.appendChild(aNode);
 				}
 			};

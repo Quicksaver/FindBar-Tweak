@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.6';
+moduleAid.VERSION = '1.5.7';
 
 this.__defineGetter__('findCSButton', function() { return gFindBar.getElement(objName+'-find-cs-button'); });
 this.__defineGetter__('findCSCheckbox', function() { return gFindBar.getElement('find-case-sensitive'); });
@@ -87,14 +87,17 @@ this.toggleFindBar = function(event) {
 	}
 	else {
 		if(gFindBar.hidden) {
-			gFindBar.onFindCommand();
-			if(gFindBar._findField.value) {
-				gFindBar._setHighlightTimeout();
-			}
-		}
-		else {
+			openFindBar();
+		} else {
 			gFindBar.close();
 		}
+	}
+};
+
+this.openFindBar = function() {
+	gFindBar.onFindCommand();
+	if(gFindBar._findField.value && (gFindBar._findField.value != linkedPanel._findWord || !documentHighlighted)) {
+		gFindBar._setHighlightTimeout();
 	}
 };
 

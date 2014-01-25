@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.7.18';
+moduleAid.VERSION = '1.7.19';
 
 this.__defineGetter__('FITresizer', function() { return gFindBar._FITresizer; });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -33,10 +33,7 @@ this.toggleFITBox = function() {
 	
 	/* Open the findbar if it isn't already when opening FIT */
 	if(toggle && (gFindBar.hidden || gFindBar._findMode != gFindBar.FIND_NORMAL)) {
-		gFindBar.onFindCommand();
-		if(gFindBar._findField.value) {
-			gFindBar._setHighlightTimeout();
-		}
+		openFindBar();
 	}
 	else if(!toggle && linkedPanel._findWord) {
 		gFindBar.value = linkedPanel._findWord;

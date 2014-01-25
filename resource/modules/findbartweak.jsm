@@ -1,11 +1,7 @@
-moduleAid.VERSION = '1.2.1';
+moduleAid.VERSION = '1.2.2';
 
 this.viewSource = false;
 this.FITFull = false;
-
-this.toggleCtrlF = function() {
-	moduleAid.loadIf('ctrlF', FITFull || prefAid.ctrlFCloses);
-};
 
 this.toggleBlurCloses = function() {
 	moduleAid.loadIf('blurCloses', prefAid.blurCloses);
@@ -40,7 +36,6 @@ moduleAid.LOADMODULE = function() {
 	prefAid.listen('findInTabs', toggleFindInTabs);
 	
 	if(!FITFull) {
-		prefAid.listen('ctrlFCloses', toggleCtrlF);
 		prefAid.listen('blurCloses', toggleBlurCloses);
 		prefAid.listen('perTab', togglePerTab);
 		prefAid.listen('blurCloses', togglePerTab);
@@ -48,7 +43,7 @@ moduleAid.LOADMODULE = function() {
 		prefAid.listen('perTab', toggleRememberStartup);
 		prefAid.listen('blurCloses', toggleRememberStartup);
 	
-		toggleCtrlF();
+		moduleAid.load('ctrlF');
 		toggleBlurCloses();
 		togglePerTab();
 	}
@@ -74,8 +69,7 @@ moduleAid.UNLOADMODULE = function() {
 		moduleAid.unload('perTab');
 		moduleAid.unload('globalFB');
 		moduleAid.unload('blurCloses');
-	
-		prefAid.unlisten('ctrlFCloses', toggleCtrlF);
+		
 		prefAid.unlisten('blurCloses', toggleBlurCloses);
 		prefAid.unlisten('perTab', togglePerTab);
 		prefAid.unlisten('blurCloses', togglePerTab);

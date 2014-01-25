@@ -1,17 +1,26 @@
-moduleAid.VERSION = '1.3.2';
+moduleAid.VERSION = '1.3.3';
 
 this.ctrlF = function(event) {
+	// Pale Moon doesn't have TabView
+	if(!viewSource && window.TabView && window.TabView.isVisible()) {
+		window.TabView.enableSearch(event);
+		return;
+	}
+	
 	// See if there is text selection and if it's the same as the findbar's value
 	if(prefAid.ctrlFClosesOnValue && prefAid.FAYTprefill && !gFindBar.hidden) {
 		var selText = gFindBar._getInitialSelection();
 		if(selText && selText != gFindBar._findField.value) {
-			gFindBar.onFindCommand();
-			gFindBar._setHighlightTimeout();
+			openFindBar();
 			return;
 		}
 	}
 	
-	toggleFindBar(event);
+	if(prefAid.ctrlFCloses) {
+		toggleFindBar(event);
+	} else {
+		openFindBar();
+	}
 };
 
 moduleAid.LOADMODULE = function() {

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.1';
+moduleAid.VERSION = '1.2.2';
 
 this.highlightByDefault = function() {
 	if(!perTabFB || viewSource || gFindBarInitialized) {
@@ -43,6 +43,12 @@ this.highlightByDefaultProgressListener = {
 	}
 };
 
+this.highlightByDefaultTabSelect = function() {
+	if(!perTabFB || prefAid.perTab) {
+		highlightByDefault();
+	}
+};
+
 moduleAid.LOADMODULE = function() {
 	listenerAid.add(window, 'WillOpenFindBar', highlightByDefaultOnOpening);
 	
@@ -50,7 +56,7 @@ moduleAid.LOADMODULE = function() {
 	listenerAid.add(window, 'WillFillSelectedText', highlightByDefault);
 	
 	if(!viewSource) {
-		listenerAid.add(gBrowser.tabContainer, "TabSelect", highlightByDefault);
+		listenerAid.add(gBrowser.tabContainer, "TabSelect", highlightByDefaultTabSelect);
 		listenerAid.add(gBrowser, "DOMContentLoaded", highlightByDefaultOnContentLoaded);
 		gBrowser.addTabsProgressListener(highlightByDefaultProgressListener);
 	}
@@ -64,7 +70,7 @@ moduleAid.UNLOADMODULE = function() {
 	listenerAid.remove(window, 'WillFillSelectedText', highlightByDefault);
 	
 	if(!viewSource) {
-		listenerAid.remove(gBrowser.tabContainer, "TabSelect", highlightByDefault);
+		listenerAid.remove(gBrowser.tabContainer, "TabSelect", highlightByDefaultTabSelect);
 		listenerAid.remove(gBrowser, "DOMContentLoaded", highlightByDefaultOnContentLoaded);
 		gBrowser.removeTabsProgressListener(highlightByDefaultProgressListener);
 		

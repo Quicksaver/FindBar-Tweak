@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.4';
+moduleAid.VERSION = '1.0.5';
 
 this.__defineGetter__('FITbroadcaster', function() { return $(objName+'-findInTabs-broadcaster'); });
 
@@ -16,6 +16,7 @@ this.commandUpdateFIT = function() {
 this.toggleFIT = function() {
 	if(FITFull) {
 		gFindBar.onFindCommand();
+		updateFITfilterTooltip(); // in findInTabs.jsm, so its placeholder text isn't replaced by the default string
 		return;
 	}
 	
@@ -45,7 +46,7 @@ this.toggleFIT = function() {
 	
 	if(prefAid.FITFull || viewSource) {
 		// No window found, we need to open a new one
-		aWindow = window.open("chrome://"+objPathString+"/content/findInTabsFull.xul", '', 'chrome,extrachrome,toolbar,resizable');
+		aWindow = window.open("chrome://"+objPathString+"/content/findInTabsFull.xul", '', 'chrome,extrachrome,toolbar,resizable,centerscreen');
 		
 		if(aWindow.document.readyState == 'uninitialized') {
 			listenerAid.add(aWindow, 'load', function() {

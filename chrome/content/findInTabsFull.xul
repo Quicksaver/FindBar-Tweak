@@ -8,8 +8,8 @@
 	id="findbartweak-findInTabs"
 	title="&FITbutton.label;"
 	windowtype="addon:findInTabs"
-	height="300"
-	width="600"
+	height="350"
+	width="800"
 	persist="width height screenX screenY sizemode">
 	
 	<popupset id="mainPopupSet">
@@ -27,6 +27,9 @@
 			key="F"
 			modifiers="accel"
 			oncommand="objName.toggleFIT();" />
+		<key id="objName-findInTabs-close"
+			keycode="VK_ESCAPE"
+			oncommand="window.close();" />
 		<key id="cmd_errorConsole"
 			key="J"
 			modifiers="accel,shift"
@@ -40,12 +43,12 @@
 			position="1"
 			flex="1">
 			
-			<box id="findbartweak-findInTabs-tabs" class="findInTabs-list" flex="1" width="400" persist="width" />
+			<box id="findbartweak-findInTabs-tabs" class="findInTabs-list" flex="1" width="300" persist="width" />
 			<vbox id="findbartweak-findInTabs-filterBox" flex="0">
 				<image id="objName-findInTabs-filter" onclick="objName.toggleFITGroups();"/>
 			</vbox>
 			<splitter class="findInTabs-splitter" resizebefore="flex"/>
-			<box id="findbartweak-findInTabs-hits" class="findInTabs-list" flex="1" width="800" persist="width" />
+			<box id="findbartweak-findInTabs-hits" class="findInTabs-list" flex="1" width="500" persist="width" />
 		</hbox>
 	</vbox>
 	

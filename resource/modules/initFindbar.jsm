@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.2.12';
+moduleAid.VERSION = '2.2.13';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return window.gFindBarInitialized; });
@@ -56,15 +56,6 @@ this.baseInit = function(bar) {
 			}
 			return false;
 		};
-		bar._close = bar.close;
-		bar.close = function() {
-			var suffix = (perTabFB && !viewSource && this.linkedPanel != gBrowser.mCurrentTab.linkedPanel) ? 'AnotherTab' : '';
-			
-			if(dispatch(this, { type: 'WillCloseFindBar'+suffix })) {
-				this._close();
-				dispatch(this, { type: 'ClosedFindBar'+suffix, cancelable: false });
-			}
-		};
 		bar.__updateFindUI = bar._updateFindUI;
 		bar._updateFindUI = function() {
 			var suffix = (perTabFB && !viewSource && this.linkedPanel != gBrowser.mCurrentTab.linkedPanel) ? 'AnotherTab' : '';
@@ -90,6 +81,21 @@ this.baseInit = function(bar) {
 			bar.__defineGetter__('linkedPanel', function() { return this.parentNode.parentNode.parentNode.id; });
 		}
 	}
+	
+	bar._close = bar.close;
+	bar.close = function() {
+		if(FITFull) {
+			window.close();
+			return;
+		}
+		
+		var suffix = (perTabFB && !viewSource && this.linkedPanel != gBrowser.mCurrentTab.linkedPanel) ? 'AnotherTab' : '';
+		
+		if(dispatch(this, { type: 'WillCloseFindBar'+suffix })) {
+			this._close();
+			dispatch(this, { type: 'ClosedFindBar'+suffix, cancelable: false });
+		}
+	};
 	
 	bar.__find = bar._find;
 	bar._find = function(aValue) {

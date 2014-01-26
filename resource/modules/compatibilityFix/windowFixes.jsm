@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.12';
+moduleAid.VERSION = '1.1.13';
 
 moduleAid.LOADMODULE = function() {
 	if(!viewSource && !FITFull) {
@@ -21,9 +21,7 @@ moduleAid.LOADMODULE = function() {
 		moduleAid.load('compatibilityFix/lessChrome');
 	}
 	
-	if(!FITFull) {
-		moduleAid.loadIf('compatibilityFix/FF28', (Services.vc.compare(Services.appinfo.platformVersion, "28.0a1") >= 0));
-	}
+	moduleAid.loadIf('compatibilityFix/FF28', (Services.vc.compare(Services.appinfo.platformVersion, "28.0a1") >= 0));
 	
 	AddonManager.getAddonByID('clearfields@alex.alexander.googlepages.com', function(addon) {
 		moduleAid.loadIf('compatibilityFix/ClearFields', (addon && addon.isActive));

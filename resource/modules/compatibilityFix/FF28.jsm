@@ -1,13 +1,11 @@
-moduleAid.VERSION = '1.0.1';
+moduleAid.VERSION = '1.1.0';
 
 // This will probably need to be changed/remove once https://bugzilla.mozilla.org/show_bug.cgi?id=939523 is addressed
 
-this.fixCloseButton = function() {
+this.fixCloseButtonTop = function() {
 	if(prefAid.movetoTop) {
-		initFindBar('fixCloseButton',
+		initFindBar('fixCloseButtonTop',
 			function(bar) {
-				setAttribute(bar, 'fixCloseButton', 'true');
-				
 				bar._mainCloseButton = bar.getElement('find-closebutton');
 				bar._topCloseButton = bar.getElement('findbar-container').appendChild(bar._mainCloseButton.cloneNode(true));
 				setAttribute(bar._topCloseButton, 'oncommand', 'gFindBar.close();');
@@ -20,23 +18,36 @@ this.fixCloseButton = function() {
 				
 				delete bar._mainCloseButton;
 				delete bar._topCloseButton;
-				
-				removeAttribute(bar, 'fixCloseButton');
 			}
 		);
 	} else {
-		deinitFindBar('fixCloseButton');
+		deinitFindBar('fixCloseButtonTop');
 	}
 };
 
 moduleAid.LOADMODULE = function() {
-	prefAid.listen('movetoTop', fixCloseButton);
+	initFindBar('fixCloseButton',
+		function(bar) {
+			setAttribute(bar, 'fixCloseButton', 'true');
+		},
+		function(bar) {
+			removeAttribute(bar, 'fixCloseButton');
+		}
+	);
 	
-	fixCloseButton();
+	if(!FITFull) {
+		prefAid.listen('movetoTop', fixCloseButtonTop);
+		
+		fixCloseButtonTop();
+	}
 };
 
 moduleAid.UNLOADMODULE = function() {
-	prefAid.unlisten('movetoTop', fixCloseButton);
+	if(!FITFull) {
+		prefAid.unlisten('movetoTop', fixCloseButtonTop);
+		
+		deinitFindBar('fixCloseButtonTop');
+	}
 	
 	deinitFindBar('fixCloseButton');
 };

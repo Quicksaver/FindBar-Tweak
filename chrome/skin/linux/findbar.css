@@ -47,6 +47,11 @@
 		padding: 3px 5px;
 	}
 	
+	findbar:not([movetotop])[fixCloseButton][noClose],
+	findbar.findInTabs-bar[fixCloseButton] {
+		-moz-padding-end: 8px;
+	}
+	
 	/* FF25 Tweaks */
 	#main-window[noToolboxBorder]:not([disablechrome]) #navigator-toolbox,
 	#main-window[findbartweak-FF25Tweaks]:not([disablechrome]) #navigator-toolbox[tabsontop=true] {

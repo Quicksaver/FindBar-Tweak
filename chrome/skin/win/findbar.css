@@ -78,6 +78,11 @@
 		padding-bottom: 0.4em;
 	}
 	
+	findbar:not([movetotop])[fixCloseButton][noClose],
+	findbar.findInTabs-bar[fixCloseButton] {
+		-moz-padding-end: 8px;
+	}
+	
 	/* FF25 Tweaks */
 	window[noToolboxBorder] #navigator-toolbox:after,
 	window[findbartweak-FF25Tweaks] #navigator-toolbox:after {

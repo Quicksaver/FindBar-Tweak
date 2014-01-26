@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.6.3';
+moduleAid.VERSION = '1.6.4';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -348,6 +348,23 @@ this.toggleNotificationState = function() {
 		&& dispatch(gFindBar, { type: 'HideFindBarInNotification' }); // If something preventDefault()s this, it means the find bar can be shown
 	
 	toggleAttribute(gFindBar, 'inNotification', inNotification);
+	
+	styleAid.unload('inNotification');
+	
+	if(inNotification) {
+		// I'm not using top and lastTopStyle values incremented because this comes before moveTop, and on resizing window, values wouldn't be accurate
+		var notificationHeight = gBrowser.getNotificationBox().currentNotification.clientHeight + (gBrowser.getNotificationBox().currentNotification.clientTop *2) +1;
+		
+		var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
+		sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
+		sscode += '@-moz-document url("'+document.baseURI+'") {\n';
+		sscode += '	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop][inNotification] {\n';
+		sscode += '		margin-top: '+notificationHeight+'px !important;\n';
+		sscode += '	}\n';
+		sscode += '}';
+		
+		styleAid.load('inNotification', sscode, true);
+	}
 };
 
 this.changeLook = function() {
@@ -529,6 +546,8 @@ moduleAid.UNLOADMODULE = function() {
 		listenerAid.remove(gBrowser.tabContainer, "TabSelect", hideOnChrome, false);
 		listenerAid.remove(gBrowser, "DOMContentLoaded", hideOnChromeContentLoaded, false);
 		gBrowser.removeTabsProgressListener(hideOnChromeProgressListener);
+		
+		styleAid.unload('inNotification');
 		
 		for(var b=0; b<gBrowser.browsers.length; b++) {
 			var inDoc = gBrowser.browsers[b].contentDocument;

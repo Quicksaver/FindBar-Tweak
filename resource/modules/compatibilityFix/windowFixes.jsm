@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.13';
+moduleAid.VERSION = '1.1.14';
 
 moduleAid.LOADMODULE = function() {
 	if(!viewSource && !FITFull) {
@@ -19,6 +19,10 @@ moduleAid.LOADMODULE = function() {
 		});
 		
 		moduleAid.load('compatibilityFix/lessChrome');
+		
+		AddonManager.getAddonByID("s3download@statusbar", function(addon) {
+			moduleAid.loadIf('compatibilityFix/S3', (addon && addon.isActive));
+		});
 	}
 	
 	moduleAid.loadIf('compatibilityFix/FF28', (Services.vc.compare(Services.appinfo.platformVersion, "28.0a1") >= 0));
@@ -38,6 +42,7 @@ moduleAid.UNLOADMODULE = function() {
 	
 	moduleAid.unload('compatibilityFix/FF28');
 	
+	moduleAid.unload('compatibilityFix/S3');
 	moduleAid.unload('compatibilityFix/lessChrome');
 	moduleAid.unload('compatibilityFix/UpdateScanner');
 	moduleAid.unload('compatibilityFix/noScript');

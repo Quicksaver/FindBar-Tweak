@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.6.4';
+moduleAid.VERSION = '1.6.5';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -92,6 +92,9 @@ this.moveTop = function() {
 		return;
 	}
 	
+	// The textbox maxWidth code should be removed, so we have an accurate size of the find bar here
+	dispatch(gFindBar, { type: 'FindBarMaybeMoveTop', cancelable: false });
+	
 	fixFindBarPosition();
 	
 	moveTopStyle = {
@@ -168,7 +171,11 @@ this.moveTop = function() {
 	toggleAttribute(gFindBar, 'inPDFJS', (isPDFJS && toolbar));
 	toggleNotificationState();
 	
-	if(!shouldReMoveTop(moveTopStyle)) { return; }
+	if(!shouldReMoveTop(moveTopStyle)) {
+		dispatch(gFindBar, { type: 'FindBarMovedTop', cancelable: false });
+		return;
+	}
+	
 	lastTopStyle = moveTopStyle;
 	
 	// Unload current stylesheet if it's been loaded
@@ -195,6 +202,16 @@ this.moveTop = function() {
 	
 	styleAid.load('topFindBar_'+_UUID, sscode, true);
 	
+	dispatch(gFindBar, { type: 'FindBarMovedTop', cancelable: false });
+	
+	moveTopCorners();
+	if(!viewSource) { findPersonaPosition(); }
+	
+	// Doing it aSync prevents the window elements from jumping at startup (stylesheet not loaded yet)
+	aSync(function() { setOnTop(); });
+};
+
+this.moveTopCorners = function() {
 	// We also need to properly place the corners, these vary with OS, FF version, theme...
 	var barStyle = getComputedStyle(gFindBar);
 	var baseCornerWidth = 16;
@@ -225,10 +242,6 @@ this.moveTop = function() {
 	styleAid.load('topFindBarCorners_'+_UUID, sscode, true);
 	
 	forceCornerRedraw();
-	if(!viewSource) { findPersonaPosition(); }
-	
-	// Doing it aSync prevents the window elements from jumping at startup (stylesheet not loaded yet)
-	aSync(function() { setOnTop(); });
 };
 
 this.forceCornerRedraw = function() {

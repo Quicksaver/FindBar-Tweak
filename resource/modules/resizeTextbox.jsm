@@ -1,23 +1,31 @@
-moduleAid.VERSION = '1.1.1';
+moduleAid.VERSION = '1.2.0';
+
+this.__defineGetter__('findBarOverflow', function() {
+	return Math.max(0, gFindBar.scrollWidth -((prefAid.movetoTop && lastTopStyle) ? lastTopStyle.maxWidth : gFindBar.clientWidth));
+});
 
 this.textboxResizersRTL = false;
 this.textboxResizing = false;
+this.textboxOverflow = null;
 
 this.saveTextboxWidth = function(obj, prop, oldVal, newVal) {
 	if(textboxResizing || oldVal == newVal) { return; }
 	textboxResizing = true;
 	
 	var width = parseInt(gFindBar._findField.getAttribute('width'));
-	var max = (prefAid.hideLabels || FITFull) ? 1000 : 680;
+	var max = 4000;
+	
 	if(width < minTextboxWidth || width > max) {
-		if(width < minTextboxWidth) {
-			setAttribute(gFindBar._findField, 'width', minTextboxWidth);
-			prefAid.findFieldWidth = minTextboxWidth;
-		}
-		else {
-			setAttribute(gFindBar._findField, 'width', max);
-			prefAid.findFieldWidth = max;
-		}
+		prefAid.findFieldWidth = (width < minTextboxWidth) ? minTextboxWidth : max;
+		setAttribute(gFindBar._findField, 'width', prefAid.findFieldWidth);
+		
+		textboxResizing = false;
+		return;
+	}
+	
+	if(textboxOverflow && width >= textboxOverflow) {
+		prefAid.findFieldWidth = textboxOverflow;
+		setAttribute(gFindBar._findField, 'width', prefAid.findFieldWidth);
 		
 		textboxResizing = false;
 		return;
@@ -25,7 +33,11 @@ this.saveTextboxWidth = function(obj, prop, oldVal, newVal) {
 	
 	prefAid.findFieldWidth = parseInt(gFindBar._findField.getAttribute('width'));
 	
-	delayTextboxResizersRedrawCorners();
+	delayFindFieldMaxWidth();
+	
+	if(prefAid.movetoTop && typeof(moveTop) != 'undefined') {
+		moveTop();
+	}
 	
 	textboxResizing = false;
 };
@@ -44,7 +56,7 @@ this.findFieldWidthChanged = function() {
 
 this.setTextboxResizers = function(bar) {
 	bar._findField.id = objName+'-find-textbox';
-	if(!FITFull && !viewSource && perTabFB) {
+	if(!viewSource && perTabFB) {
 		bar._findField.id += '-'+gBrowser.getNotificationBox(bar.browser).id;
 	}
 	
@@ -79,16 +91,11 @@ this.unsetTextboxResizers = function(bar) {
 	bar._findField.id = '';
 };
 
-this.delayTextboxResizersRedrawCorners = function() {
-	if(!prefAid.movetoTop || typeof(moveTop) == 'undefined') { return; }
-	timerAid.init('delayTextboxResizersRedrawCorners', moveTop, 100);
-};
-
 this.dblClickTextboxResizer = function(e) {
 	e.preventDefault();
 	var width = parseInt(gFindBar._findField.getAttribute('width'));
-	var maxCompare = (prefAid.hideLabels || FITFull) ? 560 : 480;
-	var max = (prefAid.hideLabels || FITFull) ? '1000' : '680';
+	var maxCompare = browserPanel.clientWidth *0.5;
+	var max = 4000;
 	if(width >= maxCompare) {
 		setAttribute(gFindBar._findField, 'width', minTextboxWidth);
 	} else {
@@ -97,14 +104,80 @@ this.dblClickTextboxResizer = function(e) {
 	return false;
 };
 
+this.delayFindFieldMaxWidth = function() {
+	if(prefAid.movetoTop) { return; }
+	timerAid.init('delayFindFieldMaxWidth', findFieldMaxWidth, 0);
+};
+
+this.findFieldNoMaxWidth = function() {
+	styleAid.unload('findFieldMaxWidth_'+_UUID);
+};
+
+this.findFieldMaxWidth = function(e) {
+	findFieldNoMaxWidth();
+	
+	if((!viewSource && perTabFB && !gFindBarInitialized) || gFindBar.hidden
+	|| prefAid.findFieldWidth <= minTextboxWidth) { return; }
+	
+	textboxOverflow = null;
+	var overflow = findBarOverflow;
+	if(overflow > 0) {
+		var maxWidth = Math.max(0, prefAid.findFieldWidth -overflow);
+		
+		var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
+		sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
+		sscode += '@-moz-document url("'+document.baseURI+'") {\n';
+		sscode += '	window['+objName+'_UUID="'+_UUID+'"] .findbar-textbox { max-width: '+maxWidth+'px !important; }\n';
+		sscode += '}';
+		
+		styleAid.load('findFieldMaxWidth_'+_UUID, sscode, true);
+		
+		textboxOverflow = maxWidth;
+	}
+};
+
 moduleAid.LOADMODULE = function() {
-	textboxResizersRTL = (getComputedStyle((viewSource) ? viewSource : (FITFull) ? FITFull : $('main-window')).getPropertyValue('direction') == 'rtl');
+	// in FITFull we use flex to always extend the findField, so none of the rest is needed
+	if(FITFull) {
+		initFindBar('textboxFITFull',
+			function(bar) {
+				setAttribute(bar._findField, 'flex', '1');
+				setAttribute(bar._findField.parentNode, 'flex', '1');
+			},
+			function(bar) {
+				removeAttribute(bar._findField, 'flex');
+				removeAttribute(bar._findField.parentNode, 'flex');
+			}
+		);
+		return;
+	}
+	
+	textboxResizersRTL = (getComputedStyle(document.documentElement).getPropertyValue('direction') == 'rtl');
 	
 	findFieldWidthChanged();
 	initFindBar('textboxResizers', setTextboxResizers, unsetTextboxResizers);
+	
+	listenerAid.add(browserPanel, 'resize', delayFindFieldMaxWidth);
+	listenerAid.add(window, 'OpenedFindBar', findFieldMaxWidth);
+	listenerAid.add(window, 'FindBarMaybeMoveTop', findFieldNoMaxWidth);
+	listenerAid.add(window, 'FindBarMovedTop', findFieldMaxWidth);
+	
+	findFieldMaxWidth();
 };
 
 moduleAid.UNLOADMODULE = function() {
+	if(FITFull) {
+		deinitFindBar('textboxFITFull');
+		return;
+	}
+	
+	findFieldNoMaxWidth();
+	
+	listenerAid.remove(browserPanel, 'resize', delayFindFieldMaxWidth);
+	listenerAid.remove(window, 'OpenedFindBar', findFieldMaxWidth);
+	listenerAid.remove(window, 'FindBarMaybeMoveTop', findFieldNoMaxWidth);
+	listenerAid.remove(window, 'FindBarMovedTop', findFieldMaxWidth);
+	
 	deinitFindBar('textboxResizers');
 	deinitFindBar('textboxWidth');
 };

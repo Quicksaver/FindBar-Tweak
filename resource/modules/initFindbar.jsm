@@ -1,11 +1,11 @@
-moduleAid.VERSION = '2.2.13';
+moduleAid.VERSION = '2.2.14';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
-this.__defineGetter__('gFindBarInitialized', function() { return window.gFindBarInitialized; });
+this.__defineGetter__('gFindBarInitialized', function() { return (FITFull) ? $('FindToolbar') : window.gFindBarInitialized; });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
 this.__defineGetter__('linkedPanel', function() { return (viewSource) ? $('appcontent') : $(gBrowser.mCurrentTab.linkedPanel); });
 this.__defineGetter__('contentDocument', function() { return (!viewSource) ? gBrowser.mCurrentBrowser.contentDocument : $('content').contentDocument; });
-this.__defineGetter__('browserPanel', function() { return $('browser-panel') || viewSource; });
+this.__defineGetter__('browserPanel', function() { return $('browser-panel') || viewSource || FITFull; });
 this.getComputedStyle = function(el) { return window.getComputedStyle(el); };
 
 if(mFinder) {

@@ -172,14 +172,6 @@
 	}
 	
 	/* Textbox resizers */
-	findbar:not([hideLabels]):not(.findInTabs-bar) .findbar-textbox {
-		max-width: 680px;
-	}
-	findbar[hideLabels] .findbar-textbox,
-	findbar.findInTabs-bar .findbar-textbox {
-		max-width: 1000px;
-	}
-	
 	findbar .find-textbox-resizer {
 		-moz-appearance: none !important;
 		background: none;
@@ -406,7 +398,8 @@
 	.findInTabs-bar toolbarbutton[anonid="find-previous"],
 	.findInTabs-bar toolbarbutton[anonid="find-closebutton"],
 	.findInTabs-bar toolbarbutton[anonid="highlight"],
-	.findInTabs-bar label[anonid="match-case-status"] {
+	.findInTabs-bar label[anonid="match-case-status"],
+	.findInTabs-bar description[anonid="find-status"] {
 		display: none;
 	}
 	

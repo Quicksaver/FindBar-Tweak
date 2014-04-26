@@ -35,8 +35,7 @@
 	}
 	box[anonid="highlightSights"][sightsStyle="circle"][gt180] box[innerContainer].otherHalf box,
 	box[anonid="highlightSights"][sightsStyle="circle"][gt360] box[innerContainer].otherHalf box {
-		-moz-transform: rotate(180deg);
-		transform: rotate(180deg); /* Firefox 16 */
+		transform: rotate(180deg);
 	}
 	
 	box[anonid="highlightSights"][sightsStyle="circle"] box[innerContainer] {

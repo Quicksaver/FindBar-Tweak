@@ -1,38 +1,30 @@
-moduleAid.VERSION = '2.1.0';
+moduleAid.VERSION = '3.0.0';
 moduleAid.LAZY = true;
 
-// privateBrowsingAid - Private browsing mode listener as on https://developer.mozilla.org/En/Supporting_private_browsing_mode, with a few modifications
-// get autoStarted - returns (bool) pb autoStarted
-// get inPrivateBrowing - returns (bool) privateBrowsingEnabled
-// addWatcher(aWatcher) - prepares aWatcher to be used as a pb listener and registers it
+// privateBrowsingAid - Aid object for private browsing mode
+// get autoStarted - returns (bool) pb permanentPrivateBrowsing
+// get inPrivateBrowing - returns (bool) isWindowPrivate(window) for this window
+// addWatcher(aWatcher) - 	prepares aWatcher to be used as a PB handler
 //	aWatcher - (object) to register as a pb observer,
 //		expects methods (all optional):
 //			init: called when object is applied as a private browsing mode watcher
-//			autoStarted: called when private browsing is enabled when both the add-on and private browsing were started with the application
+//			autoStarted: called when private browsing is enabled when the add-on was started with the application
 //			addonEnabled: called when private browsing is enabled when the add-on wasn't started with the application
-//			addonDisabled: called when private browsing is enabled when the add-on is disabled without quitting the application 
-//			onEnter: called when turning on private browsing
-//			onExit: called when turning off private browing
+//			addonDisabled: called when private browsing is enabled when the add-on is disabled without quitting the application
 //			onQuit: called when application is shutdown
 //		if it doesn't have an observe method it is created
-// removeWatcher(aWatcher) - removes aWatcher from listening to pb notifications
+// removeWatcher(aWatcher) - removes aWatcher from handling PB sessions
 //	see addWatcher()
 this.privateBrowsingAid = {
-	get autoStarted () { return Services.privateBrowsing.autoStarted; },
-	get inPrivateBrowsing () { return Services.privateBrowsing.privateBrowsingEnabled; },
+	get autoStarted () { return PrivateBrowsingUtils.permanentPrivateBrowsing; },
+	get inPrivateBrowsing () { return PrivateBrowsingUtils.isWindowPrivate(window); },
 	
 	prepare: function(aWatcher) {
 		var watcherObj = aWatcher;
 		if(!watcherObj.observe) {
 			watcherObj.observe = function(aSubject, aTopic, aData) {
 				try {
-					if(aTopic == "private-browsing") {
-						if(aData == "enter" && this.onEnter) {
-							this.onEnter();
-						} else if(aData == "exit" && this.onExit) {
-							this.onExit();
-						}
-					} else if(aTopic == "quit-application" && this.onQuit) {
+					if(aTopic == "quit-application" && this.onQuit) {
 						this.onQuit();
 					}
 				}
@@ -53,7 +45,6 @@ this.privateBrowsingAid = {
 	addWatcher: function(aWatcher) {
 		var watcher = this.prepare(aWatcher);
 		
-		observerAid.add(watcher, "private-browsing");
 		observerAid.add(watcher, "quit-application");
 		
 		if(watcher.init) {
@@ -62,12 +53,11 @@ this.privateBrowsingAid = {
 		}
 		
 		if(this.inPrivateBrowsing) {
-			if(watcher.autoStarted && this.autoStarted && STARTED == APP_STARTUP) {
-				try { watcher.autoStarted(); }
-				catch(ex) { aSync(function() { Cu.reportError(ex); }); }
-			}
-			else if(watcher.addonEnabled && STARTED != APP_STARTUP) {
+			if(watcher.addonEnabled && STARTED != APP_STARTUP) {
 				try { watcher.addonEnabled(); }
+				catch(ex) { aSync(function() { Cu.reportError(ex); }); }
+			} else if(watcher.autoStarted) {
+				try { watcher.autoStarted(); }
 				catch(ex) { aSync(function() { Cu.reportError(ex); }); }
 			}
 		}
@@ -81,7 +71,6 @@ this.privateBrowsingAid = {
 			catch(ex) { aSync(function() { Cu.reportError(ex); }); }
 		}
 		
-		observerAid.remove(watcher, "private-browsing");
 		observerAid.remove(watcher, "quit-application");
 	}
 };

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.3';
+moduleAid.VERSION = '1.3.0';
 
 this.compareRanges = function(aRange, bRange) {
 	if(aRange.nodeType || bRange.nodeType) { return false; } // Don't know if this could get here
@@ -108,121 +108,61 @@ this.innerTextProgressListener = {
 // We always return FIND_FOUND in this case because, if the user is selecting in a page, it's obvious the search string exists in it.
 this.workAroundFind = false;
 
-// By doing it this way, we actually only check for mFinder once, if we did this inside each method, we would be checking multiple times unnecessarily.
-if(mFinder) {
-	this.tweakFastFindNormal = function(browser, val, aLinksOnly, aDrawOutline, aCompare) {
-		if(!aCompare) { return browser.finder.fastFind(val, aLinksOnly, aDrawOutline); }
-		
-		// This doesn't need to be in the loop
-		var controller = (aCompare.foundEditable && aCompare.foundEditable.editor) ? aCompare.foundEditable.editor.selectionController : null;
-		if(!controller) {
-			controller = tweakGetSelectionController(aCompare.bar, aCompare.currentWindow);
+this.tweakFastFindNormal = function(browser, val, aLinksOnly, aDrawOutline, aCompare) {
+	if(!aCompare) { return browser.finder.fastFind(val, aLinksOnly, aDrawOutline); }
+	
+	// This doesn't need to be in the loop
+	var controller = (aCompare.foundEditable && aCompare.foundEditable.editor) ? aCompare.foundEditable.editor.selectionController : null;
+	if(!controller) {
+		controller = tweakGetSelectionController(aCompare.bar, aCompare.currentWindow);
+	}
+	
+	var loops = 0;
+	var res = browser.finder.fastFind(val, aLinksOnly, false);
+	while(loops < aCompare.limit) {
+		if(res == browser.finder._fastFind.FIND_NOTFOUND) {
+			break;
 		}
 		
-		var loops = 0;
-		var res = browser.finder.fastFind(val, aLinksOnly, false);
-		while(loops < aCompare.limit) {
-			if(res == browser.finder._fastFind.FIND_NOTFOUND) {
-				break;
+		if(browser.finder._fastFind.currentWindow == aCompare.currentWindow
+		// && browser.fastFind.foundLink == aCompare.foundLink // Not a good idea to filter for this
+		&& browser.finder._fastFind.foundEditable == aCompare.foundEditable) {
+			var sel = controller.getSelection(Ci.nsISelectionController.SELECTION_NORMAL);
+			if(sel.rangeCount == 1 && compareRanges(aCompare.range, sel.getRangeAt(0))) {
+				return res;
 			}
-			
-			if(browser.finder._fastFind.currentWindow == aCompare.currentWindow
-			// && browser.fastFind.foundLink == aCompare.foundLink // Not a good idea to filter for this
-			&& browser.finder._fastFind.foundEditable == aCompare.foundEditable) {
-				var sel = controller.getSelection(Ci.nsISelectionController.SELECTION_NORMAL);
-				if(sel.rangeCount == 1 && compareRanges(aCompare.range, sel.getRangeAt(0))) {
-					return res;
-				}
-			}
-			
-			loops++; // We can't rely on FIND_WRAPPED status for pages with frames
-			res = tweakFindAgain(browser, aCompare.aFindPrevious);
-		}
-		return browser.finder._fastFind.FIND_NOTFOUND;
-	};
-	this.tweakFindAgain = function(browser, aFindPrevious, aLinksOnly, aDrawOutline) {
-		return browser.finder.findAgain(aFindPrevious, aLinksOnly, aDrawOutline);
-	};
-	this.tweakGetSelectionController = function(bar, win) {
-		return bar.browser.finder._getSelectionController(win);
-	};
-	this.tweakGetWindow = function(bar) {
-		return bar.browser.finder._getWindow();
-	};
-	this.tweakHighlightRange = function(bar, retRange, controller) {
-		bar.browser.finder._highlightRange(retRange, controller);
-	};
-	this.tweakGetEditableNode = function(bar, aNode) {
-		return bar.browser.finder._getEditableNode(aNode);
-	};
-	this.tweakGetEditors = function(bar) {
-		return bar.browser.finder._editors;
-	};
-	this.tweakUnhookListenersAtIndex = function(bar, x) {
-		bar.browser.finder._unhookListenersAtIndex(x);
-	};
-	this.tweakFoundEditable = function(bar, val) {
-		if(typeof(val) != 'undefined') { bar.browser.finder._fastFind.foundEditable = val; }
-		return bar.browser.finder._fastFind.foundEditable;
-	};
-}
-else {
-	this.tweakFastFindNormal = function(browser, val, aLinksOnly, aDrawOutline, aCompare) {
-		if(!aCompare) { return browser.fastFind.find(val, aLinksOnly); }
-		
-		// This doesn't need to be in the loop
-		var controller = (aCompare.foundEditable && aCompare.foundEditable.editor) ? aCompare.foundEditable.editor.selectionController : null;
-		if(!controller) {
-			controller = tweakGetSelectionController(aCompare.bar, aCompare.currentWindow);
 		}
 		
-		var loops = 0;
-		var res = browser.fastFind.find(val, aLinksOnly);
-		while(loops < aCompare.limit) {
-			if(res == browser._fastFind.FIND_NOTFOUND) {
-				break;
-			}
-			
-			if(browser.fastFind.currentWindow == aCompare.currentWindow
-			// && browser.fastFind.foundLink == aCompare.foundLink // Not a good idea to filter for this
-			&& browser.fastFind.foundEditable == aCompare.foundEditable) {
-				var sel = controller.getSelection(Ci.nsISelectionController.SELECTION_NORMAL);
-				if(sel.rangeCount == 1 && compareRanges(aCompare.range, sel.getRangeAt(0))) {
-					return res;
-				}
-			}
-			
-			loops++; // We can't rely on FIND_WRAPPED status for pages with frames
-			res = tweakFindAgain(browser, aCompare.aFindPrevious);
-		}
-		return browser._fastFind.FIND_NOTFOUND;
-	};
-	this.tweakFindAgain = function(browser, aFindPrevious, aLinksOnly, aDrawOutline) {
-		return browser.fastFind.findAgain(aFindPrevious, aLinksOnly);
-	};
-	this.tweakGetSelectionController = function(bar, win) {
-		return bar._getSelectionController(win);
-	};
-	this.tweakGetWindow = function(bar) {
-		return bar.browser.contentWindow;
-	};
-	this.tweakHighlightRange = function(bar, retRange, controller) {
-		bar._highlight(retRange, controller);
-	};
-	this.tweakGetEditableNode = function(bar, aNode) {
-		return bar._getEditableNode(aNode);
-	};
-	this.tweakGetEditors = function(bar) {
-		return bar._editors;
-	};
-	this.tweakUnhookListenersAtIndex = function(bar, x) {
-		bar._unhookListenersAtIndex(x);
-	};
-	this.tweakFoundEditable = function(bar, val) {
-		if(typeof(val) != 'undefined') { bar.browser._fastFind.foundEditable = val; }
-		return bar.browser._fastFind.foundEditable;
-	};
-}
+		loops++; // We can't rely on FIND_WRAPPED status for pages with frames
+		res = tweakFindAgain(browser, aCompare.aFindPrevious);
+	}
+	return browser.finder._fastFind.FIND_NOTFOUND;
+};
+this.tweakFindAgain = function(browser, aFindPrevious, aLinksOnly, aDrawOutline) {
+	return browser.finder.findAgain(aFindPrevious, aLinksOnly, aDrawOutline);
+};
+this.tweakGetSelectionController = function(bar, win) {
+	return bar.browser.finder._getSelectionController(win);
+};
+this.tweakGetWindow = function(bar) {
+	return bar.browser.finder._getWindow();
+};
+this.tweakHighlightRange = function(bar, retRange, controller) {
+	bar.browser.finder._highlightRange(retRange, controller);
+};
+this.tweakGetEditableNode = function(bar, aNode) {
+	return bar.browser.finder._getEditableNode(aNode);
+};
+this.tweakGetEditors = function(bar) {
+	return bar.browser.finder._editors;
+};
+this.tweakUnhookListenersAtIndex = function(bar, x) {
+	bar.browser.finder._unhookListenersAtIndex(x);
+};
+this.tweakFoundEditable = function(bar, val) {
+	if(typeof(val) != 'undefined') { bar.browser.finder._fastFind.foundEditable = val; }
+	return bar.browser.finder._fastFind.foundEditable;
+};
 
 this.tweakFastFind = function(browser, val, aLinksOnly, aDrawOutline) {
 	if(workAroundFind) { return Ci.nsITypeAheadFind.FIND_FOUND; }
@@ -247,17 +187,9 @@ this.getLinkElement = function(aNode) {
 };
 
 moduleAid.LOADMODULE = function() {
-	// By doing it this way, we actually only check for mFinder once, if we did this inside each method, we would be checking multiple times unnecessarily.
-	if(mFinder) {
-		tweakFindRange.prototype.setCaseSensitive = function(bar) {
-			this._finder.caseSensitive = bar.browser.finder._fastFind.caseSensitive;
-		};
-	}
-	else {
-		tweakFindRange.prototype.setCaseSensitive = function(bar) {
-			this._finder.caseSensitive = bar._shouldBeCaseSensitive(this.word);
-		};
-	}
+	tweakFindRange.prototype.setCaseSensitive = function(bar) {
+		this._finder.caseSensitive = bar.browser.finder._fastFind.caseSensitive;
+	};
 	
 	tweakFindRange.prototype.Find = function(searchRange, startPt, endPt) {
 		return this._finder.Find(this.word, searchRange, startPt, endPt);

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.3';
+moduleAid.VERSION = '1.2.0';
 moduleAid.LAZY = true;
 
 // keysetAid - handles editable keysets for the add-on
@@ -10,7 +10,7 @@ moduleAid.LAZY = true;
 //			keycode - (string) either a key to press (e.g. 'A') or a keycode to watch for (e.g. 'VK_F8'); some keys/keycodes don't work, see below notes.
 //			accel: (bool) true if control key (command key on mac) should be pressed
 //			shift: (bool) true if shift key should be pressed
-//			alt: (bool) true if alt key (options key on mac) should be pressed
+//			alt: (bool) true if alt key (option key on mac) should be pressed
 //	unregister(key) - unregisters a keyset
 //		see register()
 //	compareKeys(a, b, justModifiers) - compares two keysets, returns true if they have the same specs (keycode and modifiers), returns false otherwise
@@ -20,6 +20,7 @@ moduleAid.LAZY = true;
 //	exists(key, ignore) - returns (bool) true if key with provided keycode and modifiers already exists, returns (bool) false otherwise. Returns null if no browser window is opened.
 //		(optional) ignore - if true, keysets registered by this object are ignored, defaults to false
 //		see register()
+//	translateToConstantCode(input) - returns equivalent DOM_VK_INPUT string name
 this.keysetAid = {
 	registered: [],
 	queued: [],
@@ -80,6 +81,30 @@ this.keysetAid = {
 	allCodesAccel: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', ' ', 'VK_PAGE_UP', 'VK_PAGE_DOWN', 'VK_HOME', 'VK_END', 'VK_UP', 'VK_DOWN', 'VK_LEFT', 'VK_RIGHT', '.', ',', ';', '/', '\\', '=', '+', '-', '*' ],
 	
 	allCodes: ['VK_F1', 'VK_F2', 'VK_F3', 'VK_F4', 'VK_F5', 'VK_F6', 'VK_F7', 'VK_F8', 'VK_F9', 'VK_F10', 'VK_F11', 'VK_F12', 'VK_F13', 'VK_F14', 'VK_F15', 'VK_F16', 'VK_F17', 'VK_F18', 'VK_F19', 'VK_F20', 'VK_F21', 'VK_F22', 'VK_F23', 'VK_F24'],
+	
+	translateToConstantCode: function(input) {
+		var keycode = input;
+		if(keycode.indexOf('DOM_') != 0) {
+			if(keycode.indexOf('VK_') != 0) {
+				switch(keycode) {
+					case ' ': keycode = 'SPACE'; break;
+					case '.': keycode = 'PERIOD'; break;
+					case ',': keycode = 'COMMA'; break;
+					case ';': keycode = 'SEMICOLON'; break;
+					case '/': keycode = 'SLASH'; break;
+					case '\\': keycode = 'BACK_SLASH'; break;
+					case '=': keycode = 'EQUALS'; break;
+					case '+': keycode = 'PLUS'; break;
+					case '-': keycode = 'HYPHEN_MINUS'; break;
+					case '*': keycode = 'ASTERISK'; break;
+					default: break;
+				}
+				keycode = 'VK_'+keycode;
+			}
+			keycode = 'DOM_'+keycode;
+		}
+		return keycode;
+	},
 	
 	register: function(key, noSchedule) {
 		if(!key.id) { return false; }
@@ -328,8 +353,8 @@ this.keysetAid = {
 		}
 			
 		var keyset = aWindow.document.getElementById(objName+'-keyset');
-		if(keyset && keyset.parentNode) {
-			keyset.parentNode.removeChild(keyset);
+		if(keyset) {
+			keyset.remove();
 		}
 		
 		if(UNLOADED) { return; }

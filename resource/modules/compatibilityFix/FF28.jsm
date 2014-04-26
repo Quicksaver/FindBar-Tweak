@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.0';
+moduleAid.VERSION = '1.1.1';
 
 // This will probably need to be changed/remove once https://bugzilla.mozilla.org/show_bug.cgi?id=939523 is addressed
 
@@ -13,7 +13,7 @@ this.fixCloseButtonTop = function() {
 				removeAttribute(bar._mainCloseButton, 'anonid');
 			},
 			function(bar) {
-				bar._topCloseButton.parentNode.removeChild(bar._topCloseButton);
+				bar._topCloseButton.remove();
 				setAttribute(bar._mainCloseButton, 'anonid', 'find-closebutton');
 				
 				delete bar._mainCloseButton;

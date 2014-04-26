@@ -1,4 +1,4 @@
-var defaultsVersion = '1.2.6';
+var defaultsVersion = '1.3.0';
 var objName = 'findbartweak';
 var objPathString = 'findbartweak';
 
@@ -46,7 +46,7 @@ var prefList = {
 	sightsLimit: 10,
 	
 	blurCloses: false,
-	perTab: (Services.vc.compare(Services.appinfo.platformVersion, "25.0a1") >= 0),
+	perTab: true,
 	onStartup: false,
 	findbarHidden: true,
 	
@@ -56,7 +56,6 @@ var prefList = {
 	FF25Tweaks: true,
 	hideClose: false,
 	hideLabels: false,
-	hideFindLabel: false,
 	findFieldWidth: (Services.appinfo.OS != 'Darwin' && Services.appinfo.OS != 'WINNT') ? 240 : minTextboxWidth,
 	selectColor: '#38d878',
 	keepSelectContrast: true,
@@ -83,9 +82,7 @@ var prefList = {
 	lwthemebgColor: ''
 };
 
-var perTabFB = false;
 var onTopFB = false;
-var mFinder = false;
 
 function startAddon(window) {
 	prepareObject(window);
@@ -107,22 +104,9 @@ function startConditions(aReason) {
 }
 
 function onStartup(aReason) {
-	if(Services.vc.compare(Services.appinfo.platformVersion, "25.0a1") >= 0) { perTabFB = true; }
-	
 	//if(Services.vc.compare(Services.appinfo.platformVersion, "26.0a1") >= 0) { onTopFB = true; } // Backed out of Trunk until further notice
 	// Because the above was backed out, let's ensure pref movetoBottom is disabled and stays that way
 	prefAid.movetoBottom = false;
-	
-	// After https://bugzilla.mozilla.org/show_bug.cgi?id=916536 lands, I can change this to a more simple check
-	if(Services.vc.compare(Services.appinfo.platformVersion, "26.0a1") >= 0) {
-		try {
-			let FinderModule = {};
-			Cu.import("resource://gre/modules/Finder.jsm", FinderModule);
-			delete FinderModule;
-			mFinder = true;
-		}
-		catch(ex) {}
-	}
 	
 	moduleAid.load('builtinPrefs');
 	moduleAid.load('highlightColor');

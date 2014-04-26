@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.5';
+moduleAid.VERSION = '1.0.6';
 
 this.__defineGetter__('FITbroadcaster', function() { return $(objName+'-findInTabs-broadcaster'); });
 
@@ -27,7 +27,7 @@ this.toggleFIT = function() {
 		windowMediator.callOnAll(function(bWindow) {
 			if(!aWindow) {
 				aWindow = bWindow;
-				if((viewSource || !perTabFB || gFindBarInitialized)
+				if((viewSource || gFindBarInitialized)
 				&& !gFindBar.hidden
 				&& gFindBar._findField.value
 				&& aWindow.document.readyState != 'uninitialized'
@@ -62,7 +62,7 @@ this.toggleFIT = function() {
 };
 
 this.carryDataToFITFull = function(aWindow) {
-	if((viewSource || !perTabFB || gFindBarInitialized) && (!gFindBar.hidden || documentHighlighted) && gFindBar._findField.value) {
+	if((viewSource || gFindBarInitialized) && (!gFindBar.hidden || documentHighlighted) && gFindBar._findField.value) {
 		aWindow.document.getElementById('FindToolbar')._findField.value = gFindBar._findField.value;
 	}
 	if(typeof(aWindow[objName].lastWindow) == 'undefined') {
@@ -85,7 +85,7 @@ this.addFITMainButton = function(bar) {
 };
 
 this.removeFITMainButton = function(bar) {
-	bar._FITtoggle.parentNode.removeChild(bar._FITtoggle);
+	bar._FITtoggle.remove();
 	delete bar._FITtoggle;
 };
 

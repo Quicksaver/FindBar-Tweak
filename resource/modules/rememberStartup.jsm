@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.2';
+moduleAid.VERSION = '1.0.3';
 
 this.rememberOnOpen = function() {
 	if(gFindBar._findMode == gFindBar.FIND_NORMAL) {
@@ -18,7 +18,7 @@ moduleAid.LOADMODULE = function() {
 		gFindBar.onFindCommand();
 	}
 	
-	if((!perTabFB || gFindBarInitialized) && !gFindBar.hidden && gFindBar._findMode == gFindBar.FIND_NORMAL) {
+	if(gFindBarInitialized && !gFindBar.hidden && gFindBar._findMode == gFindBar.FIND_NORMAL) {
 		prefAid.findbarHidden = gFindBar.hidden;
 	}
 };

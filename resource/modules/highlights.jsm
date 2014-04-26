@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.8';
+moduleAid.VERSION = '1.5.0';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -117,49 +117,22 @@ this.highlightsTabSelected = function() {
 	// The objective was to aSync only the reHighlight() part, but because the findField value could change in the meantime, that would fail,
 	// so I'm aSync'ing this whole bit.
 	timerAid.init('highlightsTabSelected', function() {
-		if(perTabFB) {
-			if(!gFindBarInitialized || findBarHidden) {
-				documentReHighlight = false;
-			}
-			
-			if(documentReHighlight) {
-				var originalValue = null;
-				if(gFindBar._keepCurrentValue && linkedPanel._findWord != undefined && linkedPanel._findWord != gFindBar._findField.value) {
-					originalValue = gFindBar._findField.value;
-					gFindBar._findField.value = linkedPanel._findWord;
-				}
-				
-				reHighlight(documentHighlighted);
-				
-				if(originalValue) {
-					gFindBar._findField.value = originalValue;
-				}
-			}
-			return;
-		}
-		
-		var originalValue = gFindBar._findField.value;
-		
-		if(linkedPanel._findWord && (documentHighlighted || documentReHighlight)) {
-			gFindBar._findField.value = linkedPanel._findWord;
-			gFindBar._enableFindButtons(gFindBar._findField.value);
-			if(linkedPanel._statusUI != undefined) {
-				gFindBar._updateStatusUI(linkedPanel._statusUI);
-			}
-			if(findBarHidden) {
-				documentReHighlight = false;
-			}
+		if(!gFindBarInitialized || gFindBar.hidden) {
+			documentReHighlight = false;
 		}
 		
 		if(documentReHighlight) {
-			gFindBar.getElement("highlight").checked = documentHighlighted;
+			var originalValue = null;
+			if(gFindBar._keepCurrentValue && linkedPanel._findWord != undefined && linkedPanel._findWord != gFindBar._findField.value) {
+				originalValue = gFindBar._findField.value;
+				gFindBar._findField.value = linkedPanel._findWord;
+			}
+			
 			reHighlight(documentHighlighted);
-		} else if(linkedPanel._statusUI != undefined && (!linkedPanel._findWord || (!documentHighlighted && !documentReHighlight)) ) {
-			gFindBar._updateStatusUI(linkedPanel._statusUI);
-		}
-		
-		if(gFindBar._keepCurrentValue) {
-			gFindBar._findField.value = originalValue;
+			
+			if(originalValue) {
+				gFindBar._findField.value = originalValue;
+			}
 		}
 	}, 0);
 };
@@ -195,7 +168,7 @@ this.highlightsProgressListener = {
 		// This isn't a problem in firefox, and it is probably better because new content also doesn't trigger a re-highlight,
 		// but since we do trigger a re-highlight in that case, it's better if we try to keep the button state as well.
 		// I'm using the same conditioning as in the original browser's onLocationChange handler.
-		if((!perTabFB || gFindBarInitialized) && webProgress.isTopLevel) {
+		if(gFindBarInitialized && webProgress.isTopLevel) {
 			gFindBar.getElement("highlight").checked = documentHighlighted;
 		}
 		
@@ -232,7 +205,7 @@ this.highlightsProgressListener = {
 
 // ReDo highlights when hitting FindAgain if necessary (should rarely be triggered actually)
 this.highlightsFindAgain = function() {
-	if(documentReHighlight && (!perTabFB || viewSource || gFindBarInitialized)) {
+	if(documentReHighlight && (viewSource || gFindBarInitialized)) {
 		reHighlight(documentHighlighted);
 	}
 };
@@ -252,11 +225,11 @@ this.delayReHighlight = function(doc) {
 // This way we ensure the old highlights are removed before adding new ones.
 this.reHighlight = function(reDo, toUpdate) {
 	// If there's no need to even call toggleHighlight(false) if we shouldn't, this can save a few ms when selecting tabs or loading documents
-	if(!documentHighlighted && ((perTabFB && !gFindBarInitialized) || gFindBar.hidden || !gFindBar._findField.value)) {
+	if(!documentHighlighted && (!gFindBarInitialized || gFindBar.hidden || !gFindBar._findField.value)) {
 		documentReHighlight = false;
 		
 		// Clean-up any leftover highlights stuff
-		if(!perTabFB || gFindBarInitialized) {
+		if(gFindBarInitialized) {
 			cleanUpHighlights();
 		}
 		
@@ -365,12 +338,12 @@ this.highlightsInit = function(bar) {
 			return;
 		}
 		
-		var suffix = (perTabFB && !viewSource && this.linkedPanel != gBrowser.mCurrentTab.linkedPanel) ? 'AnotherTab' : '';
+		var suffix = (!viewSource && this.linkedPanel != gBrowser.mCurrentTab.linkedPanel) ? 'AnotherTab' : '';
 		
 		if(dispatch(this, { type: 'WillToggleHighlight'+suffix, detail: aHighlight })) {
 			var word = this._findField.value;
 			
-			if((this._dispatchFindEvent && !this._dispatchFindEvent("highlightallchange"))
+			if((!this._dispatchFindEvent("highlightallchange"))
 			// Bug 429723. Don't attempt to highlight ""
 			|| (aHighlight && !word)) {
 				dispatch(this, { type: 'ToggledHighlight'+suffix, detail: aHighlight, cancelable: false });
@@ -378,10 +351,8 @@ this.highlightsInit = function(bar) {
 			}
 			
 			// Initially I was going to change this in Finder.jsm's prototype, but that caused recursion errors, so I'm going around the Finder.jsm altogether.
-			if(mFinder) {
-				this.browser._lastSearchHighlight = aHighlight;
-				this.browser.finder._searchString = word;
-			}
+			this.browser._lastSearchHighlight = aHighlight;
+			this.browser.finder._searchString = word;
 			
 			// We have to update the status because we might still have the status
 			// of another tab
@@ -390,11 +361,7 @@ this.highlightsInit = function(bar) {
 				res = this.nsITypeAheadFind.FIND_FOUND;
 			}
 			
-			if(!mFinder) {
-				this._updateStatusUI(res);
-			} else {
-				this.browser.finder._notify(word, res);
-			}
+			this.browser.finder._notify(word, res);
 			
 			dispatch(this, { type: 'ToggledHighlight'+suffix, detail: aHighlight, cancelable: false });
 		}

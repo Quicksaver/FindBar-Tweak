@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.1';
+moduleAid.VERSION = '1.5.2';
 
 this.__defineGetter__('grid', function() {
 	var grids = (!viewSource) ? linkedPanel.querySelectorAll('[anonid="findGrid"]') : $$('[anonid="findGrid"]');
@@ -66,7 +66,7 @@ this.adjustGridRows = function(aGrid) {
 		rows.appendChild(rows.firstChild.cloneNode(true));
 	}
 	while(rows.childNodes.length > prefAid.gridLimit) {
-		rows.removeChild(rows.lastChild);
+		rows.lastChild.remove();
 	}
 };
 
@@ -189,8 +189,8 @@ this.testFrameGrid = function(aGrid, f) {
 	}
 	catch(ex) {
 		try {
-			if(aGrid._frames[f].parentNode && aGrid._frames[f].parentNode.parentNode) {
-				aGrid._frames[f].parentNode.parentNode.removeChild(aGrid._frames[f].parentNode);
+			if(aGrid._frames[f].parentNode) {
+				aGrid._frames[f].parentNode.remove();
 			}
 		}
 		catch(exx) {}
@@ -350,7 +350,7 @@ this.fillHighlightGrid = function(toAdd) {
 								if(aGrid._frames[f].ownerDocument == frame.ownerDocument) {
 									// for safety, since afterwards we assume as much
 									if(aGrid._frames[f].childNodes[1].childNodes.length != prefAid.gridLimit) {
-										aGrid._frames[f].parentNode.removeChild(aGrid._frames[f]);
+										aGrid._frames[f].remove();
 										aGrid._frames.splice(f, 1);
 										f--;
 										continue;
@@ -797,18 +797,18 @@ this.removeAllGrids = function() {
 			var innerGrid = panel.querySelectorAll('[anonid="gridBox"]');
 			if(innerGrid.length > 0) {
 				for(var f=0; f<innerGrid[0].firstChild._frames.length; f++) {
-					if(innerGrid[0].firstChild._frames[f].parentNode && innerGrid[0].firstChild._frames[f].parentNode.parentNode) {
-						innerGrid[0].firstChild._frames[f].parentNode.parentNode.removeChild(innerGrid[0].firstChild._frames[f].parentNode);
+					if(innerGrid[0].firstChild._frames[f].parentNode) {
+						innerGrid[0].firstChild._frames[f].parentNode.remove();
 					}
 				}
-				innerGrid[0].parentNode.removeChild(innerGrid[0]);
+				innerGrid[0].remove();
 			}
 		}
 	}
 	else {
 		var innerGrid = $$('[anonid="gridBox"]');
 		if(innerGrid.length > 0) {
-			innerGrid[0].parentNode.removeChild(innerGrid[0]);
+			innerGrid[0].remove();
 		}
 	}
 };

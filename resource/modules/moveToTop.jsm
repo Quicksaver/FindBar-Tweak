@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.6.5';
+moduleAid.VERSION = '1.6.6';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -80,16 +80,9 @@ this.fixFindBarPosition = function() {
 this.moveTop = function() {
 	// always move it at least once to prevent the initial hangup
 	if(lastTopStyle) {
-		if((!viewSource && perTabFB && !gFindBarInitialized) || gFindBar.hidden) { return; } // no need to move it again if it's hidden, the stylesheet should remain valid
-	} else if(!viewSource && perTabFB) {
+		if((!viewSource && !gFindBarInitialized) || gFindBar.hidden) { return; } // no need to move it again if it's hidden, the stylesheet should remain valid
+	} else if(!viewSource) {
 		gFindBar; // make sure the find bar is initialized past this point
-	}
-	
-	// Bugfix: ensure these declarations only take effect when the stylesheet is loaded (from the overlay) as well.
-	// Otherwise, at startup, the browser would jump for half a second with empty space on the right.
-	if(!viewSource && !perTabFB && gFindBar.getAttribute('context') != objPathString+'_findbarMenu') {
-		delayMoveTop();
-		return;
 	}
 	
 	// The textbox maxWidth code should be removed, so we have an accurate size of the find bar here
@@ -393,7 +386,7 @@ this.hideOnChrome = function() {
 	// Bugfix for Tree Style Tab (and possibly others): findbar is on the background after uncollapsing
 	// So we do all this stuff aSync, should allow the window to repaint
 	timerAid.init('hideOnChrome', function() {
-		if(perTabFB && !gFindBarInitialized) { return; }
+		if(!gFindBarInitialized) { return; }
 		
 		var beforeState = gFindBar.collapsed;
 		hideIt(gFindBar, isCurrentBrowserValid);

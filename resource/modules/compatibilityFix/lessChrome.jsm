@@ -1,8 +1,8 @@
-moduleAid.VERSION = '1.0.2';
+moduleAid.VERSION = '1.0.3';
 
 // Handler for when autoPage inserts something into the document
 this.lessChromeShowing = function(e) {
-	if(perTabFB && !viewSource && !gFindBarInitialized) { return; }
+	if(!viewSource && !gFindBarInitialized) { return; }
 	
 	if(isAncestor(e.target, gFindBar) || isAncestor(e.target, $(objPathString+'_findbarMenu'))) {
 		e.preventDefault();

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.5.7';
+moduleAid.VERSION = '1.6.0';
 
 this.__defineGetter__('findCSButton', function() { return gFindBar.getElement(objName+'-find-cs-button'); });
 this.__defineGetter__('findCSCheckbox', function() { return gFindBar.getElement('find-case-sensitive'); });
@@ -101,21 +101,8 @@ this.openFindBar = function() {
 	}
 };
 
-this.csButtonCommand = function(e) {
-	if(e.which != 0) {
-		e.preventDefault();
-		e.stopPropagation();
-		return false;
-	}
-	
-	findCSCheckbox.checked = !findCSCheckbox.checked;
-	toggleAttribute(findCSButton, 'checked', findCSCheckbox.checked);
-  	gFindBar._setCaseSensitivity(findCSCheckbox.checked);
-	return true;
-};
-
 this.toggleButtonState = function() {
-	toggleAttribute(((!Australis) ? $(objName+'-button') : findButton), 'checked', ((!perTabFB || gFindBarInitialized) && !findBarHidden));
+	toggleAttribute(findButton, 'checked', (gFindBarInitialized && !gFindBar.hidden));
 };
 
 this.overrideButtonCommand = function(e) {
@@ -169,42 +156,14 @@ this.toggleClose = function() {
 this.toggleLabels = function() {
 	initFindBar('toggleLabels',
 		function(bar) {
-			if(!perTabFB) {
-				var csButton = bar.getElement(objName+'-find-cs-button');
-				if(prefAid.hideLabels && !csButton) {
-					var button = document.createElement('toolbarbutton');
-					button.setAttribute('anonid', objName+'-find-cs-button');
-					button.setAttribute('class', 'findbar-highlight findbar-cs-button tabbable');
-					button.setAttribute('tooltiptext', bar.getElement('find-case-sensitive').getAttribute('label'));
-					toggleAttribute(button, 'checked', prefAid.casesensitive);
-					csButton = bar.getElement("findbar-container").insertBefore(button, bar.getElement('find-case-sensitive'));
-					listenerAid.add(csButton, 'command', csButtonCommand, true);
-				} else if(!prefAid.hideLabels && csButton) {
-					listenerAid.remove(csButton, 'command', csButtonCommand, true);
-					csButton.parentNode.removeChild(csButton);
-				}
-			}
-			
 			toggleAttribute(bar, 'hideLabels', prefAid.hideLabels);
 			triggerUIChange(bar);
 		},
 		function(bar) {
-			if(!perTabFB) {
-				var csButton = bar.getElement(objName+'-find-cs-button');
-				if(csButton) {
-					listenerAid.remove(csButton, 'command', csButtonCommand, true);
-					csButton.parentNode.removeChild(csButton);
-				}
-			}
-			
 			removeAttribute(bar, 'hideLabels');
 		},
 		true
 	);
-};
-
-this.toggleFindLabel = function() {
-	toggleAttribute(gFindBar, 'hideFindLabel', prefAid.hideFindLabel);
 };
 
 this.toggleMoveToTop = function() {
@@ -261,24 +220,12 @@ this.noToolboxBorder = function(name, incr) {
 };
 
 moduleAid.LOADMODULE = function() {
-	toggleAttribute(document.documentElement, objName+'-Australis', Australis);
-	
 	// For the case-sensitive button
 	prefAid.setDefaults({ casesensitive: 0 }, 'typeaheadfind', 'accessibility');
 	
-	// The dummy function in this call prevents a weird bug where the overlay wouldn't be properly applied when opening a second window... for some reason...
-	overlayAid.overlayURI('chrome://browser/content/browser.xul', 'findbar', function(window) { if(!perTabFB) { window.gFindBar; } });
+	overlayAid.overlayURI('chrome://browser/content/browser.xul', 'findbar');
 	overlayAid.overlayURI('chrome://global/content/viewSource.xul', 'findbar');
 	overlayAid.overlayURI('chrome://global/content/viewPartialSource.xul', 'findbar');
-	
-	if(!Australis) {
-		overlayAid.overlayURI('chrome://browser/content/browser.xul', 'findbarButton');
-	}
-	
-	if(!perTabFB) {
-		prefAid.listen('hideFindLabel', toggleFindLabel);
-		toggleFindLabel();
-	}
 	
 	prefAid.listen('hideClose', toggleClose);
 	prefAid.listen('hideLabels', toggleLabels);
@@ -291,7 +238,7 @@ moduleAid.LOADMODULE = function() {
 	toggleMoveToRight();
 	
 	if(!FITFull) {
-		if(Australis && !viewSource) {
+		if(!viewSource) {
 			listenerAid.add(window, 'beforecustomization', unsetFindButton);
 			listenerAid.add(window, 'aftercustomization', setFindButton);
 			window.CustomizableUI.addListener(setButtonListener);
@@ -299,9 +246,7 @@ moduleAid.LOADMODULE = function() {
 			setFindButton();
 		}
 		
-		if(perTabFB) {
-			initFindBar('contextMenu', function(bar) { setAttribute(bar, 'context', objPathString+'_findbarMenu'); }, function(bar) { removeAttribute(bar, 'context'); });
-		}
+		initFindBar('contextMenu', function(bar) { setAttribute(bar, 'context', objPathString+'_findbarMenu'); }, function(bar) { removeAttribute(bar, 'context'); });
 		
 		prefAid.listen('movetoTop', toggleMoveToTop);
 		prefAid.listen('movetoBottom', toggleMoveToTop);
@@ -314,7 +259,7 @@ moduleAid.LOADMODULE = function() {
 		listenerAid.add(window, 'OpenedFindBar', toggleButtonState);
 		listenerAid.add(window, 'ClosedFindBar', toggleButtonState);
 		
-		if(!viewSource && perTabFB) {
+		if(!viewSource) {
 			listenerAid.add(gBrowser.tabContainer, "TabSelect", toggleButtonState);
 		}
 		
@@ -343,14 +288,12 @@ moduleAid.UNLOADMODULE = function() {
 		listenerAid.remove(window, 'OpenedFindBar', toggleButtonState);
 		listenerAid.remove(window, 'ClosedFindBar', toggleButtonState);
 		
-		if(perTabFB) {
-			if(!viewSource) {
-				listenerAid.remove(gBrowser.tabContainer, "TabSelect", toggleButtonState);
-			}
-			deinitFindBar('contextMenu');
+		if(!viewSource) {
+			listenerAid.remove(gBrowser.tabContainer, "TabSelect", toggleButtonState);
 		}
+		deinitFindBar('contextMenu');
 	
-		if(Australis && !viewSource) {
+		if(!viewSource) {
 			listenerAid.remove(window, 'beforecustomization', unsetFindButton);
 			listenerAid.remove(window, 'aftercustomization', setFindButton);
 			window.CustomizableUI.removeListener(setButtonListener);
@@ -369,20 +312,9 @@ moduleAid.UNLOADMODULE = function() {
 	deinitFindBar('toggleLabels');
 	deinitFindBar('toggleMoveToRight');
 	
-	if(!perTabFB) {
-		prefAid.unlisten('hideFindLabel', toggleFindLabel);
-		removeAttribute(gFindBar, 'hideFindLabel');
-	}
-	
-	removeAttribute(window, objName+'-Australis');
-	
 	if(UNLOADED) {
 		overlayAid.removeOverlayURI('chrome://browser/content/browser.xul', 'findbar');
 		overlayAid.removeOverlayURI('chrome://global/content/viewSource.xul', 'findbar');
 		overlayAid.removeOverlayURI('chrome://global/content/viewPartialSource.xul', 'findbar');
-		
-		if(!Australis) {
-			overlayAid.removeOverlayURI('chrome://browser/content/browser.xul', 'findbarButton');
-		}
 	}
 };

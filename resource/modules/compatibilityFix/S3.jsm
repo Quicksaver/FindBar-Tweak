@@ -1,7 +1,7 @@
-moduleAid.VERSION = '1.0.0';
+moduleAid.VERSION = '1.0.1';
 
 this.watchS3Bar = function() {
-	if(prefAid.movetoTop && (!perTabFB || gFindBarInitialized) && !gFindBar.hidden && typeof(moveTop) != 'undefined') {
+	if(prefAid.movetoTop && gFindBarInitialized && !gFindBar.hidden && typeof(moveTop) != 'undefined') {
 		moveTop();
 	}
 };

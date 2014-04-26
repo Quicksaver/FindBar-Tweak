@@ -59,11 +59,11 @@
 		}
 	}
 	
-	window[findbartweak-FF25] findbar[movetotop] {
+	findbar[movetotop] {
 		box-shadow: none;
 	}
 	
-	window[findbartweak-FF25] findbar[movetotop]:not([fixCloseButton]) {
+	findbar[movetotop]:not([fixCloseButton]) {
 		padding: 1px 4px;
 	}
 	findbar[movetotop][fixCloseButton] .findbar-container {
@@ -100,22 +100,8 @@
 		}
 	}
 	
-	/* For the toolbar button */
-	#navigator-toolbox[iconsize=large][mode=icons] > :not(#TabsToolbar) > #findbartweak-button > .toolbarbutton-icon { padding: 2px 6px; }
-	
 	/* Textbox resizers */
-	window:not([findbartweak-FF25]) findbar .findbar-textbox {
-		min-width: 127px;
-	}
-	@media not all and (-moz-windows-classic) {
-		@media (-moz-windows-default-theme) {
-			window:not([findbartweak-FF25]) findbar .findbar-textbox {
-				min-width: 120px;
-			}
-		}
-	}
-	
-	window[findbartweak-FF25] findbar .findbar-textbox {
+	findbar .findbar-textbox {
 		min-width: 14em;
 	}
 	
@@ -124,20 +110,11 @@
 		height: calc(1.2em + 5px); /* I think this faithfully represents font-height plus box-padding, thus should work with OS font zoom */
 	}
 	
-	window:not([findbartweak-FF25]) findbar resizer[anonid="find-left-resizer"] {
-		-moz-margin-end: -7px;
-		-moz-margin-start: 3px;
-	}
-	window:not([findbartweak-FF25]) findbar resizer[anonid="find-right-resizer"] {
-		-moz-margin-start: -7px;
-		-moz-margin-end: 3px;
-	}
-	
-	window[findbartweak-FF25] findbar resizer[anonid="find-left-resizer"] {
+	findbar resizer[anonid="find-left-resizer"] {
 		-moz-margin-end: -3px;
 		-moz-margin-start: -1px;
 	}
-	window[findbartweak-FF25] findbar resizer[anonid="find-right-resizer"] {
+	findbar resizer[anonid="find-right-resizer"] {
 		-moz-margin-start: -3px;
 		-moz-margin-end: -1px;
 	}
@@ -165,7 +142,7 @@
 	
 	/* Find in Tabs */
 	#findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme),
-	window[findbartweak-FF25] #findbartweak-findInTabs-box:not([movetotop]):-moz-lwtheme {
+	#findbartweak-findInTabs-box:not([movetotop]):-moz-lwtheme {
 		background-color: -moz-dialog;
 	}
 	
@@ -176,7 +153,7 @@
 	@media not all and (-moz-windows-classic) {
 		@media (-moz-windows-default-theme) {
 			#findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme),
-			window[findbartweak-FF25] #findbartweak-findInTabs-box:not([movetotop]):-moz-lwtheme {
+			#findbartweak-findInTabs-box:not([movetotop]):-moz-lwtheme {
 				background-color: hsl(210,75%,92%);
 			}
 			
@@ -192,7 +169,7 @@
 		background-clip: padding-box;
 	}
 	
-	window:not(#findbartweak-findInTabs)[findbartweak-FF25] #findbartweak-findInTabs-box:not([movetotop]) {
+	window:not(#findbartweak-findInTabs) #findbartweak-findInTabs-box:not([movetotop]) {
 		border-top: 2px solid transparent;
 		-moz-border-top-colors: rgba(0,0,0,.15) rgba(255,255,255,.15);
 	}
@@ -214,7 +191,7 @@
 		background-size: 100% 2px;
 	}
 	
-	window[findbartweak-FF25] .findInTabs-bar textbox {
+	.findInTabs-bar textbox {
 		border-radius: 2px;
 	}
 }

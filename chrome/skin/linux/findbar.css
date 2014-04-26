@@ -31,7 +31,7 @@
 		-moz-border-left-colors: ThreeDShadow;
 	}
 	
-	window[findbartweak-FF25] findbar[movetotop]:not([fixCloseButton]) {
+	findbar[movetotop]:not([fixCloseButton]) {
 		padding: 1px 3px;
 	}
 	findbar[movetotop][fixCloseButton] .findbar-container {
@@ -43,7 +43,7 @@
 		-moz-margin-end: 3px;
 	}
 	
-	window[findbartweak-FF25] findbar[movetotop] textbox {
+	findbar[movetotop] textbox {
 		padding: 3px 5px;
 	}
 	
@@ -62,19 +62,8 @@
 		border-top: 1px solid ThreeDShadow;
 	}
 	
-	/* For the toolbar button */
-	toolbar[iconsize="small"] #findbartweak-button image { max-height: 16px; }
-	
-	toolbar[iconsize="large"] #findbartweak-button image {
-		list-style-image: url("chrome://findbartweak-os/skin/button.png");
-	}
-	
 	/* Textbox resizers */
-	window:not([findbartweak-FF25]) findbar .findbar-textbox {
-		min-width: 180px;
-	}
-	
-	window[findbartweak-FF25] findbar .findbar-textbox {
+	findbar .findbar-textbox {
 		min-width: 14em;
 	}
 	
@@ -83,20 +72,11 @@
 		height: calc(1.2em + 5px); /* I think this faithfully represents font-height plus box-padding, thus should work with OS font zoom */
 	}
 	
-	window:not([findbartweak-FF25]) findbar resizer[anonid="find-left-resizer"] {
-		-moz-margin-end: -7px;
-		-moz-margin-start: 3px;
-	}
-	window:not([findbartweak-FF25]) findbar resizer[anonid="find-right-resizer"] {
-		-moz-margin-start: -7px;
-		-moz-margin-end: 3px;
-	}
-	
-	window[findbartweak-FF25] findbar resizer[anonid="find-left-resizer"] {
+	findbar resizer[anonid="find-left-resizer"] {
 		-moz-margin-end: -3px;
 		-moz-margin-start: -1px;
 	}
-	window[findbartweak-FF25] findbar resizer[anonid="find-right-resizer"] {
+	findbar resizer[anonid="find-right-resizer"] {
 		-moz-margin-start: -3px;
 		-moz-margin-end: -1px;
 	}
@@ -111,8 +91,7 @@
 	}
 	
 	/* Find in Tabs */
-	window:not([findbartweak-FF25]) #findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme),
-	window[findbartweak-FF25] #findbartweak-findInTabs-box:not([movetotop]):-moz-lwtheme {
+	#findbartweak-findInTabs-box:not([movetotop]):-moz-lwtheme {
 		background-color: -moz-dialog;
 	}
 	
@@ -121,7 +100,7 @@
 		-moz-border-bottom-colors: ThreeDShadow;
 	}
 	
-	window:not(#findbartweak-findInTabs)[findbartweak-FF25] #findbartweak-findInTabs-box:not([movetotop]) {
+	window:not(#findbartweak-findInTabs) #findbartweak-findInTabs-box:not([movetotop]) {
 		border-top: 2px solid;
 		-moz-border-top-colors: ThreeDShadow ThreeDHighlight;
 	}
@@ -136,7 +115,7 @@
 		-moz-border-top-colors: ThreeDHighlight;
 	}
 	
-	window[findbartweak-FF25] .findInTabs-bar textbox {
+	.findInTabs-bar textbox {
 		border-left-width: 1px;
 		border-right-width: 1px;
 		border-radius: 3px;

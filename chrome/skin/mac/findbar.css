@@ -6,61 +6,17 @@
 	url("chrome://findbartweak/content/findInTabsFull.xul"),
 	url-prefix("chrome://updatescan/") {
 	
-	/* Rounded inner corners */
-	window:not([findbartweak-Australis]) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
-	window:not([findbartweak-Australis]) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
-		box-shadow:	2px -2px 0 -2px rgba(0,0,0,0.57),
-				7px -4px 0px -4px -moz-mac-chrome-active,
-				6px -4px 0px -4px -moz-mac-chrome-active;
-	}
-	window:not([findbartweak-Australis]) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
-	window:not([findbartweak-Australis]) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
-		box-shadow: 	-2px -2px 0 -2px rgba(0,0,0,0.57),
-				-7px -4px 0px -4px -moz-mac-chrome-active,
-				-6px -4px 0px -4px -moz-mac-chrome-active;
-	}
-	window:not([findbartweak-Australis]) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):-moz-window-inactive:before,
-	window:not([findbartweak-Australis]) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):-moz-window-inactive:after {
-		box-shadow: 	2px -2px 0 -2px rgba(0,0,0,0.32),
-				7px -4px 0px -4px -moz-mac-chrome-inactive,
-				6px -4px 0px -4px -moz-mac-chrome-inactive;
-	}
-	window:not([findbartweak-Australis]) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):-moz-window-inactive:after,
-	window:not([findbartweak-Australis]) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):-moz-window-inactive:before {
-		box-shadow: 	-2px -2px 0 -2px rgba(0,0,0,0.32),
-				-7px -4px 0px -4px -moz-mac-chrome-inactive,
-				-6px -4px 0px -4px -moz-mac-chrome-inactive;
-	}
-	
 	/* Find Bar */
-	window:not([findbartweak-Australis]) findbar[movetotop]:not([inPDFJS]) {
-		background-color: -moz-mac-chrome-active;
-		border-bottom: 1px solid rgba(0,0,0,0.57);
-		border-right: 1px solid rgba(0,0,0,0.57);
-		border-left: 1px solid rgba(0,0,0,0.57);
-		-moz-border-bottom-colors: rgba(0,0,0,0.57);
-		-moz-border-right-colors: rgba(0,0,0,0.57);
-		-moz-border-left-colors: rgba(0,0,0,0.57);
-	}
-	window:not([findbartweak-Australis]) findbar[movetotop]:not([inPDFJS]):-moz-window-inactive {
-		background-color: -moz-mac-chrome-inactive;
-		border-bottom: 1px solid rgba(0,0,0,0.32);
-		border-right: 1px solid rgba(0,0,0,0.32);
-		border-left: 1px solid rgba(0,0,0,0.32);
-		-moz-border-bottom-colors: rgba(0,0,0,0.32);
-		-moz-border-right-colors: rgba(0,0,0,0.32);
-		-moz-border-left-colors: rgba(0,0,0,0.32);
-	}
 	
-	window[findbartweak-FF25] .browserContainer findbar:not([position="top"]):not([movetotop]) {
+	.browserContainer findbar:not([position="top"]):not([movetotop]) {
 		border-bottom: none;
 	}
 	
-	window[findbartweak-FF25] findbar:not([position="top"]):not([movetotop]):-moz-lwtheme {
+	findbar:not([position="top"]):not([movetotop]):-moz-lwtheme {
 		border-top: 1px solid #888;
 	}
 	
-	window[findbartweak-FF25] findbar[movetotop]:not([fixCloseButton]) {
+	findbar[movetotop]:not([fixCloseButton]) {
 		padding: 3px 1px;
 	}
 	findbar[movetotop][fixCloseButton] .findbar-container {
@@ -75,11 +31,11 @@
 		padding-bottom: 5px;
 	}
 	
-	window[findbartweak-Australis] findbar[movetotop] {
+	findbar[movetotop] {
 		z-index: 50;
 	}
 
-	window[findbartweak-Australis] findbar[movetotop]:not([inPDFJS]) {
+	findbar[movetotop]:not([inPDFJS]) {
 		-moz-appearance: none !important;
 		border-right: 2px solid hsla(0,0%,0%,.15);
 		border-left: 2px solid hsla(0,0%,0%,.15);
@@ -87,21 +43,21 @@
 		-moz-border-left-colors: hsla(0,0%,0%,.15) hsla(0,0%,100%,.15);
 	}
 
-	window[findbartweak-Australis] findbar[movetotop]:not([inPDFJS]),
-	window[findbartweak-Australis] #findbartweak-findInTabs-box[movetotop] {
+	findbar[movetotop]:not([inPDFJS]),
+	#findbartweak-findInTabs-box[movetotop] {
 		background: url(chrome://browser/skin/Toolbar-background-noise.png) hsl(0,0%,83%);
 		border-bottom: 2px solid hsla(0,0%,0%,.15);
 		-moz-border-bottom-colors: hsla(0,0%,0%,.15) hsla(0,0%,100%,.15);
 	}
 	
-	window[findbartweak-Australis] findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
-	window[findbartweak-Australis] findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
+	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
+	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
 		box-shadow:	2px -2px 0 -2px hsla(0,0%,0%,.15),
 				7px -4px 0px -4px hsl(0,0%,83%),
 				6px -4px 0px -4px hsl(0,0%,83%);
 	}
-	window[findbartweak-Australis] findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
-	window[findbartweak-Australis] findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
+	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
+	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
 		box-shadow: 	-2px -2px 0 -2px hsla(0,0%,0%,.15),
 				-7px -4px 0px -4px hsl(0,0%,83%),
 				-6px -4px 0px -4px hsl(0,0%,83%);
@@ -109,36 +65,36 @@
 	
 	/* these are in the stylesheets, but for some reason aren't actually applied to the toolbars, so I'm not applying them either */
 	/*
-	window[findbartweak-Australis] findbar[movetotop]:not([inPDFJS]):not(:-moz-lwtheme):-moz-window-inactive,
-	window[findbartweak-Australis] #findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme):-moz-window-inactive {
+	findbar[movetotop]:not([inPDFJS]):not(:-moz-lwtheme):-moz-window-inactive,
+	#findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme):-moz-window-inactive {
 		background-color: -moz-mac-chrome-inactive;
 	}
-	window[findbartweak-Australis] findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):not(:-moz-lwtheme):-moz-window-inactive:before,
-	window[findbartweak-Australis] findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):not(:-moz-lwtheme):-moz-window-inactive:after {
+	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):not(:-moz-lwtheme):-moz-window-inactive:before,
+	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):not(:-moz-lwtheme):-moz-window-inactive:after {
 		box-shadow:	2px -2px 0 -2px hsla(0,0%,0%,.15),
 				7px -4px 0px -4px -moz-mac-chrome-inactive,
 				6px -4px 0px -4px -moz-mac-chrome-inactive;
 	}
-	window[findbartweak-Australis] findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):not(:-moz-lwtheme):-moz-window-inactive:after,
-	window[findbartweak-Australis] findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):not(:-moz-lwtheme):-moz-window-inactive:before {
+	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):not(:-moz-lwtheme):-moz-window-inactive:after,
+	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):not(:-moz-lwtheme):-moz-window-inactive:before {
 		box-shadow: 	-2px -2px 0 -2px hsla(0,0%,0%,.15),
 				-7px -4px 0px -4px -moz-mac-chrome-inactive,
 				-6px -4px 0px -4px -moz-mac-chrome-inactive;
 	}
 	*/
 	
-	window[findbartweak-Australis] findbar[movetotop]:not([inPDFJS]):-moz-lwtheme,
-	window[findbartweak-Australis] #findbartweak-findInTabs-box[movetotop]:-moz-lwtheme {
+	findbar[movetotop]:not([inPDFJS]):-moz-lwtheme,
+	#findbartweak-findInTabs-box[movetotop]:-moz-lwtheme {
 		-moz-border-bottom-colors: hsla(0,0%,50%,.45) hsla(0,0%,100%,.45);
 		-moz-border-right-colors: hsla(0,0%,50%,.45) hsla(0,0%,100%,.45);
 		-moz-border-left-colors: hsla(0,0%,50%,.45) hsla(0,0%,100%,.45);
 	}
-	window[findbartweak-Australis] findbar[movetotop]:not([inPDFJS]) .findbar-container:-moz-lwtheme,
-	window[findbartweak-Australis] #findbartweak-findInTabs-box[movetotop]:-moz-lwtheme {
+	findbar[movetotop]:not([inPDFJS]) .findbar-container:-moz-lwtheme,
+	#findbartweak-findInTabs-box[movetotop]:-moz-lwtheme {
 		background-color: rgba(253,253,253,0.45);
 	}
 	
-	window[findbartweak-Australis][noToolboxBorder] #navigator-toolbox:after {
+	window[noToolboxBorder] #navigator-toolbox:after {
 		display: none;
 	}
 	
@@ -171,11 +127,6 @@
 		background: none;
 	}
 	
-	/* For the toolbar button */
-	toolbar[mode="full"] #findbartweak-button image {
-		margin: 1px 0;
-	}
-	
 	/* Textbox resizers */
 	findbar .findbar-textbox {
 		min-width: 176px;
@@ -186,23 +137,14 @@
 		height: 1.6em; /* I think this faithfully represents font-height plus box-padding, thus should work with OS font zoom */
 	}
 	
-	window:not([findbartweak-FF25]) findbar resizer[anonid="find-left-resizer"] {
-		-moz-margin-end: -9px;
-		-moz-margin-start: 3px;
-	}
-	window:not([findbartweak-FF25]) findbar resizer[anonid="find-right-resizer"] {
-		-moz-margin-start: -9px;
-		-moz-margin-end: 3px;
-	}
-	
-	window[findbartweak-FF25] findbar resizer[anonid="find-left-resizer"] {
+	findbar resizer[anonid="find-left-resizer"] {
 		width: 6px;
 		min-width: 6px;
 		max-width: 6px;
 		-moz-margin-end: -4px;
 		-moz-margin-start: -2px;
 	}
-	window[findbartweak-FF25] findbar resizer[anonid="find-right-resizer"] {
+	findbar resizer[anonid="find-right-resizer"] {
 		width: 6px;
 		min-width: 6px;
 		max-width: 6px;
@@ -219,66 +161,21 @@
 		height: 14px;
 	}
 	
-	/* OSX version doesn't have these images, by hiding the labels we are pretty much making the buttons useless, so I'm adding the images back.
-	Not true anymore in FF25 with the new find bar */
-	window:not([findbartweak-FF25]) findbar[hideLabels] .findbar-find-next {
-		list-style-image: url("chrome://findbartweak-os/skin/find.png");
-		-moz-image-region: rect(0px 14px 14px 0px);
-	}
-	window:not([findbartweak-FF25]) findbar[hideLabels] .findbar-find-next:hover {
-		-moz-image-region: rect(14px 14px 28px 0px);
-	}
-	window:not([findbartweak-FF25]) findbar[hideLabels] .findbar-find-next[disabled="true"] {
-		-moz-image-region: rect(28px 14px 42px 0px) !important;
-	}
-	
-	window:not([findbartweak-FF25]) findbar[hideLabels] .findbar-find-previous {
-		list-style-image: url("chrome://findbartweak-os/skin/find.png");
-		-moz-image-region: rect(0px 28px 14px 14px);
-	}
-	window:not([findbartweak-FF25]) findbar[hideLabels] .findbar-find-previous:hover {
-		-moz-image-region: rect(14px 28px 28px 14px);
-	}
-	window:not([findbartweak-FF25]) findbar[hideLabels] .findbar-find-previous[disabled="true"] {
-		-moz-image-region: rect(28px 28px 42px 14px) !important;
-	}
-	
 	.findbar-cs-button:not([checked="true"]),
-	window[findbartweak-FF25] findbar[hideLabels] toolbarbutton[anonid="find-case-sensitive"]:not([checked="true"]) {
+	findbar[hideLabels] toolbarbutton[anonid="find-case-sensitive"]:not([checked="true"]) {
 		-moz-image-region: rect(16px 16px 32px 0px);
 	}
 	
-	window[findbartweak-FF25] findbar[hideLabels] toolbarbutton[anonid="highlight"][checked="true"] {
+	findbar[hideLabels] toolbarbutton[anonid="highlight"][checked="true"] {
 		-moz-image-region: rect(0px 32px 16px 16px);
 	}
 	
-	window:not([findbartweak-FF25]) findbar[hideLabels] toolbarbutton[anonid="highlight"] image {
-		margin: 3px 0;
-	}
-	
 	/* Find in Tabs */
-	window:not([findbartweak-Australis]) #findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme) {
-		background-color: -moz-mac-chrome-active;
-	}
-	window:not([findbartweak-Australis]) #findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme):-moz-window-inactive {
-		background-color: -moz-mac-chrome-inactive;
-	}
-	
-	window:not([findbartweak-FF25Tweaks]):not([findbartweak-Australis]) #findbartweak-findInTabs-box[movetotop] {
-		border-bottom: 1px solid rgba(0,0,0,0.57);
-		-moz-border-bottom-colors: rgba(0,0,0,0.57);
-	}
-	window:not([findbartweak-FF25Tweaks]):not([findbartweak-Australis]) #findbartweak-findInTabs-box[movetotop]:-moz-window-inactive {
-		border-bottom: 1px solid rgba(0,0,0,0.32);
-		-moz-border-bottom-colors: rgba(0,0,0,0.32);
-	}
-	
-	window:not([findbartweak-FF25]) #findbartweak-findInTabs-box:not([movetotop]):not(:-moz-lwtheme),
-	window[findbartweak-FF25] #findbartweak-findInTabs-box:not([movetotop]) {
+	#findbartweak-findInTabs-box:not([movetotop]) {
 		background-image: -moz-linear-gradient(50% 0%, rgb(208,208,208), rgb(232,232,232));
 	}
 	
-	window:not(#findbartweak-findInTabs)[findbartweak-FF25] #findbartweak-findInTabs-box:not([movetotop]) {
+	window:not(#findbartweak-findInTabs) #findbartweak-findInTabs-box:not([movetotop]) {
 		border-top: 1px solid #888;
 	}
 	
@@ -288,7 +185,7 @@
 		min-height: 14px;
 	}
 	
-	window[findbartweak-FF25] findbar toolbarbutton[anonid="findbartweak-find-tabs"] + toolbarbutton[anonid="highlight"] {
+	findbar toolbarbutton[anonid="findbartweak-find-tabs"] + toolbarbutton[anonid="highlight"] {
 		-moz-margin-start: 0;
 	}
 	
@@ -297,7 +194,7 @@
 		background-color: #D0D0D0;
 	}
 	
-	window[findbartweak-FF25] .findInTabs-bar textbox {
+	.findInTabs-bar textbox {
 		border-radius: 10000px;
 	}
 }

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.6.0';
+moduleAid.VERSION = '1.6.1';
 
 this.__defineGetter__('preferencesDialog', function() { return (typeof(inPreferences) != 'undefined' && inPreferences); });
 
@@ -195,7 +195,7 @@ this.buildSights = function(sGroup, x, y, detail) {
 			
 			removeSights: function() {
 				for(var s=0; s<this.allSights.length; s++) {
-					this.allSights[s].parentNode.removeChild(this.allSights[s]);
+					this.allSights[s].remove();
 				}
 			},
 			
@@ -210,7 +210,7 @@ this.buildSights = function(sGroup, x, y, detail) {
 				// Remove hidden sights
 				for(var s=0; s<this.allSights.length; s++) {
 					if(this.allSights[s].hidden) {
-						this.allSights[s].parentNode.removeChild(this.allSights[s]);
+						this.allSights[s].remove();
 						this.allSights.splice(s, 1);
 						s--;
 					}
@@ -759,14 +759,14 @@ moduleAid.UNLOADMODULE = function() {
 			var panel = $(gBrowser.mTabs[t].linkedPanel);
 			var innerSights = panel.querySelectorAll('[anonid="findSights"]');
 			if(innerSights.length > 0) {
-				innerSights[0].parentNode.removeChild(innerSights[0]);
+				innerSights[0].remove();
 			}
 		}
 	}
 	else {
 		var innerSights = $$('[anonid="findSights"]');
 		if(innerSights.length > 0) {
-			innerSights[0].parentNode.removeChild(innerSights[0]);
+			innerSights[0].remove();
 		}
 		listenerAid.remove(viewSource, 'resize', delaySightsResizeViewSource);
 	}

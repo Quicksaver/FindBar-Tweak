@@ -1,7 +1,7 @@
-moduleAid.VERSION = '1.2.2';
+moduleAid.VERSION = '1.2.3';
 
 this.highlightByDefault = function() {
-	if(!perTabFB || viewSource || gFindBarInitialized) {
+	if(viewSource || gFindBarInitialized) {
 		gFindBar.getElement("highlight").checked = true;
 	}
 };
@@ -44,7 +44,7 @@ this.highlightByDefaultProgressListener = {
 };
 
 this.highlightByDefaultTabSelect = function() {
-	if(!perTabFB || prefAid.perTab) {
+	if(prefAid.perTab) {
 		highlightByDefault();
 	}
 };
@@ -74,12 +74,10 @@ moduleAid.UNLOADMODULE = function() {
 		listenerAid.remove(gBrowser, "DOMContentLoaded", highlightByDefaultOnContentLoaded);
 		gBrowser.removeTabsProgressListener(highlightByDefaultProgressListener);
 		
-		if(perTabFB) {
-			for(var t=0; t<gBrowser.mTabs.length; t++) {
-				var tab = gBrowser.mTabs[t];
-				if(tab._findBar && !trueAttribute(tab._findBar.browser.contentDocument.documentElement, 'highlighted')) {
-					tab._findBar.getElement("highlight").checked = false;
-				}
+		for(var t=0; t<gBrowser.mTabs.length; t++) {
+			var tab = gBrowser.mTabs[t];
+			if(tab._findBar && !trueAttribute(tab._findBar.browser.contentDocument.documentElement, 'highlighted')) {
+				tab._findBar.getElement("highlight").checked = false;
 			}
 		}
 	}

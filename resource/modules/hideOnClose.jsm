@@ -1,13 +1,13 @@
-moduleAid.VERSION = '1.2.2';
+moduleAid.VERSION = '1.2.3';
 
 this.hideTabSelected = function() {
-	if(!perTabFB || gFindBarInitialized) {
+	if(gFindBarInitialized) {
 		hideFindBarClosed();
 	}
 };
 
 this.hideFindBarClosed = function() {
-	if(findBarHidden && (documentHighlighted || documentReHighlight)) {
+	if(gFindBar.hidden && (documentHighlighted || documentReHighlight)) {
 		highlightsOff();
 	}
 };
@@ -20,7 +20,7 @@ this.hideFindBarClosedAnotherTab = function() {
 };
 
 this.hideReHighlighting = function(e) {
-	if(findBarHidden) {
+	if(gFindBar.hidden) {
 		e.preventDefault();
 		e.stopPropagation();
 	}

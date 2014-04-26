@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.2';
+moduleAid.VERSION = '1.2.3';
 
 this.viewSource = false;
 this.FITFull = false;
@@ -9,9 +9,7 @@ this.toggleBlurCloses = function() {
 
 this.togglePerTab = function() {
 	moduleAid.loadIf('perTab', !viewSource && prefAid.perTab && !prefAid.blurCloses);
-	if(perTabFB) {
-		moduleAid.loadIf('globalFB', !viewSource && !prefAid.perTab && !prefAid.blurCloses);
-	}
+	moduleAid.loadIf('globalFB', !viewSource && !prefAid.perTab && !prefAid.blurCloses);
 };
 
 this.toggleRememberStartup = function() {
@@ -25,7 +23,6 @@ this.toggleFindInTabs = function() {
 moduleAid.LOADMODULE = function() {
 	if(document.documentElement.getAttribute('windowtype') == 'navigator:view-source') { viewSource = $('viewSource'); }
 	FITFull = $(objName+'-findInTabs');
-	toggleAttribute(document.documentElement, objName+'-FF25', perTabFB);
 	
 	moduleAid.load('initFindbar');
 	moduleAid.load('initFinder');
@@ -83,6 +80,4 @@ moduleAid.UNLOADMODULE = function() {
 	moduleAid.unload('FindBarUI');
 	moduleAid.unload('initFinder');
 	moduleAid.unload('initFindbar');
-	
-	removeAttribute(document.documentElement, objName+'-FF25');
 };

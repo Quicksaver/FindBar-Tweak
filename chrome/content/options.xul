@@ -84,7 +84,6 @@
 			<preference id="pref-FF25Tweaks" name="extensions.findbartweak.FF25Tweaks" type="bool"/>
 			<preference id="pref-hideClose" name="extensions.findbartweak.hideClose" type="bool"/>
 			<preference id="pref-hideLabels" name="extensions.findbartweak.hideLabels" type="bool"/>
-			<preference id="pref-hideFindLabel" name="extensions.findbartweak.hideFindLabel" type="bool"/>
 		</preferences>
 		
 		<groupbox align="start">
@@ -98,8 +97,7 @@
 			<caption label="&OptButtonAndLabels.label;"/>
 			<checkbox label="&OptuseCounterNew.label;" preference="pref-useCounter"/>
 			<checkbox label="&OpthideClose.label;" preference="pref-hideClose"/>
-			<checkbox id="hideLabels" label="&OpthideLabels.label;" preference="pref-hideLabels"/>
-			<checkbox id="hideFindLabelCheckbox" label="&OpthideFindLabel.label;" preference="pref-hideFindLabel"/>
+			<checkbox id="hideLabels" label="&OpthideLabels.labelFF25;" preference="pref-hideLabels"/>
 		</groupbox>
 		<groupbox align="center">
 			<caption align="center">

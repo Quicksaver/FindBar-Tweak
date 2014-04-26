@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.4.4';
+moduleAid.VERSION = '1.4.5';
 
 this.getDocProperty = function(doc, prop, min) {
 	try {
@@ -134,7 +134,6 @@ moduleAid.LOADMODULE = function() {
 		function(bar) {
 			// Add found words to counter and grid arrays if needed,
 			// Modified to more accurately handle frames
-			if(!mFinder) { bar.__highlightDoc = bar._highlightDoc; }
 			bar._highlightDoc = function _highlightDoc(aHighlight, aWord, aWindow, aLevel, aSights, innerRanges) {
 				if(!aWindow) {
 					// Using the counter?
@@ -308,12 +307,7 @@ moduleAid.LOADMODULE = function() {
 			};
 		},
 		function(bar) {
-			if(!mFinder) {
-				bar._highlightDoc = bar.__highlightDoc;
-				delete bar.__highlightDoc;
-			} else {
-				delete bar._highlightDoc;
-			}
+			delete bar._highlightDoc;
 			
 			var icon = bar.getElement('find-status-icon');
 			if(icon._tempPendingTimer) {

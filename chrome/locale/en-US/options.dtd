@@ -53,9 +53,7 @@
 <!ENTITY OptsightsSameColorCurrent.label "Use the same color from the current hit">
 <!ENTITY OptsightsLimit.label "Maximum number of sights on screen:">
 
-<!ENTITY OpthideLabels.label "Hide button labels">
 <!ENTITY OpthideLabels.labelFF25 "Show button icons instead of labels">
-<!ENTITY OpthideFindLabel.label "Hide 'Find:' label">
 <!ENTITY OpthideClose.label "Hide the Findbar close button">
 <!ENTITY OptmovetoTop.label "Move to the top of the browser">
 <!ENTITY OptmovetoTop.labelFF25 "Place above the webpage">

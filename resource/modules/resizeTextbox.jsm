@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.0';
+moduleAid.VERSION = '1.2.1';
 
 this.__defineGetter__('findBarOverflow', function() {
 	return Math.max(0, gFindBar.scrollWidth -((prefAid.movetoTop && lastTopStyle) ? lastTopStyle.maxWidth : gFindBar.clientWidth));
@@ -56,7 +56,7 @@ this.findFieldWidthChanged = function() {
 
 this.setTextboxResizers = function(bar) {
 	bar._findField.id = objName+'-find-textbox';
-	if(!viewSource && perTabFB) {
+	if(!viewSource) {
 		bar._findField.id += '-'+gBrowser.getNotificationBox(bar.browser).id;
 	}
 	
@@ -85,8 +85,8 @@ this.unsetTextboxResizers = function(bar) {
 	var leftResizer = bar.getElement("find-left-resizer");
 	var rightResizer = bar.getElement("find-right-resizer");
 	
-	leftResizer.parentNode.removeChild(leftResizer);
-	rightResizer.parentNode.removeChild(rightResizer);
+	leftResizer.remove();
+	rightResizer.remove();
 	
 	bar._findField.id = '';
 };
@@ -116,7 +116,7 @@ this.findFieldNoMaxWidth = function() {
 this.findFieldMaxWidth = function(e) {
 	findFieldNoMaxWidth();
 	
-	if((!viewSource && perTabFB && !gFindBarInitialized) || gFindBar.hidden
+	if((!viewSource && !gFindBarInitialized) || gFindBar.hidden
 	|| prefAid.findFieldWidth <= minTextboxWidth) { return; }
 	
 	textboxOverflow = null;

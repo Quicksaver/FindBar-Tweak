@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.7.19';
+moduleAid.VERSION = '1.8.0';
 
 this.__defineGetter__('FITresizer', function() { return gFindBar._FITresizer; });
 this.__defineGetter__('FITbox', function() { return $(objName+'-findInTabs-box'); });
@@ -45,23 +45,13 @@ this.toggleFITBox = function() {
 		true
 	);
 	
-	if(perTabFB) {
-		timerAid.init('toggleFIT', function() {
-			if(toggle) {
-				moduleAid.load('globalFB');
-			} else {
-				togglePerTab();
-			}
-		}, 0);
-	} else {
-		timerAid.init('toggleFIT', function() {
-			if(toggle) {
-				moduleAid.unload('perTab');
-			} else {
-				togglePerTab();
-			}
-		}, 0);
-	}
+	timerAid.init('toggleFIT', function() {
+		if(toggle) {
+			moduleAid.load('globalFB');
+		} else {
+			togglePerTab();
+		}
+	}, 0);
 	
 	// Make sure we have the lastWindow reference updated right from the start
 	lastWindow = contentDocument.defaultView;
@@ -107,7 +97,7 @@ this.addFITElements = function(bar) {
 	setAttribute(updateButton, 'tooltiptext', stringsAid.get('findInTabs', 'updateButtonTooltip'+(Services.appinfo.OS == 'Darwin' ? 'Mac' : 'Win')));
 	setAttribute(updateButton, 'oncommand', objName+'.shouldFindAll();');
 	updateButton.hidden = (!FITFull) ? true : false;
-	bar._FITupdate = container.insertBefore(updateButton, bar.getElement((!perTabFB) ? 'find-label' : 'findbar-textbox-wrapper'));
+	bar._FITupdate = container.insertBefore(updateButton, bar.getElement('findbar-textbox-wrapper'));
 	
 	if(!FITFull) {
 		var resizer = document.createElement('resizer');
@@ -115,50 +105,35 @@ this.addFITElements = function(bar) {
 		setAttribute(resizer, 'dir', 'top');
 		setAttribute(resizer, 'element', objName+'-findInTabs-box');
 		resizer.hidden = true;
-		var sibling = (!perTabFB) ? bar : bar.nextSibling;
+		var sibling = bar.nextSibling;
 		bar._FITresizer = bar.parentNode.insertBefore(resizer, sibling);
 		
-		if((!perTabFB || gFindBarInitialized) && bar == gFindBar) {
+		if(gFindBarInitialized && bar == gFindBar) {
 			updateFITElements();
 		}
 	}
 };
 
 this.removeFITElements = function(bar) {
-	bar._FITupdate.parentNode.removeChild(bar._FITupdate);
+	bar._FITupdate.remove();
 	delete bar._FITupdate;
 	
 	if(!FITFull) {
-		bar._FITresizer.parentNode.removeChild(bar._FITresizer);
+		bar._FITresizer.remove();
 		delete bar._FITresizer;
 	}
 };
 
 this.updateFITElements = function() {
-	if(perTabFB && !gFindBarInitialized) { return; }
+	if(!gFindBarInitialized) { return; }
 	
 	FITresizer.hidden = FITbox.hidden;
 	FITupdate.hidden = FITbox.hidden;
 	
 	// Bugfix: only repeat the background when it's actually needed, otherwise it looks weird sometimes
 	toggleAttribute(document.documentElement, objName+'-FITopen', !FITbox.hidden && trueAttribute(FITbox, 'movetotop'));
-	toggleAttribute($('browser-bottombox'), objName+'-FITopen', !FITbox.hidden && !trueAttribute(FITbox, 'movetotop'));
 	
-	if(!perTabFB) {
-		if(trueAttribute(FITbox, 'movetotop')) {
-			if(FITresizer.getAttribute('position') != 'top') {
-				gFindBar._FITresizer = browserPanel.insertBefore(FITresizer, FITbox.nextSibling);
-			}
-			setAttribute(FITresizer, 'position', 'top');
-		} else {
-			if(FITresizer.getAttribute('position') != 'bottom') {
-				gFindBar._FITresizer = gFindBar.parentNode.insertBefore(FITresizer, gFindBar);
-			}
-			setAttribute(FITresizer, 'position', 'bottom');
-		}
-	} else {
-		toggleAttribute(FITresizer, 'position', trueAttribute(FITbox, 'movetotop'), 'top', 'bottom');
-	}
+	toggleAttribute(FITresizer, 'position', trueAttribute(FITbox, 'movetotop'), 'top', 'bottom');
 	
 	noToolboxBorder('FIT', (!FITbox.hidden && trueAttribute(FITbox, 'movetotop')));
 	
@@ -295,8 +270,8 @@ this.selectFIThit = function() {
 		var tab = getTabForContent(FITtabsList.currentItem.linkedDocument);
 		// Something went wrong, this should never happen.
 		if(!tab) {
-			FIThits.removeChild(FITtabsList.currentItem.linkedHits);
-			FITtabsList.removeChild(FITtabsList.currentItem);
+			FITtabsList.currentItem.linkedHits.remove();
+			FITtabsList.currentItem.remove();
 			return;
 		}
 		
@@ -418,9 +393,6 @@ this.selectFIThit = function() {
 	aCompare.aFindPrevious = aFindPrevious;
 	
 	tweakFastFindNormal(tab.linkedBrowser, gFindBar._findField.value, false, false, aCompare);
-	if(!mFinder) {
-		inFindBar._updateFoundLink(inFindBar.nsITypeAheadFind.FIND_FOUND);
-	}
 	
 	// Now we bring focus to the browser window
 	inWindow.focus();
@@ -619,8 +591,8 @@ this.shouldFindAll = function() {
 	}
 			
 	// Remove previous results if they exist
-	while(FITtabs.firstChild) { FITtabs.removeChild(FITtabs.firstChild); }
-	while(FIThits.firstChild) { FIThits.removeChild(FIThits.firstChild); }
+	while(FITtabs.firstChild) { FITtabs.firstChild.remove(); }
+	while(FIThits.firstChild) { FIThits.firstChild.remove(); }
 	
 	// Tabs list
 	var newTabs = document.createElement('richlistbox');
@@ -740,9 +712,9 @@ this.removeTabItem = function(item) {
 	if(!item) { return; }
 	
 	if(item.linkedHits) {
-		FIThits.removeChild(item.linkedHits);
+		item.linkedHits.remove();
 	}
-	FITtabsList.removeChild(item);
+	item.remove();
 };
 
 this.createTabItem = function(aWindow) {
@@ -813,7 +785,7 @@ this.getTabGroupName = function(aGroup) {
 
 this.resetTabHits = function(item) {
 	if(item.linkedHits) {
-		try { FIThits.removeChild(item.linkedHits); } catch(ex) { return; } // error means it's a mix up between aSync's
+		try { item.linkedHits.remove(); } catch(ex) { return; } // error means it's a mix up between aSync's
 	}
 	
 	var newHits = document.createElement('richlistbox');
@@ -1084,7 +1056,7 @@ this.orderByHits = function(item) {
 
 // When the user selects a tab in the browser, select the corresponding item in the tabs list if it exists
 this.autoSelectFITtab = function(contentDoc) {
-	if(!FITFull && perTabFB && !gFindBarInitialized) { return; } // On TabSelect
+	if(!FITFull && !gFindBarInitialized) { return; } // On TabSelect
 	if(!contentDoc || !FITtabsList) { return; } // Usually triggered when a selection is on a frame and the frame closes
 	
 	for(var i=1; i<FITtabsList.childNodes.length; i++) {
@@ -1928,14 +1900,14 @@ this.replaceLineBreaks = function(str) {
 };
 
 this.alwaysOpenFIT = function() {
-	if(prefAid.alwaysOpenFIT && (!perTabFB || gFindBarInitialized) && !gFindBar.hidden && FITbox.hidden && gFindBar._findMode == gFindBar.FIND_NORMAL) {
+	if(prefAid.alwaysOpenFIT && gFindBarInitialized && !gFindBar.hidden && FITbox.hidden && gFindBar._findMode == gFindBar.FIND_NORMAL) {
 		toggleFITBox();
 	}
 };
 
 this.FITobserver = function(aSubject, aTopic, aData) {
 	// Don't do anything if it's not needed
-	if((!FITFull && perTabFB && !gFindBarInitialized) || !gFindBar || !gFindBar._findField.value || FITbox.hidden) { return; }
+	if((!FITFull && !gFindBarInitialized) || !gFindBar || !gFindBar._findField.value || FITbox.hidden) { return; }
 	
 	var doc = null;
 	var item = null;
@@ -2060,9 +2032,7 @@ this.FITViewSourceClosed = function(aWindow) {
 };
 
 this.FITTabSelect = function() {
-	if(perTabFB) {
-		updateFITElements();
-	}
+	updateFITElements();
 };
 
 this.FITtoErrorConsole = function() {
@@ -2156,7 +2126,6 @@ moduleAid.UNLOADMODULE = function() {
 		
 		objectWatcher.removeAttributeWatcher(FITbox, 'movetotop', updateFITElements);
 		removeAttribute(document.documentElement, objName+'-FITopen');
-		removeAttribute($('browser-bottombox'), objName+'-FITopen');
 		
 		listenerAid.remove(window, 'OpenedFindBar', alwaysOpenFIT);
 		listenerAid.remove(window, 'ClosedFindBar', closeFITWithFindBar);

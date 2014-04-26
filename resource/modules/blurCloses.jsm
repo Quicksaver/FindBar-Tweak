@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.1.1';
+moduleAid.VERSION = '1.2.0';
 
 this.blurClosesAdd = function() {
 	listenerAid.add(window, 'focus', delayBlurCloses, true);
@@ -36,11 +36,7 @@ this.blurClosesTabSelect = function(e) {
 };
 
 moduleAid.LOADMODULE = function() {
-	if(!perTabFB) {
-		if(!gFindBar.hidden) {
-			gFindBar.close();
-		}
-	} else if(!viewSource) {
+	if(!viewSource) {
 		for(var t=0; t<gBrowser.mTabs.length; t++) {
 			var tab = gBrowser.mTabs[t];
 			if(tab._findBar && !tab._findBar.hidden) {
@@ -54,11 +50,7 @@ moduleAid.LOADMODULE = function() {
 	listenerAid.add(window, 'ClosedFindBarAnotherTab', blurClosesRemove);
 	
 	if(!viewSource) {
-		if(!perTabFB) {
-			listenerAid.add(gBrowser.tabContainer, "TabSelect", blurClosesTabSelect);
-		} else {
-			listenerAid.add(gBrowser.tabContainer, "TabSelectPrevious", blurClosesTabSelect);
-		}
+		listenerAid.add(gBrowser.tabContainer, "TabSelectPrevious", blurClosesTabSelect);
 	}
 };
 
@@ -70,7 +62,6 @@ moduleAid.UNLOADMODULE = function() {
 	blurClosesRemove();
 	
 	if(!viewSource) {
-		listenerAid.remove(gBrowser.tabContainer, "TabSelect", blurClosesTabSelect);
 		listenerAid.remove(gBrowser.tabContainer, "TabSelectPrevious", blurClosesTabSelect);
 	}
 };

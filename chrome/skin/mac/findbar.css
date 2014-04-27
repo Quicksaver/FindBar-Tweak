@@ -37,58 +37,32 @@
 
 	findbar[movetotop]:not([inPDFJS]) {
 		-moz-appearance: none !important;
-		border-right: 2px solid hsla(0,0%,0%,.15);
-		border-left: 2px solid hsla(0,0%,0%,.15);
-		-moz-border-right-colors: hsla(0,0%,0%,.15) hsla(0,0%,100%,.15);
-		-moz-border-left-colors: hsla(0,0%,0%,.15) hsla(0,0%,100%,.15);
+		border-right: 1px solid #ababab;
+		border-left: 1px solid #ababab;
+		-moz-border-right-colors: #ababab;
+		-moz-border-left-colors: #ababab;
 	}
 
 	findbar[movetotop]:not([inPDFJS]),
 	#findbartweak-findInTabs-box[movetotop] {
 		background: url(chrome://browser/skin/Toolbar-background-noise.png) hsl(0,0%,83%);
-		border-bottom: 2px solid hsla(0,0%,0%,.15);
-		-moz-border-bottom-colors: hsla(0,0%,0%,.15) hsla(0,0%,100%,.15);
+		border-bottom: 1px solid #ababab;
+		-moz-border-bottom-colors: #ababab;
 	}
 	
 	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
 	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
-		box-shadow:	2px -2px 0 -2px hsla(0,0%,0%,.15),
+		box-shadow:	2px -2px 0 -2px #ababab,
 				7px -4px 0px -4px hsl(0,0%,83%),
 				6px -4px 0px -4px hsl(0,0%,83%);
 	}
 	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
 	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
-		box-shadow: 	-2px -2px 0 -2px hsla(0,0%,0%,.15),
+		box-shadow: 	-2px -2px 0 -2px #ababab,
 				-7px -4px 0px -4px hsl(0,0%,83%),
 				-6px -4px 0px -4px hsl(0,0%,83%);
 	}
 	
-	/* these are in the stylesheets, but for some reason aren't actually applied to the toolbars, so I'm not applying them either */
-	/*
-	findbar[movetotop]:not([inPDFJS]):not(:-moz-lwtheme):-moz-window-inactive,
-	#findbartweak-findInTabs-box[movetotop]:not(:-moz-lwtheme):-moz-window-inactive {
-		background-color: -moz-mac-chrome-inactive;
-	}
-	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):not(:-moz-lwtheme):-moz-window-inactive:before,
-	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):not(:-moz-lwtheme):-moz-window-inactive:after {
-		box-shadow:	2px -2px 0 -2px hsla(0,0%,0%,.15),
-				7px -4px 0px -4px -moz-mac-chrome-inactive,
-				6px -4px 0px -4px -moz-mac-chrome-inactive;
-	}
-	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):not(:-moz-lwtheme):-moz-window-inactive:after,
-	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):not(:-moz-lwtheme):-moz-window-inactive:before {
-		box-shadow: 	-2px -2px 0 -2px hsla(0,0%,0%,.15),
-				-7px -4px 0px -4px -moz-mac-chrome-inactive,
-				-6px -4px 0px -4px -moz-mac-chrome-inactive;
-	}
-	*/
-	
-	findbar[movetotop]:not([inPDFJS]):-moz-lwtheme,
-	#findbartweak-findInTabs-box[movetotop]:-moz-lwtheme {
-		-moz-border-bottom-colors: hsla(0,0%,50%,.45) hsla(0,0%,100%,.45);
-		-moz-border-right-colors: hsla(0,0%,50%,.45) hsla(0,0%,100%,.45);
-		-moz-border-left-colors: hsla(0,0%,50%,.45) hsla(0,0%,100%,.45);
-	}
 	findbar[movetotop]:not([inPDFJS]) .findbar-container:-moz-lwtheme,
 	#findbartweak-findInTabs-box[movetotop]:-moz-lwtheme {
 		background-color: rgba(253,253,253,0.45);
@@ -96,6 +70,32 @@
 	
 	window[noToolboxBorder] #navigator-toolbox:after {
 		display: none;
+	}
+	
+	/* Using The Fox, Only Better, the bottom color of the slimmer isn't the same, so we (try to) apply the same style as the nav-bar */
+	
+	#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]) .findbar-container:not(:-moz-lwtheme) {
+		background-image: linear-gradient(hsl(0,0%,91%), hsl(0,0%,83%));
+		background-size: auto auto;
+		background-repeat: repeat;
+		background-clip: padding-box;
+	}
+	
+	#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
+	#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
+		box-shadow: 	2px -2px 0 -2px #ababab,
+		                7px -4px 0px -4px hsl(0,0%,90%),
+		                6px -4px 0px -4px hsl(0,0%,90%),
+		                7px -4px 0px -4px hsl(0,0%,83%),
+		                6px -4px 0px -4px hsl(0,0%,83%);
+	}
+	#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
+	#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
+		box-shadow: 	-2px -2px 0 -2px #ababab,
+		                -7px -4px 0px -4px hsl(0,0%,90%),
+		                -6px -4px 0px -4px hsl(0,0%,90%),
+		                -7px -4px 0px -4px hsl(0,0%,83%),
+		                -6px -4px 0px -4px hsl(0,0%,83%);
 	}
 	
 	/* FF25 Tweaks */

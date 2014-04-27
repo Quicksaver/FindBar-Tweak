@@ -52,6 +52,32 @@
 		-moz-padding-end: 8px;
 	}
 	
+	/* Using The Fox, Only Better, the bottom color of the slimmer isn't the same, so we (try to) apply the same style as the nav-bar */
+	
+	#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]) .findbar-container {
+		background-image: linear-gradient(rgba(255,255,255,.25), rgba(255,255,255,0));
+		background-size: auto auto;
+		background-repeat: repeat;
+		background-clip: padding-box;
+	}
+	
+	#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
+	#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
+		box-shadow: 	2px -2px 0 -2px ThreeDShadow,
+		                7px -4px 0px -4px rgba(255,255,255,0.2),
+		                6px -4px 0px -4px rgba(255,255,255,0.2),
+		                7px -4px 0px -4px -moz-dialog,
+		                6px -4px 0px -4px -moz-dialog;
+	}
+	#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
+	#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
+		box-shadow: 	-2px -2px 0 -2px ThreeDShadow,
+		                -7px -4px 0px -4px rgba(255,255,255,0.2),
+		                -6px -4px 0px -4px rgba(255,255,255,0.2),
+		                -7px -4px 0px -4px -moz-dialog,
+		                -6px -4px 0px -4px -moz-dialog;
+	}
+	
 	/* FF25 Tweaks */
 	#main-window[noToolboxBorder]:not([disablechrome]) #navigator-toolbox,
 	#main-window[findbartweak-FF25Tweaks]:not([disablechrome]) #navigator-toolbox[tabsontop=true] {

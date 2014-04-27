@@ -20,19 +20,21 @@
 		                -6px -4px 0px -4px -moz-dialog;
 	}
 	
-	@media not all and (-moz-windows-classic) {
-		@media (-moz-windows-default-theme) {
+	@media (-moz-windows-default-theme) {
+		@media	(-moz-os-version: windows-vista),
+			(-moz-os-version: windows-win7) {
+			
 			window:not(#viewSource) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
 			window:not(#viewSource) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
-				box-shadow: 	2px -2px 0 -2px rgb(170,188,207),
-				                7px -4px 0px -4px rgb(219,234,249),
-				                6px -4px 0px -4px rgb(219,234,249);
+				box-shadow: 	2px -2px 0 -2px #aabccf,
+				                7px -4px 0px -4px hsl(210,75%,92%),
+				                6px -4px 0px -4px hsl(210,75%,92%);
 			}
 			window:not(#viewSource) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
 			window:not(#viewSource) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
-				box-shadow: 	-2px -2px 0 -2px rgb(170,188,207),
-				                -7px -4px 0px -4px rgb(219,234,249),
-				                -6px -4px 0px -4px rgb(219,234,249);
+				box-shadow: 	-2px -2px 0 -2px #aabccf,
+				                -7px -4px 0px -4px hsl(210,75%,92%),
+				                -6px -4px 0px -4px hsl(210,75%,92%);
 			}
 		}
 	}
@@ -40,21 +42,23 @@
 	/* Find Bar */
 	findbar[movetotop]:not([inPDFJS]) {
 		background-color: -moz-dialog;
-		border-bottom: 1px solid rgb(0,0,0);
-		border-right: 1px solid rgb(0,0,0);
-		border-left: 1px solid rgb(0,0,0);
+		border-bottom: 1px solid ThreeDShadow;
+		border-right: 1px solid ThreeDShadow;
+		border-left: 1px solid ThreeDShadow;
 		-moz-border-bottom-colors: ThreeDShadow;
 		-moz-border-right-colors: ThreeDShadow;
 		-moz-border-left-colors: ThreeDShadow;
 	}
 	
-	@media not all and (-moz-windows-classic) {
-		@media (-moz-windows-default-theme) {
+	@media (-moz-windows-default-theme) {
+		@media	(-moz-os-version: windows-vista),
+			(-moz-os-version: windows-win7) {
+			
 			window:not(#viewSource) findbar[movetotop]:not([inPDFJS]) {
-				background-color: rgb(219,234,249);
-				-moz-border-bottom-colors: rgb(170,188,207);
-				-moz-border-right-colors: rgb(170,188,207);
-				-moz-border-left-colors: rgb(170,188,207);
+				background-color: hsl(210,75%,92%);
+				-moz-border-bottom-colors: #aabccf;
+				-moz-border-right-colors: #aabccf;
+				-moz-border-left-colors: #aabccf;
 			}
 		}
 	}
@@ -81,6 +85,55 @@
 	findbar:not([movetotop])[fixCloseButton][noClose],
 	findbar.findInTabs-bar[fixCloseButton] {
 		-moz-padding-end: 8px;
+	}
+	
+	/* Using The Fox, Only Better, the bottom color of the slimmer isn't the same, so we (try to) apply the same style as the nav-bar */
+	
+	#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]) .findbar-container {
+		background-image: linear-gradient(rgba(253,253,253,0.4), rgba(255,255,255,0));
+		background-size: auto auto;
+		background-repeat: repeat;
+		background-clip: padding-box;
+	}
+	
+	#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
+	#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
+		box-shadow: 	2px -2px 0 -2px ThreeDShadow,
+		                7px -4px 0px -4px rgba(254,254,254,0.2),
+		                6px -4px 0px -4px rgba(254,254,254,0.2),
+		                7px -4px 0px -4px -moz-dialog,
+		                6px -4px 0px -4px -moz-dialog;
+	}
+	#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
+	#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
+		box-shadow: 	-2px -2px 0 -2px ThreeDShadow,
+		                -7px -4px 0px -4px rgba(254,254,254,0.2),
+		                -6px -4px 0px -4px rgba(254,254,254,0.2),
+		                -7px -4px 0px -4px -moz-dialog,
+		                -6px -4px 0px -4px -moz-dialog;
+	}
+	
+	@media (-moz-windows-default-theme) {
+		@media	(-moz-os-version: windows-vista),
+			(-moz-os-version: windows-win7) {
+			
+			#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
+			#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
+				box-shadow: 	2px -2px 0 -2px #aabccf,
+				                7px -4px 0px -4px rgba(254,254,254,0.2),
+				                6px -4px 0px -4px rgba(254,254,254,0.2),
+				                7px -4px 0px -4px hsl(210,75%,92%),
+				                6px -4px 0px -4px hsl(210,75%,92%);
+			}
+			#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
+			#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
+				box-shadow: 	-2px -2px 0 -2px #aabccf,
+				                -7px -4px 0px -4px rgba(254,254,254,0.2),
+				                -6px -4px 0px -4px rgba(254,254,254,0.2),
+				                -7px -4px 0px -4px hsl(210,75%,92%),
+				                -6px -4px 0px -4px hsl(210,75%,92%);
+			}
+		}
 	}
 	
 	/* FF25 Tweaks */

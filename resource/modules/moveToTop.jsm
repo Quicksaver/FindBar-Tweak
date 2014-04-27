@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.6.6';
+moduleAid.VERSION = '1.6.7';
 
 this.__defineGetter__('mainWindow', function() { return $('main-window'); });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
@@ -10,8 +10,9 @@ this.lwthemeImage = null;
 
 this.findBarMaxHeight = 0;
 
-this.__defineGetter__('MIN_LEFT', function() { return 20; });
-this.__defineGetter__('MIN_RIGHT', function() { return 30; });
+// until I find a better way of finding out on which side of the browser is the scrollbar, I'm setting equal margins
+this.__defineGetter__('MIN_LEFT', function() { return 22; });
+this.__defineGetter__('MIN_RIGHT', function() { return 22; });
 this.lastTopStyle = null;
 
 this.shouldReMoveTop = function(newStyle) {
@@ -251,12 +252,6 @@ this.forceCornerRedraw = function() {
 };
 
 this.findPersonaPosition = function(aSubject, aTopic) {
-	// Bugfix: OSX changes some margins and paddings and stuff and this would leave the findbar poorly placed
-	if(aTopic && Services.appinfo.OS == 'Darwin') {
-		moveTop();
-		return;
-	}
-	
 	if(!trueAttribute(mainWindow, 'lwtheme')) {
 		prefAid.lwthemebgImage = '';
 		prefAid.lwthemebgWidth = 0;
@@ -328,7 +323,7 @@ this.stylePersonaFindBar = function() {
 		var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 		sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 		sscode += '@-moz-document url("'+document.baseURI+'") {\n';
-		sscode += '	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:not([inPDFJS])  {\n';
+		sscode += '	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:not([inPDFJS]) {\n';
 		sscode += '	  background-image: ' + prefAid.lwthemebgImage + ' !important;\n';
 		sscode += '	  background-color: ' + prefAid.lwthemebgColor + ' !important;\n';
 		sscode += '	  color: ' + prefAid.lwthemecolor + ' !important;\n';

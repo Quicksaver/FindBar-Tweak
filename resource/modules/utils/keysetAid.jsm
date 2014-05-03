@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.0';
+moduleAid.VERSION = '1.3.0';
 moduleAid.LAZY = true;
 
 // keysetAid - handles editable keysets for the add-on
@@ -17,7 +17,8 @@ moduleAid.LAZY = true;
 //		a - (obj) keyset to compare, see register()
 //		b - (obj) keyset to compare, see register()
 //		(optional) justModifiers - if true only the modifiers will be compared and the keycode will be ignored, defaults to false
-//	exists(key, ignore) - returns (bool) true if key with provided keycode and modifiers already exists, returns (bool) false otherwise. Returns null if no browser window is opened.
+//	exists(key, ignore) -	returns (obj) of existing key if provided keycode and modifiers already exists,
+//				returns (bool) false otherwise. Returns null if no browser window is opened.
 //		(optional) ignore - if true, keysets registered by this object are ignored, defaults to false
 //		see register()
 //	translateToConstantCode(input) - returns equivalent DOM_VK_INPUT string name
@@ -125,8 +126,21 @@ this.keysetAid = {
 			return true;
 		}
 		
-		if(this.isValid(key) && !this.exists(key, true)) {
-			this.registered.push(key);
+		if(this.isValid(key)) {
+			var exists = this.exists(key, true);
+			if(!exists) {
+				this.registered.push(key);
+			} else {
+				for(var o=0; o<this.delayedOtherKeys.length; o++) {
+					if(this.delayedOtherKeys[o](exists)) {
+						aSync(function() {
+							if(typeof(keysetAid) == 'undefined') { return; }
+							keysetAid.register(key);
+						}, 500);
+						return;
+					}
+				}
+			}
 		}
 		
 		if(!noSchedule) {
@@ -160,6 +174,12 @@ this.keysetAid = {
 		}
 		return false;
 	},
+	
+	// array of methods/occasions where a key could be reported as in/valid by mistake because it belongs to an add-on that hasn't been initialized yet
+	delayedOtherKeys: [
+		// Tile Tabs Function keys
+		function(aKey) { return aKey.id.startsWith('tiletabs-fkey-') && !aKey.hasModifiers; }
+	],
 	
 	prepareKey: function(key) {
 		var newKey = {
@@ -302,7 +322,7 @@ this.keysetAid = {
 			}
 			
 			if(this.compareKeys(allSets[k], key)) {
-				return true;
+				return allSets[k];
 			}
 		}
 		return false;

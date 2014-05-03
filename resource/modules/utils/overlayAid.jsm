@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.9.5';
+moduleAid.VERSION = '2.10.0';
 moduleAid.LAZY = true;
 
 // overlayAid - to use overlays in my bootstraped add-ons. The behavior is as similar to what is described in https://developer.mozilla.org/en/XUL_Tutorial/Overlays as I could manage.
@@ -395,7 +395,7 @@ this.overlayAid = {
 	unloadSome: function(aWindow, aWith) {
 		var i = this.loadedWindow(aWindow, aWith);
 		if(i !== false) {
-			this.removeInOrder(aWindow, aWindow['_OVERLAYS_'+objName][i].time);
+			this.removeInOrder(aWindow, aWindow['_OVERLAYS_'+objName][i]);
 			if(!aWindow.closed && !aWindow.willClose) {
 				aWindow._RESCHEDULE_OVERLAY = true;
 			}
@@ -406,7 +406,7 @@ this.overlayAid = {
 		if(typeof(aWindow['_OVERLAYS_'+objName]) != 'undefined') {
 			if(aWindow['_OVERLAYS_'+objName].length > 0) {
 				// only need to check for the first entry from this array, all subsequent will be unloaded before this one and reloaded afterwards if needed
-				overlayAid.removeInOrder(aWindow, aWindow['_OVERLAYS_'+objName][0].time);
+				overlayAid.removeInOrder(aWindow, aWindow['_OVERLAYS_'+objName][0], true);
 			}
 					
 			delete aWindow['_OVERLAYS_'+objName];
@@ -474,8 +474,8 @@ this.overlayAid = {
 		return time;
 	},
 	
-	removeInOrder: function(aWindow, first) {
-		if(first === 0) { return; } // already unloaded
+	removeInOrder: function(aWindow, toUnload, allFromHere) {
+		if(!toUnload.loaded) { return; } // already unloaded
 		
 		// I need to check, in the off-chance another add-on started overlaying at roughly the same time, setting this var first
 		if(typeof(aWindow._BEING_OVERLAYED) == 'undefined') {
@@ -483,21 +483,9 @@ this.overlayAid = {
 		}
 		
 		var overlayList = [];
-		// Right now I don't have any overlays that conflict between add-ons. I need to change this routine, to make it so it
-		// unloads only the conflicting overlays. But it's not an immediate need, so I'm restricting it only to the current
-		// add-on overlays for now (it will make it faster and less prone to errors when entering customize mode).
-		//var allAttr = this.getAllInAttr(aWindow);
-		var allAttr = [objName];
-		for(var y=0; y<allAttr.length; y++) {
-			var x = '_OVERLAYS_'+allAttr[y];
-			if(!aWindow[x]) { continue; }
-			
-			for(var i=0; i<aWindow[x].length; i++) {
-				if(aWindow[x][i].time >= first) {
-					overlayList.push({ x: x, i: i, time: aWindow[x][i].time });
-				}
-			}
-		}
+		this.removeMoreRecent(aWindow, toUnload, overlayList, allFromHere);
+		
+		// sort the list so we unload the most recent overlays first, going back to the one we want to unload
 		overlayList.sort(function(a,b) { return b.time-a.time; });
 		
 		for(var u=0; u<overlayList.length; u++) {
@@ -508,6 +496,105 @@ this.overlayAid = {
 		if(aWindow._BEING_OVERLAYED && aWindow._BEING_OVERLAYED == 'removing_'+objName) {
 			delete aWindow._BEING_OVERLAYED;
 		}
+	},
+	
+	removeMoreRecent: function(aWindow, toUnload, overlayList, allFromHere) {
+		var allAttr = this.getAllInAttr(aWindow);
+		for(var y=0; y<allAttr.length; y++) {
+			var x = '_OVERLAYS_'+allAttr[y];
+			if(!aWindow[x]) { continue; }
+			
+			main_overlayLoop: for(var i=0; i<aWindow[x].length; i++) {
+				// we already checked this overlay
+				for(var l=0; l<overlayList.length; l++) {
+					if(overlayList[l].x == x && overlayList[l].i == i) { continue main_overlayLoop; }
+				}
+				
+				// obviously, if the overlay we're checking is the overlay we want to remove, it should be removed
+				if(aWindow[x][i].uri == toUnload.uri) {
+					overlayList.push({ x: x, i: i, time: aWindow[x][i].time });
+					continue;
+				}
+				
+				// we only need to unload overlays that were loaded after the one we're unloading
+				if(aWindow[x][i].time >= toUnload.time) {
+					// we add this overlay to the list in case:
+					//   a) it's from the same add-on and we want to unload all of its overlays
+					//   b) it's from another add-on and it will conflict with our target overlay to unload
+					if((allFromHere && x == '_OVERLAYS_'+objName)
+					|| this.unloadConflicts(aWindow, toUnload, aWindow[x][i])) {
+						overlayList.push({ x: x, i: i, time: aWindow[x][i].time });
+						
+						this.removeMoreRecent(aWindow, aWindow[x][i], overlayList);
+					}		
+				}
+			}
+		}
+	},
+	
+	unloadConflicts: function(aWindow, aOverlay, bOverlay) {
+		// if bOverlay is overlaying aOverlay directly, then of course it needs to be removed as well
+		if(bOverlay.overlayingUri && bOverlay.overlayingUri == aOverlay.uri) {
+			return true;
+		}
+		
+		// skip these as they never conflict (I hope)
+		var skipActions = ['appendXMLSS', 'sizeToContent', 'addPreferencesElement', 'addPreference', 'appendButton', 'addToolbar'];
+		var conflictingFields = ['node', 'originalParent'];
+		
+		// we need to go through their traceBack's to see if any of them might conflict with each other
+		for(var aT=0; aT<aOverlay.traceBack.length; aT++) {
+			if(skipActions.indexOf(aOverlay.traceBack[aT].action) > -1) { continue; }
+			var aAction = this.fixTraceBackNodes(aWindow, aOverlay.traceBack[aT]);
+			
+			for(var bT=0; bT<bOverlay.traceBack.length; bT++) {
+				if(skipActions.indexOf(bOverlay.traceBack[bT].action) > -1) { continue; }
+				var bAction = this.fixTraceBackNodes(aWindow, bOverlay.traceBack[bT]);
+				
+				// if any of the nodes overlap, we consider them conflicting
+				for(var aa=0; aa<conflictingFields.length; aa++) {
+					for(var bb=0; bb<conflictingFields.length; bb++) {
+						if(isAncestor(aAction[conflictingFields[aa]], bAction[conflictingFields[bb]])
+						|| isAncestor(bAction[conflictingFields[bb]], aAction[conflictingFields[aa]])) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+		
+		return false;
+	},
+	
+	fixTraceBackNodes: function(aWindow, action) {
+		if(action.nodeID) { action.node = action.node || aWindow.document.getElementById(action.nodeID); }
+		if(action.originalParentID) { action.originalParent = action.originalParent || aWindow.document.getElementById(action.originalParentID); }
+		if(action.paletteID && !action.palette) {
+			var toolbox = aWindow.document.querySelectorAll('toolbox');
+			for(var a=0; a<toolbox.length; a++) {
+				if(toolbox[a].palette) {
+					if(toolbox[a].palette.id == action.paletteID) {
+						action.palette = toolbox[a].palette;
+					} else if(toolbox[a].palette == aWindow.gCustomizeMode.visiblePalette
+					&& aWindow.gCustomizeMode._stowedPalette.id == action.paletteID) {
+						action.palette = aWindow.gCustomizeMode._stowedPalette;
+					}
+					
+					if(!action.node && action.nodeID) {
+						for(var c=0; c<action.palette.childNodes.length; c++) {
+							if(action.palette.childNodes[c].id == action.nodeID) {
+								action.node = action.palette.childNodes[c];
+								break;
+							}
+						}
+					}
+					
+					break;
+				}
+			}
+		}
+		
+		return action;
 	},
 	
 	removeOverlay: function(aWindow, overlay) {
@@ -542,33 +629,7 @@ this.overlayAid = {
 		}
 		
 		for(var j = aWindow[x][i].traceBack.length -1; j >= 0; j--) {
-			var action = aWindow[x][i].traceBack[j];
-			if(action.nodeID) { action.node = action.node || aWindow.document.getElementById(action.nodeID); }
-			if(action.originalParentID) { action.originalParent = action.originalParent || aWindow.document.getElementById(action.originalParentID); }
-			if(action.paletteID && !action.palette) {
-				var toolbox = aWindow.document.querySelectorAll('toolbox');
-				for(var a=0; a<toolbox.length; a++) {
-					if(toolbox[a].palette) {
-						if(toolbox[a].palette.id == action.paletteID) {
-							action.palette = toolbox[a].palette;
-						} else if(toolbox[a].palette == aWindow.gCustomizeMode.visiblePalette
-						&& aWindow.gCustomizeMode._stowedPalette.id == action.paletteID) {
-							action.palette = aWindow.gCustomizeMode._stowedPalette;
-						}
-						
-						if(!action.node && action.nodeID) {
-							for(var c=0; c<action.palette.childNodes.length; c++) {
-								if(action.palette.childNodes[c].id == action.nodeID) {
-									action.node = action.palette.childNodes[c];
-									break;
-								}
-							}
-						}
-						
-						break;
-					}
-				}
-			}
+			var action = this.fixTraceBackNodes(aWindow, aWindow[x][i].traceBack[j]);
 			
 			try {
 				switch(action.action) {
@@ -887,7 +948,7 @@ this.overlayAid = {
 						if(!aWindow[x]) { continue; }
 						if(i < aWindow[x].length && aWindow[x][i].uri == aWindow._UNLOAD_OVERLAYS[0]) { break; }
 					}
-					this.removeInOrder(aWindow, aWindow[x][i].time);
+					this.removeInOrder(aWindow, aWindow[x][i]);
 					rescheduleOverlay = true;
 				}
 				aWindow._UNLOAD_OVERLAYS.shift();
@@ -920,6 +981,7 @@ this.overlayAid = {
 			&& (aWindow.document.baseURI.indexOf(this.overlays[i].uri) == 0 || this.loadedWindow(aWindow, this.overlays[i].uri, true) !== false)) {
 				aWindow._BEING_OVERLAYED = aWindow['_OVERLAYS_'+objName].push({
 					uri: this.overlays[i].overlay,
+					overlayingUri: this.overlays[i].uri,
 					traceBack: [],
 					removeMe: function() { overlayAid.removeOverlay(aWindow, this); },
 					time: 0,
@@ -1027,32 +1089,15 @@ this.overlayAid = {
 								
 								// If it's a placeholder created by us to deal with CustomizableUI, just use it.
 								if(trueAttribute(existButton, 'CUI_placeholder')) {
-									this.reAppendPlaceholder(aWindow, existButton, palette);
+									removeAttribute(existButton, 'CUI_placeholder');
+									hideIt(existButton, true);
+									this.appendButton(aWindow, palette, existButton);
 									continue buttons_loop;
 								}
 								
-								// change or remove the button on the toolbar if it is found in the document
+								// we shouldn't be changing widgets, or adding with same id as other nodes
 								if(existButton) {
-									for(var c=0; c<button.attributes.length; c++) {
-										// Why bother, id is the same already
-										if(button.attributes[c].name == 'id') { continue; }
-										
-										this.setAttribute(aWindow, existButton, button.attributes[c]);
-									}
 									continue buttons_loop;
-								}
-								
-								// change or remove in the palette if it exists there
-								for(var b=0; b<palette.childNodes.length; b++) {
-									if(palette.childNodes[b].id == button.id) {
-										for(var c=0; c<button.attributes.length; c++) {
-											// Why bother, id is the same already
-											if(button.attributes[c].name == 'id') { continue; }
-											
-											this.setAttribute(aWindow, palette.childNodes[b], button.attributes[c]);
-										}
-										continue buttons_loop;
-									}
 								}
 								
 								// Save a copy of the widget node in the sandbox,
@@ -1076,12 +1121,6 @@ this.overlayAid = {
 			
 			// Handle if node with same id was found
 			if(node) {
-				// We could have found a placeholder from CUI's handling. We need to ensure the process continues as normal (append the button) in that case
-				if(trueAttribute(node, 'CUI_placeholder') && node.collapsed) {
-					this.reAppendPlaceholder(aWindow, node, node.parentNode);
-					continue;
-				}
-				
 				// Don't process if id mismatches nodename or if parents mismatch; I should just make sure this doesn't happen in my overlays
 				if(node.nodeName != overlayNode.nodeName) { continue; }
 				if(overlayNode.parentNode.nodeName != 'overlay' && node.parentNode.id != overlayNode.parentNode.id) { continue; }
@@ -1188,18 +1227,18 @@ this.overlayAid = {
 		}
 	},
 	
-	tempAppendAllToolbars: function(aWindow, aToolbarId, except) {
+	tempAppendAllToolbars: function(aWindow, aToolbarId) {
 		windowMediator.callOnAll(function(bWindow) {
 			var wToolbar = bWindow.document.getElementById(aToolbarId);
-			if(wToolbar && !wToolbar._init && (!except || wToolbar != except)) {
+			if(wToolbar && !wToolbar._init) {
 				overlayAid.tempAppendToolbar(bWindow, wToolbar);
 			}
 		}, aWindow.document.documentElement.getAttribute('windowtype'));
 	},
-	tempRestoreAllToolbars: function(aWindow, aToolbarId, except) {
+	tempRestoreAllToolbars: function(aWindow, aToolbarId) {
 		windowMediator.callOnAll(function(bWindow) {
 			var wToolbar = bWindow.document.getElementById(aToolbarId);
-			if(wToolbar && (!except || wToolbar != except)) {
+			if(wToolbar) {
 				overlayAid.tempRestoreToolbar(wToolbar);
 			}
 		}, aWindow.document.documentElement.getAttribute('windowtype'));
@@ -1440,16 +1479,6 @@ this.overlayAid = {
 	},
 	
 	moveAround: function(aWindow, node, overlayNode, parent) {
-		if(parent.nodeName == 'toolbar' && parent != node.parentNode) {
-			// Save a copy of the widget node in the sandbox,
-			// so CUI can use it when opening a new window without having to wait for the overlay.
-			if(!Globals.widgets[overlayNode.id]) {
-				Globals.widgets[overlayNode.id] = overlayNode;
-			}
-			
-			return this.appendButton(aWindow, parent, node);
-		}
-		
 		var newParent = null;
 		if(overlayNode.getAttribute('newparent')) {
 			newParent = aWindow.document.getElementById(overlayNode.getAttribute('newparent'));
@@ -1876,23 +1905,11 @@ this.overlayAid = {
 		}
 	},
 	
-	reAppendPlaceholder: function(aWindow, node, palette) {
-		removeAttribute(node, 'CUI_placeholder');
-		hideIt(node, true);
-		this.appendButton(aWindow, palette, node);
-	},
-	
 	appendButton: function(aWindow, palette, node) {
-		if(!node.parentNode
-		|| (node.parentNode != palette && node.parentNode.id != 'wrapper-'+node.id && palette.nodeName == 'toolbarpalette')) {
+		if(!node.parentNode) {
 			palette.appendChild(node);
 		}
 		var id = node.id;
-		
-		// see note in runRegisterToolbar()
-		if(palette.nodeName == 'toolbar' && !palette._init) {
-			this.tempAppendToolbar(aWindow, palette);
-		}
 		
 		var widget = aWindow.CustomizableUI.getWidget(id);
 		if(!widget || widget.provider != aWindow.CustomizableUI.PROVIDER_API) {
@@ -1906,44 +1923,33 @@ this.overlayAid = {
 					if(aWindow.CustomizableUI.getAreaType(areas[a]) != aWindow.CustomizableUI.TYPE_TOOLBAR) { break; }
 					
 					areaId = areas[a];
-					this.tempAppendAllToolbars(aWindow, areaId, palette);
+					this.tempAppendAllToolbars(aWindow, areaId);
 					break;
 				}
 			}
 			
 			try { aWindow.CustomizableUI.createWidget(this.getWidgetData(aWindow, node, palette)); }
-			catch(ex) {Cu.reportError(ex); }
+			catch(ex) { Cu.reportError(ex); }
 			
 			if(areaId) {
-				this.tempRestoreAllToolbars(aWindow, areaId, palette);
+				this.tempRestoreAllToolbars(aWindow, areaId);
 			}
 		}
 		
 		else {
 			var placement = aWindow.CustomizableUI.getPlacementOfWidget(id, aWindow);
 			var areaNode = (placement) ? aWindow.document.getElementById(placement.area) : null;
-			if(areaNode && areaNode.nodeName == 'toolbar' && !areaNode._init && areaNode != palette) {
+			if(areaNode && areaNode.nodeName == 'toolbar' && !areaNode._init) {
 				this.tempAppendToolbar(aWindow, areaNode);
 			}
 			
 			try { aWindow.CustomizableUI.ensureWidgetPlacedInWindow(id, aWindow); }
 			catch(ex) { Cu.reportError(ex); }
 			
-			if(areaNode && areaNode != palette) {
+			if(areaNode) {
 				this.tempRestoreToolbar(areaNode);
 			}
 		}
-		
-		// CUI always gets the widget from the Globals.widgets object in this case
-		if(palette.nodeName == 'toolbar') {
-			node = aWindow.document.getElementById(id);
-			removeAttribute(node, 'CUI_placeholder');
-			hideIt(node, true);
-		}
-		
-		this.tempRestoreToolbar(palette);
-		
-		if(!node) { node = aWindow.document.getElementById(id); }
 		
 		this.traceBack(aWindow, {
 			action: 'appendButton',

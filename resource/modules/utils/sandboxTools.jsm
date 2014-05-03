@@ -1,24 +1,17 @@
-moduleAid.VERSION = '2.3.0';
+moduleAid.VERSION = '2.3.1';
 moduleAid.LAZY = true;
 
-// xmlHttpRequest(url, callback, method, async) - aid for quickly using the nsIXMLHttpRequest interface
+// xmlHttpRequest(url, callback, method) - aid for quickly using the nsIXMLHttpRequest interface
 //	url - (string) to send the request
 //	callback - (function) to be called after request is completed; expects callback(xmlhttp, e) where xmlhttp = xmlhttprequest return object and e = event object
 //	(optional) method - either (string) "POST" or (string) "GET"
-//	(optional) async - (bool) defines whether to perform the operation asynchronously, defaults to true
-this.xmlHttpRequest = function(url, callback, method, async) {
+this.xmlHttpRequest = function(url, callback, method) {
 	if(!method) { method = "GET"; }
-	if(async !== false) { async = true; }
 	
 	var xmlhttp = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Ci.nsIXMLHttpRequest);
-	xmlhttp.open(method, url, async);
-	if(async) {
-		xmlhttp.onreadystatechange = function(e) { callback(xmlhttp, e); };
-	}
+	xmlhttp.open(method, url);
+	xmlhttp.onreadystatechange = function(e) { callback(xmlhttp, e); };
 	xmlhttp.send();
-	if(!async) {
-		callback(xmlhttp);
-	}
 	return xmlhttp;
 };
 

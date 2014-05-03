@@ -10,8 +10,7 @@
 			<field name="_findbar">null</field>
 			<property name="findbar" readonly="true">
 				<getter>
-					return this._findbar ?
-					this._findbar : this._findbar = document.getBindingParent(this);
+					return this._findbar ? this._findbar : this._findbar = document.getBindingParent(this);
 				</getter>
 			</property>
 		</implementation>

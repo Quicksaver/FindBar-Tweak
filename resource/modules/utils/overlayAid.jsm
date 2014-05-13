@@ -1,4 +1,4 @@
-moduleAid.VERSION = '2.10.0';
+moduleAid.VERSION = '2.10.2';
 moduleAid.LAZY = true;
 
 // overlayAid - to use overlays in my bootstraped add-ons. The behavior is as similar to what is described in https://developer.mozilla.org/en/XUL_Tutorial/Overlays as I could manage.
@@ -1181,7 +1181,8 @@ this.overlayAid = {
 			try {
 				aWindow.CustomizableUI.registerArea(node.id, {
 					type: CustomizableUI.TYPE_TOOLBAR,
-					legacy: true
+					legacy: true,
+					defaultCollapsed: null
 				});
 			} catch(ex) { Cu.reportError(ex); }
 		}
@@ -1310,13 +1311,18 @@ this.overlayAid = {
 					
 					aNode = this.getNode(aNode);
 					
+					if(!aNode) {
+						entry.disabled = true;
+						return;
+					}
+					
 					// special case for the PanelUI-button, until https://bugzilla.mozilla.org/show_bug.cgi?id=996571 is resolved
 					if(aNode.id == 'PanelUI-button' || aNode.id == 'nav-bar-overflow-button') {
 						entry.disabled = !trueAttribute(aNode, 'removable');
 						return;
 					}
 					
-					entry.disabled = !aNode || !CustomizableUI.isWidgetRemovable(aNode.id);
+					entry.disabled = !CustomizableUI.isWidgetRemovable(aNode.id);
 				},
 				
 				hideOnSelf: function(aNode, entry) {

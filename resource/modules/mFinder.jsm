@@ -390,4 +390,3 @@ Modules.UNLOADMODULE = function() {
 	
 	deinitFindBar('mFinder');
 };
-

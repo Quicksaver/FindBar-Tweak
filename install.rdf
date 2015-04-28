@@ -26,59 +26,5 @@
 				<em:homepageURL>https://addons.mozilla.org/en-US/firefox/addon/findbar-tweak/</em:homepageURL>
 			</Description>
 		</em:localized>
-		<em:localized>
-			<Description>
-				<em:locale>de</em:locale>
-				<em:name>FindBar Tweak</em:name>
-				<em:description>Von einfachen Anpassungen wie dem Verschieben der Suchleiste an den oberen Rand bis zur mächtigen Funktion „In allen Tabs suchen“, mit FindBar Tweak wird Ihre Suchleiste „genau richtig“!</em:description>
-				<em:homepageURL>https://addons.mozilla.org/de/firefox/addon/findbar-tweak/</em:homepageURL>
-				<em:translator>Michael Köhler, Wawuschel @ babelzilla</em:translator>
-			</Description>
-		</em:localized>
-		<em:localized>
-			<Description>
-				<em:locale>pl</em:locale>
-				<em:name>FindBar Tweak</em:name>
-				<em:description>Wszystko co jest pomiędzy prostymi poprawkami takimi jak umieszczenie paska wyszukiwania na górze a potężnym narzędziu przeszukania wszystkich kart, aby FindBar Tweak mógł uczynić z Twojego paska wyszukiwania pasek "w sam raz"!</em:description>
-				<em:homepageURL>https://addons.mozilla.org/pl/firefox/addon/findbar-tweak/</em:homepageURL>
-				<em:translator>http://github.com/piotrex</em:translator>
-			</Description>
-		</em:localized>
-		<em:localized>
-			<Description>
-				<em:locale>pt-PT</em:locale>
-				<em:name>Barra de Procura Refinada</em:name>
-				<em:description>Entre pequenas alterações como mover a barra de procura para o canto superior, à ferramenta de "Procura em todos os separadores", refine a sua Barra de Procura até ficar "no ponto"!</em:description>
-				<em:homepageURL>https://addons.mozilla.org/pt-PT/firefox/addon/findbar-tweak/</em:homepageURL>
-				<em:translator>Quicksaver</em:translator>
-			</Description>
-		</em:localized>
-		<em:localized>
-			<Description>
-				<em:locale>sv-SE</em:locale>
-				<em:name>FindBar Tweak</em:name>
-				<em:description>Allt från enkla justeringar, såsom att placera söklisten i fönstrets övre hörn, till det kraftfulla verktyget "Sök i alla flikar". Utforma din söklist precis som du vill ha den med FindBar Tweak.</em:description>
-				<em:homepageURL>https://addons.mozilla.org/sv-SE/firefox/addon/findbar-tweak/</em:homepageURL>
-				<em:translator>Mikael Hiort af Ornäs</em:translator>
-			</Description>
-		</em:localized>
-		<em:localized>
-			<Description>
-				<em:locale>zh-CN</em:locale>
-				<em:name>FindBar Tweak</em:name>
-				<em:description>任何简单而又重要的调整，如调整查找栏的位置到右上角、强大的“查找所有标签页”工具等，FindBar Tweak 将给您带来恰到好处的查找栏。</em:description>
-				<em:homepageURL>https://addons.mozilla.org/zh-CN/firefox/addon/findbar-tweak/</em:homepageURL>
-				<em:translator>http://t.qq.com/HeartBlade, YFdyh000</em:translator>
-			</Description>
-		</em:localized>
-		<em:localized>
-			<Description>
-				<em:locale>zh-TW</em:locale>
-				<em:name>FindBar Tweak</em:name>
-				<em:description>所有簡單而重要的調整，如將搜尋欄放到右上角、提供有用的「尋找所有分頁」工具等，FindBar Tweak將為你帶來恰到處的尋找欄</em:description>
-				<em:homepageURL>https://addons.mozilla.org/zh-TW/firefox/addon/findbar-tweak/</em:homepageURL>
-				<em:translator>Justincheng12345 aka JC1</em:translator>
-			</Description>
-		</em:localized>
 	</Description>
 </RDF>

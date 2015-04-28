@@ -1,7 +1,0 @@
-<!ENTITY MenuOptions.label "FindBar 选项">
-<!ENTITY ToolbarButton.label "切换查找栏">
-<!ENTITY ToolbarButton.tooltip "打开/关闭查找栏">
-<!ENTITY FITbutton.label "查找所有标签页">
-<!ENTITY FITbutton.tooltip.win "在所有打开的标签页中查找该短语 (Ctrl+F3)">
-<!ENTITY FITbutton.tooltip.mac "在所有打开的标签页中查找该短语 (Command+F3)">
-<!ENTITY FITbutton.accesskey "T">

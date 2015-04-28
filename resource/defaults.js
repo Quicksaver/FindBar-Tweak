@@ -1,11 +1,11 @@
-var defaultsVersion = '1.3.0';
+var defaultsVersion = '1.4.0';
 var objName = 'findbartweak';
 var objPathString = 'findbartweak';
 
 // We define this here so we can use it also as the default value for the preference
 this.__defineGetter__('minTextboxWidth', function() {
-	if(Services.appinfo.OS == 'Darwin') { return 176; }
-	else if(Services.appinfo.OS == 'WINNT') {
+	if(DARWIN) { return 176; }
+	else if(WINNT) {
 		if(Services.navigator.oscpu && Services.navigator.oscpu.indexOf('Windows NT 5.1') == 0) { return 127; }
 		else { return 120; }
 	}
@@ -24,9 +24,6 @@ var prefList = {
 	useCounter: true,
 	
 	findInTabs: true,
-	alwaysOpenFIT: false,
-	maxFIT: 1000,
-	FITFull: false,
 	multipleFITFull: false,
 	
 	useGrid: true,
@@ -51,9 +48,7 @@ var prefList = {
 	findbarHidden: true,
 	
 	movetoTop: false,
-	movetoBottom: false,
 	movetoRight: false,
-	FF25Tweaks: true,
 	hideClose: false,
 	hideLabels: false,
 	findFieldWidth: (Services.appinfo.OS != 'Darwin' && Services.appinfo.OS != 'WINNT') ? 240 : minTextboxWidth,
@@ -74,19 +69,12 @@ var prefList = {
 	FAYTtimeout: defaultBranch.getIntPref('accessibility.typeaheadfind.timeout'),
 	FAYTenabled: defaultBranch.getBoolPref('accessibility.typeaheadfind'),
 	FAYTprefill: defaultBranch.getBoolPref('accessibility.typeaheadfind.prefillwithselection'),
-	resetNative: false,
-	
-	lwthemebgImage: '',
-	lwthemebgWidth: 0,
-	lwthemecolor: '',
-	lwthemebgColor: ''
+	resetNative: false
 };
-
-var onTopFB = false;
 
 function startAddon(window) {
 	prepareObject(window);
-	window[objName].moduleAid.load(objName, true);
+	window[objName].Modules.load(objName, window.gBrowserInit);
 }
 
 function stopAddon(window) {
@@ -96,45 +84,37 @@ function stopAddon(window) {
 function startPreferences(window) {
 	replaceObjStrings(window.document);
 	preparePreferences(window);
-	window[objName].moduleAid.load('preferences', true);
-}
-
-function startConditions(aReason) {
-	return true;
+	window[objName].Modules.load('preferences', true);
 }
 
 function onStartup(aReason) {
-	//if(Services.vc.compare(Services.appinfo.platformVersion, "26.0a1") >= 0) { onTopFB = true; } // Backed out of Trunk until further notice
-	// Because the above was backed out, let's ensure pref movetoBottom is disabled and stays that way
-	prefAid.movetoBottom = false;
-	
-	moduleAid.load('builtinPrefs');
-	moduleAid.load('highlightColor');
-	moduleAid.load('findInTabsSandbox');
-	moduleAid.load('compatibilityFix/sandboxFixes');
+	Modules.load('builtinPrefs');
+	Modules.load('highlightColor');
+	Modules.load('findInTabsSandbox');
+	Modules.load('compatibilityFix/sandboxFixes');
 	
 	// Apply the add-on to every window opened and to be opened
-	windowMediator.callOnAll(startAddon, 'navigator:browser');
-	windowMediator.register(startAddon, 'domwindowopened', 'navigator:browser');
+	Windows.callOnAll(startAddon, 'navigator:browser');
+	Windows.register(startAddon, 'domwindowopened', 'navigator:browser');
 	
 	// Apply the add-on to every window opened and to be opened
-	windowMediator.callOnAll(startAddon, 'navigator:view-source');
-	windowMediator.register(startAddon, 'domwindowopened', 'navigator:view-source');
+	Windows.callOnAll(startAddon, 'navigator:view-source');
+	Windows.register(startAddon, 'domwindowopened', 'navigator:view-source');
 	
 	// Apply the add-on to every preferences window opened and to be opened
-	windowMediator.callOnAll(startPreferences, null, "chrome://"+objPathString+"/content/options.xul");
-	windowMediator.register(startPreferences, 'domwindowopened', null, "chrome://"+objPathString+"/content/options.xul");
-	browserMediator.callOnAll(startPreferences, "chrome://"+objPathString+"/content/options.xul");
-	browserMediator.register(startPreferences, 'pageshow', "chrome://"+objPathString+"/content/options.xul");
+	Windows.callOnAll(startPreferences, null, "chrome://"+objPathString+"/content/options.xul");
+	Windows.register(startPreferences, 'domwindowopened', null, "chrome://"+objPathString+"/content/options.xul");
+	Browsers.callOnAll(startPreferences, "chrome://"+objPathString+"/content/options.xul");
+	Browsers.register(startPreferences, 'pageshow', "chrome://"+objPathString+"/content/options.xul");
 }
 
 function onShutdown(aReason) {
 	// remove the add-on from all windows
-	windowMediator.callOnAll(stopAddon, null, null, true);
-	browserMediator.callOnAll(stopAddon, null, true);
+	Windows.callOnAll(stopAddon, null, null, true);
+	Browsers.callOnAll(stopAddon, null, true);
 	
-	moduleAid.unload('compatibilityFix/sandboxFixes');
-	moduleAid.unload('findInTabsSandbox');
-	moduleAid.unload('highlightColor');
-	moduleAid.unload('builtinPrefs');
+	Modules.unload('compatibilityFix/sandboxFixes');
+	Modules.unload('findInTabsSandbox');
+	Modules.unload('highlightColor');
+	Modules.unload('builtinPrefs');
 }

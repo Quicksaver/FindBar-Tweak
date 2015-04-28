@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.0.7';
+Modules.VERSION = '1.0.8';
 
 this.findBarHiddenState = true;
 
@@ -7,13 +7,13 @@ this.globalFBOnOpen = function() {
 	if(gFindBar._findMode != gFindBar.FIND_NORMAL) { return; }
 	
 	findBarHiddenState = false;
-	timerAid.cancel('globalFBOnClose');
-	timerAid.init('globalFBOnOpen', globalFBOpenAll, 50);
+	Timers.cancel('globalFBOnClose');
+	Timers.init('globalFBOnOpen', globalFBOpenAll, 50);
 };
 
 this.globalFBOpenAll = function() {
-	for(var t=0; t<gBrowser.mTabs.length; t++) {
-		var bar = gBrowser.getFindBar(gBrowser.mTabs[t]);
+	for(var tab of gBrowser.tabs) {
+		var bar = gBrowser.getFindBar(tab);
 		if(bar == gFindBar && !gFindBar.hidden) { continue; }
 		bar.open();
 	}
@@ -21,14 +21,14 @@ this.globalFBOpenAll = function() {
 
 this.globalFBOnClose = function() {
 	findBarHiddenState = true;
-	timerAid.cancel('globalFBOnOpen');
-	timerAid.init('globalFBOnClose', globalFBCloseAll, 50);
+	Timers.cancel('globalFBOnOpen');
+	Timers.init('globalFBOnClose', globalFBCloseAll, 50);
 };
 
 this.globalFBCloseAll = function() {
-	for(var t=0; t<gBrowser.mTabs.length; t++) {
-		if(gBrowser.mTabs[t]._findBar) {
-			var bar = gBrowser.getFindBar(gBrowser.mTabs[t]);
+	for(var tab of gBrowser.tabs) {
+		if(gBrowser.isFindBarInitialized(tab)) {
+			var bar = gBrowser.getFindBar(tab);
 			if(gFindBarInitialized && bar == gFindBar && gFindBar.hidden) { continue; }
 			bar.close();
 		}
@@ -54,23 +54,23 @@ this.globalFBTabSelect = function() {
 	
 	// Copy the values of the findField from one tab to another
 	if(currentTab && currentTab._findBar) {
-		gFindBar._findField.value = currentTab._findBar._findField.value;
+		findQuery = currentTab._findBar._findField.value;
 		gFindBar.getElement('highlight').checked = currentTab._findBar.getElement('highlight').checked;
 		gFindBar.getElement('find-case-sensitive').checked = currentTab._findBar.getElement('find-case-sensitive').checked;
-		gFindBar._enableFindButtons(gFindBar._findField.value);
+		gFindBar._enableFindButtons(findQuery);
 		
 		// remove highlights from a previous search query
-		if(documentHighlighted && linkedPanel._highlightedWord && linkedPanel._highlightedWord != gFindBar._findField.value) {
-			highlightsOff();
+		if(documentHighlighted && highlightedWord && highlightedWord != findQuery) {
+			highlights.off();
 		}
 	}
 };
 
-moduleAid.LOADMODULE = function() {
-	listenerAid.add(gBrowser.tabContainer, "TabOpen", globalFBTabOpen);
-	listenerAid.add(gBrowser.tabContainer, "TabSelectPrevious", globalFBTabSelect);
-	listenerAid.add(window, 'OpenedFindBar', globalFBOnOpen);
-	listenerAid.add(window, 'ClosedFindBar', globalFBOnClose);
+Modules.LOADMODULE = function() {
+	Listeners.add(gBrowser.tabContainer, "TabOpen", globalFBTabOpen);
+	Listeners.add(gBrowser.tabContainer, "TabSelectPrevious", globalFBTabSelect);
+	Listeners.add(window, 'OpenedFindBar', globalFBOnOpen);
+	Listeners.add(window, 'ClosedFindBar', globalFBOnClose);
 	
 	findBarHiddenState = !gFindBarInitialized || gFindBar.hidden;
 	if(!findBarHiddenState) {
@@ -80,17 +80,17 @@ moduleAid.LOADMODULE = function() {
 	}
 };
 
-moduleAid.UNLOADMODULE = function() {
-	listenerAid.remove(gBrowser.tabContainer, "TabOpen", globalFBTabOpen);
-	listenerAid.remove(gBrowser.tabContainer, "TabSelectPrevious", globalFBTabSelect);
-	listenerAid.remove(window, 'OpenedFindBar', globalFBOnOpen);
-	listenerAid.remove(window, 'ClosedFindBar', globalFBOnClose);
+Modules.UNLOADMODULE = function() {
+	Listeners.remove(gBrowser.tabContainer, "TabOpen", globalFBTabOpen);
+	Listeners.remove(gBrowser.tabContainer, "TabSelectPrevious", globalFBTabSelect);
+	Listeners.remove(window, 'OpenedFindBar', globalFBOnOpen);
+	Listeners.remove(window, 'ClosedFindBar', globalFBOnClose);
 	
-	for(var t=0; t<gBrowser.mTabs.length; t++) {
-		if(gBrowser.mTabs[t] == gBrowser.mCurrentTab) { continue; }
+	for(var tab of gBrowser.tabs) {
+		if(tab == gBrowser.mCurrentTab) { continue; }
 		
-		if(gBrowser.mTabs[t]._findBar && !$(gBrowser.mTabs[t].linkedPanel)._findWord) {
-			var bar = gBrowser.mTabs[t]._findBar;
+		if(gBrowser.isFindBarInitialized(tab) && !tab.linkedBrowser.finder.findWord) {
+			var bar = gBrowser.getFindBar(tab);
 			bar.close();
 		}
 	}

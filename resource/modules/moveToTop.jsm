@@ -1,51 +1,36 @@
-moduleAid.VERSION = '1.6.7';
+Modules.VERSION = '2.0.0';
 
-this.__defineGetter__('mainWindow', function() { return $('main-window'); });
-this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
-this.__defineGetter__('browser', function() { return $('browser'); });
-this.__defineGetter__('appcontent', function() { return $('appcontent'); });
-
-this.moveTopStyle = {};
-this.lwthemeImage = null;
-
-this.findBarMaxHeight = 0;
+this.__defineGetter__('gBrowserBox', function() { return $('browser'); });
+this.__defineGetter__('gAppContent', function() { return $('appcontent'); });
+this.__defineGetter__('TabsToolbar', function() { return $('TabsToolbar'); });
 
 // until I find a better way of finding out on which side of the browser is the scrollbar, I'm setting equal margins
-this.__defineGetter__('MIN_LEFT', function() { return 22; });
-this.__defineGetter__('MIN_RIGHT', function() { return 22; });
-this.lastTopStyle = null;
+this.MIN_LEFT = 22;
+this.MIN_RIGHT = 22;
+this.CORNER_WIDTH = 16;
+this.moveTopStyle = null;
 
 this.shouldReMoveTop = function(newStyle) {
-	if(!lastTopStyle) { return true; }
+	if(!moveTopStyle) { return true; }
 	
 	if(!newStyle) {
-		if(isPDFJS) {
-			var loadingBar = contentDocument.getElementById('loadingBar');
-			loadingBar = (loadingBar && loadingBar.clientHeight > 0);
-			if(loadingBar != lastTopStyle.PDFJSloadingBar) { return true; }
-		}
-		return (gFindBar.clientWidth != lastTopStyle.clientWidth);
+		if(isPDFJS != moveTopStyle.inPDFJS || (isPDFJS && isPDFJS.loadingBar != moveTopStyle.PDFJSloadingBar)) { return true; }
+		return (gFindBar.clientWidth != moveTopStyle.clientWidth);
 	}
-	else if(newStyle.top != lastTopStyle.top
-		|| newStyle.right != lastTopStyle.right
-		|| newStyle.left != lastTopStyle.left
-		|| newStyle.maxWidth != lastTopStyle.maxWidth
-		|| newStyle.clientWidth != lastTopStyle.clientWidth
-		|| newStyle.movetoRight != lastTopStyle.movetoRight) {
+	else if(newStyle.top != moveTopStyle.top
+		|| newStyle.right != moveTopStyle.right
+		|| newStyle.left != moveTopStyle.left
+		|| newStyle.maxWidth != moveTopStyle.maxWidth
+		|| newStyle.clientWidth != moveTopStyle.clientWidth
+		|| newStyle.movetoRight != moveTopStyle.movetoRight) {
 			return true;
 	}
 	
 	return false;
 };
 
-this.browserPanelResized = function() {
-	timerAid.init('browserPanelResized', function() {
-		dispatch(browserPanel, { type: 'browserPanelResized', cancelable: false });
-	}, 0);
-};
-
 this.delayMoveTop = function() {
-	timerAid.init('delayMoveTop', moveTop, 0);
+	Timers.init('delayMoveTop', moveTop, 0);
 };
 
 this.moveTopAsNeeded = function(e) {
@@ -58,30 +43,12 @@ this.moveTopAsNeeded = function(e) {
 	}
 };
 
-this.containerPDFResize = function(e) {
-	if(!inPDFJS(e.target.document)) { return; }
-	delayMoveTop();
-};
-
-this.fixFindBarPosition = function() {
-	if(!onTopFB) { return; }
-	
-	// Bug 893446 sets these properties to relative and absolute, causing the findbar to jump around when toggling it.
-	gFindBar.style.position = '';
-	gFindBar.parentNode.style.position = '';
-				
-	// Bug 893446 sets gFindBar.style.height incorrectly, we don't need this when we're using this feature
-	gFindBar.style.height = '';
-	
-	// Bug 893446 scrolls the content when toggling the findbar, this is of course not necessary as well with this feature
-	gFindBar._contentScrollOffset = 0;
-};
-
 // Handles the position of the findbar
 this.moveTop = function() {
 	// always move it at least once to prevent the initial hangup
-	if(lastTopStyle) {
-		if((!viewSource && !gFindBarInitialized) || gFindBar.hidden) { return; } // no need to move it again if it's hidden, the stylesheet should remain valid
+	if(moveTopStyle) {
+		// no need to move it again if it's hidden, the stylesheet should remain valid
+		if((!viewSource && !gFindBarInitialized) || gFindBar.hidden) { return; }
 	} else if(!viewSource) {
 		gFindBar; // make sure the find bar is initialized past this point
 	}
@@ -89,117 +56,90 @@ this.moveTop = function() {
 	// The textbox maxWidth code should be removed, so we have an accurate size of the find bar here
 	dispatch(gFindBar, { type: 'FindBarMaybeMoveTop', cancelable: false });
 	
-	fixFindBarPosition();
-	
-	moveTopStyle = {
-		marginTop: null,
-		movetoRight: prefAid.movetoRight,
+	var topStyle = {
+		movetoRight: Prefs.movetoRight,
 		maxWidth: -MIN_RIGHT -MIN_LEFT,
 		clientWidth: gFindBar.clientWidth,
 		left: MIN_LEFT,
 		right: MIN_RIGHT,
-		PDFJSloadingBar: false,
+		PDFJSloadingBar: 0,
+		inPDFJS: false,
 		top: -1 // Move the find bar one pixel up so it covers the toolbox borders, giving it a more seamless look
 	};
 	
-	var appContentPos = $('content').getBoundingClientRect();
-	moveTopStyle.maxWidth += appContentPos.width;
-	moveTopStyle.top += appContentPos.top;
-	moveTopStyle.left += appContentPos.left;
-	moveTopStyle.right += document.documentElement.clientWidth -appContentPos.right;
+	var contentPos = $('content').getBoundingClientRect();
+	topStyle.maxWidth += contentPos.width;
+	topStyle.top += contentPos.top;
+	topStyle.left += contentPos.left;
+	topStyle.right += document.documentElement.clientWidth -contentPos.right;
 	
 	// Compatibility with TreeStyleTab
-	if($('TabsToolbar') && !$('TabsToolbar').collapsed) {
+	if(!viewSource && TabsToolbar && !TabsToolbar.collapsed && TabsToolbar.getAttribute('treestyletab-tabbar-autohide-state') != 'hidden') {
 		// This is also needed when the tabs are on the left, the width of the findbar doesn't follow with the rest of the window for some reason
-		if($('TabsToolbar').getAttribute('treestyletab-tabbar-position') == 'left' || $('TabsToolbar').getAttribute('treestyletab-tabbar-position') == 'right') {
-			var TabsToolbar = $('TabsToolbar');
+		if(TabsToolbar.getAttribute('treestyletab-tabbar-position') == 'left' || TabsToolbar.getAttribute('treestyletab-tabbar-position') == 'right') {
 			var TabsSplitter = document.getAnonymousElementByAttribute($('content'), 'class', 'treestyletab-splitter');
-			moveTopStyle.maxWidth -= TabsToolbar.clientWidth;
-			moveTopStyle.maxWidth -= TabsSplitter.clientWidth +(TabsSplitter.clientLeft *2);
-			if(!prefAid.movetoRight && TabsToolbar.getAttribute('treestyletab-tabbar-position') == 'left') {
-				moveTopStyle.left += TabsToolbar.clientWidth;
-				moveTopStyle.left += TabsSplitter.clientWidth +(TabsSplitter.clientLeft *2);
+			topStyle.maxWidth -= TabsToolbar.clientWidth;
+			topStyle.maxWidth -= TabsSplitter.clientWidth +(TabsSplitter.clientLeft *2);
+			if(TabsToolbar.getAttribute('treestyletab-tabbar-position') == 'left') {
+				topStyle.left += TabsToolbar.clientWidth;
+				topStyle.left += TabsSplitter.clientWidth +(TabsSplitter.clientLeft *2);
 			}
-			if(prefAid.movetoRight && TabsToolbar.getAttribute('treestyletab-tabbar-position') == 'right') {
-				moveTopStyle.right += TabsToolbar.clientWidth;
-				moveTopStyle.right += TabsSplitter.clientWidth +(TabsSplitter.clientLeft *2);
+			if(TabsToolbar.getAttribute('treestyletab-tabbar-position') == 'right') {
+				topStyle.right += TabsToolbar.clientWidth;
+				topStyle.right += TabsSplitter.clientWidth +(TabsSplitter.clientLeft *2);
 			}
 		}
 	}
 	
 	// Compatibility with PDF.JS
-	if(isPDFJS) {
-		var toolbar = contentDocument.getElementById('toolbarViewer');
-		if(toolbar) {
-			moveTopStyle.top += toolbar.clientHeight;
-			var outerContainer = contentDocument.getElementById('outerContainer');
-			var sidebarContainer = contentDocument.getElementById('sidebarContainer');
-			if(outerContainer.classList.contains('sidebarOpen')) {
-				moveTopStyle.left += sidebarContainer.clientWidth;
-			}
-			var loadingBar = contentDocument.getElementById('loadingBar');
-			if(loadingBar && loadingBar.clientHeight) {
-				moveTopStyle.top += loadingBar.clientHeight;
-				moveTopStyle.PDFJSloadingBar = true;
-				
-				// don't cover the loading bar
-				moveTopStyle.top++;
-				
-				// Make sure we move the find bar back to its place when the loading bar is hidden
-				timerAid.init('moveTopPDFJSLoadingBar', function() {
-					try {
-						if(loadingBar.clientHeight == 0) {
-							timerAid.cancel('moveTopPDFJSLoadingBar');
-							moveTopAsNeeded({ type: 'FindBarUIChanged' });
-						}
-					}
-					catch(ex) {
-						timerAid.cancel('moveTopPDFJSLoadingBar');
-					}
-				}, 50, 'slack');
-			}
-			listenerAid.add(contentDocument.defaultView, 'resize', containerPDFResize, true);
+	if(isPDFJS && isPDFJS.toolbar) {
+		topStyle.inPDFJS = true;
+		topStyle.top += isPDFJS.toolbarHeight;
+		topStyle.left += isPDFJS.sidebarWidth;
+		topStyle.maxWidth -= isPDFJS.sidebarWidth;
+		if(isPDFJS.loadingBar) {
+			topStyle.top += isPDFJS.loadingBar;
+			topStyle.PDFJSloadingBar = isPDFJS.loadingBar;
+			
+			// don't cover the loading bar
+			topStyle.top++;
 		}
 	}
 	
-	toggleAttribute(gFindBar, 'inPDFJS', (isPDFJS && toolbar));
+	toggleAttribute(gFindBar, 'inPDFJS', topStyle.inPDFJS);
 	toggleNotificationState();
 	
-	if(!shouldReMoveTop(moveTopStyle)) {
+	if(!shouldReMoveTop(topStyle)) {
 		dispatch(gFindBar, { type: 'FindBarMovedTop', cancelable: false });
 		return;
 	}
 	
-	lastTopStyle = moveTopStyle;
-	
-	// Unload current stylesheet if it's been loaded
-	styleAid.unload('topFindBar_'+_UUID);
-	styleAid.unload('topFindBarCorners_'+_UUID);
+	moveTopStyle = topStyle;
 	
 	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 	sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 	sscode += '@-moz-document url("'+document.baseURI+'") {\n';
 	sscode += '	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop] {\n';
-	sscode += '		max-width: ' + Math.max(moveTopStyle.maxWidth, 5) + 'px !important;\n';
+	sscode += '		max-width: ' + Math.max(topStyle.maxWidth, 5) + 'px;\n';
 	// Bug 893446 sets left and right values to 0, so we need to overwrite them
-	if(!prefAid.movetoRight) {
-		sscode += '	left: ' + moveTopStyle.left + 'px !important;\n';
-		sscode += '	right: auto !important;\n';
+	if(!Prefs.movetoRight) {
+		sscode += '	left: ' + topStyle.left + 'px;\n';
+	//	sscode += '	right: auto;\n';
 	} else {
-		sscode += '	right: ' + moveTopStyle.right + 'px !important;\n';
-		sscode += '	left: auto !important;\n';
+		sscode += '	right: ' + topStyle.right + 'px;\n';
+	//	sscode += '	left: auto;\n';
 	}
-	sscode += '		top: ' + moveTopStyle.top + 'px !important;\n';
-	sscode += '		bottom: auto !important;\n';
+	sscode += '		top: ' + topStyle.top + 'px;\n';
+	sscode += '		bottom: auto;\n';
 	sscode += '	}';
 	sscode += '}';
 	
-	styleAid.load('topFindBar_'+_UUID, sscode, true);
+	Styles.load('topFindBar_'+_UUID, sscode, true);
 	
 	dispatch(gFindBar, { type: 'FindBarMovedTop', cancelable: false });
 	
 	moveTopCorners();
-	if(!viewSource) { findPersonaPosition(); }
+	if(!viewSource) { stylePersonaFindBar(); }
 	
 	// Doing it aSync prevents the window elements from jumping at startup (stylesheet not loaded yet)
 	aSync(function() { setOnTop(); });
@@ -208,32 +148,31 @@ this.moveTop = function() {
 this.moveTopCorners = function() {
 	// We also need to properly place the corners, these vary with OS, FF version, theme...
 	var barStyle = getComputedStyle(gFindBar);
-	var baseCornerWidth = 16;
 	var container = gFindBar.getElement('findbar-container');
 	
 	if(barStyle.getPropertyValue('direction') == 'ltr') {
-		var findBarPaddingStart = parseInt(barStyle.getPropertyValue('padding-left'));
-		var findBarPaddingEnd = parseInt(barStyle.getPropertyValue('padding-right'));
-		var findBarBorderStart = parseInt(barStyle.getPropertyValue('border-left-width'));
-		var findBarBorderEnd = parseInt(barStyle.getPropertyValue('border-right-width'));
+		var findBarPaddingStart = parseInt(barStyle.paddingLeft);
+		var findBarPaddingEnd = parseInt(barStyle.paddingRight);
+		var findBarBorderStart = parseInt(barStyle.borderLeftWidth);
+		var findBarBorderEnd = parseInt(barStyle.borderRightWidth);
 	} else {
-		var findBarPaddingStart = parseInt(barStyle.getPropertyValue('padding-right'));
-		var findBarPaddingEnd = parseInt(barStyle.getPropertyValue('padding-left'));
-		var findBarBorderStart = parseInt(barStyle.getPropertyValue('border-right-width'));
-		var findBarBorderEnd = parseInt(barStyle.getPropertyValue('border-left-width'));
+		var findBarPaddingStart = parseInt(barStyle.paddingRight);
+		var findBarPaddingEnd = parseInt(barStyle.paddingLeft);
+		var findBarBorderStart = parseInt(barStyle.borderRightWidth);
+		var findBarBorderEnd = parseInt(barStyle.borderLeftWidth);
 	}
 	
-	var beforeStart = -baseCornerWidth -findBarPaddingStart -(findBarBorderStart -1);
+	var beforeStart = -CORNER_WIDTH -findBarPaddingStart -(findBarBorderStart -1);
 	var afterStart = gFindBar.clientWidth -container.clientWidth -findBarPaddingEnd +(findBarBorderEnd -1);
 	
 	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 	sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 	sscode += '@-moz-document url("'+document.baseURI+'") {\n';
-	sscode += '	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:before { -moz-margin-start: ' + beforeStart + 'px !important; }\n';
-	sscode += '	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:after { -moz-margin-start: ' + afterStart + 'px !important; }\n';
+	sscode += '	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:before { -moz-margin-start: ' + beforeStart + 'px; }\n';
+	sscode += '	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:after { -moz-margin-start: ' + afterStart + 'px; }\n';
 	sscode += '}';
 	
-	styleAid.load('topFindBarCorners_'+_UUID, sscode, true);
+	Styles.load('topFindBarCorners_'+_UUID, sscode, true);
 	
 	forceCornerRedraw();
 };
@@ -243,102 +182,96 @@ this.forceCornerRedraw = function() {
 	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 	sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 	sscode += '@-moz-document url("'+document.baseURI+'") {\n';
-	sscode += '	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:before, findbar[movetotop]:after { padding-bottom: 1px !important; }\n';
+	sscode += '	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:before, findbar[movetotop]:after { padding-bottom: 1px; }\n';
 	sscode += '}';
-	styleAid.load('tempRedrawCorners_'+_UUID, sscode, true);
+	Styles.load('tempRedrawCorners_'+_UUID, sscode, true);
 	aSync(function() {
-		styleAid.unload('tempRedrawCorners_'+_UUID);
+		Styles.unload('tempRedrawCorners_'+_UUID);
 	}, 10);
 };
 
-this.findPersonaPosition = function(aSubject, aTopic) {
-	if(!trueAttribute(mainWindow, 'lwtheme')) {
-		prefAid.lwthemebgImage = '';
-		prefAid.lwthemebgWidth = 0;
-		prefAid.lwthemecolor = '';
-		prefAid.lwthemebgColor = '';
-		stylePersonaFindBar();
-		return;
-	}
-	
-	var windowStyle = getComputedStyle(mainWindow);
-	if(prefAid.lwthemebgImage != windowStyle.getPropertyValue('background-image') && windowStyle.getPropertyValue('background-image') != 'none') {
-		prefAid.lwthemebgImage = windowStyle.getPropertyValue('background-image');
-		prefAid.lwthemecolor = windowStyle.getPropertyValue('color');
-		prefAid.lwthemebgColor = windowStyle.getPropertyValue('background-color');
-		prefAid.lwthemebgWidth = 0;
-		
-		lwthemeImage = new window.Image();
-		lwthemeImage.onload = function() { findPersonaWidth(); };
-		lwthemeImage.src = prefAid.lwthemebgImage.substr(5, prefAid.lwthemebgImage.length - 8);
-		return;
-	}
-	
-	stylePersonaFindBar();
+this.lwtheme = {
+	bgImage: '',
+	color: '',
+	bgColor: ''
 };
 
-this.findPersonaWidth = function() {
-	if(prefAid.lwthemebgWidth == 0 && lwthemeImage.naturalWidth != 0) {
-		prefAid.lwthemebgWidth = lwthemeImage.naturalWidth;
-	}
-	
-	if(prefAid.lwthemebgWidth != 0) {
-		stylePersonaFindBar();
-	}
+this.personaChanged = function() {
+	aSync(stylePersonaFindBar);
 };
 
 this.stylePersonaFindBar = function() {
-	// Unload current stylesheet if it's been loaded
-	styleAid.unload('personaFindBar_'+_UUID);
+	if(!moveTopStyle) { return; }
 	
-	if(prefAid.lwthemebgImage != '') {
-		var windowStyle = getComputedStyle(mainWindow);
-		
-		// Another personas in OSX tweak
-		var offsetPersonaY = -moveTopStyle.top;
-		var offsetWindowPadding = windowStyle.getPropertyValue('background-position');
-		if(offsetWindowPadding.indexOf(' ') > -1 && offsetWindowPadding.indexOf('px', offsetWindowPadding.indexOf(' ') +1) > -1) {
-			offsetPersonaY += parseInt(offsetWindowPadding.substr(offsetWindowPadding.indexOf(' ') +1, offsetWindowPadding.indexOf('px', offsetWindowPadding.indexOf(' ') +1)));
-		}
-		
-		var barStyle = getComputedStyle(gFindBar);
-		if(barStyle.getPropertyValue('direction') == 'ltr') {
-			var findBarBorderStart = parseInt(barStyle.getPropertyValue('border-left-width'));
-			var findBarBorderEnd = parseInt(barStyle.getPropertyValue('border-right-width'));
-		} else {
-			var findBarBorderStart = parseInt(barStyle.getPropertyValue('border-right-width'));
-			var findBarBorderEnd = parseInt(barStyle.getPropertyValue('border-left-width'));
-		}
-		
-		// I have no idea where does the -1 come from, it's not the findbars own border
-		// or maybe it is, I'm using that for now.
-		if(!prefAid.movetoRight) {
-			var offsetPersonaXSide = 'left';
-			var offsetPersonaX = -moveTopStyle.left -(prefAid.lwthemebgWidth - mainWindow.clientWidth) -findBarBorderStart;
-		} else {
-			var offsetPersonaXSide = 'right';
-			var offsetPersonaX = -moveTopStyle.right -findBarBorderEnd;
-		}
-		
-		var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
-		sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
-		sscode += '@-moz-document url("'+document.baseURI+'") {\n';
-		sscode += '	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:not([inPDFJS]) {\n';
-		sscode += '	  background-image: ' + prefAid.lwthemebgImage + ' !important;\n';
-		sscode += '	  background-color: ' + prefAid.lwthemebgColor + ' !important;\n';
-		sscode += '	  color: ' + prefAid.lwthemecolor + ' !important;\n';
-		sscode += '	  background-position: '+offsetPersonaXSide+' '+offsetPersonaX+'px top '+offsetPersonaY+'px !important;\n';
-		sscode += '	  background-repeat: repeat !important;\n';
-		sscode += '	  background-size: auto auto !important;\n';
-		sscode += '	}\n';
-		
-		// There's just no way I can have rounded corners with personas
-		sscode += '	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:not([inPDFJS]):before, findbar[movetotop]:not([inPDFJS]):after { display: none !important; }\n';
-		
-		sscode += '}';
-		
-		styleAid.load('personaFindBar_'+_UUID, sscode, true);
+	if(!trueAttribute(document.documentElement, 'lwtheme')) {
+		lwtheme.bgImage = '';
+		lwtheme.color = '';
+		lwtheme.bgColor = '';
 	}
+	else {
+		var windowStyle = getComputedStyle(document.documentElement);
+		if(lwtheme.bgImage != windowStyle.backgroundImage && windowStyle.backgroundImage != 'none') {
+			lwtheme.bgImage = windowStyle.backgroundImage;
+			lwtheme.color = windowStyle.color;
+			lwtheme.bgColor = windowStyle.backgroundColor;
+		}
+	}
+	
+	// Unload current stylesheet if it's been loaded
+	if(!lwtheme.bgImage) {
+		Styles.unload('personaFindBar_'+_UUID);
+		return;
+	}
+	
+	var windowStyle = getComputedStyle(document.documentElement);
+	var barStyle = getComputedStyle(gFindBar);
+	
+	// Another personas in OSX tweak
+	var offsetWindowPadding = windowStyle.backgroundPosition;
+	var offsetY = -moveTopStyle.top;
+	if(offsetWindowPadding.indexOf(' ') > -1 && offsetWindowPadding.indexOf('px', offsetWindowPadding.indexOf(' ') +1) > -1) {
+		offsetY += parseInt(offsetWindowPadding.substr(offsetWindowPadding.indexOf(' ') +1, offsetWindowPadding.indexOf('px', offsetWindowPadding.indexOf(' ') +1)));
+	}
+	
+	if(barStyle.direction == 'ltr') {
+		var borderStart = parseInt(barStyle.borderLeftWidth);
+		var borderEnd = parseInt(barStyle.borderRightWidth);
+	} else {
+		var borderStart = parseInt(barStyle.borderRightWidth);
+		var borderEnd = parseInt(barStyle.borderLeftWidth);
+	}
+	
+	// I have no idea where does the -1 come from, it's not the findbars own border
+	// or maybe it is, I'm using that for now.
+	if(!Prefs.movetoRight) {
+		var offsetXSide = 'left';
+		var offsetX = -moveTopStyle.left +document.documentElement.clientWidth -borderStart;
+	} else {
+		var offsetXSide = 'right';
+		var offsetX = -moveTopStyle.right -borderStart;
+	}
+	
+	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
+	sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
+	sscode += '@-moz-document url("'+document.baseURI+'") {\n';
+	sscode += '	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:not([inPDFJS]) {\n';
+	sscode += '	  background-image: ' + lwtheme.bgImage + ';\n';
+	sscode += '	  background-color: ' + lwtheme.bgColor + ';\n';
+	sscode += '	  color: ' + lwtheme.color + ';\n';
+	sscode += '	  background-position: '+offsetXSide+' '+offsetX+'px top '+offsetY+'px;\n';
+	sscode += '	  background-repeat: repeat;\n';
+	sscode += '	  background-size: auto auto;\n';
+	sscode += '	}\n';
+	
+	// There's just no way I can have rounded corners with personas
+	sscode += '	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:not([inPDFJS]):before,\n';
+	sscode += '	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:not([inPDFJS]):after {\n';
+	sscode += '		display: none !important;\n';
+	sscode += '	}\n';
+	
+	sscode += '}';
+	
+	Styles.load('personaFindBar_'+_UUID, sscode, true);
 };
 
 this.toggleNotificationState = function() {
@@ -350,96 +283,26 @@ this.toggleNotificationState = function() {
 	
 	toggleAttribute(gFindBar, 'inNotification', inNotification);
 	
-	styleAid.unload('inNotification');
+	if(!inNotification) {
+		Styles.unload('inNotification_'+_UUID);
+		return;
+	}
 	
-	if(inNotification) {
-		// I'm not using top and lastTopStyle values incremented because this comes before moveTop, and on resizing window, values wouldn't be accurate
-		var notificationHeight = gBrowser.getNotificationBox().currentNotification.clientHeight + (gBrowser.getNotificationBox().currentNotification.clientTop *2) +1;
-		
-		var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
-		sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
-		sscode += '@-moz-document url("'+document.baseURI+'") {\n';
-		sscode += '	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop][inNotification] {\n';
-		sscode += '		margin-top: '+notificationHeight+'px !important;\n';
-		sscode += '	}\n';
-		sscode += '}';
-		
-		styleAid.load('inNotification', sscode, true);
-	}
-};
-
-this.changeLook = function() {
-	// Apply the special style for the findbar in pdf documents
-	if((isPDFJS && !trueAttribute(gFindBar, 'inPDFJS'))
-	|| (!isPDFJS && trueAttribute(gFindBar, 'inPDFJS'))) {
-		delayMoveTop();
-	}
-};
-
-// Prevent the FindBar from being visible in chrome pages like the add-ons manager
-this.hideOnChrome = function() {
-	// Bugfix for Tree Style Tab (and possibly others): findbar is on the background after uncollapsing
-	// So we do all this stuff aSync, should allow the window to repaint
-	timerAid.init('hideOnChrome', function() {
-		if(!gFindBarInitialized) { return; }
-		
-		var beforeState = gFindBar.collapsed;
-		hideIt(gFindBar, isCurrentBrowserValid);
-		
-		// Sometimes switching to the add-ons manager and then back to another tab, the find bar would be poorly positioned
-		if(gFindBar.collapsed != beforeState) {
-			moveTop();
-		}
-		
-		changeLook();
-		toggleNotificationState();
-	}, 0);
-};
-
-this.hideOnChromeContentLoaded = function(e) {
-	// this is the content document of the loaded page.
-	var doc = e.originalTarget;
-	if(doc instanceof window.HTMLDocument) {
-		// is this an inner frame?
-		// Find the root document:
-		while(doc.defaultView.frameElement) {
-			doc = doc.defaultView.frameElement.ownerDocument;
-		}
-		
-		if(doc == contentDocument) {
-			hideOnChrome();
-		}
-	}
-};
-
-// Tab progress listeners, handles opening and closing of pages and location changes
-this.hideOnChromeProgressListener = {
-	onLocationChange: function(aBrowser, webProgress, request, location) {
-		// Frames don't need to trigger this
-		if(webProgress.DOMWindow == aBrowser.contentWindow) {
-			hideOnChromeHandleBrowser(aBrowser, 100);
-		}
-	},
+	// I'm not using top and moveTopStyle values incremented because this comes before moveTop, and on resizing window, values wouldn't be accurate
+	var notificationHeight = gBrowser.getNotificationBox().currentNotification.clientHeight + (gBrowser.getNotificationBox().currentNotification.clientTop *2) +1;
 	
-	// Mostly handles some necessary browser tags
-	onProgressChange: function(aBrowser, webProgress, request, curSelfProgress, maxSelfProgress, curTotalProgress, maxTotalProgress) {
-		hideOnChromeHandleBrowser(aBrowser, curTotalProgress);
-	}
+	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
+	sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
+	sscode += '@-moz-document url("'+document.baseURI+'") {\n';
+	sscode += '	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop][inNotification] {\n';
+	sscode += '		margin-top: '+notificationHeight+'px !important;\n';
+	sscode += '	}\n';
+	sscode += '}';
+	
+	Styles.load('inNotification_'+_UUID, sscode, true);
 };
 
-this.hideOnChromeHandleBrowser = function(aBrowser, curTotalProgress) {
-	// I found the > 3 to be the best value for comparison ( coming from onProgressChange() for aboutBlankCollapse() ), from a lot of trial and errors tests
-	if(aBrowser == gBrowser.mCurrentBrowser && curTotalProgress > 3) {
-		hideOnChrome();
-	}
-};
-
-this.hideOnChromeAttrWatcher = function(obj, prop, oldVal, newVal) {
-	if(oldVal != newVal) {
-		hideOnChrome();
-	}
-};
-
+this.findBarMaxHeight = 0;
 this.setOnTop = function(e) {
 	if(!e || !e.defaultPrevented) {
 		// Bugfix: in windows 8 the findbar's bottom border will jump clicking a button if we are showing the icons instead of the labels.
@@ -458,9 +321,9 @@ this.setOnTop = function(e) {
 		var containerStyle = getComputedStyle(container);
 		var barStyle = getComputedStyle(gFindBar);
 		
-		height += parseInt(containerStyle.getPropertyValue('margin-bottom')) + parseInt(containerStyle.getPropertyValue('margin-top'));
-		height += parseInt(barStyle.getPropertyValue('padding-bottom')) + parseInt(barStyle.getPropertyValue('padding-top'));
-		height += parseInt(barStyle.getPropertyValue('border-bottom-width')) + parseInt(barStyle.getPropertyValue('border-top-width'));
+		height += parseInt(containerStyle.marginBottom) + parseInt(containerStyle.marginTop);
+		height += parseInt(barStyle.paddingBottom) + parseInt(barStyle.paddingTop);
+		height += parseInt(barStyle.borderBottomWidth) + parseInt(barStyle.borderTopWidth);
 		
 		initFindBar('movetotop',
 			function(bar) {
@@ -475,55 +338,123 @@ this.setOnTop = function(e) {
 		);
 		
 		// We also need to properly place the rounder corners, as their position can vary with themes
-		var cornerMarginTop = -parseInt(barStyle.getPropertyValue('padding-top'));
+		var cornerMarginTop = -parseInt(barStyle.paddingTop);
 		
 		var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 		sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 		sscode += '@-moz-document url("'+document.baseURI+'") {\n';
 		sscode += '	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:before,\n';
 		sscode += '	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:after {\n';
-		sscode += '	  margin-top: ' + cornerMarginTop + 'px !important;\n';
+		sscode += '	  margin-top: ' + cornerMarginTop + 'px;\n';
 		sscode += '	}\n';
 		sscode += '}';
 		
-		styleAid.load('placeCornersFindBar_'+_UUID, sscode, true);
+		Styles.load('placeCornersFindBar_'+_UUID, sscode, true);
 	}
 };
 
-moduleAid.LOADMODULE = function() {
-	prefAid.listen('movetoRight', moveTop);
-	
-	listenerAid.add(browserPanel, 'resize', browserPanelResized);
-	listenerAid.add(window, 'WillOpenFindBar', setOnTop);
-	listenerAid.add(window, 'OpenedFindBar', moveTop);
-	listenerAid.add(window, 'ClosedFindBar', fixFindBarPosition);
-	listenerAid.add(window, "UpdatedStatusFindBar", moveTopAsNeeded);
-	listenerAid.add(window, "HighlightCounterUpdated", moveTopAsNeeded);
-	listenerAid.add(window, 'FindBarUIChanged', moveTopAsNeeded);
-	
-	if(!viewSource) {
-		// Register all opened tabs with a listener
-		gBrowser.addTabsProgressListener(hideOnChromeProgressListener);
-		listenerAid.add(gBrowser.tabContainer, "TabSelect", hideOnChrome, false);
-		listenerAid.add(gBrowser, "DOMContentLoaded", hideOnChromeContentLoaded, false);
-		objectWatcher.addAttributeWatcher($('cmd_find'), 'disabled', hideOnChromeAttrWatcher);
+this.finderTopListener = {
+	onPDFJS: function(aBrowser) {
+		if(!viewSource && aBrowser != gBrowser.mCurrentBrowser) { return; }
 		
-		// Compatibility with LessChrome HD
-		listenerAid.add(window, "LessChromeShown", moveTop, false);
-		listenerAid.add(window, "LessChromeHidden", moveTop, false);
+		if(shouldReMoveTop()) {
+			moveTop();
+		}
+	},
+	
+	onIsValid: function(aBrowser) {
+		if(!viewSource && aBrowser != gBrowser.mCurrentBrowser) { return; }
 		
-		observerAid.add(findPersonaPosition, "lightweight-theme-changed");
+		hideOnChrome();
 	}
+};
+
+this.changeLook = function() {
+	// Apply the special style for the findbar in pdf documents
+	if((isPDFJS && !trueAttribute(gFindBar, 'inPDFJS'))
+	|| (!isPDFJS && trueAttribute(gFindBar, 'inPDFJS'))) {
+		delayMoveTop();
+	}
+};
+
+// Prevent the FindBar from being visible in chrome pages like the add-ons manager
+this.hideOnChrome = function() {
+	// Bugfix for Tree Style Tab (and possibly others): findbar is on the background after uncollapsing
+	// So we do all this stuff aSync, should allow the window to repaint
+	Timers.init('hideOnChrome', function() {
+		if(!gFindBarInitialized) { return; }
+		
+		var isValid = Finder.isValid;
+		if(isValid == gFindBar.collapsed) {
+			hideIt(gFindBar, isValid);
+			if(isValid) {
+				// Sometimes switching to the add-ons manager and then back to another tab, the find bar would be poorly positioned
+				moveTop();
+			}
+			
+			changeLook();
+			toggleNotificationState();
+		}
+	}, 0);
+};
+
+this.hideOnChromeAttrWatcher = function(obj, prop, oldVal, newVal) {
+	if(oldVal != newVal) {
+		hideOnChrome();
+	}
+};
+
+Modules.LOADMODULE = function() {
+	Prefs.listen('movetoRight', moveTop);
+	
+	Listeners.add(window, 'WillOpenFindBar', setOnTop);
+	Listeners.add(window, 'OpenedFindBar', moveTop);
+	Listeners.add(window, "UpdatedStatusFindBar", moveTopAsNeeded);
+	Listeners.add(window, 'FindBarUIChanged', moveTopAsNeeded);
 	
 	// Reposition the findbar when the window resizes
-	listenerAid.add(browserPanel, "browserPanelResized", delayMoveTop, false);
+	Listeners.add(window, "resize", delayMoveTop);
+	
+	if(!viewSource) {
+		initFindBar('moveToTopContent',
+			function(bar) {
+				Messenger.loadInBrowser(bar.browser, 'moveToTop');
+				bar.browser.finder.addResultListener(finderTopListener);
+			},
+			function(bar) {
+				bar.browser.finder.removeResultListener(finderTopListener);
+				Messenger.unloadFromBrowser(bar.browser, 'moveToTop');
+			}
+		);
+		
+		Listeners.add(gBrowser.tabContainer, "TabSelect", hideOnChrome);
+		Watchers.addAttributeWatcher($('cmd_find'), 'disabled', hideOnChromeAttrWatcher);
+		Observers.add(personaChanged, "lightweight-theme-styling-update");
+	}
+	
+	// To fix the findbar's close button being outside the container of the rest of its buttons.
+	// This will probably need to be changed/remove once https://bugzilla.mozilla.org/show_bug.cgi?id=939523 is addressed
+	initFindBar('fixCloseButtonTop',
+		function(bar) {
+			bar._mainCloseButton = bar.getElement('find-closebutton');
+			bar._topCloseButton = bar.getElement('findbar-container').appendChild(bar._mainCloseButton.cloneNode(true));
+			setAttribute(bar._topCloseButton, 'oncommand', 'gFindBar.close();');
+			removeAttribute(bar._mainCloseButton, 'anonid');
+		},
+		function(bar) {
+			bar._topCloseButton.remove();
+			setAttribute(bar._mainCloseButton, 'anonid', 'find-closebutton');
+			delete bar._mainCloseButton;
+			delete bar._topCloseButton;
+		}
+	);
 	
 	moveTop();
 	
 	if(!viewSource) {
 		// we just init this so we can easily remove the collapsed state and others later when disabling the module if necessary
 		initFindBar('resetTopState',
-			function(bar) { return; },
+			function(bar) {},
 			function(bar) {
 				hideIt(bar, true);
 				removeAttribute(bar, 'inPDFJS');
@@ -535,48 +466,32 @@ moduleAid.LOADMODULE = function() {
 	}
 };
 
-moduleAid.UNLOADMODULE = function() {
+Modules.UNLOADMODULE = function() {
 	if(!viewSource) {
-		observerAid.remove(findPersonaPosition, "lightweight-theme-changed");
+		Observers.remove(personaChanged, "lightweight-theme-styling-update");
+		Watchers.removeAttributeWatcher($('cmd_find'), 'disabled', hideOnChromeAttrWatcher);
+		Listeners.remove(gBrowser.tabContainer, "TabSelect", hideOnChrome);
 		
-		// Compatibility with LessChrome HD
-		listenerAid.remove(window, "LessChromeShown", moveTop, false);
-		listenerAid.remove(window, "LessChromeHidden", moveTop, false);
-		
-		objectWatcher.removeAttributeWatcher($('cmd_find'), 'disabled', hideOnChromeAttrWatcher);
-		listenerAid.remove(gBrowser.tabContainer, "TabSelect", hideOnChrome, false);
-		listenerAid.remove(gBrowser, "DOMContentLoaded", hideOnChromeContentLoaded, false);
-		gBrowser.removeTabsProgressListener(hideOnChromeProgressListener);
-		
-		styleAid.unload('inNotification');
-		
-		for(var b=0; b<gBrowser.browsers.length; b++) {
-			var inDoc = gBrowser.browsers[b].contentDocument;
-			if(inPDFJS(inDoc)) {
-				listenerAid.remove(contentDocument.defaultView, 'resize', containerPDFResize, true);
-			}
-		}
+		Styles.unload('inNotification_'+_UUID);
 		
 		deinitFindBar('resetTopState');
+		deinitFindBar('moveToTopContent');
 	}
 	
-	listenerAid.remove(browserPanel, "browserPanelResized", delayMoveTop, false);
-	
-	listenerAid.remove(window, 'FindBarUIChanged', moveTopAsNeeded);
-	listenerAid.remove(window, 'WillOpenFindBar', setOnTop);
-	listenerAid.remove(window, 'OpenedFindBar', moveTop);
-	listenerAid.remove(window, 'ClosedFindBar', fixFindBarPosition);
-	listenerAid.remove(window, "UpdatedStatusFindBar", moveTopAsNeeded);
-	listenerAid.remove(window, "HighlightCounterUpdated", moveTopAsNeeded);
-	listenerAid.remove(browserPanel, 'resize', browserPanelResized);
+	Listeners.remove(window, "resize", delayMoveTop);
+	Listeners.remove(window, 'FindBarUIChanged', moveTopAsNeeded);
+	Listeners.remove(window, 'WillOpenFindBar', setOnTop);
+	Listeners.remove(window, 'OpenedFindBar', moveTop);
+	Listeners.remove(window, "UpdatedStatusFindBar", moveTopAsNeeded);
 	
 	deinitFindBar('movetotop');
+	deinitFindBar('fixCloseButtonTop');
 	
-	prefAid.unlisten('movetoRight', moveTop);
+	Prefs.unlisten('movetoRight', moveTop);
 	
-	styleAid.unload('personaFindBar_'+_UUID);
-	styleAid.unload('topFindBar_'+_UUID);
-	styleAid.unload('topFindBarCorners_'+_UUID);
-	styleAid.unload('tempRedrawCorners_'+_UUID);
-	styleAid.unload('placeCornersFindBar_'+_UUID);
+	Styles.unload('personaFindBar_'+_UUID);
+	Styles.unload('topFindBar_'+_UUID);
+	Styles.unload('topFindBarCorners_'+_UUID);
+	Styles.unload('tempRedrawCorners_'+_UUID);
+	Styles.unload('placeCornersFindBar_'+_UUID);
 };

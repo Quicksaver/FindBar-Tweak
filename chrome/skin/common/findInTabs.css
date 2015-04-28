@@ -1,0 +1,142 @@
+@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
+@-moz-document url("chrome://findbartweak/content/findInTabsFull.xul") {
+	
+	#findbartweak-findInTabs-box {
+		min-height: 20px;
+	}
+	
+	#findbartweak-findInTabs-hits richlistitem {
+		padding: 0 5px;
+	}
+	
+	#findbartweak-findInTabs-hits richlistitem label {
+		margin-left: 0;
+		margin-right: 0;
+	}
+	
+	#findbartweak-findInTabs-hits label[unloaded] {
+		text-align: center;
+	}
+	
+	.findbar-tabs {
+		list-style-image: url("chrome://findbartweak/skin/findintabs.png");
+		-moz-image-region: rect(0px, 16px, 16px, 0px);
+	}
+	
+	.findbar-tabs-update {
+		list-style-image: url("chrome://findbartweak/skin/findintabs.png");
+		-moz-image-region: rect(0px, 32px, 16px, 16px);
+		-moz-margin-end: 5px;
+	}
+	
+	findbar:not([hideLabels]) .findbar-tabs-update image,
+	findbar:not([hideLabels]) .findbar-tabs image {
+		display: none;
+	}
+	
+	.findbar-tabs image,
+	.findbar-tabs-update image,
+	.findbar-cs-button image {
+		background: none;
+		border: none;
+	}
+	
+	.findInTabs-list {
+		min-width: 30px;
+		height: 100%;
+		padding: 3px;
+		overflow: hidden;
+	}
+	
+	.findInTabs-list listheader {
+		-moz-appearance: none;
+		background: none;
+		border: none;
+		box-shadow: none;
+		padding: 0;
+		pointer-events: none;
+	}
+	
+	.findInTabs-list listheader .hitsHeader {
+		text-align: center;
+	}
+	
+	.findInTabs-list listheader image {
+		display: none;
+	}
+	
+	.findInTabs-list image {
+		min-width: 16px;
+		max-height: 16px;
+		-moz-margin-start: 1px;
+	}
+	
+	.findInTabs-list .right {
+		text-align: end;
+	}
+	
+	#findbartweak-findInTabs-tabs label[unloaded] {
+		font-style: italic;
+		color: rgb(204,0,0);
+		text-shadow: 0px 0px 9px white, 0px 0px 9px white, 0px 1px 0px rgba(255, 255, 255, 0.3);
+	}
+	
+	.findInTabs-splitter {
+		margin-top: 26px;
+		margin-bottom: 5px;
+	}
+	
+	#findbartweak-findInTabs-filterBox {
+		width: 16px;
+		margin-top: 5px;
+		margin-left: -5px;
+		margin-right: -11px;
+	}
+	
+	#findbartweak-findInTabs-filter {
+		list-style-image: url("chrome://findbartweak/skin/findintabs.png");
+		-moz-image-region: rect(0px 48px 16px 32px);
+		opacity: 0.7;
+		transition: opacity .1s;
+	}
+	
+	#findbartweak-findInTabs-filter:hover,
+	#findbartweak-findInTabs-filter[active]:hover {
+		opacity: 1;
+		cursor: pointer;
+	}
+	
+	#findbartweak-findInTabs-filter[active] {
+		opacity: 0.85;
+		-moz-image-region: rect(16px 48px 32px 32px);
+	}
+	
+	/* Some personas add a shadow to the entries */
+	.findInTabs-list label:not([unloaded]) {
+		text-shadow: none;
+	}
+	
+	.findInTabs-list label[highlight]:hover {
+		cursor: pointer;
+	}
+	
+	/* these aren't needed in the FIT standalone window */
+	.findInTabs-bar toolbarbutton[anonid="find-next"],
+	.findInTabs-bar toolbarbutton[anonid="find-previous"],
+	.findInTabs-bar toolbarbutton[anonid="find-closebutton"],
+	.findInTabs-bar toolbarbutton[anonid="highlight"],
+	.findInTabs-bar label[anonid="match-case-status"],
+	.findInTabs-bar description[anonid="find-status"] {
+		display: none;
+	}
+	
+	.findInTabs-bar,
+	.findInTabs-bar[hidden] {
+		transition: none;
+	}
+	
+	/* Original binding has many handlers that don't work when the findbar has no browser associated */
+	.findInTabs-bar textbox {
+		-moz-binding: url("chrome://findbartweak/content/FITbinding.xbl#FIT-textbox");
+	}
+}

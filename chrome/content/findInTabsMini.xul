@@ -9,7 +9,7 @@
 			accesskey="&FITbutton.accesskey;"
 			type="checkbox"
 			autoCheck="false"
-			oncommand="objName.toggleFIT();" />
+			oncommand="objName.FITMini.toggle();" />
 	</broadcasterset>
 	
 	<window id="main-window">
@@ -17,7 +17,7 @@
 			<key id="objName-findInTabs-key"
 				keycode="VK_F3"
 				modifiers="alt"
-				oncommand="objName.commandUpdateFIT();" />
+				oncommand="objName.FITMini.command();" />
 		</keyset>
 	</window>
 	
@@ -30,14 +30,14 @@
 				accesskey="&FITbutton.accesskey;"
 				type="checkbox"
 				autoCheck="false"
-				oncommand="objName.toggleFIT();" />
+				oncommand="objName.FITMini.toggle();" />
 		</broadcasterset>
 		
 		<keyset id="objName-findInTabs-keyset">
 			<key id="objName-findInTabs-key"
 				keycode="VK_F3"
 				modifiers="alt"
-				oncommand="objName.commandUpdateFIT();" />
+				oncommand="objName.FITMini.command();" />
 		</keyset>
 	</window>
 	

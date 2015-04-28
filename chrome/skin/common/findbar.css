@@ -1,16 +1,15 @@
-@import url("chrome://findbartweak/skin/sights.css");
-
 @namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
 @-moz-document
 	url("chrome://browser/content/browser.xul"),
 	url("chrome://global/content/viewSource.xul"),
 	url("chrome://global/content/viewPartialSource.xul"),
-	url("chrome://findbartweak/content/findInTabsFull.xul"),
-	url-prefix("chrome://updatescan/") {
+	url("chrome://findbartweak/content/findInTabsFull.xul") {
+	
+	/* findbar appearance */
 	
 	findbar[hideLabels] checkbox[anonid="find-case-sensitive"],
 	findbar[noClose] .findbar-closebutton,
-	findbar[fixCloseButton] .findbar-closebutton:not([anonid]) {
+	findbar .findbar-closebutton:not([anonid]) {
 		display: none;
 	}
 	
@@ -41,9 +40,39 @@
 	findbar[keepButtons] spacer {
 		display: -moz-box;
 	}
+	
 	findbar[keepButtons] label[anonid="match-case-status"] {
 		display: none;
 	}
+	
+	.findbar-cs-button,
+	findbar[hideLabels] toolbarbutton[anonid="find-case-sensitive"] {
+		list-style-image: url("chrome://findbartweak/skin/toolbar.png");
+		-moz-image-region: rect(0px 16px 16px 0px);
+	}
+	
+	image[anonid="find-status-icon"][status="pending"] {
+		-moz-padding-start: 8px;
+	}
+	
+	/* to show the findbar on the right or the left, we just switch the locale direction when it's on the bottom */
+	
+	findbar:not([movetotop])[movetoright]:-moz-locale-dir(ltr) > hbox.findbar-container,
+	findbar:not([movetotop]):not([movetoright]):-moz-locale-dir(rtl) > hbox.findbar-container {
+		direction: rtl;
+	}
+	
+	findbar:not([movetotop])[movetoright]:-moz-locale-dir(ltr) > hbox.findbar-container > *,
+	findbar:not([movetotop]):not([movetoright]):-moz-locale-dir(rtl) > hbox.findbar-container > * {
+		direction: ltr;
+	}
+	
+	findbar:not([movetotop])[movetoright]:-moz-locale-dir(ltr) .findbar-find-status,
+	findbar:not([movetotop]):not([movetoright]):-moz-locale-dir(rtl) .findbar-find-status {
+		margin: 0 12px !important; /* !important tag is necessary, the original also have !important tags */
+	}
+	
+	/* small findbar at the top */
 	
 	findbar[movetotop] {
 		position: fixed;
@@ -57,39 +86,9 @@
 		min-width: 15px;
 	}
 	
-	findbar:not([movetotop])[movetoright]:-moz-locale-dir(ltr) > hbox.findbar-container,
-	findbar:not([movetotop]):not([movetoright]):-moz-locale-dir(rtl) > hbox.findbar-container {
-		direction: rtl;
-	}
-	findbar:not([movetotop])[movetoright]:-moz-locale-dir(ltr) > hbox.findbar-container > *,
-	findbar:not([movetotop]):not([movetoright]):-moz-locale-dir(rtl) > hbox.findbar-container > * {
-		direction: ltr;
-	}
-	
-	findbar:not([movetotop])[movetoright]:-moz-locale-dir(ltr) .findbar-find-status,
-	findbar:not([movetotop]):not([movetoright]):-moz-locale-dir(rtl) .findbar-find-status {
-		margin: 0 12px !important; /* !important tag is necessary, the original also have !important tags */
-	}
-	
-	.findbar-cs-button,
-	findbar[hideLabels] toolbarbutton[anonid="find-case-sensitive"] {
-		list-style-image: url("chrome://findbartweak/skin/toolbar.png");
-		-moz-image-region: rect(0px 16px 16px 0px);
-	}
-	
-	image[anonid="find-status-icon"][status="pending"] {
-		-moz-padding-start: 8px;
-	}
-	
 	/* Rounded inner corners */
-	findbar[movetotop]:before {
-		content: "";
-		width: 16px;
-		height: 16px;
-		border-radius: 8px;
-		background: transparent;
-		position: fixed;
-	}
+	
+	findbar[movetotop]:before,
 	findbar[movetotop]:after {
 		content: "";
 		width: 16px;
@@ -99,21 +98,8 @@
 		position: fixed;
 	}
 	
-	/* FF25 Tweaks */
-	window[findbartweak-FF25Tweaks] findbar:-moz-lwtheme,
-	window[findbartweak-FF25Tweaks] #content:-moz-lwtheme {
-		background-color: transparent !important; /* !important tag needed to override style attr of #content in WinXP */
-	}
-	
-	/* Find Toolbar at the bottom in FF25 */
-	window:not(#findbartweak-findInTabs) findbar:not([position="top"]) {
-		-moz-box-ordinal-group: 3;
-	}
-	resizer[anonid="findbartweak-findInTabs-resizer"][position="top"] {
-		-moz-box-ordinal-group: 0;
-	}
-	
 	/* Find Toolbar styled for PDF.JS documents */
+	
 	findbar[movetotop][inPDFJS]:-moz-locale-dir(ltr):before,
 	findbar[movetotop][inPDFJS]:-moz-locale-dir(rtl):after {
 		box-shadow: 	2px -2px 0 -2px rgba(255,255,255,0.08),
@@ -121,6 +107,7 @@
 		                7px -4px 0px -4px rgba(68,68,68,0.95),
 		                6px -4px 0px -4px rgba(68,68,68,0.95);
 	}
+	
 	findbar[movetotop][inPDFJS]:-moz-locale-dir(ltr):after,
 	findbar[movetotop][inPDFJS]:-moz-locale-dir(rtl):before {
 		box-shadow: 	-2px -2px 0 -2px rgba(255,255,255,0.08),
@@ -128,6 +115,7 @@
 		                -7px -4px 0px -4px rgba(68,68,68,0.95),
 		                -6px -4px 0px -4px rgba(68,68,68,0.95);
 	}
+	
 	findbar[movetotop][inPDFJS] {
 		border: none;
 		background-color: rgb(71,71,71);
@@ -140,12 +128,14 @@
 		                rgba(0,0,0,0.15) 0px 1px 0px 0px,
 		                rgba(0,0,0,0.1) 0px 1px 1px 0px;
 	}
+	
 	findbar[movetotop][inPDFJS] toolbarbutton:not([disabled="true"]),
 	findbar[movetotop][inPDFJS] .findbar-find-status {
 		color: rgb(216,216,216);
 	}
 	
 	/* Textbox resizers */
+	
 	findbar .find-textbox-resizer {
 		-moz-appearance: none !important;
 		background: none;
@@ -156,223 +146,5 @@
 	findbar[movetoright] resizer[anonid="find-right-resizer"]:-moz-locale-dir(ltr),
 	findbar:not([movetoright]) resizer[anonid="find-right-resizer"]:-moz-locale-dir(rtl) {
 		display: none;
-	}
-	
-	/* Grid stuff */
-	hbox[anonid="gridBox"] {
-		pointer-events: none;
-		width: 100%;
-		height: 100%;
-	}
-	
-	vbox[anonid="findGrid"] {
-		opacity: 0.7;
-	}
-	
-	vbox[anonid="findGrid"] > vbox:not(.topSpacer):not(.bottomSpacer) {
-		position: relative;
-	}
-	
-	vbox[anonid="findGrid"] > vbox > vbox:not([highlight]) {
-		display: none;
-	}
-	
-	vbox[anonid="findGrid"] vbox[highlight] {
-		position: absolute;
-		width: 100%;
-		min-height: 2px !important;
-	}
-	
-	vbox[anonid="findGrid"][gridSpacers="none"] vbox[flex="0"] {
-		height: 0px;
-	}
-	
-	vbox[anonid="findGrid"] vbox[pattern] {
-		background-image: url("chrome://findbartweak/skin/pattern.gif");
-	}
-	
-	vbox[anonid="findGrid"] vbox[highlight]:not([pattern]):not([current]):not([hover]) { z-index: 100; }
-	vbox[anonid="findGrid"] vbox[pattern]:not([current]):not([hover]) { z-index: 200; }
-	vbox[anonid="findGrid"] vbox[current] { z-index: 300; }
-	vbox[anonid="findGrid"] vbox[hover] { z-index: 400; }
-	
-	/* For HBox frame grids */
-	hbox[anonid="gridBox"][ownedByFindBarTweak],
-	hbox[anonid="gridBox"][ownedByFindBarTweak] vbox[anonid="findGrid"] {
-		display: flex;
-	}
-	
-	hbox[anonid="gridBox"][ownedByFindBarTweak] vbox[anonid="findGrid"] {
-		flex-direction: column;
-	}
-	
-	hbox[anonid="gridBox"][ownedByFindBarTweak] vbox[anonid="findGrid"] > vbox:not(.topSpacer):not(.bottomSpacer) {
-		height: 100%;
-	}
-	
-	/* Grid for the View Source window */
-	#viewSource hbox[anonid="gridBox"] {
-		position: fixed !important;
-	}
-	
-	#viewSource vbox[anonid="findGrid"] {
-		height: 100%;
-		position: relative;
-		top: -13px; /* I have no idea why this happens... */
-	}
-
-	/* Find In Tabs */
-	#main-window[findbartweak-FITopen]:-moz-lwtheme {
-		background-repeat: repeat-y;
-	}
-	
-	resizer[anonid="findbartweak-findInTabs-resizer"] {
-		-moz-appearance: none;
-		background: none;
-		height: 4px;
-	}
-	resizer[anonid="findbartweak-findInTabs-resizer"][position="bottom"] {
-		margin-bottom: -4px;
-	}
-	resizer[anonid="findbartweak-findInTabs-resizer"][position="top"] {
-		margin-top: -4px;
-	}
-	
-	#findbartweak-findInTabs-box {
-		min-height: 20px;
-	}
-	
-	#findbartweak-findInTabs-hits richlistitem {
-		padding: 0 5px;
-	}
-	#findbartweak-findInTabs-hits richlistitem label {
-		margin-left: 0;
-		margin-right: 0;
-	}
-	
-	#findbartweak-findInTabs-hits label[unloaded] {
-		text-align: center;
-	}
-	
-	.findbar-tabs {
-		list-style-image: url("chrome://findbartweak/skin/findintabs.png");
-		-moz-image-region: rect(0px, 16px, 16px, 0px);
-	}
-	
-	.findbar-tabs-update {
-		list-style-image: url("chrome://findbartweak/skin/findintabs.png");
-		-moz-image-region: rect(0px, 32px, 16px, 16px);
-	}
-	
-	.findbar-tabs-update {
-		-moz-margin-end: 5px;
-	}
-	findbar:not([hideLabels]) .findbar-tabs-update image,
-	findbar:not([hideLabels]) .findbar-tabs image {
-		display: none;
-	}
-	
-	.findbar-tabs image,
-	.findbar-tabs-update image,
-	.findbar-cs-button image {
-		background: none;
-		border: none;
-	}
-	
-	.findInTabs-list {
-		min-width: 30px;
-		height: 100%;
-		padding: 3px;
-		overflow: hidden;
-	}
-	
-	.findInTabs-list listheader {
-		-moz-appearance: none;
-		background: none;
-		border: none;
-		box-shadow: none;
-		padding: 0;
-		pointer-events: none;
-	}
-	
-	.findInTabs-list listheader .hitsHeader {
-		text-align: center;
-	}
-	
-	.findInTabs-list listheader image {
-		display: none;
-	}
-	
-	.findInTabs-list image {
-		min-width: 16px;
-		max-height: 16px;
-		-moz-margin-start: 1px;
-	}
-	
-	.findInTabs-list .right {
-		text-align: end;
-	}
-	
-	#findbartweak-findInTabs-tabs label[unloaded] {
-		font-style: italic;
-		color: rgb(204,0,0);
-		text-shadow: 0px 0px 9px white, 0px 0px 9px white, 0px 1px 0px rgba(255, 255, 255, 0.3);
-	}
-	
-	.findInTabs-splitter {
-		margin-top: 26px;
-		margin-bottom: 5px;
-	}
-	
-	#findbartweak-findInTabs-filterBox {
-		width: 16px;
-		margin-top: 5px;
-		margin-left: -5px;
-		margin-right: -11px;
-	}
-	
-	#findbartweak-findInTabs-filter {
-		list-style-image: url("chrome://findbartweak/skin/findintabs.png");
-		-moz-image-region: rect(0px 48px 16px 32px);
-		opacity: 0.7;
-		transition: opacity .1s;
-	}
-	#findbartweak-findInTabs-filter:hover,
-	#findbartweak-findInTabs-filter[active]:hover {
-		opacity: 1;
-		cursor: pointer;
-	}
-	#findbartweak-findInTabs-filter[active] {
-		opacity: 0.85;
-		-moz-image-region: rect(16px 48px 32px 32px);
-	}
-	
-	/* Some personas add a shadow to the entries */
-	.findInTabs-list label:not([unloaded]) {
-		text-shadow: none;
-	}
-	
-	.findInTabs-list label[highlight]:hover {
-		cursor: pointer;
-	}
-	
-	/* Specific for the FIT standalone window */
-	.findInTabs-bar toolbarbutton[anonid="find-next"],
-	.findInTabs-bar toolbarbutton[anonid="find-previous"],
-	.findInTabs-bar toolbarbutton[anonid="find-closebutton"],
-	.findInTabs-bar toolbarbutton[anonid="highlight"],
-	.findInTabs-bar label[anonid="match-case-status"],
-	.findInTabs-bar description[anonid="find-status"] {
-		display: none;
-	}
-	
-	.findInTabs-bar textbox {
-		/* Original binding has many handlers that don't work when the findbar has no browser associated */
-		-moz-binding: url("chrome://findbartweak/content/FITbinding.xbl#FIT-textbox");
-	}
-	
-	.findInTabs-bar,
-	.findInTabs-bar[hidden] {
-		transition: none;
 	}
 }

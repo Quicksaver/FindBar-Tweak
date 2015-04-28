@@ -1,10 +1,10 @@
-moduleAid.VERSION = '1.0.0';
+Modules.VERSION = '1.0.1';
 
 this.overrideFindlistWidth = function() {
-	prefAid.fieldWidth = prefAid.findFieldWidth;
+	Prefs.fieldWidth = Prefs.findFieldWidth;
 	initFindBar('findlistFix',
 		function(bar) {
-			bar.getElement('findbar-textbox').style.width = prefAid.fieldWidth+'px';
+			bar.getElement('findbar-textbox').style.width = Prefs.fieldWidth+'px';
 		},
 		function(bar) {
 			bar.getElement('findbar-textbox').style.width = '';
@@ -13,15 +13,15 @@ this.overrideFindlistWidth = function() {
 	);
 };
 
-moduleAid.LOADMODULE = function() {
-	prefAid.setDefaults({ fieldWidth: 150 }, 'findlist');
+Modules.LOADMODULE = function() {
+	Prefs.setDefaults({ fieldWidth: 150 }, 'findlist');
 	
-	prefAid.listen('findFieldWidth', overrideFindlistWidth);
+	Prefs.listen('findFieldWidth', overrideFindlistWidth);
 	overrideFindlistWidth();
 };
 
-moduleAid.UNLOADMODULE = function() {
-	prefAid.unlisten('findFieldWidth', overrideFindlistWidth);
+Modules.UNLOADMODULE = function() {
+	Prefs.unlisten('findFieldWidth', overrideFindlistWidth);
 	
 	deinitFindbar('findlistFix');
 };

@@ -1,16 +1,16 @@
-moduleAid.VERSION = '1.2.0';
+Modules.VERSION = '1.2.1';
 
 this.blurClosesAdd = function() {
-	listenerAid.add(window, 'focus', delayBlurCloses, true);
+	Listeners.add(window, 'focus', delayBlurCloses, true);
 };
 
 this.blurClosesRemove = function() {
-	listenerAid.remove(window, 'focus', delayBlurCloses, true);
+	Listeners.remove(window, 'focus', delayBlurCloses, true);
 };
 
 // The delay is for FAYT feature, to give it time to focus the findbar and not the document window
 this.delayBlurCloses = function(e) {
-	timerAid.init('blurCloses', function() { blurCloses(e); }, 0);
+	Timers.init('blurCloses', () => { blurCloses(e); }, 0);
 };
 
 this.blurCloses = function(e) {
@@ -23,8 +23,6 @@ this.blurCloses = function(e) {
 };
 
 this.blurClosesTabSelect = function(e) {
-	if(!dispatch(currentTab._findBar, { type: 'ClosingFindbarOnBlurTabSelect' })) { return; }
-	
 	if(e.type == 'TabSelect') {
 		gFindBar.close();
 	} else if(currentTab && currentTab._findBar) {
@@ -35,33 +33,32 @@ this.blurClosesTabSelect = function(e) {
 	}
 };
 
-moduleAid.LOADMODULE = function() {
+Modules.LOADMODULE = function() {
 	if(!viewSource) {
-		for(var t=0; t<gBrowser.mTabs.length; t++) {
-			var tab = gBrowser.mTabs[t];
+		for(var tab of gBrowser.tabs) {
 			if(tab._findBar && !tab._findBar.hidden) {
 				tab._findBar.close();
 			}
 		}
 	}
 	
-	listenerAid.add(window, 'OpenedFindBar', blurClosesAdd);
-	listenerAid.add(window, 'ClosedFindBar', blurClosesRemove);
-	listenerAid.add(window, 'ClosedFindBarAnotherTab', blurClosesRemove);
+	Listeners.add(window, 'OpenedFindBar', blurClosesAdd);
+	Listeners.add(window, 'ClosedFindBar', blurClosesRemove);
+	Listeners.add(window, 'ClosedFindBarBackground', blurClosesRemove);
 	
 	if(!viewSource) {
-		listenerAid.add(gBrowser.tabContainer, "TabSelectPrevious", blurClosesTabSelect);
+		Listeners.add(gBrowser.tabContainer, "TabSelectPrevious", blurClosesTabSelect);
 	}
 };
 
-moduleAid.UNLOADMODULE = function() {
-	listenerAid.remove(window, 'OpenedFindBar', blurClosesAdd);
-	listenerAid.remove(window, 'ClosedFindBar', blurClosesRemove);
-	listenerAid.remove(window, 'ClosedFindBarAnotherTab', blurClosesRemove);
+Modules.UNLOADMODULE = function() {
+	Listeners.remove(window, 'OpenedFindBar', blurClosesAdd);
+	Listeners.remove(window, 'ClosedFindBar', blurClosesRemove);
+	Listeners.remove(window, 'ClosedFindBarBackground', blurClosesRemove);
 	
 	blurClosesRemove();
 	
 	if(!viewSource) {
-		listenerAid.remove(gBrowser.tabContainer, "TabSelectPrevious", blurClosesTabSelect);
+		Listeners.remove(gBrowser.tabContainer, "TabSelectPrevious", blurClosesTabSelect);
 	}
 };

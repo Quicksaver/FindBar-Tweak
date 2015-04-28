@@ -18,10 +18,7 @@
 <!ENTITY OptgridInScrollbar.label "Show highlights grid in the scrollbar">
 <!ENTITY OptuseCounterNew.label "Show matches counter in the Findbar">
 <!ENTITY OptfindInTabs.label "Enable 'Find in All Tabs'">
-<!ENTITY OptalwaysOpenFIT.label "Open 'Find in All Tabs' with the Findbar">
-<!ENTITY OptFITFull.label "Open 'Find in All Tabs' in its own separate window">
 <!ENTITY OptmultipleFITFull.label "Allow multiple instances of the 'Find in All Tabs' window">
-<!ENTITY OptmaxFIT.label "Don't find if the number of hits in a tab exceeds:">
 
 <!ENTITY Optcolor.label "Highlights Color">
 <!ENTITY OptselectColor.label "Current Hit Color">
@@ -58,8 +55,6 @@
 <!ENTITY OptmovetoTop.label "Move to the top of the browser">
 <!ENTITY OptmovetoTop.labelFF25 "Place above the webpage">
 <!ENTITY OptmovetoRight.label "Place on the right">
-<!ENTITY OptmovetoBottom.label "Move to the bottom of the browser">
-<!ENTITY OptFF25Tweaks.label "Integrate with the rest of the chrome on top">
 <!ENTITY OptblurCloses.label "Close the Findbar when it loses focus">
 <!ENTITY OptperTab.label "Findbar starts closed in new tabs">
 <!ENTITY OptonStartup.label "Remember Findbar opened/closed state on startup">

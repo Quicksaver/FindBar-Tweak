@@ -1,5 +1,6 @@
-moduleAid.VERSION = '2.3.1';
-moduleAid.LAZY = true;
+Modules.VERSION = '2.6.0';
+Modules.UTILS = true;
+Modules.BASEUTILS = true;
 
 // xmlHttpRequest(url, callback, method) - aid for quickly using the nsIXMLHttpRequest interface
 //	url - (string) to send the request
@@ -10,6 +11,9 @@ this.xmlHttpRequest = function(url, callback, method) {
 	
 	var xmlhttp = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Ci.nsIXMLHttpRequest);
 	xmlhttp.open(method, url);
+	if(url.endsWith('.json')) {
+		xmlhttp.overrideMimeType("application/json");
+	}
 	xmlhttp.onreadystatechange = function(e) { callback(xmlhttp, e); };
 	xmlhttp.send();
 	return xmlhttp;
@@ -31,37 +35,33 @@ this.aSync = function(aFunc, aDelay) {
 };
 
 // dispatch(obj, properties) - creates and dispatches an event and returns (bool) whether preventDefault was not called on it
-//	obj - (xul element) object to dispatch the event from, it will be e.target
-//	properties - (obj) expecting the following sub properties defining the following event characteristics:
+//	aNode - (xul element) object to dispatch the event from, it will be e.target
+//	props - (obj) expecting the following sub properties defining the following event characteristics:
 //		type - (str) the event type
 //		(optional) bubbles - (bool) defaults to true
 //		(optional) cancelable - (bool) defaults to true
 //		(optional) detail - to be passed to the event
-this.dispatch = function(obj, properties) {
-	if(!obj || (!obj.ownerDocument && !obj.document) || !obj.dispatchEvent || !properties || !properties.type) { return false; }
+//		(optional) asking - (bool) if true, will return the .detail property of the event, which can be modified by listeners; defaults to false, .detail defaults to undefined
+this.dispatch = function(aNode, props) {
+	if(!aNode || !aNode.dispatchEvent
+	|| (!aNode.ownerDocument && !aNode.document && (!aNode.content || !aNode.content.document))
+	|| !props || !props.type) { return false; }
 	
-	var bubbles = properties.bubbles || true;
-	var cancelable = properties.cancelable || true;
-	var detail = properties.detail || undefined;
+	var bubbles = props.bubbles || true;
+	var cancelable = props.cancelable || !props.asking;
+	var detail = props.detail || undefined;
 	
-	var event = (obj.ownerDocument) ? obj.ownerDocument.createEvent('CustomEvent') : obj.document.createEvent('CustomEvent');
-	event.initCustomEvent(properties.type, bubbles, cancelable, detail);
-	return obj.dispatchEvent(event);
-};
-
-// askForOwner(aNode) - dispatches an event to node, where anyone can set event.detail to any value
-// for example, to get the id of the trigger node that opened a popup or panel programmatically
-//	aNode - (xul element) the object node to ask about
-this.askForOwner = function(aNode) {
-	if(!aNode || (!aNode.ownerDocument && !aNode.document) || !aNode.dispatchEvent) { return null; }
+	var doc = (aNode.ownerDocument) ? aNode.ownerDocument : (aNode.document) ? aNode.document : aNode.content.document; // last one's for content processes
+	var event = doc.createEvent('CustomEvent');
 	
-	var owner = null;
-	var event = (aNode.ownerDocument) ? aNode.ownerDocument.createEvent('CustomEvent') : aNode.document.createEvent('CustomEvent');
-	event.__defineGetter__('detail', function() { return owner; });
-	event.__defineSetter__('detail', function(v) { return owner = v; });
-	event.initCustomEvent('AskingForNodeOwner', true, false, owner);
-	aNode.dispatchEvent(event);
-	return owner;
+	if(props.asking) {
+		event.__defineGetter__('detail', function() { return detail; });
+		event.__defineSetter__('detail', function(v) { return detail = v; });
+	}
+	
+	event.initCustomEvent(props.type, bubbles, cancelable, detail);
+	var ret = aNode.dispatchEvent(event);
+	return (props.asking) ? detail : ret;
 };
 
 // compareFunction(a, b, strict) - returns (bool) if a === b
@@ -88,14 +88,15 @@ this.isAncestor = function(aNode, aParent, aWindow) {
 	if(ownDocument && ownDocument == aParent) { return true; }
 	if(aNode.compareDocumentPosition && (aNode.compareDocumentPosition(aParent) & aNode.DOCUMENT_POSITION_CONTAINS)) { return true; }
 	
-	var browsers = (aParent.tagName == 'browser') ? [aParent] : aParent.getElementsByTagName('browser');
-	for(var i=0; i<browsers.length; i++) {
-		if(isAncestor(aNode, browsers[i].contentDocument, browsers[i].contentWindow)) { return true; }
+	var browserNodes = (aParent.tagName == 'browser') ? [aParent] : aParent.getElementsByTagName('browser');
+	for(var browser of browserNodes) {
+		try { if(isAncestor(aNode, browser.contentDocument, browser.contentWindow)) { return true; } }
+		catch(ex) { /* this will fail in e10s */ }
 	}
 	
 	if(!aWindow) { return false; }
-	for(var i=0; i<aWindow.frames.length; i++) {
-		if(isAncestor(aNode, aWindow.frames[i].document, aWindow.frames[i])) { return true; }
+	for(var frame of aWindow.frames) {
+		if(isAncestor(aNode, frame.document, frame)) { return true; }
 	}
 	return false;
 };
@@ -117,16 +118,7 @@ this.trim = function(str) {
 	return str.substring(Math.max(str.search(/\S/), 0), str.search(/\S\s*$/) + 1);
 };
 
-// closeCustomize() - useful for when you want to close the customize toolbar dialogs for whatever reason
-this.closeCustomize = function() {
-	windowMediator.callOnAll(function(aWindow) {
-		if(aWindow.gCustomizeMode) {
-			aWindow.gCustomizeMode.exit();
-		}
-	}, 'navigator:browser');
-};
-
-// replaceObjStrings(node, prop) - replace all objName, objPathString and UserAgentLocale references in the node attributes and its children with the proper names
+// replaceObjStrings(node, prop) - replace all objName and objPathString references in the node attributes and its children with the proper names
 //	node - (xul element) to replace the strings in
 //	(optional) prop - (string) if specified, instead of checking attributes, it will check for node.prop for occurences of what needs to be replaced. This will not check child nodes.
 this.replaceObjStrings = function(node, prop) {
@@ -141,9 +133,6 @@ this.replaceObjStrings = function(node, prop) {
 		while(node[prop].indexOf('objPathString') > -1) {
 			node[prop] = node[prop].replace('objPathString', objPathString);
 		}
-		while(node[prop].indexOf('UserAgentLocale') > -1) {
-			node[prop] = node[prop].replace('UserAgentLocale', UserAgentLocale);
-		}
 		
 		return;
 	}
@@ -156,9 +145,6 @@ this.replaceObjStrings = function(node, prop) {
 			while(node.attributes[a].value.indexOf('objPathString') > -1) {
 				node.attributes[a].value = node.attributes[a].value.replace('objPathString', objPathString);
 			}
-			while(node.attributes[a].value.indexOf('UserAgentLocale') > -1) {
-				node.attributes[a].value = node.attributes[a].value.replace('UserAgentLocale', UserAgentLocale);
-			}
 		}
 	}
 	
@@ -167,4 +153,11 @@ this.replaceObjStrings = function(node, prop) {
 		replaceObjStrings(curChild);
 		curChild = curChild.nextSibling;
 	}
+};
+
+// getComputedStyle(aNode, pseudo) - returns the resulting object from calling the equivalent window.getComputedStyle() on it
+//	aNode - (element) of which to return the computed style object
+//	(optional) pseudo -(string) specifying the pseudo-element to match, see https://developer.mozilla.org/en-US/docs/Web/API/Window.getComputedStyle
+this.getComputedStyle = function(aNode, pseudo) {
+	return aNode.ownerGlobal.getComputedStyle(aNode, pseudo);
 };

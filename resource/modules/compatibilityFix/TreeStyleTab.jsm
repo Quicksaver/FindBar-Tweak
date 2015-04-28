@@ -1,15 +1,15 @@
-moduleAid.VERSION = '1.0.0';
+Modules.VERSION = '1.0.1';
 
 this.TSTmoveTopCollapsed = function() {
-	if(prefAid.movetoTop) {
+	if(Prefs.movetoTop) {
 		moveTop();
 	}
 };
 
-moduleAid.LOADMODULE = function() {
-	objectWatcher.addAttributeWatcher($('TabsToolbar'), 'collapsed', TSTmoveTopCollapsed);
+Modules.LOADMODULE = function() {
+	Watchers.addAttributeWatcher($('TabsToolbar'), 'collapsed', TSTmoveTopCollapsed);
 };
 
-moduleAid.UNLOADMODULE = function() {
-	objectWatcher.removeAttributeWatcher($('TabsToolbar'), 'collapsed', TSTmoveTopCollapsed);
+Modules.UNLOADMODULE = function() {
+	Watchers.removeAttributeWatcher($('TabsToolbar'), 'collapsed', TSTmoveTopCollapsed);
 };

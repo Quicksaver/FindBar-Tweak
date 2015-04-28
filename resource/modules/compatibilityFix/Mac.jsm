@@ -1,11 +1,11 @@
-moduleAid.VERSION = '1.0.1';
+Modules.VERSION = '1.0.2';
 
-moduleAid.LOADMODULE = function() {
-	overlayAid.overlayURI('chrome://'+objPathString+'/content/options.xul', 'chrome://'+objPathString+'/content/optionsMac.xul');
-	overlayAid.overlayURI('chrome://'+objPathString+'/content/findInTabsMini.xul', 'chrome://'+objPathString+'/content/findInTabsMiniMac.xul');
+Modules.LOADMODULE = function() {
+	Overlays.overlayURI('chrome://'+objPathString+'/content/options.xul', 'chrome://'+objPathString+'/content/optionsMac.xul');
+	Overlays.overlayURI('chrome://'+objPathString+'/content/findInTabsMini.xul', 'chrome://'+objPathString+'/content/findInTabsMiniMac.xul');
 };
 
-moduleAid.UNLOADMODULE = function() {
-	overlayAid.removeOverlayURI('chrome://'+objPathString+'/content/options.xul', 'chrome://'+objPathString+'/content/optionsMac.xul');
-	overlayAid.removeOverlayURI('chrome://'+objPathString+'/content/findInTabsMini.xul', 'chrome://'+objPathString+'/content/findInTabsMiniMac.xul');
+Modules.UNLOADMODULE = function() {
+	Overlays.removeOverlayURI('chrome://'+objPathString+'/content/options.xul', 'chrome://'+objPathString+'/content/optionsMac.xul');
+	Overlays.removeOverlayURI('chrome://'+objPathString+'/content/findInTabsMini.xul', 'chrome://'+objPathString+'/content/findInTabsMiniMac.xul');
 };

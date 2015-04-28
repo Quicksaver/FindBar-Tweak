@@ -1,9 +1,10 @@
-moduleAid.VERSION = '1.2.1';
-moduleAid.LAZY = true;
+Modules.VERSION = '1.3.2';
+Modules.UTILS = true;
+Modules.BASEUTILS = true;
 
 // keydownPanel - 	Panel elements don't support keyboard navigation by default; this object fixes that.
 // 			This aid does NOT self-clean, so make sure to remove every call and set object on it.
-//			However, the methods are kept in the panel object, and listenerAid self-cleans, so it should be ok though, as long as that doesn't fail and the objects
+//			However, the methods are kept in the panel object, and Listeners self-cleans, so it should be ok though, as long as that doesn't fail and the objects
 //			are fully removed.
 //			To also enable a keyset that toggles (closes) the panel, supply it to the panel object as its ._toggleKeyset property, in the form of:
 //				key - (obj):
@@ -26,18 +27,18 @@ this.keydownPanel = {
 		panel._keydownPanel = function(e) {
 			// Let's make sure
 			if(panel.state != 'open' && !trueAttribute(panel, 'current')) {
-				listenerAid.remove(window, 'keydown', panel._keydownPanel, true);
+				Listeners.remove(window, 'keydown', panel._keydownPanel, true);
 				return;
 			}
 			
 			// if this var exists, it means this keyset should be used to toggle the panel as well
 			if(panel._toggleKeyset) {
-				var keycode = keysetAid.translateToConstantCode(panel._toggleKeyset.keycode);
+				var keycode = Keysets.translateToConstantCode(panel._toggleKeyset.keycode);
 				
 				if(e[keycode] && e[keycode] == e.which
 				&& panel._toggleKeyset.shift == e.shiftKey
 				&& panel._toggleKeyset.alt == e.altKey
-				&& panel._toggleKeyset.accel == ((Services.appinfo.OS == 'Darwin') ? e.metaKey : e.ctrlKey)) {
+				&& panel._toggleKeyset.accel == (DARWIN ? e.metaKey : e.ctrlKey)) {
 					e.preventDefault();
 					e.stopPropagation();
 					
@@ -70,8 +71,8 @@ this.keydownPanel = {
 				case e.DOM_VK_END:
 					e.preventDefault();
 					e.stopPropagation();
-					listenerAid.add(panel, 'mouseover', panel._mouseOverPanel);
-					listenerAid.add(panel, 'mousemove', panel._mouseOverPanel);
+					Listeners.add(panel, 'mouseover', panel._mouseOverPanel);
+					Listeners.add(panel, 'mousemove', panel._mouseOverPanel);
 					
 					var items = panel.querySelectorAll('menuitem,toolbarbutton.subviewbutton');
 					var active = -1;
@@ -142,8 +143,8 @@ this.keydownPanel = {
 		};
 		
 		panel._mouseOverPanel = function() {
-			listenerAid.remove(panel, 'mouseover', panel._mouseOverPanel);
-			listenerAid.remove(panel, 'mousemove', panel._mouseOverPanel);
+			Listeners.remove(panel, 'mouseover', panel._mouseOverPanel);
+			Listeners.remove(panel, 'mousemove', panel._mouseOverPanel);
 			var items = panel.querySelectorAll('menuitem,toolbarbutton.subviewbutton');
 			for(var i=0; i<items.length; i++) {
 				var attr = (items[i].localName == 'menuitem') ? '_moz-menuactive' : 'focused';
@@ -158,23 +159,23 @@ this.keydownPanel = {
 		panel._panelShown = function(e) {
 			if(e.target != panel) { return; }
 			
-			listenerAid.add(window, 'keydown', panel._keydownPanel, true);
+			Listeners.add(window, 'keydown', panel._keydownPanel, true);
 		};
 		
 		panel._panelHidden = function(e) {;
 			if(e.target != panel) { return; }
 			
-			listenerAid.remove(panel, 'mouseover', panel._mouseOverPanel);
-			listenerAid.remove(panel, 'mousemove', panel._mouseOverPanel);
-			listenerAid.remove(window, 'keydown', panel._keydownPanel, true);
+			Listeners.remove(panel, 'mouseover', panel._mouseOverPanel);
+			Listeners.remove(panel, 'mousemove', panel._mouseOverPanel);
+			Listeners.remove(window, 'keydown', panel._keydownPanel, true);
 		};	
 		
 		if(panel.nodeName == 'panelview' && isAncestor(panel, window.PanelUI.multiView)) {
-			listenerAid.add(panel, 'ViewShowing', panel._panelShown);
-			listenerAid.add(panel, 'ViewHiding', panel._panelHidden);
+			Listeners.add(panel, 'ViewShowing', panel._panelShown);
+			Listeners.add(panel, 'ViewHiding', panel._panelHidden);
 		} else {
-			listenerAid.add(panel, 'popupshown', panel._panelShown);
-			listenerAid.add(panel, 'popuphidden', panel._panelHidden);
+			Listeners.add(panel, 'popupshown', panel._panelShown);
+			Listeners.add(panel, 'popuphidden', panel._panelHidden);
 		}
 	},
 	
@@ -182,16 +183,16 @@ this.keydownPanel = {
 		// not set
 		if(!panel || !panel._keydownPanel) { return; }
 		
-		listenerAid.remove(panel, 'mouseover', panel._mouseOverPanel);
-		listenerAid.remove(panel, 'mousemove', panel._mouseOverPanel);
-		listenerAid.remove(window, 'keydown', panel._keydownPanel, true);
+		Listeners.remove(panel, 'mouseover', panel._mouseOverPanel);
+		Listeners.remove(panel, 'mousemove', panel._mouseOverPanel);
+		Listeners.remove(window, 'keydown', panel._keydownPanel, true);
 		
 		if(panel.nodeName == 'panelview' && isAncestor(panel, window.PanelUI.multiView)) {
-			listenerAid.remove(panel, 'ViewShowing', panel._panelShown);
-			listenerAid.remove(panel, 'ViewHiding', panel._panelHidden);
+			Listeners.remove(panel, 'ViewShowing', panel._panelShown);
+			Listeners.remove(panel, 'ViewHiding', panel._panelHidden);
 		} else {
-			listenerAid.remove(panel, 'popupshown', panel._panelShown);
-			listenerAid.remove(panel, 'popuphidden', panel._panelHidden);
+			Listeners.remove(panel, 'popupshown', panel._panelShown);
+			Listeners.remove(panel, 'popuphidden', panel._panelHidden);
 		}
 		
 		delete panel._keydownPanel;

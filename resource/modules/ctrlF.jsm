@@ -1,36 +1,38 @@
-moduleAid.VERSION = '1.3.3';
+Modules.VERSION = '2.0.0';
 
-this.ctrlF = function(event) {
-	// Pale Moon doesn't have TabView
-	if(!viewSource && window.TabView && window.TabView.isVisible()) {
-		window.TabView.enableSearch(event);
+this.ctrlF = function() {
+	// See if there is text selection and if it's the same as the findbar's value
+	if(Prefs.ctrlFClosesOnValue && Prefs.FAYTprefill && !gFindBar.hidden) {
+		Finder.getTextSelection.then(selText => {
+			if(selText && selText != findQuery) {
+				openFindBar();
+				return;
+			}
+			
+			ctrlFToggles();
+		});
 		return;
 	}
 	
-	// See if there is text selection and if it's the same as the findbar's value
-	if(prefAid.ctrlFClosesOnValue && prefAid.FAYTprefill && !gFindBar.hidden) {
-		var selText = gFindBar._getInitialSelection();
-		if(selText && selText != gFindBar._findField.value) {
-			openFindBar();
-			return;
-		}
-	}
+	ctrlFToggles();
+};
 	
-	if(prefAid.ctrlFCloses) {
-		toggleFindBar(event);
+this.ctrlFToggles = function() {
+	if(Prefs.ctrlFCloses) {
+		toggleFindBar();
 	} else {
 		openFindBar();
 	}
 };
 
-moduleAid.LOADMODULE = function() {
+Modules.LOADMODULE = function() {
 	this.backups = {
 		oncommand: $('cmd_find').getAttribute('oncommand')
 	};
 	setAttribute($('cmd_find'), 'oncommand', objName+'.ctrlF(event);');
 };
 
-moduleAid.UNLOADMODULE = function() {
+Modules.UNLOADMODULE = function() {
 	if(this.backups) {
 		setAttribute($('cmd_find'), 'oncommand', this.backups.oncommand);
 		delete this.backups;

@@ -1,51 +1,51 @@
-moduleAid.VERSION = '2.0.1';
+Modules.VERSION = '2.0.2';
 
 this.nativePrefs = {};
 
 this.handleNativePref = function(nPref, cPref) {
 	nativePrefs[nPref] = {
 		cPref: cPref,
-		revertValue: prefAid[nPref],
+		revertValue: Prefs[nPref],
 		changedNative: function() {
-			nativePrefs[nPref].revertValue = prefAid[nPref];
+			nativePrefs[nPref].revertValue = Prefs[nPref];
 			
-			prefAid.unlisten(cPref, nativePrefs[nPref].changedCustom);
-			prefAid[cPref] = prefAid[nPref];
-			prefAid.listen(cPref, nativePrefs[nPref].changedCustom);
+			Prefs.unlisten(cPref, nativePrefs[nPref].changedCustom);
+			Prefs[cPref] = Prefs[nPref];
+			Prefs.listen(cPref, nativePrefs[nPref].changedCustom);
 		},
 		changedCustom: function() {
-			prefAid.unlisten(nPref, nativePrefs[nPref].changedNative);
-			prefAid[nPref] = prefAid[cPref];
-			prefAid.listen(nPref, nativePrefs[nPref].changedNative);
+			Prefs.unlisten(nPref, nativePrefs[nPref].changedNative);
+			Prefs[nPref] = Prefs[cPref];
+			Prefs.listen(nPref, nativePrefs[nPref].changedNative);
 		}
 	};
 	
-	prefAid.listen(cPref, nativePrefs[nPref].changedCustom);
+	Prefs.listen(cPref, nativePrefs[nPref].changedCustom);
 	
 	nativePrefs[nPref].changedCustom();
 };
 
 this.resetNativePrefs = function() {
 	for(var x in nativePrefs) {
-		prefAid.unlisten(nativePrefs[x].cPref, nativePrefs[x].changedCustom);
-		prefAid.unlisten(x, nativePrefs[x].changedNative);
+		Prefs.unlisten(nativePrefs[x].cPref, nativePrefs[x].changedCustom);
+		Prefs.unlisten(x, nativePrefs[x].changedNative);
 	}
 	
-	if(!prefAid.resetNative) {
+	if(!Prefs.resetNative) {
 		for(var x in nativePrefs) {
-			prefAid[x] = nativePrefs[x].revertValue;
+			Prefs[x] = nativePrefs[x].revertValue;
 		}
 	} else {
 		for(var x in nativePrefs) {
-			prefAid.reset(x);
+			Prefs.reset(x);
 		}
 	}
 };
 
-moduleAid.LOADMODULE = function() {
-	prefAid.setDefaults({ timeout: 5000, prefillwithselection: true }, 'typeaheadfind', 'accessibility');
-	prefAid.setDefaults({ typeaheadfind: false }, 'accessibility', '');
-	prefAid.setDefaults({ eat_space_to_next_word: true, stop_at_punctuation: true }, 'word_select', 'layout');
+Modules.LOADMODULE = function() {
+	Prefs.setDefaults({ timeout: 5000, prefillwithselection: true }, 'typeaheadfind', 'accessibility');
+	Prefs.setDefaults({ typeaheadfind: false }, 'accessibility', '');
+	Prefs.setDefaults({ eat_space_to_next_word: true, stop_at_punctuation: true }, 'word_select', 'layout');
 	
 	handleNativePref('timeout', 'FAYTtimeout');
 	handleNativePref('typeaheadfind', 'FAYTenabled');
@@ -56,6 +56,6 @@ moduleAid.LOADMODULE = function() {
 	alwaysRunOnShutdown.push(resetNativePrefs);
 };
 
-moduleAid.UNLOADMODULE = function() {
+Modules.UNLOADMODULE = function() {
 	resetNativePrefs();
 };

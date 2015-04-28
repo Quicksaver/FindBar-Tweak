@@ -1,47 +1,47 @@
-moduleAid.VERSION = '1.2.5';
+Modules.VERSION = '1.2.6';
 
 this.uiBackup = {};
 
 this.handleUIHighlightBackground = function() {
-	uiBackup.textHighlightBackground = prefAid.textHighlightBackground;
+	uiBackup.textHighlightBackground = Prefs.textHighlightBackground;
 	
 	// This triggers a re-color
-	var original = prefAid.highlightColor;
-	if(prefAid.textHighlightBackground) {
-		prefAid.highlightColor = prefAid.textHighlightBackground;
+	var original = Prefs.highlightColor;
+	if(Prefs.textHighlightBackground) {
+		Prefs.highlightColor = Prefs.textHighlightBackground;
 	} else {
-		prefAid.reset('highlightColor');
+		Prefs.reset('highlightColor');
 	}
 	// Make sure we trigger a re-color when it's not actually been changed
-	if(original == prefAid.highlightColor) {
+	if(original == Prefs.highlightColor) {
 		changeHighlightColor();
 	}
 };
 
 // This won't trigger a re-color
 this.handleUIHighlightForeground = function() {
-	uiBackup.textHighlightForeground = prefAid.textHighlightForeground;
+	uiBackup.textHighlightForeground = Prefs.textHighlightForeground;
 };
 
 this.handleUISelectBackground = function() {
-	uiBackup.textSelectBackgroundAttention = prefAid.textSelectBackgroundAttention;
+	uiBackup.textSelectBackgroundAttention = Prefs.textSelectBackgroundAttention;
 	
 	// This triggers a re-color
-	var original = prefAid.selectColor;
-	if(prefAid.textSelectBackgroundAttention) {
-		prefAid.selectColor = prefAid.textSelectBackgroundAttention;
+	var original = Prefs.selectColor;
+	if(Prefs.textSelectBackgroundAttention) {
+		Prefs.selectColor = Prefs.textSelectBackgroundAttention;
 	} else {
-		prefAid.reset('selectColor');
+		Prefs.reset('selectColor');
 	}
 	// Make sure we trigger a re-color when it's not actually been changed
-	if(original == prefAid.selectColor) {
+	if(original == Prefs.selectColor) {
 		changeSelectColor();
 	}
 };
 
 // This won't trigger a re-color
 this.handleUISelectForeground = function() {
-	uiBackup.textSelectForeground = prefAid.textSelectForeground;
+	uiBackup.textSelectForeground = Prefs.textSelectForeground;
 };
 
 this.getRGBfromString = function(m) {
@@ -66,28 +66,26 @@ this.darkBackgroundRGB = function(rgb) {
 };
 
 this.changeHighlightColor = function() {
-	var m = prefAid.highlightColor.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
+	var m = Prefs.highlightColor.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
 	if(!m) { return; }
 	var rgb = getRGBfromString(m);
 	
 	// Have to remove the listeners and add them back after, so the backups aren't overwritten with our values
-	prefAid.unlisten('textHighlightBackground', handleUIHighlightBackground);
-	prefAid.unlisten('textHighlightForeground', handleUIHighlightForeground);
+	Prefs.unlisten('textHighlightBackground', handleUIHighlightBackground);
+	Prefs.unlisten('textHighlightForeground', handleUIHighlightForeground);
 	
-	prefAid.textHighlightBackground = prefAid.highlightColor;
-	prefAid.textHighlightForeground = (darkBackgroundRGB(rgb)) ? '#FFFFFF' : '#000000';
+	Prefs.textHighlightBackground = Prefs.highlightColor;
+	Prefs.textHighlightForeground = (darkBackgroundRGB(rgb)) ? '#FFFFFF' : '#000000';
 	
-	prefAid.listen('textHighlightBackground', handleUIHighlightBackground);
-	prefAid.listen('textHighlightForeground', handleUIHighlightForeground);
+	Prefs.listen('textHighlightBackground', handleUIHighlightBackground);
+	Prefs.listen('textHighlightForeground', handleUIHighlightForeground);
 	
 	setHighlightColorStyleSheet(rgb);
 	
-	observerAid.notify('ReHighlightAll');
+	Observers.notify('ReHighlightAll');
 };
 
 this.setHighlightColorStyleSheet = function(rgb) {
-	styleAid.unload('highlightColorStyleSheet');
-	
 	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 	sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 	sscode += '@-moz-document\n';
@@ -96,17 +94,15 @@ this.setHighlightColorStyleSheet = function(rgb) {
 	sscode += '	url("chrome://global/content/viewPartialSource.xul"),\n';
 	sscode += '	url("chrome://findbartweak/content/findInTabsFull.xul") {\n';
 	sscode += '		.findInTabs-list label[highlight]:not([current]):not(:hover) {\n';
-	sscode += '			background-color: '+prefAid.highlightColor+';\n';
+	sscode += '			background-color: '+Prefs.highlightColor+';\n';
 	sscode += '			color: '+((darkBackgroundRGB(rgb)) ? '#FFFFFF' : '#000000')+';\n';
 	sscode += '		}\n';
 	sscode += '		vbox[anonid="findGrid"] vbox[highlight]:not([current]):not([hover]) {\n';
-	sscode += '			background-color: '+prefAid.highlightColor+';\n';
+	sscode += '			background-color: '+Prefs.highlightColor+';\n';
 	sscode += '		}\n';
 	sscode += '}';
 	
-	styleAid.load('highlightColorStyleSheet', sscode, true);
-	
-	styleAid.unload('otherHighlightColorStyleSheet');
+	Styles.load('highlightColorStyleSheet', sscode, true);
 	
 	// For PDF.JS
 	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
@@ -115,38 +111,36 @@ this.setHighlightColorStyleSheet = function(rgb) {
 	
 	// For grids in frames
 	sscode += 'div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"] div[highlight]:not([current]):not([hover]) {\n';
-	sscode += '	background-color: '+prefAid.highlightColor+';\n';
+	sscode += '	background-color: '+Prefs.highlightColor+';\n';
 	sscode += '}\n';
 	
-	styleAid.load('otherHighlightColorStyleSheet', sscode, true);
+	Styles.load('otherHighlightColorStyleSheet', sscode, true);
 };
 
 this.changeSelectColor = function() {
-	var m = prefAid.selectColor.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
+	var m = Prefs.selectColor.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
 	if(!m) { return; }
 	var rgb = getRGBfromString(m);
 	
 	// Have to remove the listeners and add them back after, so the backups aren't overwritten with our values
-	prefAid.unlisten('textSelectBackgroundAttention', handleUISelectBackground);
-	prefAid.unlisten('textSelectForeground', handleUISelectForeground);
+	Prefs.unlisten('textSelectBackgroundAttention', handleUISelectBackground);
+	Prefs.unlisten('textSelectForeground', handleUISelectForeground);
 	
-	prefAid.textSelectBackgroundAttention = prefAid.selectColor;
+	Prefs.textSelectBackgroundAttention = Prefs.selectColor;
 	
-	if(!prefAid.keepSelectContrast) { prefAid.textSelectForeground = (darkBackgroundRGB(rgb)) ? '#FFFFFF' : '#000000'; }
-	else if(uiBackup.textSelectForeground) { prefAid.textSelectForeground = uiBackup.textSelectForeground; }
-	else { prefAid.reset('textSelectForeground'); }
+	if(!Prefs.keepSelectContrast) { Prefs.textSelectForeground = (darkBackgroundRGB(rgb)) ? '#FFFFFF' : '#000000'; }
+	else if(uiBackup.textSelectForeground) { Prefs.textSelectForeground = uiBackup.textSelectForeground; }
+	else { Prefs.reset('textSelectForeground'); }
 	
-	prefAid.listen('textSelectBackgroundAttention', handleUISelectBackground);
-	prefAid.listen('textSelectForeground', handleUISelectForeground);
+	Prefs.listen('textSelectBackgroundAttention', handleUISelectBackground);
+	Prefs.listen('textSelectForeground', handleUISelectForeground);
 	
 	setSelectColorStyleSheet(rgb);
 	
-	observerAid.notify('ReHighlightAll');
+	Observers.notify('ReHighlightAll');
 };
 
 this.setSelectColorStyleSheet = function(rgb) {
-	styleAid.unload('selectColorStyleSheet');
-	
 	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 	sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 	sscode += '@-moz-document\n';
@@ -156,7 +150,7 @@ this.setSelectColorStyleSheet = function(rgb) {
 	sscode += '	url("chrome://findbartweak/content/findInTabsFull.xul") {\n';
 	sscode += '		.findInTabs-list label[highlight][current],\n';
 	sscode += '		.findInTabs-list label[highlight]:hover {\n';
-	sscode += '			background-color: '+prefAid.selectColor+';\n';
+	sscode += '			background-color: '+Prefs.selectColor+';\n';
 	sscode += '			color: '+((darkBackgroundRGB(rgb)) ? '#FFFFFF' : '#000000')+';\n';
 	sscode += '		}\n';
 	sscode += '		.findInTabs-list richlistitem:hover {\n';
@@ -165,13 +159,11 @@ this.setSelectColorStyleSheet = function(rgb) {
 	sscode += '		}\n';
 	sscode += '		vbox[anonid="findGrid"] vbox[highlight][current],\n';
 	sscode += '		vbox[anonid="findGrid"] vbox[highlight][hover] {\n';
-	sscode += '			background-color: '+prefAid.selectColor+';\n';
+	sscode += '			background-color: '+Prefs.selectColor+';\n';
 	sscode += '		}\n';
 	sscode += '}';
 	
-	styleAid.load('selectColorStyleSheet', sscode, true);
-	
-	styleAid.unload('otherSelectColorStyleSheet');
+	Styles.load('selectColorStyleSheet', sscode, true);
 	
 	// For PDF.JS
 	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
@@ -181,31 +173,31 @@ this.setSelectColorStyleSheet = function(rgb) {
 	// For grids in frames
 	sscode += 'div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"] div[highlight][current],\n';
 	sscode += 'div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"] div[highlight][hover] {\n';
-	sscode += '	background-color: '+prefAid.selectColor+';\n';
+	sscode += '	background-color: '+Prefs.selectColor+';\n';
 	sscode += '}\n';
 	
-	styleAid.load('otherSelectColorStyleSheet', sscode, true);
+	Styles.load('otherSelectColorStyleSheet', sscode, true);
 };
 
 this.resetColorPrefs = function() {
-	prefAid.unlisten('textHighlightBackground', handleUIHighlightBackground);
-	prefAid.unlisten('textHighlightForeground', handleUIHighlightForeground);
-	prefAid.unlisten('textSelectBackgroundAttention', handleUISelectBackground);
-	prefAid.unlisten('textSelectForeground', handleUISelectForeground);
+	Prefs.unlisten('textHighlightBackground', handleUIHighlightBackground);
+	Prefs.unlisten('textHighlightForeground', handleUIHighlightForeground);
+	Prefs.unlisten('textSelectBackgroundAttention', handleUISelectBackground);
+	Prefs.unlisten('textSelectForeground', handleUISelectForeground);
 	
-	if(!prefAid.resetNative && uiBackup.textHighlightBackground) { prefAid.textHighlightBackground = uiBackup.textHighlightBackground; }
-	else { prefAid.reset('textHighlightBackground'); }
-	if(!prefAid.resetNative && uiBackup.textHighlightForeground) { prefAid.textHighlightForeground = uiBackup.textHighlightForeground; }
-	else { prefAid.reset('textHighlightForeground'); }
+	if(!Prefs.resetNative && uiBackup.textHighlightBackground) { Prefs.textHighlightBackground = uiBackup.textHighlightBackground; }
+	else { Prefs.reset('textHighlightBackground'); }
+	if(!Prefs.resetNative && uiBackup.textHighlightForeground) { Prefs.textHighlightForeground = uiBackup.textHighlightForeground; }
+	else { Prefs.reset('textHighlightForeground'); }
 	
-	if(!prefAid.resetNative && uiBackup.textSelectBackgroundAttention) { prefAid.textSelectBackgroundAttention = uiBackup.textSelectBackgroundAttention; }
-	else { prefAid.reset('textSelectBackgroundAttention'); }
-	if(!prefAid.resetNative && uiBackup.textSelectForeground) { prefAid.textSelectForeground = uiBackup.textSelectForeground; }
-	else { prefAid.reset('textSelectForeground'); }
+	if(!Prefs.resetNative && uiBackup.textSelectBackgroundAttention) { Prefs.textSelectBackgroundAttention = uiBackup.textSelectBackgroundAttention; }
+	else { Prefs.reset('textSelectBackgroundAttention'); }
+	if(!Prefs.resetNative && uiBackup.textSelectForeground) { Prefs.textSelectForeground = uiBackup.textSelectForeground; }
+	else { Prefs.reset('textSelectForeground'); }
 };
 
-moduleAid.LOADMODULE = function() {
-	prefAid.setDefaults({
+Modules.LOADMODULE = function() {
+	Prefs.setDefaults({
 		textHighlightBackground: '',
 		textHighlightForeground: '',
 		textSelectBackgroundAttention: '',
@@ -213,15 +205,15 @@ moduleAid.LOADMODULE = function() {
 	}, 'ui', '');
 	
 	uiBackup = {
-		textHighlightBackground: prefAid.textHighlightBackground,
-		textHighlightForeground: prefAid.textHighlightForeground,
-		textSelectBackgroundAttention: prefAid.textSelectBackgroundAttention,
-		textSelectForeground: prefAid.textSelectForeground
+		textHighlightBackground: Prefs.textHighlightBackground,
+		textHighlightForeground: Prefs.textHighlightForeground,
+		textSelectBackgroundAttention: Prefs.textSelectBackgroundAttention,
+		textSelectForeground: Prefs.textSelectForeground
 	};
 	
-	prefAid.listen('highlightColor', changeHighlightColor);
-	prefAid.listen('selectColor', changeSelectColor);
-	prefAid.listen('keepSelectContrast', changeSelectColor);
+	Prefs.listen('highlightColor', changeHighlightColor);
+	Prefs.listen('selectColor', changeSelectColor);
+	Prefs.listen('keepSelectContrast', changeSelectColor);
 	
 	alwaysRunOnShutdown.push(resetColorPrefs);
 	
@@ -229,13 +221,15 @@ moduleAid.LOADMODULE = function() {
 	changeSelectColor();
 };
 
-moduleAid.UNLOADMODULE = function() {
-	styleAid.unload('highlightColorStyleSheet');
-	styleAid.unload('otherHighlightColorStyleSheet');
+Modules.UNLOADMODULE = function() {
+	Styles.unload('highlightColorStyleSheet');
+	Styles.unload('otherHighlightColorStyleSheet');
+	Styles.unload('selectColorStyleSheet');
+	Styles.unload('otherSelectColorStyleSheet');
 	
-	prefAid.unlisten('highlightColor', changeHighlightColor);
-	prefAid.unlisten('selectColor', changeSelectColor);
-	prefAid.unlisten('keepSelectContrast', changeSelectColor);
+	Prefs.unlisten('highlightColor', changeHighlightColor);
+	Prefs.unlisten('selectColor', changeSelectColor);
+	Prefs.unlisten('keepSelectContrast', changeSelectColor);
 	
 	resetColorPrefs();
 };

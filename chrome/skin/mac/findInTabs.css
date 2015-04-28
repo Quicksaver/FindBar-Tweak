@@ -1,0 +1,25 @@
+@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
+@-moz-document url("chrome://findbartweak/content/findInTabsFull.xul") {
+	
+	.findbar-tabs image,
+	.findbar-tabs-update image,
+	.findbar-cs-button image {
+		min-height: 14px;
+	}
+	
+	findbar toolbarbutton[anonid="findbartweak-find-tabs"] + toolbarbutton[anonid="highlight"] {
+		-moz-margin-start: 0;
+	}
+	
+	.findInTabs-bar textbox {
+		border-radius: 10000px;
+	}
+	
+	#findbartweak-findInTabs-box {
+		background-image: -moz-linear-gradient(50% 0%, rgb(208,208,208), rgb(232,232,232));
+	}
+	
+	#contentBox {
+		background-color: #D0D0D0;
+	}
+}

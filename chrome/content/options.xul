@@ -10,10 +10,7 @@
 	<prefpane id="generalPane" label="&OptGeneral.label;" style="&Optwindow.style;">
 		<preferences>
 			<preference id="pref-findInTabs" name="extensions.findbartweak.findInTabs" type="bool"/>
-			<preference id="pref-alwaysOpenFIT" name="extensions.findbartweak.alwaysOpenFIT" type="bool"/>
-			<preference id="pref-FITFull" name="extensions.findbartweak.FITFull" type="bool"/>
 			<preference id="pref-multipleFITFull" name="extensions.findbartweak.multipleFITFull" type="bool"/>
-			<preference id="pref-maxFIT" name="extensions.findbartweak.maxFIT" type="int"/>
 			<preference id="pref-blurCloses" name="extensions.findbartweak.blurCloses" type="bool"/>
 			<preference id="pref-perTab" name="extensions.findbartweak.perTab" type="bool"/>
 			<preference id="pref-onStartup" name="extensions.findbartweak.onStartup" type="bool"/>
@@ -57,19 +54,7 @@
         </groupbox>
 		<groupbox align="start">
 			<caption><checkbox label="&OptfindInTabs.label;" preference="pref-findInTabs"/></caption>
-			<checkbox label="&OptalwaysOpenFIT.label;" dependson="pref-findInTabs,!pref-FITFull" preference="pref-alwaysOpenFIT"/>
-			<checkbox label="&OptFITFull.label;" dependson="pref-findInTabs" preference="pref-FITFull"/>
 			<checkbox label="&OptmultipleFITFull.label;" dependson="pref-findInTabs" preference="pref-multipleFITFull"/>
-			<hbox align="center">
-				<label dependson="pref-findInTabs" value="&OptmaxFIT.label;"/>
-				<textbox type="number"
-					dependson="pref-findInTabs"
-					size="4"
-					min="0"
-					max="99999"
-					style="text-align: center;"
-					preference="pref-maxFIT"/>
-			</hbox>
 		</groupbox>
 	</prefpane>
 	
@@ -79,18 +64,14 @@
 			<preference id="pref-keepSelectContrast" name="extensions.findbartweak.keepSelectContrast" type="bool"/>
 			<preference id="pref-useCounter" name="extensions.findbartweak.useCounter" type="bool"/>
 			<preference id="pref-movetoTop" name="extensions.findbartweak.movetoTop" type="bool"/>
-			<preference id="pref-movetoBottom" name="extensions.findbartweak.movetoBottom" type="bool"/>
 			<preference id="pref-movetoRight" name="extensions.findbartweak.movetoRight" type="bool"/>
-			<preference id="pref-FF25Tweaks" name="extensions.findbartweak.FF25Tweaks" type="bool"/>
 			<preference id="pref-hideClose" name="extensions.findbartweak.hideClose" type="bool"/>
 			<preference id="pref-hideLabels" name="extensions.findbartweak.hideLabels" type="bool"/>
 		</preferences>
 		
 		<groupbox align="start">
 			<caption label="&Optdisplay.label;"/>
-			<checkbox id="movetoBottomCheckbox" label="&OptmovetoBottom.label;" preference="pref-movetoBottom" hidden="true"/>
-			<checkbox id="movetoTopCheckbox" label="&OptmovetoTop.label;" dependson="!pref-movetoBottom" preference="pref-movetoTop"/>
-			<checkbox id="FF25TweaksCheckbox" label="&OptFF25Tweaks.label;" dependson="!pref-movetoTop,!pref-movetoBottom" preference="pref-FF25Tweaks" hidden="true" />
+			<checkbox id="movetoTopCheckbox" label="&OptmovetoTop.label;" preference="pref-movetoTop"/>
 			<checkbox label="&OptmovetoRight.label;" preference="pref-movetoRight"/>
 		</groupbox>
 		<groupbox align="start">

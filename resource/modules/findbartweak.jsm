@@ -1,46 +1,47 @@
-moduleAid.VERSION = '1.2.3';
+Modules.VERSION = '2.0.0';
 
 this.viewSource = false;
 this.FITFull = false;
 
 this.toggleBlurCloses = function() {
-	moduleAid.loadIf('blurCloses', prefAid.blurCloses);
+	Modules.loadIf('blurCloses', Prefs.blurCloses);
 };
 
 this.togglePerTab = function() {
-	moduleAid.loadIf('perTab', !viewSource && prefAid.perTab && !prefAid.blurCloses);
-	moduleAid.loadIf('globalFB', !viewSource && !prefAid.perTab && !prefAid.blurCloses);
+	Modules.loadIf('perTab', !viewSource && !FITFull && Prefs.perTab && !Prefs.blurCloses);
+	Modules.loadIf('globalFB', !viewSource && !FITFull && !Prefs.perTab && !Prefs.blurCloses);
 };
 
 this.toggleRememberStartup = function() {
-	moduleAid.loadIf('rememberStartup', !viewSource && prefAid.onStartup && !prefAid.perTab && !prefAid.blurCloses);
+	Modules.loadIf('rememberStartup', !viewSource && !FITFull && Prefs.onStartup && !Prefs.perTab && !Prefs.blurCloses);
 };
 
 this.toggleFindInTabs = function() {
-	moduleAid.loadIf('findInTabsMini', FITFull || prefAid.findInTabs);
+	Modules.loadIf('findInTabsMini', FITFull || Prefs.findInTabs);
 };
 
-moduleAid.LOADMODULE = function() {
-	if(document.documentElement.getAttribute('windowtype') == 'navigator:view-source') { viewSource = $('viewSource'); }
-	FITFull = $(objName+'-findInTabs');
+Modules.LOADMODULE = function() {
+	viewSource = (document.documentElement.getAttribute('windowtype') == 'navigator:view-source') && $('viewSource');
+	FITFull = (document.documentElement.getAttribute('windowtype') == 'addon:findInTabs') && $(objPathString+'-findInTabs');
 	
-	moduleAid.load('initFindbar');
-	moduleAid.load('initFinder');
-	moduleAid.load('FindBarUI');
-	if(!FITFull) { moduleAid.load('highlights'); }
-	moduleAid.load('compatibilityFix/windowFixes');
+	Modules.load('gFindBar');
+	if(!FITFull) {
+		Modules.load('mFinder');
+		Modules.load('highlights');
+	}
+	Modules.load('FindBarUI');
+	Modules.load('compatibilityFix/windowFixes');
 	
-	prefAid.listen('findInTabs', toggleFindInTabs);
+	Prefs.listen('findInTabs', toggleFindInTabs);
 	
 	if(!FITFull) {
-		prefAid.listen('blurCloses', toggleBlurCloses);
-		prefAid.listen('perTab', togglePerTab);
-		prefAid.listen('blurCloses', togglePerTab);
-		prefAid.listen('onStartup', toggleRememberStartup);
-		prefAid.listen('perTab', toggleRememberStartup);
-		prefAid.listen('blurCloses', toggleRememberStartup);
-	
-		moduleAid.load('ctrlF');
+		Prefs.listen('blurCloses', toggleBlurCloses);
+		Prefs.listen('perTab', togglePerTab);
+		Prefs.listen('blurCloses', togglePerTab);
+		Prefs.listen('onStartup', toggleRememberStartup);
+		Prefs.listen('perTab', toggleRememberStartup);
+		Prefs.listen('blurCloses', toggleRememberStartup);
+		
 		toggleBlurCloses();
 		togglePerTab();
 	}
@@ -52,32 +53,35 @@ moduleAid.LOADMODULE = function() {
 	}
 };
 
-moduleAid.UNLOADMODULE = function() {
+Modules.UNLOADMODULE = function() {
 	if(!FITFull) {
-		moduleAid.unload('rememberStartup');
+		Modules.unload('rememberStartup');
 	}
 	
-	prefAid.unlisten('findInTabs', toggleFindInTabs);
+	Prefs.unlisten('findInTabs', toggleFindInTabs);
 	
-	moduleAid.unload('findInTabs');
+	Modules.unload('findInTabs');
 	
 	if(!FITFull) {
-		moduleAid.unload('ctrlF');
-		moduleAid.unload('perTab');
-		moduleAid.unload('globalFB');
-		moduleAid.unload('blurCloses');
+		Modules.unload('perTab');
+		Modules.unload('globalFB');
+		Modules.unload('blurCloses');
 		
-		prefAid.unlisten('blurCloses', toggleBlurCloses);
-		prefAid.unlisten('perTab', togglePerTab);
-		prefAid.unlisten('blurCloses', togglePerTab);
-		prefAid.unlisten('onStartup', toggleRememberStartup);
-		prefAid.unlisten('perTab', toggleRememberStartup);
-		prefAid.unlisten('blurCloses', toggleRememberStartup);
+		Prefs.unlisten('blurCloses', toggleBlurCloses);
+		Prefs.unlisten('perTab', togglePerTab);
+		Prefs.unlisten('blurCloses', togglePerTab);
+		Prefs.unlisten('onStartup', toggleRememberStartup);
+		Prefs.unlisten('perTab', toggleRememberStartup);
+		Prefs.unlisten('blurCloses', toggleRememberStartup);
 	}
 	
-	moduleAid.unload('compatibilityFix/windowFixes');
-	if(!FITFull) { moduleAid.unload('highlights'); }
-	moduleAid.unload('FindBarUI');
-	moduleAid.unload('initFinder');
-	moduleAid.unload('initFindbar');
+	Modules.unload('compatibilityFix/windowFixes');
+	Modules.unload('FindBarUI');
+	
+	if(!FITFull) {
+		Modules.unload('highlights');
+		Modules.unload('mFinder');
+	}
+	
+	Modules.unload('gFindBar');
 };

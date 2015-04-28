@@ -1,84 +1,77 @@
-moduleAid.VERSION = '1.2.3';
+Modules.VERSION = '2.0.0';
 
-this.highlightByDefault = function() {
-	if(viewSource || gFindBarInitialized) {
-		gFindBar.getElement("highlight").checked = true;
-	}
+this.highlightByDefault = function(bar) {
+	bar.getElement("highlight").checked = true;
 };
-
-this.highlightByDefaultOnOpening = function(e) {
-	if(e.defaultPrevented || !gFindBar.hidden) { return; }
 	
-	highlightByDefault();
+this.highlightByDefaultOnWillOpen = function(e) {
+	if(e.defaultPrevented || !e.originalTarget.hidden) { return; }
+	
+	highlightByDefault(e.originalTarget);
 };
 
-this.highlightByDefaultOnContentLoaded = function(e) {
-	// this is the content document of the loaded page.
-	var doc = e.originalTarget;
-	if(doc instanceof window.HTMLDocument) {
-		// is this an inner frame?
-		// Find the root document:
-		while(doc.defaultView.frameElement) {
-			doc = doc.defaultView.frameElement.ownerDocument;
-		}
-		
-		if(doc == contentDocument) {
-			highlightByDefault();
-		}
-	}
+this.highlightByDefaultOnFillSelectedText = function() {
+	highlightByDefault(gFindBar);
 };
 
-// Tab progress listeners, handles opening and closing of pages and location changes
-this.highlightByDefaultProgressListener = {
-	// Commands a reHighlight if needed, triggered from history navigation as well
-	onLocationChange: function(browser, webProgress, request, location) {
-		// Frames don't need to trigger this
-		if(webProgress.DOMWindow == browser.contentWindow) {
-			if(browser == gBrowser.mCurrentBrowser) {
-				if(request && !request.isPending()) {
-					highlightByDefault();
-				}
+Modules.LOADMODULE = function() {
+	initFindBar('highlightByDefault',
+		function(bar) {
+			bar.browser.finder.addMessage('HighlightByDefault', () => {
+				highlightByDefault(bar);
+			});
+			
+			Messenger.loadInBrowser(bar.browser, 'highlightByDefault');
+			
+			if(!viewSource) {
+				// We so don't want the tabbrowser's onLocationChange handler to unset the highlight button,
+				// but it's so hard to override it correctly... This works great, so here's to hoping this use of
+				// arguments.callee.caller is acceptable.
+				var highlightBtn = bar.getElement('highlight');
+				Object.defineProperty(highlightBtn, '_checked', Object.getOwnPropertyDescriptor(Object.getPrototypeOf(highlightBtn), 'checked'));
+				Object.defineProperty(highlightBtn, 'checked', {
+					configurable: true,
+					enumerable: true,
+					get: function() { return this._checked; },
+					set: function(v) {
+						if(arguments.callee.caller.toString().indexOf('bug 253793') > -1) { return this._checked; }
+						return this._checked = v;
+					}
+				});
+			}
+			
+			if(!bar.hidden) {
+				highlightByDefault(bar);
+			}
+		},
+		function(bar) {
+			bar.browser.finder.removeMessage('HighlightByDefault');
+			
+			Messenger.unloadFromBrowser(bar.browser, 'highlightByDefault');
+			
+			if(!viewSource) {
+				var highlightBtn = bar.getElement('highlight');
+				Object.defineProperty(highlightBtn, 'checked', Object.getOwnPropertyDescriptor(Object.getPrototypeOf(highlightBtn), 'checked'));
+				delete highlightBtn._checked;
+			}
+			
+			if(!bar.browser.finder.documentHighlighted) {
+				bar.getElement("highlight").checked = false;
 			}
 		}
-	}
-};
-
-this.highlightByDefaultTabSelect = function() {
-	if(prefAid.perTab) {
-		highlightByDefault();
-	}
-};
-
-moduleAid.LOADMODULE = function() {
-	listenerAid.add(window, 'WillOpenFindBar', highlightByDefaultOnOpening);
+	);
+	
+	Listeners.add(window, 'WillOpenFindBar', highlightByDefaultOnWillOpen);
+	Listeners.add(window, 'WillOpenFindBarBackground', highlightByDefaultOnWillOpen);
 	
 	// Always highlight all by default when selecting text and filling the findbar with it
-	listenerAid.add(window, 'WillFillSelectedText', highlightByDefault);
-	
-	if(!viewSource) {
-		listenerAid.add(gBrowser.tabContainer, "TabSelect", highlightByDefaultTabSelect);
-		listenerAid.add(gBrowser, "DOMContentLoaded", highlightByDefaultOnContentLoaded);
-		gBrowser.addTabsProgressListener(highlightByDefaultProgressListener);
-	}
-	
-	// Sometimes, when restarting firefox, it wouldn't check the box (go figure this one out...)
-	aSync(highlightByDefault);
+	Listeners.add(window, 'WillFillSelectedText', highlightByDefaultOnFillSelectedText);
 };
 
-moduleAid.UNLOADMODULE = function() {
-	listenerAid.remove(window, 'WillOpenFindBar', highlightByDefaultOnOpening);
-	listenerAid.remove(window, 'WillFillSelectedText', highlightByDefault);
+Modules.UNLOADMODULE = function() {
+	deinitFindBar('highlightByDefault');
 	
-	if(!viewSource) {
-		listenerAid.remove(gBrowser.tabContainer, "TabSelect", highlightByDefaultTabSelect);
-		listenerAid.remove(gBrowser, "DOMContentLoaded", highlightByDefaultOnContentLoaded);
-		gBrowser.removeTabsProgressListener(highlightByDefaultProgressListener);
-		
-		for(var t=0; t<gBrowser.mTabs.length; t++) {
-			var tab = gBrowser.mTabs[t];
-			if(tab._findBar && !trueAttribute(tab._findBar.browser.contentDocument.documentElement, 'highlighted')) {
-				tab._findBar.getElement("highlight").checked = false;
-			}
-		}
-	}
+	Listeners.remove(window, 'WillOpenFindBar', highlightByDefaultOnWillOpen);
+	Listeners.remove(window, 'WillOpenFindBarBackground', highlightByDefaultOnWillOpen);
+	Listeners.remove(window, 'WillFillSelectedText', highlightByDefaultOnFillSelectedText);
 };

@@ -1,5 +1,6 @@
-moduleAid.VERSION = '1.1.0';
-moduleAid.LAZY = true;
+Modules.VERSION = '1.2.1';
+Modules.UTILS = true;
+Modules.BASEUTILS = true;
 
 // innerText(node) - returns the equivalent of IE's .innerText property of node; essentially returns .textContent stripped of all the script tags
 //	node - (xul element) to retrieve text content from

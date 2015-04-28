@@ -33,6 +33,7 @@
 		border: 8px solid transparent;
 		position: absolute;
 	}
+	
 	box[anonid="highlightSights"][sightsStyle="circle"][gt180] box[innerContainer].otherHalf box,
 	box[anonid="highlightSights"][sightsStyle="circle"][gt360] box[innerContainer].otherHalf box {
 		transform: rotate(180deg);
@@ -71,9 +72,6 @@
 	/* for the View Source window */
 	#viewSource hbox[anonid="findSights"] {
 		position: fixed !important;
-	}
-	
-	#viewSource hbox[anonid="findSights"] {
 		top: 0px;
 	}
 	

@@ -1,0 +1,16 @@
+@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
+@-moz-document
+	url("chrome://browser/content/browser.xul"),
+	url("chrome://global/content/viewSource.xul"),
+	url("chrome://global/content/viewPartialSource.xul"),
+	url-prefix("chrome://updatescan/") {
+	
+	vbox[anonid="findGrid"]:not([gridSpacers="none"]) vbox.topSpacer[flex="0"],
+	vbox[anonid="findGrid"][gridSpacers="single"] vbox.bottomSpacer[flex="0"] {
+		height: 0px;
+	}
+	vbox[anonid="findGrid"][gridSpacers="double"] vbox.bottomSpacer[flex="0"] {
+		height: 14px;
+	}
+	
+}

@@ -1,4 +1,4 @@
-moduleAid.VERSION = '1.2.3';
+Modules.VERSION = '1.2.4';
 
 this.hideTabSelected = function() {
 	if(gFindBarInitialized) {
@@ -8,14 +8,14 @@ this.hideTabSelected = function() {
 
 this.hideFindBarClosed = function() {
 	if(gFindBar.hidden && (documentHighlighted || documentReHighlight)) {
-		highlightsOff();
+		highlights.off();
 	}
 };
 
-this.hideFindBarClosedAnotherTab = function() {
-	if(currentTab && currentTab._findBar && trueAttribute(currentTab._findBar.browser.contentDocument.documentElement, 'highlighted')) {
-		removeAttribute(currentTab._findBar.browser.contentDocument.documentElement, 'highlighted');
-		setAttribute(currentTab._findBar.browser.contentDocument.documentElement, 'reHighlight', 'true');
+this.hideFindBarClosedBackground = function(e) {
+	if(e.originalTarget.browser.finder.documentHighlighted) {
+		e.originalTarget.browser.finder.documentHighlighted = false;
+		e.originalTarget.browser.finder.documentReHighlight = true;
 	}
 };
 
@@ -26,22 +26,22 @@ this.hideReHighlighting = function(e) {
 	}
 };
 
-moduleAid.LOADMODULE = function() {
-	listenerAid.add(window, 'WillReHighlight', hideReHighlighting, true);
-	listenerAid.add(window, 'ClosedFindBar', hideFindBarClosed);
-	listenerAid.add(window, 'ClosedFindBarAnotherTab', hideFindBarClosedAnotherTab);
+Modules.LOADMODULE = function() {
+	Listeners.add(window, 'WillReHighlight', hideReHighlighting, true);
+	Listeners.add(window, 'ClosedFindBar', hideFindBarClosed);
+	Listeners.add(window, 'ClosedFindBarBackground', hideFindBarClosedBackground);
 	
 	if(!viewSource) {
-		listenerAid.add(gBrowser.tabContainer, "TabSelect", hideFindBarClosed);
+		Listeners.add(gBrowser.tabContainer, "TabSelect", hideFindBarClosed);
 	}
 };
 
-moduleAid.UNLOADMODULE = function() {
-	listenerAid.remove(window, 'WillReHighlight', hideReHighlighting, true);
-	listenerAid.remove(window, 'ClosedFindBar', hideFindBarClosed);
-	listenerAid.remove(window, 'ClosedFindBarAnotherTab', hideFindBarClosedAnotherTab);
+Modules.UNLOADMODULE = function() {
+	Listeners.remove(window, 'WillReHighlight', hideReHighlighting, true);
+	Listeners.remove(window, 'ClosedFindBar', hideFindBarClosed);
+	Listeners.remove(window, 'ClosedFindBarBackground', hideFindBarClosedBackground);
 	
 	if(!viewSource) {
-		listenerAid.remove(gBrowser.tabContainer, "TabSelect", hideFindBarClosed);
+		Listeners.remove(gBrowser.tabContainer, "TabSelect", hideFindBarClosed);
 	}
 };

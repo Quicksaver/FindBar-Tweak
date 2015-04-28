@@ -1,26 +1,18 @@
-moduleAid.VERSION = '1.6.0';
+Modules.VERSION = '1.7.0';
 
-this.__defineGetter__('findCSButton', function() { return gFindBar.getElement(objName+'-find-cs-button'); });
-this.__defineGetter__('findCSCheckbox', function() { return gFindBar.getElement('find-case-sensitive'); });
 this.__defineGetter__('findButton', function() {
 	var node = $('find-button');
 	
 	// If the node is in the menu-panel for instance, it won't be found on startup, until the panel is opened once so it is built
-	if(!node) {
-		// Because of https://bugzilla.mozilla.org/show_bug.cgi?id=952963 this needs to be in a try block for now,
-		// this can be changed once that bug is fixed.
-		try {
-			var widget = window.CustomizableUI.getWidget('find-button');
-			if(widget.areaType) {
-				node = widget.forWindow(window).node;
-			}
-		} catch(ex) {}
+	if(!node && !viewSource && !FITFull) {
+		var widget = CustomizableUI.getWidget('find-button');
+		if(widget.areaType) {
+			node = widget.forWindow(window).node;
+		}
 	}
 	
 	return node;
 });
-
-this.customizing = false;
 
 this.doOpenOptions = function() {
 	openOptions();
@@ -28,7 +20,7 @@ this.doOpenOptions = function() {
 
 this.alwaysFindNormal = function(e) {
 	// If opening normal Find bar when quick find is already opened, make sure we trigger the change
-	if(!gFindBar.hidden && e.detail == gFindBar.FIND_NORMAL && gFindBar._findMode != gFindBar.FIND_NORMAL && prefAid.FAYTmode != 'alwaysquick') {
+	if(!gFindBar.hidden && e.detail == gFindBar.FIND_NORMAL && gFindBar._findMode != gFindBar.FIND_NORMAL && Prefs.FAYTmode != 'alwaysquick') {
 		e.preventDefault();
 		e.stopPropagation();
 		gFindBar._findMode = gFindBar.FIND_NORMAL;
@@ -44,12 +36,11 @@ this.alwaysFindNormal = function(e) {
 	}
 	
 	// If opening findbar when QuickFind bar is already opened and we're supposed to keep QuickFind, make sure we do
-	if(!gFindBar.hidden && prefAid.FAYTmode == 'alwaysquick' && (!e.detail || e.detail == gFindBar.FIND_NORMAL)) {
+	if(!gFindBar.hidden && Prefs.FAYTmode == 'alwaysquick' && (!e.detail || e.detail == gFindBar.FIND_NORMAL)) {
 		e.preventDefault();
 		e.stopPropagation();
 		gFindBar.open(gFindBar.FIND_TYPEAHEAD);
-		if(gFindBar._quickFindTimeout) { window.clearTimeout(gFindBar._quickFindTimeout); }
-		gFindBar._quickFindTimeout = window.setTimeout(function(aSelf) { if(aSelf._findMode != aSelf.FIND_NORMAL) aSelf.close(); }, gFindBar._quickFindTimeoutLength, gFindBar);
+		gFindBar._setFindCloseTimeout();
 		return;
 	}
 	
@@ -57,7 +48,7 @@ this.alwaysFindNormal = function(e) {
 	if(!gFindBar.hidden) { return; }
 	
 	// FAYT: option to force normal mode over quick find mode
-	if(e.detail == gFindBar.FIND_TYPEAHEAD && prefAid.FAYTmode == 'normal') {
+	if(e.detail == gFindBar.FIND_TYPEAHEAD && Prefs.FAYTmode == 'normal') {
 		e.preventDefault();
 		e.stopPropagation();
 		gFindBar.open(gFindBar.FIND_NORMAL);
@@ -65,38 +56,34 @@ this.alwaysFindNormal = function(e) {
 	}
 	
 	// Option to force quick find mode over normal mode
-	if((!e.detail || e.detail == gFindBar.FIND_NORMAL) && prefAid.FAYTmode == 'alwaysquick') {
+	if((!e.detail || e.detail == gFindBar.FIND_NORMAL) && Prefs.FAYTmode == 'alwaysquick') {
 		e.preventDefault();
 		e.stopPropagation();
 		gFindBar.open(gFindBar.FIND_TYPEAHEAD);
-		if(gFindBar._quickFindTimeout) { window.clearTimeout(gFindBar._quickFindTimeout); }
-		gFindBar._quickFindTimeout = window.setTimeout(function(aSelf) { if(aSelf._findMode != aSelf.FIND_NORMAL) aSelf.close(); }, gFindBar._quickFindTimeoutLength, gFindBar);
+		gFindBar._setFindCloseTimeout();
 		return;
 	}
 };
 
 this.triggerUIChange = function(bar) {
-	dispatch(bar, { type: 'FindBarUIChanged', cancelable: false });
+	// there's no need to send this for every single findbar element in the window
+	Timers.init('triggerUIChange', () => {
+		dispatch(bar, { type: 'FindBarUIChanged', cancelable: false });
+	}, 0);
 };
 
 // Handler for Ctrl+F, it closes the findbar if it is already opened
-this.toggleFindBar = function(event) {
-	// Pale Moon doesn't have TabView
-	if(!viewSource && window.TabView && window.TabView.isVisible()) {
-		window.TabView.enableSearch(event);
-	}
-	else {
-		if(gFindBar.hidden) {
-			openFindBar();
-		} else {
-			gFindBar.close();
-		}
+this.toggleFindBar = function() {
+	if(gFindBar.hidden) {
+		openFindBar();
+	} else {
+		gFindBar.close();
 	}
 };
 
 this.openFindBar = function() {
 	gFindBar.onFindCommand();
-	if(gFindBar._findField.value && (gFindBar._findField.value != linkedPanel._findWord || !documentHighlighted)) {
+	if(findQuery && (findQuery != findWord || !documentHighlighted)) {
 		gFindBar._setHighlightTimeout();
 	}
 };
@@ -114,21 +101,16 @@ this.overrideButtonCommand = function(e) {
 };
 
 this.setFindButton = function() {
-	customizing = false;
-	
 	if(findButton) {
-		// I really don't like setting this listener on window, but setting it on findButton the event will be at phase AT_TARGET, and can't be
-		// cancelled there.
-		listenerAid.add(window, 'command', overrideButtonCommand, true);
+		// I really don't like setting this listener on window, but setting it on findButton the event will be at phase AT_TARGET, and can't be cancelled there.
+		Listeners.add(window, 'command', overrideButtonCommand, true);
 		toggleButtonState();
 	}
 };
 
 this.unsetFindButton = function() {
-	customizing = true;
-	
 	if(findButton) {
-		listenerAid.remove(window, 'command', overrideButtonCommand, true);
+		Listeners.remove(window, 'command', overrideButtonCommand, true);
 		removeAttribute(findButton, 'checked');
 	}
 };
@@ -137,13 +119,16 @@ this.unsetFindButton = function() {
 this.setButtonListener = {
 	onWidgetAdded: function(aId) {
 		if(!customizing && aId == 'find-button') { setFindButton(); }
+	},
+	onAreaNodeRegistered: function() {
+		if(!customizing) { setFindButton(); }
 	}
 };
 
 this.toggleClose = function() {
 	initFindBar('toggleClose',
 		function(bar) {
-			toggleAttribute(bar, 'noClose', prefAid.hideClose);
+			toggleAttribute(bar, 'noClose', Prefs.hideClose);
 			triggerUIChange(bar);
 		},
 		function(bar) {
@@ -156,7 +141,7 @@ this.toggleClose = function() {
 this.toggleLabels = function() {
 	initFindBar('toggleLabels',
 		function(bar) {
-			toggleAttribute(bar, 'hideLabels', prefAid.hideLabels);
+			toggleAttribute(bar, 'hideLabels', Prefs.hideLabels);
 			triggerUIChange(bar);
 		},
 		function(bar) {
@@ -167,17 +152,13 @@ this.toggleLabels = function() {
 };
 
 this.toggleMoveToTop = function() {
-	// Because fb on top was backed out, let's ensure pref movetoBottom is disabled and stays that way
-	if(prefAid.movetoBottom) { prefAid.movetoBottom = false; }
-	
-	moduleAid.loadIf('moveToTop', prefAid.movetoTop && (!onTopFB || !prefAid.movetoBottom));
-	moduleAid.loadIf('moveToBottom', prefAid.movetoBottom && onTopFB);
+	Modules.loadIf('moveToTop', Prefs.movetoTop);
 };
 
 this.toggleMoveToRight = function(startup) {
 	initFindBar('toggleMoveToRight',
 		function(bar) {
-			toggleAttribute(bar, 'movetoright', prefAid.movetoRight);
+			toggleAttribute(bar, 'movetoright', Prefs.movetoRight);
 		},
 		function(bar) {
 			removeAttribute(bar, 'movetoright');
@@ -189,7 +170,7 @@ this.toggleMoveToRight = function(startup) {
 this.toggleKeepButtons = function(startup) {
 	initFindBar('toggleKeepButtons',
 		function(bar) {
-			toggleAttribute(bar, 'keepButtons', prefAid.keepButtons);
+			toggleAttribute(bar, 'keepButtons', Prefs.keepButtons);
 		},
 		function(bar) {
 			removeAttribute(bar, 'keepButtons');
@@ -198,40 +179,19 @@ this.toggleKeepButtons = function(startup) {
 	);
 };
 
-this.toggleFF25Tweaks = function() {
-	moduleAid.loadIf('FF25Tweaks', onTopFB && !viewSource && prefAid.FF25Tweaks && !prefAid.movetoTop && !prefAid.movetoBottom);
-};
-
-this.toolboxBorderCounter = { length: 0 };
-this.noToolboxBorder = function(name, incr) {
-	if(incr) {
-		if(!toolboxBorderCounter[name]) {
-			toolboxBorderCounter.length++;
-			toolboxBorderCounter[name] = true;
-		}
-	} else {
-		if(toolboxBorderCounter[name]) {
-			toolboxBorderCounter.length--;
-			delete toolboxBorderCounter[name];
-		}
-	}
-	
-	toggleAttribute(document.documentElement, 'noToolboxBorder', toolboxBorderCounter.length);
-};
-
-moduleAid.LOADMODULE = function() {
+Modules.LOADMODULE = function() {
 	// For the case-sensitive button
-	prefAid.setDefaults({ casesensitive: 0 }, 'typeaheadfind', 'accessibility');
+	Prefs.setDefaults({ casesensitive: 0 }, 'typeaheadfind', 'accessibility');
 	
-	overlayAid.overlayURI('chrome://browser/content/browser.xul', 'findbar');
-	overlayAid.overlayURI('chrome://global/content/viewSource.xul', 'findbar');
-	overlayAid.overlayURI('chrome://global/content/viewPartialSource.xul', 'findbar');
+	Overlays.overlayURI('chrome://browser/content/browser.xul', 'findbar');
+	Overlays.overlayURI('chrome://global/content/viewSource.xul', 'findbar');
+	Overlays.overlayURI('chrome://global/content/viewPartialSource.xul', 'findbar');
 	
-	prefAid.listen('hideClose', toggleClose);
-	prefAid.listen('hideLabels', toggleLabels);
-	prefAid.listen('movetoRight', toggleMoveToRight);
+	Prefs.listen('hideClose', toggleClose);
+	Prefs.listen('hideLabels', toggleLabels);
+	Prefs.listen('movetoRight', toggleMoveToRight);
 	
-	moduleAid.load('resizeTextbox');
+	Modules.load('resizeTextbox');
 	
 	toggleClose();
 	toggleLabels();
@@ -239,82 +199,78 @@ moduleAid.LOADMODULE = function() {
 	
 	if(!FITFull) {
 		if(!viewSource) {
-			listenerAid.add(window, 'beforecustomization', unsetFindButton);
-			listenerAid.add(window, 'aftercustomization', setFindButton);
-			window.CustomizableUI.addListener(setButtonListener);
+			Listeners.add(window, 'beforecustomization', unsetFindButton);
+			Listeners.add(window, 'aftercustomization', setFindButton);
+			CustomizableUI.addListener(setButtonListener);
 			
-			setFindButton();
+			if(!customizing) {
+				setFindButton();
+			}
 		}
 		
-		initFindBar('contextMenu', function(bar) { setAttribute(bar, 'context', objPathString+'_findbarMenu'); }, function(bar) { removeAttribute(bar, 'context'); });
+		initFindBar('contextMenu',
+			function(bar) { setAttribute(bar, 'context', objPathString+'_findbarMenu'); },
+			function(bar) { removeAttribute(bar, 'context'); }
+		);
 		
-		prefAid.listen('movetoTop', toggleMoveToTop);
-		prefAid.listen('movetoBottom', toggleMoveToTop);
-		prefAid.listen('keepButtons', toggleKeepButtons);
-		prefAid.listen('movetoTop', toggleFF25Tweaks);
-		prefAid.listen('movetoBottom', toggleFF25Tweaks);
-		prefAid.listen('FF25Tweaks', toggleFF25Tweaks);
+		Prefs.listen('movetoTop', toggleMoveToTop);
+		Prefs.listen('keepButtons', toggleKeepButtons);
 		
-		listenerAid.add(window, 'WillOpenFindBar', alwaysFindNormal, true);
-		listenerAid.add(window, 'OpenedFindBar', toggleButtonState);
-		listenerAid.add(window, 'ClosedFindBar', toggleButtonState);
+		Listeners.add(window, 'WillOpenFindBar', alwaysFindNormal, true);
+		Listeners.add(window, 'OpenedFindBar', toggleButtonState);
+		Listeners.add(window, 'ClosedFindBar', toggleButtonState);
 		
 		if(!viewSource) {
-			listenerAid.add(gBrowser.tabContainer, "TabSelect", toggleButtonState);
+			Listeners.add(gBrowser.tabContainer, "TabSelect", toggleButtonState);
 		}
 		
+		Modules.load('ctrlF');
 		toggleMoveToTop();
 		toggleKeepButtons();
-		toggleFF25Tweaks();
 	}
 };
 
-moduleAid.UNLOADMODULE = function() {
+Modules.UNLOADMODULE = function() {
 	if(!FITFull) {
-		prefAid.unlisten('movetoTop', toggleMoveToTop);
-		prefAid.unlisten('movetoBottom', toggleMoveToTop);
-		prefAid.unlisten('keepButtons', toggleKeepButtons);
-		prefAid.unlisten('movetoTop', toggleFF25Tweaks);
-		prefAid.unlisten('movetoBottom', toggleFF25Tweaks);
-		prefAid.unlisten('FF25Tweaks', toggleFF25Tweaks);
+		Prefs.unlisten('movetoTop', toggleMoveToTop);
+		Prefs.unlisten('keepButtons', toggleKeepButtons);
 		
-		moduleAid.unload('FF25Tweaks');
-		moduleAid.unload('moveToTop');
-		moduleAid.unload('moveToBottom');
+		Modules.unload('moveToTop');
+		Modules.unload('ctrlF');
 		
 		deinitFindBar('toggleKeepButtons');
 		
-		listenerAid.remove(window, 'WillOpenFindBar', alwaysFindNormal, true);
-		listenerAid.remove(window, 'OpenedFindBar', toggleButtonState);
-		listenerAid.remove(window, 'ClosedFindBar', toggleButtonState);
+		Listeners.remove(window, 'WillOpenFindBar', alwaysFindNormal, true);
+		Listeners.remove(window, 'OpenedFindBar', toggleButtonState);
+		Listeners.remove(window, 'ClosedFindBar', toggleButtonState);
 		
 		if(!viewSource) {
-			listenerAid.remove(gBrowser.tabContainer, "TabSelect", toggleButtonState);
+			Listeners.remove(gBrowser.tabContainer, "TabSelect", toggleButtonState);
 		}
 		deinitFindBar('contextMenu');
 	
 		if(!viewSource) {
-			listenerAid.remove(window, 'beforecustomization', unsetFindButton);
-			listenerAid.remove(window, 'aftercustomization', setFindButton);
-			window.CustomizableUI.removeListener(setButtonListener);
+			Listeners.remove(window, 'beforecustomization', unsetFindButton);
+			Listeners.remove(window, 'aftercustomization', setFindButton);
+			CustomizableUI.removeListener(setButtonListener);
 			
 			unsetFindButton();
 		}
 	}
 		
-	prefAid.unlisten('hideClose', toggleClose);
-	prefAid.unlisten('hideLabels', toggleLabels);
-	prefAid.unlisten('movetoRight', toggleMoveToRight);
+	Prefs.unlisten('hideClose', toggleClose);
+	Prefs.unlisten('hideLabels', toggleLabels);
+	Prefs.unlisten('movetoRight', toggleMoveToRight);
 	
-	moduleAid.unload('resizeTextbox');
+	Modules.unload('resizeTextbox');
 	
 	deinitFindBar('toggleClose');
 	deinitFindBar('toggleLabels');
 	deinitFindBar('toggleMoveToRight');
 	
 	if(UNLOADED) {
-		overlayAid.removeOverlayURI('chrome://browser/content/browser.xul', 'findbar');
-		overlayAid.removeOverlayURI('chrome://global/content/viewSource.xul', 'findbar');
-		overlayAid.removeOverlayURI('chrome://global/content/viewPartialSource.xul', 'findbar');
+		Overlays.removeOverlayURI('chrome://browser/content/browser.xul', 'findbar');
+		Overlays.removeOverlayURI('chrome://global/content/viewSource.xul', 'findbar');
+		Overlays.removeOverlayURI('chrome://global/content/viewPartialSource.xul', 'findbar');
 	}
 };

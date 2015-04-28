@@ -1,46 +1,48 @@
-moduleAid.VERSION = '1.0.1';
+Modules.VERSION = '2.0.0';
 
-this.toggleMoveFITtoTop = function() {
-	if((onTopFB && !prefAid.movetoBottom) || prefAid.movetoTop) {
-		overlayAid.overlayURI('chrome://'+objPathString+'/content/findInTabs.xul', 'movetoTop_FIT');
-	} else {
-		overlayAid.removeOverlayURI('chrome://'+objPathString+'/content/findInTabs.xul', 'movetoTop_FIT');
-	}
-};
-
-this.startFITWindow = function(aWindow) {
-	replaceObjStrings(aWindow.document);
-	startAddon(aWindow);
-};
-
-this.closeFITWindows = function() {
-	windowMediator.callOnAll(function(aWindow) { try { aWindow.close(); } catch(ex) { Cu.reportError(ex); } }, null, "chrome://"+objPathString+"/content/findInTabsFull.xul");
-};
-
-this.FITenabledListener = function() {
-	if(!prefAid.findInTabs) {
-		closeFITWindows();
-	}
-};
-
-moduleAid.LOADMODULE = function() {
-	prefAid.listen('findInTabs', FITenabledListener);
-	prefAid.listen('movetoTop', toggleMoveFITtoTop);
-	prefAid.listen('movetoBottom', toggleMoveFITtoTop);
+this.FITSandbox = {
+	fulls: new Set(),
+	viewSources: new Set(),
+	navigators: new Set(),
 	
-	toggleMoveFITtoTop();
+	startWindow: function(aWindow) {
+		FITSandbox.fulls.add(aWindow);
+		listenOnce(aWindow, 'unload', function() {
+			FITSandbox.fulls.delete(aWindow);
+			if(FITSandbox.fulls.size == 0) {
+				Observers.notify('FIT:Unload');
+			}
+		});
+		
+		replaceObjStrings(aWindow.document);
+		startAddon(aWindow);
+		Observers.notify('FIT:Load');
+	},
+	
+	closeWindows: function() {
+		Windows.callOnAll(function(aWindow) {
+			try { aWindow.close(); }
+			catch(ex) { Cu.reportError(ex); }
+		}, 'addon:findInTabs');
+	},
+	
+	enabledListener: function() {
+		if(!Prefs.findInTabs) {
+			FITSandbox.closeWindows();
+		}
+	}
+};
+
+Modules.LOADMODULE = function() {
+	Prefs.listen('findInTabs', FITSandbox.enabledListener);
 	
 	// Apply the add-on to our own FIT window; none are (or should be!) open yet, so only need to register
-	windowMediator.register(startFITWindow, 'domwindowopened', null, "chrome://"+objPathString+"/content/findInTabsFull.xul");
+	Windows.register(FITSandbox.startWindow, 'domwindowopened', null, "chrome://"+objPathString+"/content/findInTabsFull.xul");
 };
 
-moduleAid.UNLOADMODULE = function() {
-	prefAid.unlisten('findInTabs', FITenabledListener);
-	prefAid.unlisten('movetoTop', toggleMoveFITtoTop);
-	prefAid.unlisten('movetoBottom', toggleMoveFITtoTop);
-	
-	overlayAid.removeOverlayURI('chrome://'+objPathString+'/content/findInTabs.xul', 'movetoTop_FIT');
+Modules.UNLOADMODULE = function() {
+	Prefs.unlisten('findInTabs', FITSandbox.enabledListener);
 	
 	// If we get to this point it's probably safe to assume we should close all our windows
-	closeFITWindows();
+	FITSandbox.closeWindows();
 };

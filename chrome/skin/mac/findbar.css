@@ -3,10 +3,9 @@
 	url("chrome://browser/content/browser.xul"),
 	url("chrome://global/content/viewSource.xul"),
 	url("chrome://global/content/viewPartialSource.xul"),
-	url("chrome://findbartweak/content/findInTabsFull.xul"),
-	url-prefix("chrome://updatescan/") {
+	url("chrome://findbartweak/content/findInTabsFull.xul") {
 	
-	/* Find Bar */
+	/* findbar appearance */
 	
 	.browserContainer findbar:not([position="top"]):not([movetotop]) {
 		border-bottom: none;
@@ -16,39 +15,49 @@
 		border-top: 1px solid #888;
 	}
 	
-	findbar[movetotop]:not([fixCloseButton]) {
-		padding: 3px 1px;
+	.findbar-cs-button:not([checked="true"]),
+	findbar[hideLabels] toolbarbutton[anonid="find-case-sensitive"]:not([checked="true"]) {
+		-moz-image-region: rect(16px 16px 32px 0px);
 	}
-	findbar[movetotop][fixCloseButton] .findbar-container {
+	
+	findbar[hideLabels] toolbarbutton[anonid="highlight"][checked="true"] {
+		-moz-image-region: rect(0px 32px 16px 16px);
+	}
+	
+	/* small findbar at the top */
+	
+	findbar[movetotop] {
+		z-index: 50;
+	}
+	
+	findbar[movetotop] .findbar-container {
 		-moz-padding-end: 1px;
 		padding-top: 3px;
 		padding-bottom: 3px;
 	}
 	
-	findbar[movetotop][fixCloseButton] .findbar-closebutton {
+	findbar[movetotop] .findbar-closebutton {
 		-moz-padding-start: 1px;
 		padding-top: 5px;
 		padding-bottom: 5px;
 	}
-	
-	findbar[movetotop] {
-		z-index: 50;
-	}
 
 	findbar[movetotop]:not([inPDFJS]) {
 		-moz-appearance: none !important;
+		background: url(chrome://browser/skin/Toolbar-background-noise.png) hsl(0,0%,83%);
 		border-right: 1px solid #ababab;
 		border-left: 1px solid #ababab;
+		border-bottom: 1px solid #ababab;
 		-moz-border-right-colors: #ababab;
 		-moz-border-left-colors: #ababab;
-	}
-
-	findbar[movetotop]:not([inPDFJS]),
-	#findbartweak-findInTabs-box[movetotop] {
-		background: url(chrome://browser/skin/Toolbar-background-noise.png) hsl(0,0%,83%);
-		border-bottom: 1px solid #ababab;
 		-moz-border-bottom-colors: #ababab;
 	}
+	
+	findbar[movetotop]:not([inPDFJS]) .findbar-container:-moz-lwtheme {
+		background-color: rgba(253,253,253,0.45);
+	}
+	
+	/* Rounded inner corners */
 	
 	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
 	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
@@ -63,18 +72,10 @@
 				-6px -4px 0px -4px hsl(0,0%,83%);
 	}
 	
-	findbar[movetotop]:not([inPDFJS]) .findbar-container:-moz-lwtheme,
-	#findbartweak-findInTabs-box[movetotop]:-moz-lwtheme {
-		background-color: rgba(253,253,253,0.45);
-	}
-	
-	window[noToolboxBorder] #navigator-toolbox:after {
-		display: none;
-	}
 	
 	/* Using The Fox, Only Better, the bottom color of the slimmer isn't the same, so we (try to) apply the same style as the nav-bar */
-	
-	#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]) .findbar-container:not(:-moz-lwtheme) {
+	/* needs to follow includeNavBar preference */
+	/*#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]) .findbar-container:not(:-moz-lwtheme) {
 		background-image: linear-gradient(hsl(0,0%,91%), hsl(0,0%,83%));
 		background-size: auto auto;
 		background-repeat: repeat;
@@ -96,38 +97,10 @@
 		                -6px -4px 0px -4px hsl(0,0%,90%),
 		                -7px -4px 0px -4px hsl(0,0%,83%),
 		                -6px -4px 0px -4px hsl(0,0%,83%);
-	}
-	
-	/* FF25 Tweaks */
-	window[noToolboxBorder] #navigator-toolbox toolbar,
-	window[findbartweak-FF25Tweaks] #navigator-toolbox toolbar,
-	window[noToolboxBorder] #navigator-toolbox toolbar:-moz-window-inactive,
-	window[findbartweak-FF25Tweaks] #navigator-toolbox toolbar:-moz-window-inactive {
-		-moz-border-bottom-colors: transparent;
-	}
-	
-	window[findbartweak-FF25Tweaks]:not([disablechrome="true"]) #browser > *:not([renderabove]):not([noTopBorder]):not(.omnisidebar_switch) {
-		border-top: 1px solid rgba(0,0,0,0.57);
-	}
-	window[findbartweak-FF25Tweaks]:not([disablechrome="true"]) #browser > *:not([renderabove]):not([noTopBorder]):not(.omnisidebar_switch):-moz-window-inactive {
-		border-top: 1px solid rgba(0,0,0,0.32);
-	}
-	
-	window[findbartweak-FF25Tweaks] tabbrowser findbar:not(:-moz-lwtheme) {
-		background-color: -moz-mac-chrome-active;
-		background-image: none;
-	}
-	window[findbartweak-FF25Tweaks] tabbrowser findbar:not(:-moz-lwtheme):-moz-window-inactive {
-		background-color: -moz-mac-chrome-inactive;
-		background-image: none;
-	}
-	
-	window[findbartweak-FF25Tweaks] findbar:-moz-lwtheme,
-	window[findbartweak-FF25Tweaks] #content:-moz-lwtheme {
-		background: none;
-	}
+	}*/
 	
 	/* Textbox resizers */
+	
 	findbar .findbar-textbox {
 		min-width: 176px;
 	}
@@ -150,51 +123,5 @@
 		max-width: 6px;
 		-moz-margin-start: -4px;
 		-moz-margin-end: -2px;
-	}
-	
-	/* Grid stuff */
-	vbox[anonid="findGrid"]:not([gridSpacers="none"]) vbox.topSpacer[flex="0"],
-	vbox[anonid="findGrid"][gridSpacers="single"] vbox.bottomSpacer[flex="0"] {
-		height: 0px;
-	}
-	vbox[anonid="findGrid"][gridSpacers="double"] vbox.bottomSpacer[flex="0"] {
-		height: 14px;
-	}
-	
-	.findbar-cs-button:not([checked="true"]),
-	findbar[hideLabels] toolbarbutton[anonid="find-case-sensitive"]:not([checked="true"]) {
-		-moz-image-region: rect(16px 16px 32px 0px);
-	}
-	
-	findbar[hideLabels] toolbarbutton[anonid="highlight"][checked="true"] {
-		-moz-image-region: rect(0px 32px 16px 16px);
-	}
-	
-	/* Find in Tabs */
-	#findbartweak-findInTabs-box:not([movetotop]) {
-		background-image: -moz-linear-gradient(50% 0%, rgb(208,208,208), rgb(232,232,232));
-	}
-	
-	window:not(#findbartweak-findInTabs) #findbartweak-findInTabs-box:not([movetotop]) {
-		border-top: 1px solid #888;
-	}
-	
-	.findbar-tabs image,
-	.findbar-tabs-update image,
-	.findbar-cs-button image {
-		min-height: 14px;
-	}
-	
-	findbar toolbarbutton[anonid="findbartweak-find-tabs"] + toolbarbutton[anonid="highlight"] {
-		-moz-margin-start: 0;
-	}
-	
-	/* Specific for the FIT standalone window */
-	window#findbartweak-findInTabs #contentBox {
-		background-color: #D0D0D0;
-	}
-	
-	.findInTabs-bar textbox {
-		border-radius: 10000px;
 	}
 }

@@ -1,11 +1,9 @@
-moduleAid.VERSION = '1.0.4';
+Modules.VERSION = '1.0.5';
 
-moduleAid.LOADMODULE = function() {
-	moduleAid.loadIf('compatibilityFix/Mac', Services.appinfo.OS == 'Darwin');
-	moduleAid.loadIf('compatibilityFix/FF26', onTopFB);
+Modules.LOADMODULE = function() {
+	Modules.loadIf('compatibilityFix/Mac', DARWIN);
 };
 
-moduleAid.UNLOADMODULE = function() {
-	moduleAid.unload('compatibilityFix/FF26');
-	moduleAid.unload('compatibilityFix/Mac');
+Modules.UNLOADMODULE = function() {
+	Modules.unload('compatibilityFix/Mac');
 };

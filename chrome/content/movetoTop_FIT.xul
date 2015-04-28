@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<overlay id="findInTabs_overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-	
-	<hbox id="objName-findInTabs-box" newparent="browser-panel" insertafter="fullscr-toggler" movetotop="true" />
-	
-</overlay>

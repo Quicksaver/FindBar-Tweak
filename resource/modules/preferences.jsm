@@ -1,29 +1,39 @@
-moduleAid.VERSION = '1.2.6';
+Modules.VERSION = '1.3.0';
 
 this.inPreferences = true;
-this.__defineGetter__('linkedPanel', function() { return window.document; });
 
 this.previewSights = function(box, style) {
-	moduleAid.load('sights');
-	if(!sights._groups) { sights._groups = new Array(); }
+	Modules.load('sights');
+	
+	var bSights = sights.get();
+	if(!bSights.groups) { bSights.groups = new Map(); }
 	
 	// Hide the current sights
-	cancelCurrentSights();
+	sights.remove(bSights, 0);
 	
 	var dimensions = box.getBoundingClientRect();
-	buildSights(null, dimensions.left +(dimensions.width /2), dimensions.top +(dimensions.height /2), { current: true, style: style });
+	sights.build(
+		{ sights: bSights },
+		{
+			group: 0,
+			centerX: dimensions.left +(dimensions.width /2),
+			centerY: dimensions.top +(dimensions.height /2),
+			current: true,
+			style: style
+		}
+	);
 };
 
 this.resetNativePrefs = function() {
-	prefAid.reset('typeaheadfind');
-	prefAid.reset('timeout');
-	prefAid.reset('prefillwithselection');
-	prefAid.reset('eat_space_to_next_word');
-	prefAid.reset('stop_at_punctuation');
-	prefAid.reset('textHighlightForeground');
-	prefAid.reset('textHighlightBackground');
-	prefAid.reset('textSelectForeground');
-	prefAid.reset('textSelectBackgroundAttention');
+	Prefs.reset('typeaheadfind');
+	Prefs.reset('timeout');
+	Prefs.reset('prefillwithselection');
+	Prefs.reset('eat_space_to_next_word');
+	Prefs.reset('stop_at_punctuation');
+	Prefs.reset('textHighlightForeground');
+	Prefs.reset('textHighlightBackground');
+	Prefs.reset('textSelectForeground');
+	Prefs.reset('textSelectBackgroundAttention');
 	
 	$('pref-typeaheadfind').value = $('pref-typeaheadfind').valueFromPreferences;
 	$('pref-timeout').value = $('pref-timeout').valueFromPreferences;
@@ -34,10 +44,10 @@ this.resetNativePrefs = function() {
 	$('pref-selectColor').value = $('pref-selectColor').valueFromPreferences;
 };
 
-moduleAid.LOADMODULE = function() {
+Modules.LOADMODULE = function() {
 	fillVersion($('addonVersion'));
 };
 
-moduleAid.UNLOADMODULE = function() {
-	moduleAid.unload('sights');
+Modules.UNLOADMODULE = function() {
+	Modules.unload('sights');
 };

@@ -10,8 +10,6 @@
 		</menupopup>
 	</popupset>
 	
-	<findbar id="FindToolbar" context="objPathString_findbarMenu"/>
-	
 	<!-- for the View Source window -->
 	<window id="viewSource">
 		<menupopup id="objPathString_findbarMenu">

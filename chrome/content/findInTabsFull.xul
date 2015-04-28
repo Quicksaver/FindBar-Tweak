@@ -2,6 +2,8 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://findbartweak/skin/findbar.css" type="text/css"?>
 <?xml-stylesheet href="chrome://findbartweak-os/skin/findbar.css" type="text/css"?>
+<?xml-stylesheet href="chrome://findbartweak/skin/findInTabs.css" type="text/css"?>
+<?xml-stylesheet href="chrome://findbartweak-os/skin/findInTabs.css" type="text/css"?>
 <!DOCTYPE overlay SYSTEM "chrome://findbartweak/locale/findbar.dtd">
 <window 
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -22,22 +24,25 @@
 		<key id="objName-findInTabs-key"
 			keycode="VK_F3"
 			modifiers="alt"
-			oncommand="objName.commandUpdateFIT();" />
+			oncommand="objName.FITMini.command();" />
 		<key id="cmd_find"
 			key="F"
 			modifiers="accel"
-			oncommand="objName.toggleFIT();" />
+			oncommand="objName.FITMini.toggle();" />
 		<key id="objName-findInTabs-close"
 			keycode="VK_ESCAPE"
 			oncommand="window.close();" />
 		<key id="cmd_errorConsole"
 			key="J"
 			modifiers="accel,shift"
-			oncommand="objName.FITtoErrorConsole();" />
+			oncommand="objName.FIT.console();" />
 	</keyset>
 	
 	<vbox id="contentBox" flex="1">
-		<findbar id="FindToolbar" class="findInTabs-bar" context="objName_findbarMenu" />
+		<findbar id="FindToolbar"
+			class="findInTabs-bar"
+			browserid="null"
+			context="objName_findbarMenu" />
 		<hbox id="objName-findInTabs-box"
 			insertafter="FindToolbar"
 			position="1"
@@ -45,7 +50,7 @@
 			
 			<box id="findbartweak-findInTabs-tabs" class="findInTabs-list" flex="1" width="300" persist="width" />
 			<vbox id="findbartweak-findInTabs-filterBox" flex="0">
-				<image id="objName-findInTabs-filter" onclick="objName.toggleFITGroups();"/>
+				<image id="objName-findInTabs-filter" onclick="objName.FIT.toggleGroups();"/>
 			</vbox>
 			<splitter class="findInTabs-splitter" resizebefore="flex"/>
 			<box id="findbartweak-findInTabs-hits" class="findInTabs-list" flex="1" width="500" persist="width" />

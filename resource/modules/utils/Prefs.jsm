@@ -1,4 +1,4 @@
-Modules.VERSION = '2.3.0';
+Modules.VERSION = '2.4.0';
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -91,15 +91,32 @@ this.Prefs = {
 	},
 	
 	_setPref: function(pref, branch, trunk) {
-		var branchString = ((trunk) ? trunk+'.' : '') +branch+'.';
-		
-		this._prefObjects[pref] = Services.fuel.prefs.get(branchString+pref);
+		this._prefObjects[pref] = {};
 		this._onChange[pref] = [];
-		this.__defineGetter__(pref, function() { return this._prefObjects[pref].value; });
-		this.__defineSetter__(pref, function(v) { return this._prefObjects[pref].value = v; });
 		this.length++;
 		
-		this._prefObjects[pref].events.addListener("change", this.prefChanged);
+		this._prefObjects[pref].branch = Services.prefs.getBranch(((trunk) ? trunk+'.' : '') +branch+'.');
+		this._prefObjects[pref].type = this._prefObjects[pref].branch.getPrefType(pref);
+		
+		switch(this._prefObjects[pref].type) {
+			case Services.prefs.PREF_STRING:
+				this._prefObjects[pref].__defineGetter__('value', function() { return this.branch.getCharPref(pref); });
+				this._prefObjects[pref].__defineSetter__('value', function(v) { this.branch.setCharPref(pref, v); return this.value; });
+				break;
+			case Services.prefs.PREF_INT:
+				this._prefObjects[pref].__defineGetter__('value', function() { return this.branch.getIntPref(pref); });
+				this._prefObjects[pref].__defineSetter__('value', function(v) { this.branch.setIntPref(pref, v); return this.value; });
+				break;
+			case Services.prefs.PREF_BOOL:
+				this._prefObjects[pref].__defineGetter__('value', function() { return this.branch.getBoolPref(pref); });
+				this._prefObjects[pref].__defineSetter__('value', function(v) { this.branch.setBoolPref(pref, v); return this.value; });
+				break;
+		}
+		
+		this.__defineGetter__(pref, function() { return this._prefObjects[pref].value; });
+		this.__defineSetter__(pref, function(v) { return this._prefObjects[pref].value = v; });
+		
+		this._prefObjects[pref].branch.addObserver(pref, this, false);
 	},
 	
 	listen: function(pref, handler) {
@@ -132,7 +149,7 @@ this.Prefs = {
 	},
 	
 	listening: function(pref, handler) {
-		for(var i = 0; i < this._onChange[pref].length; i++) {
+		for(let i = 0; i < this._onChange[pref].length; i++) {
 			if(compareFunction(this._onChange[pref][i], handler, true)) {
 				return i;
 			}
@@ -141,27 +158,29 @@ this.Prefs = {
 	},
 	
 	reset: function(pref) {
-		this._prefObjects[pref].reset();
+		this._prefObjects[pref].branch.clearUserPref(pref);
 	},
 	
-	prefChanged: function(e) {
-		var pref = e.data;
+	observe: function(aSubject, aTopic, aData) {
+		let pref = aData;
 		while(!Prefs._onChange[pref]) {
 			if(pref.indexOf('.') == -1) {
-				Cu.reportError("Couldn't find listener handlers for preference "+e.data);
+				Cu.reportError("Couldn't find listener handlers for preference "+aData);
 				return;
 			}
 			pref = pref.substr(pref.indexOf('.')+1);
 		}
 		
-		for(var i = 0; i < Prefs._onChange[pref].length; i++) {
-			Prefs._onChange[pref][i](pref, Prefs[pref]);
+		for(let handler of Prefs._onChange[pref]) {
+			// don't block executing of other possible listeners if one fails
+			try { handler(pref, Prefs[pref]); }
+			catch(ex) { Cu.reportError(ex); }
 		}
 	},
 	
 	clean: function() {
-		for(var pref in this._prefObjects) {
-			this._prefObjects[pref].events.removeListener("change", this.prefChanged);
+		for(let pref in this._prefObjects) {
+			this._prefObjects[pref].branch.removeObserver(pref, this);
 		}
 	}
 };

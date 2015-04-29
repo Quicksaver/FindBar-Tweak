@@ -29,7 +29,7 @@
 // Note: Firefox 34 is the minimum version supported as the modules assume we're in a version with Australis already,
 // along with xulStore already implemented, in detriment of localstore.rdf.
 
-let bootstrapVersion = '1.7.4';
+let bootstrapVersion = '1.7.5';
 let UNLOADED = false;
 let STARTED = false;
 let Addon = {};
@@ -61,7 +61,6 @@ function LOG(str) {
 }
 
 XPCOMUtils.defineLazyServiceGetter(Services, "xulStore", "@mozilla.org/xul/xulstore;1", "nsIXULStore");
-XPCOMUtils.defineLazyServiceGetter(Services, "fuel", "@mozilla.org/fuel/application;1", "fuelIApplication");
 XPCOMUtils.defineLazyServiceGetter(Services, "navigator", "@mozilla.org/network/protocol;1?name=http", "nsIHttpProtocolHandler");
 XPCOMUtils.defineLazyServiceGetter(Services, "stylesheet", "@mozilla.org/content/style-sheet-service;1", "nsIStyleSheetService");
 

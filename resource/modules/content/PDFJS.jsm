@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.0';
+Modules.VERSION = '1.0.1';
 
 this.PDFJS = {
 	// We need this to access protected properties, hidden from privileged code
@@ -105,7 +105,7 @@ this.PDFJS = {
 				// instead, we use messages to carry out actions through PDFJSEventReceiver()
 				var events = [ 'find', 'findagain', 'findhighlightallchange', 'findcasesensitivitychange' ];
 				for (var i = 0, len = events.length; i < len; i++) {
-					content.removeEventListener(events[i], this.findController.handleEvent);
+					content.removeEventListener(events[i], this.findController);
 				}
 			}
 			
@@ -181,7 +181,7 @@ this.PDFJS = {
 		if(this.findController.handleEvent) {
 			var events = [ 'find', 'findagain', 'findhighlightallchange', 'findcasesensitivitychange' ];
 			for (var i = 0, len = events.length; i < len; i++) {
-				content.addEventListener(events[i], this.findController.handleEvent);
+				content.addEventListener(events[i], this.findController);
 			}
 		}
 		

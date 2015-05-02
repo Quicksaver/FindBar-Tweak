@@ -1,24 +1,32 @@
-Modules.VERSION = '2.0.0';
+Modules.VERSION = '2.1.0';
 
-this.highlightByDefault = function(bar) {
-	bar.getElement("highlight").checked = true;
-};
+this.highlightByDefault = {
+	apply: function(bar) {
+		bar.getElement("highlight").checked = true;
+	},
 	
-this.highlightByDefaultOnWillOpen = function(e) {
-	if(e.defaultPrevented || !e.originalTarget.hidden) { return; }
-	
-	highlightByDefault(e.originalTarget);
-};
-
-this.highlightByDefaultOnFillSelectedText = function() {
-	highlightByDefault(gFindBar);
+	handleEvent: function(e) {
+		switch(e.type) {
+			case 'WillOpenFindBar':
+			case 'WillOpenFindBarBackground':
+				if(e.defaultPrevented || !e.originalTarget.hidden) { return; }
+				
+				this.apply(e.originalTarget);
+				break;
+			
+			
+			case 'WillFillSelectedText':
+				this.apply(gFindBar);
+				break;
+		}
+	}
 };
 
 Modules.LOADMODULE = function() {
 	initFindBar('highlightByDefault',
 		function(bar) {
 			bar.browser.finder.addMessage('HighlightByDefault', () => {
-				highlightByDefault(bar);
+				highlightByDefault.apply(bar);
 			});
 			
 			Messenger.loadInBrowser(bar.browser, 'highlightByDefault');
@@ -34,14 +42,14 @@ Modules.LOADMODULE = function() {
 					enumerable: true,
 					get: function() { return this._checked; },
 					set: function(v) {
-						if(arguments.callee.caller.toString().indexOf('bug 253793') > -1) { return this._checked; }
+						if(arguments.callee.caller.toString().contains('bug 253793')) { return this._checked; }
 						return this._checked = v;
 					}
 				});
 			}
 			
 			if(!bar.hidden) {
-				highlightByDefault(bar);
+				highlightByDefault.apply(bar);
 			}
 		},
 		function(bar) {
@@ -61,17 +69,17 @@ Modules.LOADMODULE = function() {
 		}
 	);
 	
-	Listeners.add(window, 'WillOpenFindBar', highlightByDefaultOnWillOpen);
-	Listeners.add(window, 'WillOpenFindBarBackground', highlightByDefaultOnWillOpen);
+	Listeners.add(window, 'WillOpenFindBar', highlightByDefault);
+	Listeners.add(window, 'WillOpenFindBarBackground', highlightByDefault);
 	
 	// Always highlight all by default when selecting text and filling the findbar with it
-	Listeners.add(window, 'WillFillSelectedText', highlightByDefaultOnFillSelectedText);
+	Listeners.add(window, 'WillFillSelectedText', highlightByDefault);
 };
 
 Modules.UNLOADMODULE = function() {
 	deinitFindBar('highlightByDefault');
 	
-	Listeners.remove(window, 'WillOpenFindBar', highlightByDefaultOnWillOpen);
-	Listeners.remove(window, 'WillOpenFindBarBackground', highlightByDefaultOnWillOpen);
-	Listeners.remove(window, 'WillFillSelectedText', highlightByDefaultOnFillSelectedText);
+	Listeners.remove(window, 'WillOpenFindBar', highlightByDefault);
+	Listeners.remove(window, 'WillOpenFindBarBackground', highlightByDefault);
+	Listeners.remove(window, 'WillFillSelectedText', highlightByDefault);
 };

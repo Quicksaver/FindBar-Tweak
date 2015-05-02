@@ -1,11 +1,11 @@
-Modules.VERSION = '2.2.0';
+Modules.VERSION = '2.2.1';
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
 // Timers - Object to aid in setting, initializing and cancelling timers
 // init(aName, aFunc, aDelay, aType) - initializes a named timer to be kept in the timers object
 //	aName - (string) to name the timer
-//	aFunc - (function) to be fired by the timer, it will be bound to self
+//	aFunc - (function) to be fired by the timer
 //	aDelay - (int) msec to set the timer
 //	(optional) aType -
 //		(string) 'slack' fires every aDelay msec and waits for the last aFunc call to finish before restarting the timer,
@@ -13,8 +13,7 @@ Modules.BASEUTILS = true;
 //		(string) 'precise_skip' not really sure what this one does,
 //		(string) 'once' fires only once,
 //		defaults to once
-// create(aFunc, aDelay, aType, toBind) - creates a timer object and returns it
-//	toBind - (object) to bind aFunc to, if unset aFunc will be bound to self
+// create(aFunc, aDelay, aType) - creates a timer object and returns it
 //	see init()
 this.Timers = {
 	timers: {},
@@ -22,18 +21,18 @@ this.Timers = {
 	init: function(aName, aFunc, aDelay, aType) {
 		this.cancel(aName);
 		
-		var type = this._switchType(aType);
 		this.timers[aName] = {
 			timer: Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer),
 			handler: aFunc
 		};
-		this.timers[aName].timer.init(function(aSubject, aTopic, aData) {
-			var handler = Timers.timers[aName].handler;
-			if(typeof(Timers) != 'undefined' && aSubject.type == Ci.nsITimer.TYPE_ONE_SHOT) {
-				Timers.cancel(aName);
+		
+		this.timers[aName].timer.init((aSubject, aTopic, aData) => {
+			var handler = this.timers[aName].handler;
+			if(aSubject.type == Ci.nsITimer.TYPE_ONE_SHOT) {
+				this.cancel(aName);
 			}
-			handler.call(self, aSubject, aTopic, aData);
-		}, aDelay, type);
+			handler(aSubject, aTopic, aData);
+		}, aDelay, this._switchType(aType));
 		
 		this.__defineGetter__(aName, function() { return this.timers[aName]; });
 		return this.timers[aName];
@@ -59,16 +58,16 @@ this.Timers = {
 	},
 	
 	clean: function() {
-		for(var timerObj in this.timers) {
+		for(let timerObj in this.timers) {
 			this.cancel(timerObj);
 		}
 	},
 	
-	create: function(aFunc, aDelay, aType, toBind) {
+	create: function(aFunc, aDelay, aType) {
 		var type = this._switchType(aType);
 		var newTimer = {
 			timer: Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer),
-			handler: (toBind) ? aFunc.bind(toBind) : aFunc.bind(self),
+			handler: aFunc,
 			cancel: function() {
 				this.timer.cancel();
 			}

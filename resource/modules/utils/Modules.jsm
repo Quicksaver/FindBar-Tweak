@@ -25,8 +25,8 @@ this.self = this;
 //				so that they only unload on the very end; like above, should only be used in backbone modules
 //	Modules.CLEAN - (bool) if false, this module won't be removed by clean(); defaults to true
 this.Modules = {
-	version: '2.5.0',
-	modules: [],
+	version: '2.6.0',
+	modules: new Set(),
 	moduleVars: {},
 	
 	loadIf: function(aModule, anIf, delayed) {
@@ -39,13 +39,9 @@ this.Modules = {
 	
 	load: function(aModule, delayed) {
 		var path = this.preparePath(aModule);
-		if(!path) {
-			return false;
-		}
+		if(!path) { return false; }
 		
-		if(this.loaded(path) !== false) {
-			return true;
-		}
+		if(this.loaded(path)) { return true; }
 		
 		try { Services.scriptloader.loadSubScript(path, self); }
 		catch(ex) {
@@ -56,17 +52,17 @@ this.Modules = {
 		var module = {
 			name: aModule,
 			path: path,
-			load: (this.LOADMODULE) ? this.LOADMODULE : null,
-			unload: (this.UNLOADMODULE) ? this.UNLOADMODULE : null,
-			vars: (this.VARSLIST) ? this.VARSLIST : null,
-			version: (this.VERSION) ? this.VERSION : null,
-			utils: (this.UTILS) ? this.UTILS : false,
-			baseutils: (this.BASEUTILS) ? this.BASEUTILS : false,
+			load: this.LOADMODULE || null,
+			unload: this.UNLOADMODULE || null,
+			vars: this.VARSLIST || null,
+			version: this.VERSION || null,
+			utils: this.UTILS || false,
+			baseutils: this.BASEUTILS || false,
 			clean: (this.CLEAN !== undefined) ? this.CLEAN : true,
 			loaded: false,
 			failed: false
 		};
-		var i = this.modules.push(module) -1;
+		this.modules.add(module);
 		
 		delete this.VARSLIST;
 		delete this.LOADMODULE;
@@ -76,7 +72,7 @@ this.Modules = {
 		delete this.BASEUTILS;
 		delete this.CLEAN;
 		
-		if(!this.modules[i].vars) {
+		if(!module.vars) {
 			if(!Globals.moduleCache[aModule]) {
 				var tempScope = {
 					Modules: {},
@@ -93,60 +89,61 @@ this.Modules = {
 				delete tempScope.$$;
 				
 				var scopeVars = [];
-				for(var v in tempScope) {
+				for(let v in tempScope) {
 					scopeVars.push(v);
 				}
-				Globals.moduleCache[aModule] = { vars: scopeVars };
+				Globals.moduleCache[aModule] = scopeVars;
 			}
-			this.modules[i].vars = Globals.moduleCache[aModule].vars;
+			module.vars = Globals.moduleCache[aModule];
 		}
 		
-		try { this.createVars(this.modules[i].vars); }
+		try { this.createVars(module.vars); }
 		catch(ex) {
 			Cu.reportError(ex);
 			this.unload(aModule, true, true);
 			return false;
 		}
 		
-		if(this.modules[i].load) {
+		if(module.load) {
 			if(!delayed || delayed.delayedStartupFinished) {
-				try { this.modules[i].load(); }
+				try { module.load(); }
 				catch(ex) {
 					Cu.reportError(ex);
 					this.unload(aModule, true);
 					return false;
 				}
-				this.modules[i].loaded = true;
-			} else {
-				this.modules[i]._aSync = () => {
+				module.loaded = true;
+			}
+			else {
+				module.aSync = () => {
 					if(typeof(Modules) == 'undefined') { return; } // when disabling the add-on before it's had time to perform the load call
 					
-					try { this.modules[i].load(); }
+					try { module.load(); }
 					catch(ex) {
 						Cu.reportError(ex);
 						this.unload(aModule, true);
 						return;
 					}
-					delete this.modules[i]._aSync;
-					delete this.modules[i].aSync;
-					this.modules[i].loaded = true; 
+					module.loaded = true; 
 				};
 				
 				// if we're delaying a load in a browser window, we should wait for it to finish the initial painting
 				if(typeof(delayed) == 'object' && "delayedStartupFinished" in delayed) {
-					this.modules[i].aSync = Observers.add((aSubject, aTopic) => {
+					module.observe = function(aSubject, aTopic) {
 						if(aSubject.gBrowserInit == delayed) {
-							Observers.remove(this.modules[i].aSync, 'browser-delayed-startup-finished');
-							this.modules[i]._aSync();
+							Observers.remove(this, 'browser-delayed-startup-finished');
+							this.aSync();
 						}
-					}, 'browser-delayed-startup-finished');
+					};
+					
+					Observers.add(module, 'browser-delayed-startup-finished');
 				} else {
-					this.modules[i].aSync = aSync(this.modules[i]._aSync, 250);
+					module._aSync = aSync(module.aSync, 250);
 				}
 			}
 		}
 		else {
-			this.modules[i].loaded = true;
+			module.loaded = true;
 		}
 		
 		return true;
@@ -156,28 +153,28 @@ this.Modules = {
 		var path = this.preparePath(aModule);
 		if(!path) { return true; }
 		
-		var i = this.loaded(aModule);
-		if(i === false) { return true; }
+		var module = this.loaded(aModule);
+		if(!module) { return true; }
 		
-		if(!justVars && this.modules[i].unload && (this.modules[i].loaded || force)) {
-			try { this.modules[i].unload(); }
+		if(!justVars && module.unload && (module.loaded || force)) {
+			try { module.unload(); }
 			catch(ex) {
 				if(!force) { Cu.reportError(ex); }
 				Cu.reportError('Failed to load module '+aModule);
-				this.modules[i].failed = true;
+				module.failed = true;
 				return false;
 			}
 		}
 		
-		try { this.deleteVars(this.modules[i].vars); }
+		try { this.deleteVars(module.vars); }
 		catch(ex) {
 			if(!force) { Cu.reportError(ex); }
 			Cu.reportError('Failed to load module '+aModule);
-			this.modules[i].failed = true;
+			module.failed = true;
 			return false;
 		}
 		
-		this.modules.splice(i, 1);
+		this.modules.delete(module);
 		return true;
 	},
 	
@@ -191,15 +188,17 @@ this.Modules = {
 		var done = false;
 		
 		while(!done) {
-			var i = Modules.modules.length -1;
-			
-			while(i >= 0) {
-				if(Modules.modules[i].clean
-				&& Modules.modules[i].utils == utils
-				&& Modules.modules[i].baseutils == baseutils) {
-					Modules.unload(Modules.modules[i].name);
+			var toUnload = [];
+			for(let module of this.modules) {
+				if(module.clean
+				&& module.utils == utils
+				&& module.baseutils == baseutils) {
+					toUnload.push(module);
 				}
-				i--;
+			}
+			
+			for(var i = toUnload.length -1; i >= 0; i--) {
+				this.unload(toUnload[i].name);
 			}
 			
 			if(!utils) { utils = true; }
@@ -209,22 +208,22 @@ this.Modules = {
 	},
 	
 	loaded: function(aModule) {
-		for(var i = 0; i < this.modules.length; i++) {
-			if(this.modules[i].path == aModule || this.modules[i].name == aModule) {
-				return i;
+		for(let module of this.modules) {
+			if(module.path == aModule || module.name == aModule) {
+				return module;
 			}
 		}
-		return false;
+		return null;
 	},
 	
 	createVars: function(aList) {
 		if(!Array.isArray(aList)) { return; }
 		
-		for(var i=0; i<aList.length; i++) {
-			if(this.moduleVars[aList[i]]) {
-				this.moduleVars[aList[i]]++;
+		for(let x of aList) {
+			if(this.moduleVars[x]) {
+				this.moduleVars[x]++;
 			} else {
-				this.moduleVars[aList[i]] = 1;
+				this.moduleVars[x] = 1;
 			}
 		}
 	},
@@ -232,12 +231,12 @@ this.Modules = {
 	deleteVars: function(aList) {
 		if(!Array.isArray(aList)) { return; }
 		
-		for(var o = 0; o < aList.length; o++) {
-			if(this.moduleVars[aList[o]]) {
-				this.moduleVars[aList[o]]--;
-				if(this.moduleVars[aList[o]] == 0) {
-					delete self[aList[o]];
-					delete this.moduleVars[aList[o]];
+		for(let x of aList) {
+			if(this.moduleVars[x]) {
+				this.moduleVars[x]--;
+				if(this.moduleVars[x] == 0) {
+					delete self[x];
+					delete this.moduleVars[x];
 				}
 			}
 		}
@@ -245,7 +244,7 @@ this.Modules = {
 	
 	preparePath: function(aModule) {
 		if(typeof(aModule) != 'string') { return null; }
-		if(aModule.indexOf("resource://") === 0) { return aModule; }
+		if(aModule.startsWith("resource://")) { return aModule; }
 		return "resource://"+objPathString+"/modules/"+aModule+".jsm";
 	}
 };

@@ -1,19 +1,16 @@
-// VERSION = '1.0.3'
+// VERSION = '1.0.4'
 
 // Strings - use for getting strings out of bundles from .properties locale files
 this.__defineGetter__('Strings', function() { delete this.Strings; Modules.load('utils/Strings'); return Strings; });
 
 // xmlHttpRequest() - aid for quickly using the nsIXMLHttpRequest interface
-this.xmlHttpRequest = function(url, callback, method, async) { loadSandboxTools(); return xmlHttpRequest(url, callback, method, async); };
+this.xmlHttpRequest = function(url, callback, method) { loadSandboxTools(); return xmlHttpRequest(url, callback, method); };
 
 // aSync() - lets me run aFunc asynchronously
 this.aSync = function(aFunc, aDelay) { loadSandboxTools(); return aSync(aFunc, aDelay); };
 
 // dispatch() - creates and dispatches an event and returns (bool) whether preventDefault was called on it
 this.dispatch = function(obj, properties) { loadSandboxTools(); return dispatch(obj, properties); };
-
-// compareFunction() - returns (bool) if a === b
-this.compareFunction = function(a, b, strict) { loadSandboxTools(); return compareFunction(a, b, strict); };
 
 // isAncestor() - Checks if aNode decends from aParent
 this.isAncestor = function(aNode, aParent) { loadSandboxTools(); return isAncestor(aNode, aParent); };
@@ -59,7 +56,6 @@ this.loadSandboxTools = function() {
 	delete this.xmlHttpRequest;
 	delete this.aSync;
 	delete this.dispatch;
-	delete this.compareFunction;
 	delete this.isAncestor;
 	delete this.hideIt;
 	delete this.trim;

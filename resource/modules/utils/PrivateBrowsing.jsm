@@ -1,4 +1,4 @@
-Modules.VERSION = '3.2.0';
+Modules.VERSION = '3.2.1';
 Modules.UTILS = true;
 
 // PrivateBrowsing - Aid object for private browsing mode
@@ -20,9 +20,8 @@ this.PrivateBrowsing = {
 	get inPrivateBrowsing () { return PrivateBrowsingUtils.isWindowPrivate(window); },
 	
 	prepare: function(aWatcher) {
-		var watcherObj = aWatcher;
-		if(!watcherObj.observe) {
-			watcherObj.observe = function(aSubject, aTopic, aData) {
+		if(!aWatcher.observe) {
+			aWatcher.observe = function(aSubject, aTopic, aData) {
 				try {
 					if(aTopic == "quit-application" && this.onQuit) {
 						this.onQuit();
@@ -32,43 +31,39 @@ this.PrivateBrowsing = {
 				catch(ex) { aSync(function() { Cu.reportError(ex); }); }
 			};
 		}
-		if(!watcherObj.init) { watcherObj.init = null; }
-		if(!watcherObj.autoStarted) { watcherObj.autoStarted = null; }
-		if(!watcherObj.addonEnabled) { watcherObj.addonEnabled = null; }
-		if(!watcherObj.addonDisabled) { watcherObj.addonDisabled = null; }
-		if(!watcherObj.onQuit) { watcherObj.onQuit = null; }
-		return watcherObj;
+		if(!aWatcher.init) { aWatcher.init = null; }
+		if(!aWatcher.autoStarted) { aWatcher.autoStarted = null; }
+		if(!aWatcher.addonEnabled) { aWatcher.addonEnabled = null; }
+		if(!aWatcher.addonDisabled) { aWatcher.addonDisabled = null; }
+		if(!aWatcher.onQuit) { aWatcher.onQuit = null; }
 	},
 	
 	addWatcher: function(aWatcher) {
-		var watcher = this.prepare(aWatcher);
+		this.prepare(aWatcher);
+		Observers.add(aWatcher, "quit-application");
 		
-		Observers.add(watcher, "quit-application");
-		
-		if(watcher.init) {
-			try { watcher.init(); }
+		if(aWatcher.init) {
+			try { aWatcher.init(); }
 			catch(ex) { aSync(function() { Cu.reportError(ex); }); }
 		}
 		
 		if(this.inPrivateBrowsing) {
-			if(watcher.addonEnabled && STARTED != APP_STARTUP) {
-				try { watcher.addonEnabled(); }
+			if(aWatcher.addonEnabled && STARTED != APP_STARTUP) {
+				try { aWatcher.addonEnabled(); }
 				catch(ex) { aSync(function() { Cu.reportError(ex); }); }
-			} else if(watcher.autoStarted) {
-				try { watcher.autoStarted(); }
+			} else if(aWatcher.autoStarted) {
+				try { aWatcher.autoStarted(); }
 				catch(ex) { aSync(function() { Cu.reportError(ex); }); }
 			}
 		}
 	},
 	
 	removeWatcher: function(aWatcher) {
-		var watcher = this.prepare(aWatcher);
-		
-		if(watcher.addonDisabled && this.inPrivateBrowsing && UNLOADED && UNLOADED != APP_SHUTDOWN) {
-			try { watcher.addonDisabled(); }
+		if(aWatcher.addonDisabled && this.inPrivateBrowsing && UNLOADED && UNLOADED != APP_SHUTDOWN) {
+			try { aWatcher.addonDisabled(); }
 			catch(ex) { aSync(function() { Cu.reportError(ex); }); }
 		}
 		
-		Observers.remove(watcher, "quit-application");
+		Observers.remove(aWatcher, "quit-application");
 	}
 };

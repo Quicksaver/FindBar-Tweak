@@ -1,4 +1,4 @@
-var defaultsVersion = '1.4.1';
+var defaultsVersion = '1.4.2';
 var objName = 'findbartweak';
 var objPathString = 'findbartweak';
 
@@ -6,7 +6,7 @@ var objPathString = 'findbartweak';
 this.__defineGetter__('minTextboxWidth', function() {
 	if(DARWIN) { return 176; }
 	else if(WINNT) {
-		if(Services.navigator.oscpu && Services.navigator.oscpu.indexOf('Windows NT 5.1') == 0) { return 127; }
+		if(Services.navigator.oscpu && Services.navigator.oscpu.startsWith('Windows NT 5.1')) { return 127; }
 		else { return 120; }
 	}
 	else { return 180; }

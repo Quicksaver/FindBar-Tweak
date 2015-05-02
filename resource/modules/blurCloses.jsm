@@ -1,34 +1,37 @@
-Modules.VERSION = '1.2.1';
+Modules.VERSION = '2.0.0';
 
-this.blurClosesAdd = function() {
-	Listeners.add(window, 'focus', delayBlurCloses, true);
-};
-
-this.blurClosesRemove = function() {
-	Listeners.remove(window, 'focus', delayBlurCloses, true);
-};
-
-// The delay is for FAYT feature, to give it time to focus the findbar and not the document window
-this.delayBlurCloses = function(e) {
-	Timers.init('blurCloses', () => { blurCloses(e); }, 0);
-};
-
-this.blurCloses = function(e) {
-	var focusedNode = document.commandDispatcher.focusedElement || e.target;
-	if(!isAncestor(focusedNode, gFindBar)
-	&& !isAncestor(focusedNode, $(objPathString+'_findbarMenu'))
-	&& dispatch(gFindBar, { type: 'ClosingFindbarOnBlur', detail: focusedNode })) {
-		gFindBar.close();
-	}
-};
-
-this.blurClosesTabSelect = function(e) {
-	if(e.type == 'TabSelect') {
-		gFindBar.close();
-	} else if(currentTab && currentTab._findBar) {
-		currentTab._findBar.close();
-		if(gFindBarInitialized) {
-			gFindBar.close();
+this.blurCloses = {
+	handleEvent: function(e) {
+		switch(e.type) {
+			'focus':
+				// The timer is for FAYT feature, to give it time to focus the findbar and not the document window
+				Timers.init('blurCloses', () => {
+					var focusedNode = document.commandDispatcher.focusedElement || e.target;
+					if(!isAncestor(focusedNode, gFindBar)
+					&& !isAncestor(focusedNode, $(objPathString+'_findbarMenu'))
+					&& dispatch(gFindBar, { type: 'ClosingFindbarOnBlur', detail: focusedNode })) {
+						gFindBar.close();
+					}
+				}, 0);
+				break;
+			
+			'OpenedFindBar':
+				Listeners.add(window, 'focus', this, true);
+				break;
+			
+			'ClosedFindBar':
+			'ClosedFindBarBackground':
+				Listeners.remove(window, 'focus', this, true);
+				break;
+			
+			'TabSelectPrevious':
+				if(currentTab && currentTab._findBar) {
+					currentTab._findBar.close();
+					if(gFindBarInitialized) {
+						gFindBar.close();
+					}
+				}
+				break;
 		}
 	}
 };
@@ -42,23 +45,22 @@ Modules.LOADMODULE = function() {
 		}
 	}
 	
-	Listeners.add(window, 'OpenedFindBar', blurClosesAdd);
-	Listeners.add(window, 'ClosedFindBar', blurClosesRemove);
-	Listeners.add(window, 'ClosedFindBarBackground', blurClosesRemove);
+	Listeners.add(window, 'OpenedFindBar', blurCloses);
+	Listeners.add(window, 'ClosedFindBar', blurCloses);
+	Listeners.add(window, 'ClosedFindBarBackground', blurCloses);
 	
 	if(!viewSource) {
-		Listeners.add(gBrowser.tabContainer, "TabSelectPrevious", blurClosesTabSelect);
+		Listeners.add(gBrowser.tabContainer, "TabSelectPrevious", blurCloses);
 	}
 };
 
 Modules.UNLOADMODULE = function() {
-	Listeners.remove(window, 'OpenedFindBar', blurClosesAdd);
-	Listeners.remove(window, 'ClosedFindBar', blurClosesRemove);
-	Listeners.remove(window, 'ClosedFindBarBackground', blurClosesRemove);
-	
-	blurClosesRemove();
+	Listeners.remove(window, 'OpenedFindBar', blurCloses);
+	Listeners.remove(window, 'ClosedFindBar', blurCloses);
+	Listeners.remove(window, 'ClosedFindBarBackground', blurCloses);
+	Listeners.remove(window, 'focus', blurCloses, true);
 	
 	if(!viewSource) {
-		Listeners.remove(gBrowser.tabContainer, "TabSelectPrevious", blurClosesTabSelect);
+		Listeners.remove(gBrowser.tabContainer, "TabSelectPrevious", blurCloses);
 	}
 };

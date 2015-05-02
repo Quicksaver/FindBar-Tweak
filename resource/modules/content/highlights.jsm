@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.0';
+Modules.VERSION = '1.1.0';
 
 this.getDocProperty = function(doc, prop, min) {
 	try {
@@ -16,26 +16,90 @@ this.getDocProperty = function(doc, prop, min) {
 	catch(ex) { return 0; }
 };
 
-this.escHighlights = function(e) {
-	if(e.keyCode == e.DOM_VK_ESCAPE) {
-		message('HighlightsOff');
-	}
-};
-
-this.setEscHighlights = function(m) {
-	if('documentHighlighted' in m.data) {
-		if(m.data.documentHighlighted) {
-			Listeners.add(document, 'keyup', escHighlights);
-		} else {
-			Listeners.remove(document, 'keyup', escHighlights);
-		}
-	}
-};
-
 this.highlights = {
 	onPDFResult: function() {
 		// there's no point in calling trackPDFMatches for every page, we can stack them up
-		Timers.init('trackPDFMatches', this.trackPDFMatches, 50);
+		Timers.init('trackPDFMatches', () => { this.trackPDFMatches(); }, 50);
+	},
+	
+	MESSAGES: [
+		'Highlights:Info'
+	],
+	
+	receiveMessage: function(m) {
+		let name = messageName(m);
+		
+		switch(name) {
+			case 'Highlights:Info':
+				this.setEsc(m.data);
+				break;
+		}
+	},
+	
+	handleEvent: function(e) {
+		switch(e.type) {
+			case 'keyup':
+				this.esc(e);
+				break;
+		}
+	},
+	
+	// Tab progress listeners, handles opening and closing of pages and location changes
+	// Commands a reHighlight if needed, triggered from history navigation as well
+	onLocationChange: function(aWebProgress, aRequest, aLocation) {
+		// Frames don't need to trigger this
+		if(aWebProgress.isTopLevel) {
+			documentReHighlight = true;
+			
+			// Bugfix: This used to be (request && !request.isPending()),
+			// I'm not sure why I made it that way before, maybe I saw it in an example somewhere?
+			// But by also reHighlighting when !request, we successfully reHighlight when there is dynamic content loaded (e.g. AJAX)
+			// e.g. "Show more" button in deviantart
+			if(!aRequest || !aRequest.isPending()) {
+				this.delay();
+			}
+			
+			// Bugfix issue #42: when opening an image file, highlights from previous loaded document would remain
+			else if(aRequest.contentType && aRequest.contentType.startsWith('image/')) {
+				Timers.cancel('delayReHighlight');
+				documentHighlighted = false;
+				this.apply(false);
+			}
+		}
+	},
+	
+	onStateChange: function(aWebProgress, aRequest, aStateFlags, aStatus) {
+		if(!aWebProgress.isLoadingDocument && aWebProgress.DOMWindow == content) {
+			this.delay();
+		}
+	},
+
+	// Commands a reHighlight if needed on any tab, triggered from frames as well
+	// Mainly for back/forward actions
+	onDOMContentLoaded: function(e) {
+		// this is the content document of the loaded page.
+		if(e.originalTarget instanceof content.HTMLDocument) {
+			documentReHighlight = true;
+			
+			// Bugfix: don't do immediately! Pages with lots of frames will trigger this each time a frame is loaded, can slowdown page load
+			this.delay();
+		}
+	},
+	
+	esc: function(e) {
+		if(e.keyCode == e.DOM_VK_ESCAPE) {
+			message('HighlightsOff');
+		}
+	},
+	
+	setEsc: function(data) {
+		if('documentHighlighted' in data) {
+			if(data.documentHighlighted) {
+				Listeners.add(document, 'keyup', this);
+			} else {
+				Listeners.remove(document, 'keyup', this);
+			}
+		}
 	},
 	
 	apply: function(aHighlight) {
@@ -60,7 +124,7 @@ this.highlights = {
 		// as that would never be set if the find bar was empty on load, so it kept setting the timer here.
 		if(!PDFJS.findController || PDFJS.findController.resumeCallback) {
 			Finder.matchesPDF = 0;
-			Timers.init('trackPDFMatches', highlights.trackPDFMatches, 0);
+			Timers.init('trackPDFMatches', () => { this.trackPDFMatches(); }, 0);
 			return;
 		}
 		
@@ -95,51 +159,9 @@ this.highlights = {
 			message('TempPending', true);
 			
 			// Because it might still not be finished, we should update later
-			Timers.init('trackPDFMatches', highlights.trackPDFMatches, 250);
+			Timers.init('trackPDFMatches', () => { this.trackPDFMatches(); }, 250);
 		} else {
 			message('TempPending', false);
-		}
-	},
-	
-	// Tab progress listeners, handles opening and closing of pages and location changes
-	// Commands a reHighlight if needed, triggered from history navigation as well
-	onLocationChange: function(aWebProgress, aRequest, aLocation) {
-		// Frames don't need to trigger this
-		if(aWebProgress.isTopLevel) {
-			documentReHighlight = true;
-			
-			// Bugfix: This used to be (request && !request.isPending()),
-			// I'm not sure why I made it that way before, maybe I saw it in an example somewhere?
-			// But by also reHighlighting when !request, we successfully reHighlight when there is dynamic content loaded (e.g. AJAX)
-			// e.g. "Show more" button in deviantart
-			if(!aRequest || !aRequest.isPending()) {
-				this.delay();
-			}
-			
-			// Bugfix issue #42: when opening an image file, highlights from previous loaded document would remain
-			else if(aRequest.contentType && aRequest.contentType.indexOf('image/') === 0) {
-				Timers.cancel('delayReHighlight');
-				documentHighlighted = false;
-				this.apply(false);
-			}
-		}
-	},
-	
-	onStateChange: function(aWebProgress, aRequest, aStateFlags, aStatus) {
-		if(!aWebProgress.isLoadingDocument && aWebProgress.DOMWindow == content) {
-			this.delay();
-		}
-	},
-
-	// Commands a reHighlight if needed on any tab, triggered from frames as well
-	// Mainly for back/forward actions
-	onDOMContentLoaded: function(e) {
-		// this is the content document of the loaded page.
-		if(e.originalTarget instanceof content.HTMLDocument) {
-			documentReHighlight = true;
-			
-			// Bugfix: don't do immediately! Pages with lots of frames will trigger this each time a frame is loaded, can slowdown page load
-			this.delay();
 		}
 	},
 
@@ -164,7 +186,9 @@ Modules.LOADMODULE = function() {
 	DOMContentLoaded.add(highlights);
 	
 	// set outside Finder, as it's a message that it already listens to
-	listen('Highlights:Info', setEscHighlights);
+	for(let msg of highlights.MESSAGES) {
+		listen(msg, highlights);
+	}
 	
 	// make sure the info stays updated
 	Finder.syncPDFJS();
@@ -172,12 +196,15 @@ Modules.LOADMODULE = function() {
 
 Modules.UNLOADMODULE = function() {
 	Timers.cancel('trackPDFMatches');
-	unlisten('Highlights:Info', setEscHighlights);
+	
+	for(let msg of highlights.MESSAGES) {
+		unlisten(msg, highlights);
+	}
 	
 	Finder.removeResultListener(highlights);
 	webProgress.removeProgressListener(highlights);
 	DOMContentLoaded.remove(highlights);
-	Listeners.remove(document, 'keyup', escHighlights);
+	Listeners.remove(document, 'keyup', highlights);
 	
 	RemoteFinderListener.removeMessage('Highlights:Clean');
 	

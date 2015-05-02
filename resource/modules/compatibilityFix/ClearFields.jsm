@@ -1,22 +1,32 @@
-Modules.VERSION = '1.0.2';
+Modules.VERSION = '2.0.0';
 
-this.clearFieldsOnClick = function() {
-	gFindBar._find();
-};
-
-this.clearFieldsAddListener = function() {
-	// ClearFields doesn't distinguish types of clicks (left, middle, right) so I can't either
-	Listeners.add($('ClearFields-in-find'), 'click', clearFieldsOnClick);
+this.clearFields = {
+	handleEvent: function(e) {
+		switch(e.type) {
+			case 'OpenedFindBar':
+				this.setup();
+				break;
+			
+			case 'click':
+				gFindBar._find();
+				break;
+		}
+	},
+	
+	setup: function() {
+		// ClearFields doesn't distinguish types of clicks (left, middle, right) so I can't either
+		Listeners.add($('ClearFields-in-find'), 'click', this);
+	}
 };
 
 Modules.LOADMODULE = function() {
-	clearFieldsAddListener();
+	clearFields.setup();
 	
 	// This is put here because the clear field button isn't added at startup
-	Listeners.add(window, 'OpenedFindBar', clearFieldsAddListener);
+	Listeners.add(window, 'OpenedFindBar', clearFields);
 };
 
 Modules.UNLOADMODULE = function() {
-	Listeners.remove($('ClearFields-in-find'), 'click', clearFieldsOnClick);
-	Listeners.remove(window, 'OpenedFindBar', clearFieldsAddListener);
+	Listeners.remove($('ClearFields-in-find'), 'click', clearFields);
+	Listeners.remove(window, 'OpenedFindBar', clearFields);
 };

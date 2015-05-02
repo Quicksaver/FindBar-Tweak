@@ -1,4 +1,4 @@
-Modules.VERSION = '2.3.0';
+Modules.VERSION = '2.4.0';
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -13,7 +13,7 @@ Modules.BASEUTILS = true;
 //	(optional) beforeComplete - true calls aCallback immediatelly regardless of readyState, false fires aCallback when window loads if readyState != complete, defaults to false.
 //	see callOnMostRecent()
 // register(aHandler, aTopic, aType, aURI, beforeComplete) - registers aHandler to be notified of every aTopic
-//	aHandler - (function(aWindow)) handler to be fired. IMPORTANT: handler does not keep its original scope! Use as if in global sandbox scope, never use 'this' in it.
+//	aHandler - (function(aWindow)) handler to be fired. Or (nsiObserver object) with observe() method which will be passed aWindow and aTopic as its only two arguments.
 //	aTopic - (string) "domwindowopened" or (string) "domwindowclosed"
 //	(optional) beforeComplete -	See callOnAll()
 //					Note that regardless of this value, if you set aType, no callback will be performed before the window is loaded because the windowtype attribute
@@ -28,8 +28,7 @@ this.Windows = {
 	watchers: [],
 	
 	getEnumerator: function(aType) {
-		var type = aType || null;
-		return Services.wm.getEnumerator(type);
+		return Services.wm.getEnumerator(aType || null);
 	},
 	
 	callOnMostRecent: function(aCallback, aType, aURI) {
@@ -58,18 +57,20 @@ this.Windows = {
 		while(browserEnumerator.hasMoreElements()) {
 			var window = browserEnumerator.getNext();
 			if(!aURI || window.document.documentURI == aURI) {
-				if(window.document.readyState == "complete" || beforeComplete) {
-					aCallback(window);
-				} else if(!UNLOADED) {
-					callOnLoad(window, aCallback);
-				}
+				callOnLoad(window, aCallback, beforeComplete);
 			}
 		}
 	},
 	
 	register: function(aHandler, aTopic, aType, aURI, beforeComplete) {
 		if(this.watching(aHandler, aTopic, aType, aURI, beforeComplete) === false) {
-			this.watchers.push({ handler: aHandler, topic: aTopic, type: aType || null, uri: aURI || null, beforeComplete: beforeComplete || false });
+			this.watchers.push({
+				handler: aHandler,
+				topic: aTopic,
+				type: aType || null,
+				uri: aURI || null,
+				beforeComplete: beforeComplete || false
+			});
 		}
 	},
 	
@@ -78,43 +79,6 @@ this.Windows = {
 		if(i !== false) {
 			this.watchers.splice(i, 1);
 		}
-	},
-	
-	callHandlers: function(aSubject, aTopic, noBefore) {
-		var scheduleOnLoad = false;
-		for(var i = 0; i < Windows.watchers.length; i++) {
-			// windowtype is undefined until the window loads
-			if(!noBefore && aSubject.document.readyState != 'complete' && Windows.watchers[i].type) {
-				scheduleOnLoad = true;
-			}
-			
-			if(Windows.watchers[i].topic == aTopic
-			&& (!Windows.watchers[i].type || aSubject.document.documentElement.getAttribute('windowtype') == Windows.watchers[i].type)
-			&& (!Windows.watchers[i].uri || aSubject.document.documentURI == Windows.watchers[i].uri)) {
-				if(noBefore) {
-					if(!Windows.watchers[i].beforeComplete) {
-						Windows.watchers[i].handler(aSubject);
-					}
-					continue;
-				}
-				
-				if(aSubject.document.readyState == 'complete' || Windows.watchers[i].beforeComplete) {
-					Windows.watchers[i].handler(aSubject);
-				}
-			}
-			
-			if(scheduleOnLoad) {
-				callOnLoad(aSubject, Windows.callLoadedHandlers, aTopic);
-			}
-		}
-	},
-	
-	callWatchers: function(aSubject, aTopic) {
-		Windows.callHandlers(aSubject, aTopic, false);
-	},
-	
-	callLoadedHandlers: function(aSubject, aTopic) {
-		Windows.callHandlers(aSubject, aTopic, true);
 	},
 	
 	watching: function(aHandler, aTopic, aType, aURI, beforeComplete) {
@@ -132,13 +96,54 @@ this.Windows = {
 			}
 		}
 		return false;
+	},
+	
+	observe: function(aSubject, aTopic, noBefore) {
+		var scheduleOnLoad = false;
+		
+		for(let watcher of this.watchers) {
+			// 'windowtype' attr is undefined until the window loads
+			if(!noBefore && aSubject.document.readyState != 'complete' && watcher.type) {
+				scheduleOnLoad = true;
+			}
+			
+			if(watcher.topic == aTopic
+			&& (!watcher.type || aSubject.document.documentElement.getAttribute('windowtype') == watcher.type)
+			&& (!watcher.uri || aSubject.document.documentURI == watcher.uri)) {
+				if(noBefore) {
+					// don't run this handler if it's been run before
+					if(!watcher.beforeComplete) {
+						if(watcher.handler.observe) {
+							watcher.handler.observe(aSubject, aTopic);
+						} else {
+							watcher.handler(aSubject);
+						}
+					}
+					continue;
+				}
+				
+				if(aSubject.document.readyState == 'complete' || watcher.beforeComplete) {
+					if(watcher.handler.observe) {
+						watcher.handler.observe(aSubject, aTopic);
+					} else {
+						watcher.handler(aSubject);
+					}
+				}
+			}
+		}
+		
+		if(scheduleOnLoad) {
+			callOnLoad(aSubject, (aWindow) => {
+				this.observe(aWindow, aTopic, true);
+			});
+		}
 	}
 };
 
 Modules.LOADMODULE = function() {
-	Services.ww.registerNotification(Windows.callWatchers);
+	Services.ww.registerNotification(Windows);
 };
 
 Modules.UNLOADMODULE = function() {
-	Services.ww.unregisterNotification(Windows.callWatchers);
+	Services.ww.unregisterNotification(Windows);
 };

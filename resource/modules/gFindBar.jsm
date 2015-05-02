@@ -1,10 +1,9 @@
-Modules.VERSION = '1.0.0';
+Modules.VERSION = '1.0.1';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return FITFull || viewSource || window.gFindBarInitialized; });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
 this.__defineGetter__('browserPanel', function() { return $('browser-panel') || viewSource || FITFull; });
-this.getComputedStyle = function(el) { return window.getComputedStyle(el); };
 
 this.__defineGetter__('findQuery', function() { return gFindBar._findField.value; });
 this.__defineSetter__('findQuery', function(v) { return gFindBar._findField.value = v; });

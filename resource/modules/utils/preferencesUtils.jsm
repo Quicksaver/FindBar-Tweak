@@ -1,4 +1,4 @@
-Modules.VERSION = '1.4.0';
+Modules.VERSION = '1.4.1';
 Modules.UTILS = true;
 
 // dependsOn - object that adds a dependson attribute functionality to xul preference elements.
@@ -34,7 +34,7 @@ this.dependsOn = {
 			for(var node of elements) {
 				if(alreadyChanged.indexOf(node) > -1) { continue; }
 				
-				if(node.getAttribute('dependson').indexOf(field.id) > -1) {
+				if(node.getAttribute('dependson').contains(field.id)) {
 					this.updateElement(node);
 					alreadyChanged.push(node);
 				}
@@ -44,7 +44,7 @@ this.dependsOn = {
 		for(var node of elements) {
 			if(alreadyChanged.indexOf(node) > -1) { continue; }
 			
-			if(node.getAttribute('dependson').indexOf(e.target.id) > -1) {
+			if(node.getAttribute('dependson').contains(e.target.id)) {
 				this.updateElement(node);
 				alreadyChanged.push(node);
 			}
@@ -69,7 +69,7 @@ this.dependsOn = {
 			while(a < alternates.length) {
 				var inverse = false;
 				var dependency = alternates[a].split(':');
-				if(dependency[0].indexOf('!') > -1) {
+				if(dependency[0].contains('!')) {
 					inverse = true;
 					dependency[0] = dependency[0].replace('!', '');
 				}

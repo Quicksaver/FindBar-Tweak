@@ -1,4 +1,4 @@
-Modules.VERSION = '2.3.0';
+Modules.VERSION = '2.3.1';
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -33,9 +33,7 @@ this.Strings = {
 				var myex = 'Failed to load string from properties file. [Addon: '+objPathString+'] [File: '+bundle+'] [String: '+string+']';
 				try {
 					string = this.get(bundle, string, replace, aNumber, true);
-					if(string !== null) {
-						Services.console.logStringMessage(myex + ' [Successfully loaded en backup]');
-					} else {
+					if(string === null) {
 						Cu.reportError(myex + ' [Failed to load en backup]');
 						string = '';
 					}
@@ -50,7 +48,7 @@ this.Strings = {
 		}
 		
 		// This means we are dealing with a possible Plural Form, so we need to make sure we treat it accordingly
-		if(aNumber != undefined && string.indexOf(';') > -1) {
+		if(aNumber != undefined && string.contains(';')) {
 			try {
 				var [getForm, numForms] = PluralForm.makeGetter(this.bundles[bundleObj].GetStringFromName('PluralRule'));
 				string = getForm(aNumber, string);
@@ -59,9 +57,9 @@ this.Strings = {
 		}
 		
 		if(replace) {
-			for(var i = 0; i < replace.length; i++) {
-				while(string.indexOf(replace[i][0]) > -1) {
-					string = string.replace(replace[i][0], replace[i][1]);
+			for(let x of replace) {
+				while(string.contains(x[0])) {
+					string = string.replace(x[0], x[1]);
 				}
 			}
 		}

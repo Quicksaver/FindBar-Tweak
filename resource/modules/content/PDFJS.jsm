@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.1';
+Modules.VERSION = '1.0.2';
 
 this.PDFJS = {
 	// We need this to access protected properties, hidden from privileged code
@@ -55,8 +55,8 @@ this.PDFJS = {
 			this.findController.extractText();
 			
 			if(this.findController.state.type === 'find') {
-				Timers.init('PDFFindTimeout', function() {
-					PDFJS.findController.nextMatch(PDFJS.findController.state.type);
+				Timers.init('PDFFindTimeout', () => {
+					this.findController.nextMatch(this.findController.state.type);
 				}, this.findController.state.delay);
 			} else {
 				this.findController.nextMatch(this.findController.state.type);

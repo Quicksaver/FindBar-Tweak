@@ -1,7 +1,77 @@
-Modules.VERSION = '2.0.0';
+Modules.VERSION = '2.1.0';
 
 this.FITMini = {
 	get broadcaster() { return $(objName+'-findInTabs-broadcaster'); },
+	
+	// triggers a find operation, to make sure we have hits to show when selecting one, and that we actually show them as well
+	receiveMessage: function(m) {
+		var bar = (viewSource) ? gFindBar : gBrowser.getFindBar(gBrowser.getTabForBrowser(m.target));
+		
+		// don't actually perform the fastFind operation, as it already will have been commanded by the message sender
+		bar.browser.finder.workAroundFind = true;
+		bar._findField.value = m.data.query;
+		bar._setCaseSensitivity(m.data.caseSensitive ? 1 : 0); // implies bar._find()
+		bar.browser.finder.workAroundFind = false;
+	},
+	
+	handleEvent: function(e) {
+		switch(e.type) {
+			case 'TabClose':
+				if(FITSandbox.fulls.size > 0) {
+					Observers.notify('FIT:Update', e.target.linkedBrowser, 'removeBrowser');
+				}
+				break;
+			
+			case 'TabSelect':
+				this.sendToUpdate();
+				break;
+			
+			case 'TabOpen':
+				// if any FIT window is open, we need to make sure the findInTabs content script is loaded, even if its findbar isn't initialized yet
+				if(FITSandbox.fulls.size > 0) {
+					Messenger.loadInBrowser(e.target.linkedBrowser, 'findInTabs');
+				}
+				break;
+		}
+	},
+	
+	observe: function(aSubject, aTopic) {
+		switch(aTopic) {
+			case 'FIT:Load':
+				// already opened tabs need to have their findBar created, otherwise FIT won't work there
+				if(!viewSource) {
+					for(let browser of gBrowser.browsers) {
+						Messenger.loadInBrowser(browser, 'findInTabs');
+					}
+				} else {
+					Messenger.loadInBrowser(gFindBar.browser, 'findInTabs');
+				}
+				break;
+			
+			case 'FIT:Unload':
+				if(!viewSource) {
+					for(let browser of gBrowser.browsers) {
+						Messenger.unloadFromBrowser(browser, 'findInTabs');
+					}
+				} else {
+					Messenger.unloadFromBrowser(gFindBar.browser, 'findInTabs');
+				}
+				break;
+		}
+	},
+	
+	onFindResult: function(data, browser) {
+		FITMini.sendToUpdate(browser);
+	},
+	
+	onPDFJSState: function(browser) {
+		if(FITSandbox.fulls.size == 0) { return; }
+		
+		// We do with a delay to allow the page to render the selected element
+		aSync(() => {
+			this.sendToUpdate(browser);
+		}, 10);
+	},
 	
 	commmand: function() {
 		if(!FITFull) {
@@ -40,36 +110,19 @@ this.FITMini = {
 		
 		// No window found, we need to open a new one
 		var aWindow = window.open("chrome://"+objPathString+"/content/findInTabsFull.xul", '', 'chrome,extrachrome,toolbar,resizable,centerscreen');
-		
-		if(aWindow.document.readyState == 'uninitialized') {
-			callOnLoad(aWindow, this.carryData);
-		} else {
-			this.carryData(aWindow);
-		}
-	},
-	
-	carryData: function(aWindow) {
-		if((viewSource || gFindBarInitialized) && (!gFindBar.hidden || documentHighlighted) && findQuery) {
-			aWindow.document.getElementById('FindToolbar')._findField.value = findQuery;
-		}
-		if(typeof(aWindow[objName].FIT) == 'undefined') {
-			Listeners.add(aWindow, 'FITLoaded', function() {
+		callOnLoad(aWindow, () => {
+			if((viewSource || gFindBarInitialized) && (!gFindBar.hidden || documentHighlighted) && findQuery) {
+				aWindow.document.getElementById('FindToolbar')._findField.value = findQuery;
+			}
+			
+			if(typeof(aWindow[objName].FIT) == 'undefined') {
+				Listeners.add(aWindow, 'FITLoaded', function() {
+					aWindow[objName].FIT.lastBrowser = (viewSource) ? gFindBar.browser : gBrowser.mCurrentBrowser;
+				}, false, true);
+			} else {
 				aWindow[objName].FIT.lastBrowser = (viewSource) ? gFindBar.browser : gBrowser.mCurrentBrowser;
-			}, false, true);
-		} else {
-			aWindow[objName].FIT.lastBrowser = (viewSource) ? gFindBar.browser : gBrowser.mCurrentBrowser;
-		}
-	},
-	
-	// triggers a find operation, to make sure we have hits to show when selecting one, and that we actually show them as well
-	find: function(m) {
-		var bar = (viewSource) ? gFindBar : gBrowser.getFindBar(gBrowser.getTabForBrowser(m.target));
-		
-		// don't actually perform the fastFind operation, as it already will have been commanded by the message sender
-		bar.browser.finder.workAroundFind = true;
-		bar._findField.value = m.data.query;
-		bar._setCaseSensitivity(m.data.caseSensitive ? 1 : 0); // implies bar._find()
-		bar.browser.finder.workAroundFind = false;
+			}
+		});
 	},
 	
 	sendToUpdate: function(browser) {
@@ -77,36 +130,6 @@ this.FITMini = {
 		
 		browser = browser || (viewSource ? gFindBar.browser : gBrowser.mCurrentBrowser);
 		Observers.notify('FIT:Update', browser, 'updateBrowser');
-	},
-	
-	onTabClose: function(e) {
-		if(FITSandbox.fulls.size == 0) { return; }
-		
-		Observers.notify('FIT:Update', e.target.linkedBrowser, 'removeBrowser');
-	},
-	
-	onTabSelect: function(e) {
-		FITMini.sendToUpdate();
-	},
-	
-	onTabOpen: function(e) {
-		if(FITSandbox.fulls.size == 0) { return; }
-		
-		// if any FIT window is open, we need to make sure the findInTabs content script is loaded, even if its findbar isn't initialized yet
-		Messenger.loadInBrowser(e.target.linkedBrowser, 'findInTabs');
-	},
-	
-	onFindResult: function(data, browser) {
-		FITMini.sendToUpdate(browser);
-	},
-	
-	onPDFJSState: function(browser) {
-		if(FITSandbox.fulls.size == 0) { return; }
-		
-		// We do with a delay to allow the page to render the selected element
-		aSync(function() {
-			FITMini.sendToUpdate(browser);
-		}, 10);
 	},
 	
 	onUnload: function() {
@@ -122,31 +145,6 @@ this.FITMini = {
 				FITSandbox.viewSources.delete(window);
 				Observers.notify('FIT:Update', gFindBar.browser, 'removeBrowser');
 			}
-		}
-	},
-	
-	observe: function(aSubject, aTopic) {
-		switch(aTopic) {
-			case 'FIT:Load':
-				// already opened tabs need to have their findBar created, otherwise FIT won't work there
-				if(!viewSource) {
-					for(let browser of gBrowser.browsers) {
-						Messenger.loadInBrowser(browser, 'findInTabs');
-					}
-				} else {
-					Messenger.loadInBrowser(gFindBar.browser, 'findInTabs');
-				}
-				break;
-			
-			case 'FIT:Unload':
-				if(!viewSource) {
-					for(let browser of gBrowser.browsers) {
-						Messenger.unloadFromBrowser(browser, 'findInTabs');
-					}
-				} else {
-					Messenger.unloadFromBrowser(gFindBar.browser, 'findInTabs');
-				}
-				break;
 		}
 	}
 };
@@ -182,13 +180,13 @@ Modules.LOADMODULE = function() {
 			}
 		);
 		
-		Messenger.listenWindow(window, 'FIT:Find', FITMini.find);
+		Messenger.listenWindow(window, 'FIT:Find', FITMini);
 		
 		if(!viewSource) {
 			// Update FIT lists as needed
-			Listeners.add(gBrowser.tabContainer, 'TabClose', FITMini.onTabClose);
-			Listeners.add(gBrowser.tabContainer, 'TabSelect', FITMini.onTabSelect);
-			Listeners.add(gBrowser.tabContainer, 'TabOpen', FITMini.onTabOpen);
+			Listeners.add(gBrowser.tabContainer, 'TabClose', FITMini);
+			Listeners.add(gBrowser.tabContainer, 'TabSelect', FITMini);
+			Listeners.add(gBrowser.tabContainer, 'TabOpen', FITMini);
 		}
 		
 		Observers.add(FITMini, 'FIT:Load');
@@ -218,12 +216,12 @@ Modules.UNLOADMODULE = function() {
 	Observers.remove(FITMini, 'FIT:Unoad');
 	
 	if(!viewSource) {
-		Listeners.remove(gBrowser.tabContainer, 'TabClose', FITMini.onTabClose);
-		Listeners.remove(gBrowser.tabContainer, 'TabSelect', FITMini.onTabSelect);
-		Listeners.remove(gBrowser.tabContainer, 'TabOpen', FITMini.onTabOpen);
+		Listeners.remove(gBrowser.tabContainer, 'TabClose', FITMini);
+		Listeners.remove(gBrowser.tabContainer, 'TabSelect', FITMini);
+		Listeners.remove(gBrowser.tabContainer, 'TabOpen', FITMini);
 	}
 	
-	Messenger.unlistenWindow(window, 'FIT:Find', FITMini.find);
+	Messenger.unlistenWindow(window, 'FIT:Find', FITMini);
 	
 	Overlays.removeOverlayWindow(window, 'findInTabsMini');
 	

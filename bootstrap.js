@@ -22,19 +22,19 @@
 //	type - (string) event type to listen to
 //	handler - (function(event, aSubject)) - method to be called when event is triggered
 //	(optional) capture - (bool) capture mode
-// callOnLoad(aSubject, aCallback) - calls aCallback when load event is fired on that window
+// callOnLoad(aSubject, aCallback, beforeComplete) - calls aCallback immediately if aWindow is already loaded, otherwise waits for the load event to be fired on that window.
 //	aSubject - (xul object) to execute aCallback on
 //	aCallback - (function(aSubject)) to be called on aSubject
+//	(optional) beforeComplete - (bool) if true, aCallback will be called on aSubject immediately, regardless of its readyState value; defaults to false.
 // disable() - disables the add-on, in general the add-on disabling itself is a bad idea so I shouldn't use it
 // Note: Firefox 34 is the minimum version supported as the modules assume we're in a version with Australis already,
 // along with xulStore already implemented, in detriment of localstore.rdf.
 
-let bootstrapVersion = '1.7.5';
+let bootstrapVersion = '1.7.6';
 let UNLOADED = false;
 let STARTED = false;
 let Addon = {};
 let AddonData = null;
-let observerLOADED = false;
 let onceListeners = [];
 let alwaysRunOnShutdown = [];
 let isChrome = true;
@@ -166,11 +166,20 @@ function listenOnce(aSubject, type, handler, capture) {
 	onceListeners.push(runOnce);
 }
 
-function callOnLoad(aSubject, aCallback, arg1) {
-	listenOnce(aSubject, "load", function(event, aSubject) {
+function callOnLoad(aSubject, aCallback, beforeComplete) {
+	if(aSubject.document.readyState == 'complete' || beforeComplete) {
+		try { aCallback(aSubject); }
+		catch(ex) { Cu.reportError(ex); }
+		return;
+	}
+	
+	// don't wait for the load event if we're terminating
+	if(UNLOADED) { return; }
+	
+	listenOnce(aSubject, "load", function() {
 		if(UNLOADED) { return; }
 		
-		try { aCallback(aSubject, arg1); }
+		try { aCallback(aSubject); }
 		catch(ex) { Cu.reportError(ex); }
 	}, false);
 }
@@ -249,7 +258,6 @@ function shutdown(aData, aReason) {
 			alwaysRunOnShutdown.pop()();
 		}
 		
-		if(observerLOADED) { Observers.callQuits(); }
 		removeOnceListener();
 		return;
 	}

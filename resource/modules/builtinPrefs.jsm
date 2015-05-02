@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.2';
+Modules.VERSION = '2.0.3';
 
 this.nativePrefs = {};
 
@@ -26,17 +26,17 @@ this.handleNativePref = function(nPref, cPref) {
 };
 
 this.resetNativePrefs = function() {
-	for(var x in nativePrefs) {
+	for(let x in nativePrefs) {
 		Prefs.unlisten(nativePrefs[x].cPref, nativePrefs[x].changedCustom);
 		Prefs.unlisten(x, nativePrefs[x].changedNative);
 	}
 	
 	if(!Prefs.resetNative) {
-		for(var x in nativePrefs) {
+		for(let x in nativePrefs) {
 			Prefs[x] = nativePrefs[x].revertValue;
 		}
 	} else {
-		for(var x in nativePrefs) {
+		for(let x in nativePrefs) {
 			Prefs.reset(x);
 		}
 	}

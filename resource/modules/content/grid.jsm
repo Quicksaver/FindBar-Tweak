@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.0';
+Modules.VERSION = '1.1.0';
 
 this.grids = {
 	allHits: new Set(),
@@ -26,6 +26,18 @@ this.grids = {
 		
 		direction: function(dir) {
 			message('Grid:Direction', dir);
+		}
+	},
+	
+	handleEvent: function(e) {
+		switch(e.type) {
+			case 'resize':
+				Timers.init('resizeGridSpacers', () => { this.resizeSpacers(); });
+				break;
+			
+			case 'scroll':
+				Timers.init('delayUpdatePDFGrid', () => { this.updatePDFGrid(); }, 50);
+				break;
 		}
 	},
 	
@@ -126,7 +138,7 @@ this.grids = {
 		
 		// Still no grid for this frame, so we create a new one
 		if(!grid) {
-			var divFrame = (document.baseURI.indexOf('chrome://updatescan/') != 0);
+			var divFrame = (!document.baseURI.startsWith('chrome://updatescan/'));
 			boxNode = this.create(owner, divFrame);
 			grid = boxNode.firstChild;
 		}
@@ -248,7 +260,7 @@ this.grids = {
 			}
 			
 			// don't use the Listeners object, so we don't keep references to old nodes in there
-			$('viewerContainer').addEventListener('scroll', this.delayUpdatePDF);
+			$('viewerContainer').addEventListener('scroll', this);
 		}
 		
 		// For normal HTML pages
@@ -340,7 +352,7 @@ this.grids = {
 		
 		this.followCurrent();
 		this.resizeSpacers();
-		Listeners.add(Scope, 'resize', this.delayResizeSpacers);
+		Listeners.add(Scope, 'resize', this);
 	},
 	
 	followCurrent: function() {
@@ -406,10 +418,6 @@ this.grids = {
 				}
 			}
 		}
-	},
-	
-	delayUpdatePDF: function() {
-		Timers.init('delayUpdatePDFGrid', function() { grids.updatePDFGrid(); }, 50);
 	},
 	
 	updatePDFGrid: function() {
@@ -584,7 +592,7 @@ this.grids = {
 		this.chromeGrid.style('paddingTop', '');
 		this.chromeGrid.direction(this.direction(document));
 		removeAttribute(this.chromeGrid, 'gridSpacers');
-		Listeners.remove(Scope, 'resize', this.delayResizeSpacers);
+		Listeners.remove(Scope, 'resize', this);
 		
 		if(isPDFJS) {
 			var offsetY = document.querySelectorAll('div.toolbar')[0].clientHeight;
@@ -725,10 +733,6 @@ this.grids = {
 			default:
 				return 'rtl';
 		}
-	},
-	
-	delayResizeSpacers: function() {
-		Timers.init('resizeGridSpacers', function() { grids.resizeSpacers(); });
 	},
 	
 	resizeSpacers: function(grid) {
@@ -946,7 +950,7 @@ Modules.LOADMODULE = function() {
 };
 
 Modules.UNLOADMODULE = function() {
-	Listeners.remove(Scope, 'resize', grids.delayResizeSpacers);
+	Listeners.remove(Scope, 'resize', grids);
 	
 	RemoteFinderListener.removeMessage('Grid:Reposition');
 	RemoteFinderListener.removeMessage('Grid:Remove');
@@ -956,6 +960,6 @@ Modules.UNLOADMODULE = function() {
 	
 	grids.removeAllGrids();
 	if(isPDFJS) {
-		$('viewerContainer').removeEventListener('scroll', grids.delayUpdatePDF);
+		$('viewerContainer').removeEventListener('scroll', grids);
 	}
 };

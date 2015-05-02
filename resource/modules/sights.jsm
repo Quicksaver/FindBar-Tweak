@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.0';
+Modules.VERSION = '2.1.0';
 
 this.SIGHTS_SIZE_FOCUS = 400;
 this.SIGHTS_SIZE_CIRCLE = 100;
@@ -6,6 +6,41 @@ this.SIGHTS_SIZE_CIRCLE = 100;
 this.__defineGetter__('preferencesDialog', function() { return (typeof(inPreferences) != 'undefined' && inPreferences); });
 
 this.sights = {
+	handleEvent: function(e) {
+		switch(e.type) {
+			case 'change':
+				this.preferencesColor();
+				break;
+			
+			case 'resize':
+				Timers.init('resizeViewSource', () => { this.resizeViewSource(); }, 0);
+				break;
+		}
+	},
+	
+	observe: function(aSubject, aTopic, aData) {
+		switch(aSubject) {
+			case 'selectColor':
+			case 'highlightColor':
+			case 'sightsColor':
+			case 'sightsSameColor':
+			case 'sightsSameColorAll':
+			case 'sightsAllColor':
+			case 'sightsAllSameColor':
+				this.color();
+				break;
+			
+			case 'sightsCurrent':
+			case 'sightsHighlights':
+				Observers.notify('ReHighlightAll');
+				break;
+		}
+	},
+	
+	attrWatcher: function() {
+		this.preferencesColor();
+	},
+	
 	get: function(bar, toRemove) {
 		if(preferencesDialog) {
 			return $$('[anonid="findSights"]')[0];
@@ -158,7 +193,7 @@ this.sights = {
 			};
 			
 			bSights.groups.set(data.group, group);
-			group.timer = Timers.create(group.updateSights, (style == 'focus') ? 25 : 20, 'slack', group);
+			group.timer = Timers.create(() => { group.updateSights(); }, (style == 'focus') ? 25 : 20, 'slack');
 		}
 			
 		var box = document.createElement('box');
@@ -208,10 +243,6 @@ this.sights = {
 		if(group) {
 			group.selfRemove();
 		}
-	},
-	
-	delayResizeViewSource: function() {
-		Timers.init('resizeViewSource', function() { sights.resizeViewSource(); }, 0);
 	},
 	
 	resizeViewSource: function() {
@@ -275,21 +306,21 @@ this.sights = {
 	}
 };
 
-this.sightsToggled = function() {
-	Observers.notify('ReHighlightAll');
-};
-
 Modules.LOADMODULE = function() {
 	Styles.load('sights', 'sights');
 	
 	if(preferencesDialog) {
-		Listeners.add($('pref-sightsSameColor'), 'change', sights.preferencesColor);
-		Listeners.add($('pref-sightsSameColorAll'), 'change', sights.preferencesColor);
-		Watchers.addAttributeWatcher($('selectColor'), 'color', sights.preferencesColor);
-		Watchers.addAttributeWatcher($('highlightsColor'), 'color', sights.preferencesColor);
-		Watchers.addAttributeWatcher($('sightsColor'), 'color', sights.preferencesColor);
+		Listeners.add($('pref-sightsSameColor'), 'change', sights);
+		Listeners.add($('pref-sightsSameColorAll'), 'change', sights);
+		Watchers.addAttributeWatcher($('selectColor'), 'color', sights);
+		Watchers.addAttributeWatcher($('highlightsColor'), 'color', sights);
+		Watchers.addAttributeWatcher($('sightsColor'), 'color', sights);
 		sights.preferencesColor();
 		return;
+	}
+	
+	if(viewSource) {
+		Listeners.add(viewSource, 'resize', sights);
 	}
 	
 	initFindBar('sights',
@@ -311,15 +342,10 @@ Modules.LOADMODULE = function() {
 			Messenger.loadInBrowser(bar.browser, 'sights');
 			
 			if(viewSource) {
-				Listeners.add(viewSource, 'resize', sights.delayResizeViewSource);
 				sights.resizeViewSource();
 			}
 		},
 		function(bar) {
-			if(viewSource) {
-				Listeners.remove(viewSource, 'resize', sights.delayResizeViewSource);
-			}
-			
 			bar.browser.finder.removeMessage('Sights:Add');
 			bar.browser.finder.removeMessage('Sights:Scroll');
 			bar.browser.finder.removeMessage('Sights:Remove');
@@ -335,40 +361,44 @@ Modules.LOADMODULE = function() {
 		}
 	);
 	
-	Prefs.listen('selectColor', sights.color);
-	Prefs.listen('highlightColor', sights.color);
-	Prefs.listen('sightsColor', sights.color);
-	Prefs.listen('sightsSameColor', sights.color);
-	Prefs.listen('sightsSameColorAll', sights.color);
-	Prefs.listen('sightsAllColor', sights.color);
-	Prefs.listen('sightsAllSameColor', sights.color);
-	Prefs.listen('sightsCurrent', sightsToggled);
-	Prefs.listen('sightsHighlights', sightsToggled);
+	Prefs.listen('selectColor', sights);
+	Prefs.listen('highlightColor', sights);
+	Prefs.listen('sightsColor', sights);
+	Prefs.listen('sightsSameColor', sights);
+	Prefs.listen('sightsSameColorAll', sights);
+	Prefs.listen('sightsAllColor', sights);
+	Prefs.listen('sightsAllSameColor', sights);
+	Prefs.listen('sightsCurrent', sights);
+	Prefs.listen('sightsHighlights', sights);
 	
 	sights.color();
-	sightsToggled();
+	Observers.notify('ReHighlightAll');
 }
 
 Modules.UNLOADMODULE = function() {
 	if(preferencesDialog) {
 		Styles.unload('sightsColor_'+_UUID);
-		Listeners.remove($('pref-sightsSameColor'), 'change', sights.preferencesColor);
-		Listeners.remove($('pref-sightsSameColorAll'), 'change', sights.preferencesColor);
-		Watchers.removeAttributeWatcher($('selectColor'), 'color', sights.preferencesColor);
-		Watchers.removeAttributeWatcher($('highlightsColor'), 'color', sights.preferencesColor);
-		Watchers.removeAttributeWatcher($('sightsColor'), 'color', sights.preferencesColor);
+		Listeners.remove($('pref-sightsSameColor'), 'change', sights);
+		Listeners.remove($('pref-sightsSameColorAll'), 'change', sights);
+		Watchers.removeAttributeWatcher($('selectColor'), 'color', sights);
+		Watchers.removeAttributeWatcher($('highlightsColor'), 'color', sights);
+		Watchers.removeAttributeWatcher($('sightsColor'), 'color', sights);
 		return;
 	}
 	
-	Prefs.unlisten('selectColor', sights.color);
-	Prefs.unlisten('highlightColor', sights.color);
-	Prefs.unlisten('sightsColor', sights.color);
-	Prefs.unlisten('sightsSameColor', sights.color);
-	Prefs.unlisten('sightsSameColorAll', sights.color);
-	Prefs.unlisten('sightsAllColor', sights.color);
-	Prefs.unlisten('sightsAllSameColor', sights.color);
-	Prefs.unlisten('sightsCurrent', sightsToggled);
-	Prefs.unlisten('sightsHighlights', sightsToggled);
+	if(viewSource) {
+		Listeners.remove(viewSource, 'resize', sights);
+	}
+	
+	Prefs.unlisten('selectColor', sights);
+	Prefs.unlisten('highlightColor', sights);
+	Prefs.unlisten('sightsColor', sights);
+	Prefs.unlisten('sightsSameColor', sights);
+	Prefs.unlisten('sightsSameColorAll', sights);
+	Prefs.unlisten('sightsAllColor', sights);
+	Prefs.unlisten('sightsAllSameColor', sights);
+	Prefs.unlisten('sightsCurrent', sights);
+	Prefs.unlisten('sightsHighlights', sights);
 	
 	deinitFindBar('sights');
 	

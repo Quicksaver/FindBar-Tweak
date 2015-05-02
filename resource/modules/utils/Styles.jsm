@@ -1,4 +1,4 @@
-Modules.VERSION = '2.3.0';
+Modules.VERSION = '2.3.1';
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -16,7 +16,7 @@ Modules.BASEUTILS = true;
 //		(string) one of 'agent', 'user', or 'author'; or (int) one of Services.stylesheet.***_SHEET constants;
 //		for details see https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XPCOM/Reference/Interface/nsIStyleSheetService
 //		defaults to Services.stylesheet.AUTHOR_SHEET, which is takes effect after the others in the CSS cascade
-// unload(aName, aPath, isData, aType) - unloads aPath css stylesheet
+// unload(aName, aPath, isData) - unloads aPath css stylesheet
 //	(optional) aPath
 //	see load()
 // loadIf(aName, aPath, isData, anIf, aType) - conditionally load or unload a stylesheet
@@ -25,30 +25,32 @@ Modules.BASEUTILS = true;
 // loaded(aName, aPath) - returns (int) with corresponding sheet index in sheets[] if aName or aPath has been loaded, returns (bool) false otherwise
 //	see unload()
 this.Styles = {
-	sheets: [],
+	sheets: new Set(),
 	
 	load: function(aName, aPath, isData, aType) {
 		var path = this.convert(aPath, isData);
 		var type = this._switchType(aType);
 		
-		var alreadyLoaded = this.loaded(aName, path);
-		if(alreadyLoaded !== false) {
-			if(this.sheets[alreadyLoaded].name == aName) {
-				if(this.sheets[alreadyLoaded].path == path && this.sheets[alreadyLoaded].type == type) {
+		var sheet = this.loaded(aName, path);
+		if(sheet) {
+			if(sheet.name == aName) {
+				if(sheet.path == path && sheet.type == type) {
 					return false;
 				}
 				this.unload(aName);
 			}
 		}
 		
-		var i = this.sheets.push({
+		sheet = {
 			name: aName,
 			path: path,
 			type: type,
 			uri: Services.io.newURI(path, null, null)
-		}) -1;
-		if(!Services.stylesheet.sheetRegistered(this.sheets[i].uri, type)) {
-			try { Services.stylesheet.loadAndRegisterSheet(this.sheets[i].uri, type); }
+		};
+		this.sheets.add(sheet);
+		
+		if(!Services.stylesheet.sheetRegistered(sheet.uri, type)) {
+			try { Services.stylesheet.loadAndRegisterSheet(sheet.uri, type); }
 			catch(ex) { Cu.reportError(ex); }
 		}
 		return true;
@@ -56,25 +58,23 @@ this.Styles = {
 	
 	unload: function(aName, aPath, isData, aType) {
 		if(typeof(aName) != 'string') {
-			for(var a = 0; a < aName.length; a++) {
-				this.unload(aName[a]);
+			for(let x of aName) {
+				this.unload(x);
 			}
 			return true;
 		};
 		
 		var path = this.convert(aPath, isData);
-		var type = this._switchType(aType);
-		var i = this.loaded(aName, path);
-		if(i !== false) {
-			var uri = this.sheets[i].uri;
-			this.sheets.splice(i, 1);
-			for(var s = 0; s < this.sheets.length; s++) {
-				if(this.sheets[s].path == path && this.sheets[s].type == type) {
+		var sheet = this.loaded(aName, path);
+		if(sheet) {
+			this.sheets.delete(sheet);
+			for(let other of this.sheets) {
+				if(other.path == path && other.type == sheet.type) {
 					return true;
 				}
 			}
-			if(Services.stylesheet.sheetRegistered(uri, type)) {
-				try { Services.stylesheet.unregisterSheet(uri, type); }
+			if(Services.stylesheet.sheetRegistered(sheet.uri, sheet.type)) {
+				try { Services.stylesheet.unregisterSheet(sheet.uri, sheet.type); }
 				catch(ex) { Cu.reportError(ex); }
 			}
 			return true;
@@ -86,17 +86,17 @@ this.Styles = {
 		if(anIf) {
 			this.load(aName, aPath, isData, aType);
 		} else {
-			this.unload(aName, aPath, isData, aType);
+			this.unload(aName, aPath, isData);
 		}
 	},
 	
 	loaded: function(aName, aPath) {
-		for(var i = 0; i < this.sheets.length; i++) {
-			if(this.sheets[i].name == aName || (aPath && this.sheets[i].path == aPath)) {
-				return i;
+		for(let sheet of this.sheets) {
+			if(sheet.name == aName || (aPath && sheet.path == aPath)) {
+				return sheet;
 			}
 		}
-		return false;
+		return null;
 	},
 	
 	convert: function(aPath, isData) {
@@ -104,11 +104,11 @@ this.Styles = {
 			return aPath;
 		}
 		
-		if(!isData && aPath.indexOf("chrome://") != 0) {
+		if(!isData && !aPath.startsWith("chrome://")) {
 			return "chrome://"+objPathString+"/skin/"+aPath+".css";
 		}
 		
-		if(isData && aPath.indexOf("data:text/css,") != 0) {
+		if(isData && !aPath.startsWith("data:text/css,")) {
 			return 'data:text/css,' + encodeURIComponent(aPath);
 		}
 		

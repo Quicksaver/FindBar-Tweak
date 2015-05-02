@@ -1,4 +1,4 @@
-Modules.VERSION = '2.3.0';
+Modules.VERSION = '2.4.0';
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -15,7 +15,7 @@ Modules.BASEUTILS = true;
 // remove(obj, type, listener, capture, maxTriggers) - removes listener from obj
 //	see add()
 this.Listeners = {
-	handlers: [],
+	handlers: new Set(),
 	inContent: typeof(Scope) != 'undefined',
 	
 	// Used to be if maxTriggers is set to the boolean false, it acted as a switch to not bind the function to our object,
@@ -23,13 +23,11 @@ this.Listeners = {
 	add: function(obj, type, listener, capture, maxTriggers) {
 		if(!obj || !obj.addEventListener) { return false; }
 		
-		if(this.listening(obj, type, capture, listener) !== false) {
-			return true;
-		}
+		if(this.listening(obj, type, capture, listener)) { return true; }
 		
 		if(maxTriggers === true) { maxTriggers = 1; }
 		
-		var newHandler = {
+		var handler = {
 			_obj: obj,
 			_objID: obj.id,
 			get obj () {
@@ -43,25 +41,27 @@ this.Listeners = {
 			listener: listener,
 			capture: capture,
 			maxTriggers: (maxTriggers) ? maxTriggers : null,
-			triggerCount: 0
-		};
-		
-		this.handlers.push(newHandler);
-		var i = this.handlers.length -1;
-		
-		var handlerMethod = function() {
-			if(this.maxTriggers) {
-				this.triggerCount++;
-				if(this.triggerCount == this.maxTriggers) {
-					Listeners.remove(this.obj, this.type, this.listener, this.capture);
+			triggerCount: 0,
+			
+			handleEvent: function(e) {
+				if(this.maxTriggers) {
+					this.triggerCount++;
+					if(this.triggerCount == this.maxTriggers) {
+						Listeners.remove(this.obj, this.type, this.listener, this.capture);
+					}
+				}
+				
+				if(this.listener.handleEvent) {
+					this.listener.handleEvent(e);
+				} else {
+					this.listener(e);
 				}
 			}
-			
-			this.listener.apply(self, arguments);
 		};
-		this.handlers[i].handler = handlerMethod.bind(this.handlers[i]);
 		
-		this.handlers[i].obj.addEventListener(this.handlers[i].type, this.handlers[i].handler, this.handlers[i].capture);
+		this.handlers.add(handler);
+		
+		handler.obj.addEventListener(handler.type, handler, handler.capture);
 		return true;
 	},
 	
@@ -74,40 +74,39 @@ this.Listeners = {
 			return false;
 		}
 		
-		var i = this.listening(obj, type, capture, listener);
-		if(i !== false) {
-			this.handlers[i].obj.removeEventListener(this.handlers[i].type, this.handlers[i].handler, this.handlers[i].capture);
-			this.handlers.splice(i, 1);
+		let handler = this.listening(obj, type, capture, listener);
+		if(handler) {
+			handler.obj.removeEventListener(handler.type, handler, handler.capture);
+			this.handlers.delete(handler);
 			return true;
 		}
 		return false;
 	},
 	
 	listening: function(obj, type, capture, listener) {
-		for(var i=0; i<this.handlers.length; i++) {
-			if(this.handlers[i].obj == obj
-			&& this.handlers[i].type == type
-			&& this.handlers[i].capture == capture
-			// we shouldn't use compareFunction in content, as we may have already unloaded and the resource is invalid now to load that module back
-			&& ((!this.inContent && compareFunction(this.handlers[i].listener, listener)) || (this.inContent && this.handlers[i].listener == listener))) {
-				return i;
+		for(let handler of this.handlers) {
+			if(handler.obj == obj
+			&& handler.type == type
+			&& handler.capture == capture
+			&& handler.listener == listener) {
+				return handler;
 			}
 		}
-		return false;
+		return null;
 	},
 	
 	/* I'm not sure if clean is currently working...
 	OmniSidebar - Started browser and opened new window then closed it, it would not remove the switchers listeners, I don't know in which window,
 	or it would but it would still leave a ZC somehow. Removing them manually in UNLOADMODULE fixed the ZC but they should have been taken care of here */
 	clean: function() {
-		while(this.handlers[0]) {
+		for(let handler of this.handlers) {
 			try {
-				if(this.handlers[0].obj && this.handlers[0].obj.removeEventListener) {
-					this.handlers[0].obj.removeEventListener(this.handlers[0].type, this.handlers[0].handler, this.handlers[0].capture);
+				if(handler.obj && handler.obj.removeEventListener) {
+					handler.obj.removeEventListener(handler.type, handler, handler.capture);
 				}
 			}
 			catch(ex) { handleDeadObject(ex); /* Prevents can't access dead object sometimes */ }
-			this.handlers.splice(0, 1);
+			this.handlers.delete(handler);
 		}
 	}
 };

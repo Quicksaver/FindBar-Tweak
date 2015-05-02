@@ -1,4 +1,4 @@
-Modules.VERSION = '2.6.0';
+Modules.VERSION = '2.7.0';
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -25,7 +25,7 @@ this.xmlHttpRequest = function(url, callback, method) {
 this.aSync = function(aFunc, aDelay) {
 	var newTimer = {
 		timer: Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer),
-		handler: aFunc.bind(self),
+		handler: aFunc,
 		cancel: function() {
 			this.timer.cancel();
 		}
@@ -62,17 +62,6 @@ this.dispatch = function(aNode, props) {
 	event.initCustomEvent(props.type, bubbles, cancelable, detail);
 	var ret = aNode.dispatchEvent(event);
 	return (props.asking) ? detail : ret;
-};
-
-// compareFunction(a, b, strict) - returns (bool) if a === b
-//	a - (function) to compare
-//	b - (function) to compare
-//	(optional) strict - false compares function source as (string), true does not, defaults to false
-this.compareFunction = function(a, b, strict) {
-	if(a === b || (!strict && a.toSource() == b.toSource())) {
-		return true;
-	}
-	return false;
 };
 
 // isAncestor(aNode, aParent) - Checks if aNode decends from aParent
@@ -120,17 +109,18 @@ this.trim = function(str) {
 
 // replaceObjStrings(node, prop) - replace all objName and objPathString references in the node attributes and its children with the proper names
 //	node - (xul element) to replace the strings in
-//	(optional) prop - (string) if specified, instead of checking attributes, it will check for node.prop for occurences of what needs to be replaced. This will not check child nodes.
+//	(optional) prop -	(string) if specified, instead of checking attributes, it will check for node.prop for occurences of what needs to be replaced.
+//				When specified, this method is not recursive, it will not check child nodes!
 this.replaceObjStrings = function(node, prop) {
 	if(!node) { return; }
 	
 	if(prop) {
 		if(!node[prop]) { return; }
 		
-		while(node[prop].indexOf('objName') > -1) {
+		while(node[prop].contains('objName')) {
 			node[prop] = node[prop].replace('objName', objName);
 		}
-		while(node[prop].indexOf('objPathString') > -1) {
+		while(node[prop].contains('objPathString')) {
 			node[prop] = node[prop].replace('objPathString', objPathString);
 		}
 		
@@ -138,12 +128,12 @@ this.replaceObjStrings = function(node, prop) {
 	}
 	
 	if(node.attributes) {
-		for(var a=0; a<node.attributes.length; a++) {
-			while(node.attributes[a].value.indexOf('objName') > -1) {
-				node.attributes[a].value = node.attributes[a].value.replace('objName', objName);
+		for(let attr of node.attributes) {
+			while(attr.value.contains('objName')) {
+				attr.value = attr.value.replace('objName', objName);
 			}
-			while(node.attributes[a].value.indexOf('objPathString') > -1) {
-				node.attributes[a].value = node.attributes[a].value.replace('objPathString', objPathString);
+			while(attr.value.contains('objPathString')) {
+				attr.value = attr.value.replace('objPathString', objPathString);
 			}
 		}
 	}

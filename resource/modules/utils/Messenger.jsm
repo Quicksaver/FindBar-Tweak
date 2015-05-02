@@ -1,4 +1,4 @@
-Modules.VERSION = '1.3.1';
+Modules.VERSION = '1.4.0';
 Modules.UTILS = true;
 
 // Messenger - 	Aid object to communicate with browser content scripts (e10s).
@@ -109,11 +109,11 @@ this.Messenger = {
 			if(!aWindow.gBrowser.tabContainer[objName+'Content']) {
 				aWindow.gBrowser.tabContainer[objName+'Content'] = {
 					modules: [aModule],
-					listener: function(e) {
+					handleEvent: function(e) {
 						Messenger.messageBrowser(e.target.linkedBrowser, 'reinit');
 					}
 				};
-				aWindow.gBrowser.tabContainer.addEventListener('TabOpen', aWindow.gBrowser.tabContainer[objName+'Content'].listener, true);
+				aWindow.gBrowser.tabContainer.addEventListener('TabOpen', aWindow.gBrowser.tabContainer[objName+'Content'], true);
 			}
 			else if(aWindow.gBrowser.tabContainer[objName+'Content'].modules.indexOf(aModule) == -1) {
 				aWindow.gBrowser.tabContainer[objName+'Content'].modules.push(aModule);
@@ -128,7 +128,7 @@ this.Messenger = {
 			if(aWindow.gBrowser.tabContainer[objName+'Content'] && aWindow.gBrowser.tabContainer[objName+'Content'].modules.indexOf(aModule) != -1) {
 				aWindow.gBrowser.tabContainer[objName+'Content'].modules.splice(aWindow.gBrowser.tabContainer[objName+'Content'].modules.indexOf(aModule), 1);
 				if(aWindow.gBrowser.tabContainer[objName+'Content'].modules.length == 0) {
-					aWindow.gBrowser.tabContainer.removeEventListener('TabOpen', aWindow.gBrowser.tabContainer[objName+'Content'].listener, true);
+					aWindow.gBrowser.tabContainer.removeEventListener('TabOpen', aWindow.gBrowser.tabContainer[objName+'Content'], true);
 					delete aWindow.gBrowser.tabContainer[objName+'Content'];
 				}
 			}
@@ -151,7 +151,7 @@ this.Messenger = {
 		this.messageAll('unload', aModule);
 	},
 	
-	initContent: function(m) {
+	receiveMessage: function(m) {
 		// if this is a preloaded browser, we don't need to load in it, the content script will still be loaded in the actual tab's browser
 		if(m.target.parentNode.localName == 'window' && m.target.parentNode.id == 'win') { return; }
 		
@@ -163,66 +163,70 @@ this.Messenger = {
 			oldVersion: AddonData.oldVersion,
 			newVersion: AddonData.newVersion
 		};	
-		Messenger.messageBrowser(m.target, 'init', carryData);
+		this.messageBrowser(m.target, 'init', carryData);
 		
 		// carry the preferences current values into content
 		var current = {};
-		for(var pref in prefList) {
+		for(let pref in prefList) {
 			if(pref.startsWith('NoSync_')) { continue; }
 			current[pref] = Prefs[pref];
 		}
-		Messenger.messageBrowser(m.target, 'pref', current);
+		this.messageBrowser(m.target, 'pref', current);
 		
 		// load into this browser all the content modules that should be loaded in all content scripts
-		for(var module of Messenger.loadedInAll) {
-			Messenger.messageBrowser(m.target, 'load', module);
+		for(let module of this.loadedInAll) {
+			this.messageBrowser(m.target, 'load', module);
 		}
 		
 		// load into this browser all the content modules that should be loaded into content scripts of this window
 		if(m.target.ownerGlobal.gBrowser && m.target.ownerGlobal.gBrowser.tabContainer && m.target.ownerGlobal.gBrowser.tabContainer[objName+'Content']) {
-			for(var module of m.target.ownerGlobal.gBrowser.tabContainer[objName+'Content'].modules) {
-				Messenger.messageBrowser(m.target, 'load', module);
+			for(let module of m.target.ownerGlobal.gBrowser.tabContainer[objName+'Content'].modules) {
+				this.messageBrowser(m.target, 'load', module);
 			}
 		}
 		
 		// now we can load other individual modules that have been queued in the meantime (between window opening and content process finishing to initialize)
-		Messenger.messageBrowser(m.target, 'loadQueued');
+		this.messageBrowser(m.target, 'loadQueued');
 	},
 	
-	carryPref: function(pref, val) {
-		if(pref.startsWith('NoSync_')) { return; }
-		
-		var carry = {};
-		carry[pref] = val;
-		Messenger.messageAll('pref', carry);
+	observe: function(aSubject, aTopic, aData) {
+		switch(aTopic) {
+			case 'nsPref:changed':
+				if(aSubject.startsWith('NoSync_')) { return; }
+				
+				var carry = {};
+				carry[aSubject] = aData;
+				Messenger.messageAll('pref', carry);
+				break;
+		}
 	},
 	
 	cleanWindow: function(aWindow) {
 		if(aWindow.gBrowser && aWindow.gBrowser.tabContainer && aWindow.gBrowser.tabContainer[objName+'Content']) {
-			aWindow.gBrowser.tabContainer.removeEventListener('TabOpen', aWindow.gBrowser.tabContainer[objName+'Content'].listener, true);
+			aWindow.gBrowser.tabContainer.removeEventListener('TabOpen', aWindow.gBrowser.tabContainer[objName+'Content'], true);
 			delete aWindow.gBrowser.tabContainer[objName+'Content'];
 		}
 	}
 };
 
 Modules.LOADMODULE = function() {
-	Messenger.listenAll('init', Messenger.initContent);
+	Messenger.listenAll('init', Messenger);
 	Messenger.globalMM.loadFrameScript('resource://'+objPathString+'/modules/utils/content.js?'+AddonData.initTime, true);
 	
-	for(var pref in prefList) {
+	for(let pref in prefList) {
 		if(pref.startsWith('NoSync_')) { continue; }
 		
-		Prefs.listen(pref, Messenger.carryPref);
+		Prefs.listen(pref, Messenger);
 	}
 };
 
 Modules.UNLOADMODULE = function() {
-	Messenger.unlistenAll('init', Messenger.initContent);
+	Messenger.unlistenAll('init', Messenger);
 	
-	for(var pref in prefList) {
+	for(let pref in prefList) {
 		if(pref.startsWith('NoSync_')) { continue; }
 		
-		Prefs.unlisten(pref, Messenger.carryPref);
+		Prefs.unlisten(pref, Messenger);
 	}
 	
 	Windows.callOnAll(Messenger.cleanWindow, 'navigator:browser');

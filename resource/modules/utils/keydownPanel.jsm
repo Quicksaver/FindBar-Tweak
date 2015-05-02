@@ -1,4 +1,4 @@
-Modules.VERSION = '1.3.2';
+Modules.VERSION = '1.4.0';
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -6,6 +6,7 @@ Modules.BASEUTILS = true;
 // 			This aid does NOT self-clean, so make sure to remove every call and set object on it.
 //			However, the methods are kept in the panel object, and Listeners self-cleans, so it should be ok though, as long as that doesn't fail and the objects
 //			are fully removed.
+//			Don't forget this aid needs to use the panel's .handleEvent() method to work properly (as in it can't be set beforehand)!
 //			To also enable a keyset that toggles (closes) the panel, supply it to the panel object as its ._toggleKeyset property, in the form of:
 //				key - (obj):
 //					keycode - (string) either a key to press (e.g. 'A') or a keycode to watch for (e.g. 'VK_F8')
@@ -22,183 +23,187 @@ Modules.BASEUTILS = true;
 this.keydownPanel = {
 	setupPanel: function(panel) {
 		// already set
-		if(!panel || panel._keydownPanel) { return; }
+		if(!panel || panel.handleEvent) { return; }
 		
-		panel._keydownPanel = function(e) {
-			// Let's make sure
-			if(panel.state != 'open' && !trueAttribute(panel, 'current')) {
-				Listeners.remove(window, 'keydown', panel._keydownPanel, true);
-				return;
-			}
-			
-			// if this var exists, it means this keyset should be used to toggle the panel as well
-			if(panel._toggleKeyset) {
-				var keycode = Keysets.translateToConstantCode(panel._toggleKeyset.keycode);
-				
-				if(e[keycode] && e[keycode] == e.which
-				&& panel._toggleKeyset.shift == e.shiftKey
-				&& panel._toggleKeyset.alt == e.altKey
-				&& panel._toggleKeyset.accel == (DARWIN ? e.metaKey : e.ctrlKey)) {
-					e.preventDefault();
-					e.stopPropagation();
-					
-					if(panel.hidePopup) {
-						panel.hidePopup();
-					} else {
-						keydownPanel.closeSubView();
+		panel.handleEvent = function(e) {
+			switch(e.type) {
+				case 'keydown':
+					// Let's make sure
+					if(this.state != 'open' && !trueAttribute(this, 'current')) {
+						Listeners.remove(window, 'keydown', this, true);
+						return;
 					}
-					return;
-				}
-			}
-			
-			switch(e.which) {
-				case e.DOM_VK_A: case e.DOM_VK_B: case e.DOM_VK_C: case e.DOM_VK_D: case e.DOM_VK_E: case e.DOM_VK_F: case e.DOM_VK_G: case e.DOM_VK_H: case e.DOM_VK_I: case e.DOM_VK_J: case e.DOM_VK_K: case e.DOM_VK_L: case e.DOM_VK_M: case e.DOM_VK_N: case e.DOM_VK_O: case e.DOM_VK_P: case e.DOM_VK_Q: case e.DOM_VK_R: case e.DOM_VK_S: case e.DOM_VK_T: case e.DOM_VK_U: case e.DOM_VK_V: case e.DOM_VK_W: case e.DOM_VK_X: case e.DOM_VK_Y: case e.DOM_VK_Z:
-					var items = panel.querySelectorAll('menuitem,toolbarbutton.subviewbutton');
-					for(var i=0; i<items.length; i++) {
-						if(keydownPanel.menuItemAccesskeyCode(items[i].getAttribute('accesskey'), e) == e.which) {
+					
+					// if this var exists, it means this keyset should be used to toggle the panel as well
+					if(this._toggleKeyset) {
+						var keycode = Keysets.translateToConstantCode(this._toggleKeyset.keycode);
+						
+						if(e[keycode] && e[keycode] == e.which
+						&& this._toggleKeyset.shift == e.shiftKey
+						&& this._toggleKeyset.alt == e.altKey
+						&& this._toggleKeyset.accel == (DARWIN ? e.metaKey : e.ctrlKey)) {
 							e.preventDefault();
 							e.stopPropagation();
-							items[i].doCommand();
-							keydownPanel.closeSubView();
-							break;
+							
+							if(this.hidePopup) {
+								this.hidePopup();
+							} else {
+								keydownPanel.closeSubView();
+							}
+							return;
 						}
-					}
-					break;
-				
-				case e.DOM_VK_UP:
-				case e.DOM_VK_DOWN:
-				case e.DOM_VK_HOME:
-				case e.DOM_VK_END:
-					e.preventDefault();
-					e.stopPropagation();
-					Listeners.add(panel, 'mouseover', panel._mouseOverPanel);
-					Listeners.add(panel, 'mousemove', panel._mouseOverPanel);
-					
-					var items = panel.querySelectorAll('menuitem,toolbarbutton.subviewbutton');
-					var active = -1;
-					for(var i=0; i<items.length; i++) {
-						var attr = (items[i].localName == 'menuitem') ? '_moz-menuactive' : 'focused';
-						if(trueAttribute(items[i], attr)) {
-							active = i;
-							break;
-						}
-					}
-					
-					if(items[active]) {
-						var attr = (items[active].localName == 'menuitem') ? '_moz-menuactive' : 'focused';
-						if(attr == 'focused') {
-							items[active].blur();
-							items[active].style.MozUserFocus = '';
-						}
-						removeAttribute(items[active], attr);
 					}
 					
 					switch(e.which) {
+						case e.DOM_VK_A: case e.DOM_VK_B: case e.DOM_VK_C: case e.DOM_VK_D: case e.DOM_VK_E: case e.DOM_VK_F: case e.DOM_VK_G: case e.DOM_VK_H: case e.DOM_VK_I: case e.DOM_VK_J: case e.DOM_VK_K: case e.DOM_VK_L: case e.DOM_VK_M: case e.DOM_VK_N: case e.DOM_VK_O: case e.DOM_VK_P: case e.DOM_VK_Q: case e.DOM_VK_R: case e.DOM_VK_S: case e.DOM_VK_T: case e.DOM_VK_U: case e.DOM_VK_V: case e.DOM_VK_W: case e.DOM_VK_X: case e.DOM_VK_Y: case e.DOM_VK_Z:
+							let items = this.querySelectorAll('menuitem,toolbarbutton.subviewbutton');
+							for(let item of items) {
+								if(keydownPanel.menuItemAccesskeyCode(item.getAttribute('accesskey'), e) == e.which) {
+									e.preventDefault();
+									e.stopPropagation();
+									item.doCommand();
+									keydownPanel.closeSubView();
+									break;
+								}
+							}
+							break;
+						
 						case e.DOM_VK_UP:
-							active--;
-							if(active < 0) { active = items.length -1; }
-							break;
 						case e.DOM_VK_DOWN:
-							active++;
-							if(active >= items.length) { active = 0; }
-							break;
 						case e.DOM_VK_HOME:
-							active = 0;
-							break;
 						case e.DOM_VK_END:
-							active = items.length -1;
-							break;
-					}
-					
-					var attr = (items[active].localName == 'menuitem') ? '_moz-menuactive' : 'focused';
-					setAttribute(items[active], attr, 'true');
-					if(attr == 'focused') {
-						items[active].style.MozUserFocus = 'normal';
-						items[active].focus();
-					}
-					
-					break;
-				
-				case e.DOM_VK_RETURN:
-					var items = panel.querySelectorAll('menuitem,toolbarbutton.subviewbutton');
-					for(var i=0; i<items.length; i++) {
-						var attr = (items[i].localName == 'menuitem') ? '_moz-menuactive' : 'focused';
-						if(trueAttribute(items[i], attr)) {
 							e.preventDefault();
 							e.stopPropagation();
-							if(attr == 'focused') {
-								items[i].blur();
-								items[i].style.MozUserFocus = '';
+							Listeners.add(this, 'mouseover', this);
+							Listeners.add(this, 'mousemove', this);
+							
+							let items = this.querySelectorAll('menuitem,toolbarbutton.subviewbutton');
+							let active = -1;
+							for(var i=0; i<items.length; i++) {
+								var attr = (items[i].localName == 'menuitem') ? '_moz-menuactive' : 'focused';
+								if(trueAttribute(items[i], attr)) {
+									active = i;
+									break;
+								}
 							}
 							
-							items[i].doCommand();
-							keydownPanel.closeSubView();
+							if(items[active]) {
+								var attr = (items[active].localName == 'menuitem') ? '_moz-menuactive' : 'focused';
+								if(attr == 'focused') {
+									items[active].blur();
+									items[active].style.MozUserFocus = '';
+								}
+								removeAttribute(items[active], attr);
+							}
+							
+							switch(e.which) {
+								case e.DOM_VK_UP:
+									active--;
+									if(active < 0) { active = items.length -1; }
+									break;
+								case e.DOM_VK_DOWN:
+									active++;
+									if(active >= items.length) { active = 0; }
+									break;
+								case e.DOM_VK_HOME:
+									active = 0;
+									break;
+								case e.DOM_VK_END:
+									active = items.length -1;
+									break;
+							}
+							
+							var attr = (items[active].localName == 'menuitem') ? '_moz-menuactive' : 'focused';
+							setAttribute(items[active], attr, 'true');
+							if(attr == 'focused') {
+								items[active].style.MozUserFocus = 'normal';
+								items[active].focus();
+							}
+							
 							break;
-						}
+						
+						case e.DOM_VK_RETURN:
+							let items = this.querySelectorAll('menuitem,toolbarbutton.subviewbutton');
+							for(let item of items) {
+								var attr = (item.localName == 'menuitem') ? '_moz-menuactive' : 'focused';
+								if(trueAttribute(item, attr)) {
+									e.preventDefault();
+									e.stopPropagation();
+									if(attr == 'focused') {
+										item.blur();
+										item.style.MozUserFocus = '';
+									}
+									
+									item.doCommand();
+									keydownPanel.closeSubView();
+									break;
+								}
+							}
+							break;
+						
+						default: break;
 					}
 					break;
 				
-				default: break;
+				case 'mouseover':
+				case 'mousemove':
+					Listeners.remove(this, 'mouseover', this);
+					Listeners.remove(this, 'mousemove', this);
+					let items = this.querySelectorAll('menuitem,toolbarbutton.subviewbutton');
+					for(let item of items) {
+						var attr = (item.localName == 'menuitem') ? '_moz-menuactive' : 'focused';
+						if(attr == 'focused') {
+							item.blur();
+							item.style.MozUserFocus = '';
+						}
+						removeAttribute(item, attr);
+					}
+					break;
+				
+				case 'ViewShowing':
+				case 'popupshown':
+					if(e.target == this) {
+						Listeners.add(window, 'keydown', this, true);
+					}
+					break;
+				
+				case 'ViewHiding':
+				case 'popuphidden':
+					if(e.target == this) {
+						Listeners.remove(this, 'mouseover', this);
+						Listeners.remove(this, 'mousemove', this);
+						Listeners.remove(window, 'keydown', this, true);
+					}
+					break;
 			}
 		};
-		
-		panel._mouseOverPanel = function() {
-			Listeners.remove(panel, 'mouseover', panel._mouseOverPanel);
-			Listeners.remove(panel, 'mousemove', panel._mouseOverPanel);
-			var items = panel.querySelectorAll('menuitem,toolbarbutton.subviewbutton');
-			for(var i=0; i<items.length; i++) {
-				var attr = (items[i].localName == 'menuitem') ? '_moz-menuactive' : 'focused';
-				if(attr == 'focused') {
-					items[i].blur();
-					items[i].style.MozUserFocus = '';
-				}
-				removeAttribute(items[i], attr);
-			}
-		};
-		
-		panel._panelShown = function(e) {
-			if(e.target != panel) { return; }
-			
-			Listeners.add(window, 'keydown', panel._keydownPanel, true);
-		};
-		
-		panel._panelHidden = function(e) {;
-			if(e.target != panel) { return; }
-			
-			Listeners.remove(panel, 'mouseover', panel._mouseOverPanel);
-			Listeners.remove(panel, 'mousemove', panel._mouseOverPanel);
-			Listeners.remove(window, 'keydown', panel._keydownPanel, true);
-		};	
 		
 		if(panel.nodeName == 'panelview' && isAncestor(panel, window.PanelUI.multiView)) {
-			Listeners.add(panel, 'ViewShowing', panel._panelShown);
-			Listeners.add(panel, 'ViewHiding', panel._panelHidden);
+			Listeners.add(panel, 'ViewShowing', panel);
+			Listeners.add(panel, 'ViewHiding', panel);
 		} else {
-			Listeners.add(panel, 'popupshown', panel._panelShown);
-			Listeners.add(panel, 'popuphidden', panel._panelHidden);
+			Listeners.add(panel, 'popupshown', panel);
+			Listeners.add(panel, 'popuphidden', panel);
 		}
 	},
 	
 	unsetPanel: function(panel) {
 		// not set
-		if(!panel || !panel._keydownPanel) { return; }
+		if(!panel || !panel.handleEvent) { return; }
 		
-		Listeners.remove(panel, 'mouseover', panel._mouseOverPanel);
-		Listeners.remove(panel, 'mousemove', panel._mouseOverPanel);
-		Listeners.remove(window, 'keydown', panel._keydownPanel, true);
+		Listeners.remove(panel, 'mouseover', panel);
+		Listeners.remove(panel, 'mousemove', panel);
+		Listeners.remove(window, 'keydown', panel, true);
 		
 		if(panel.nodeName == 'panelview' && isAncestor(panel, window.PanelUI.multiView)) {
-			Listeners.remove(panel, 'ViewShowing', panel._panelShown);
-			Listeners.remove(panel, 'ViewHiding', panel._panelHidden);
+			Listeners.remove(panel, 'ViewShowing', panel);
+			Listeners.remove(panel, 'ViewHiding', panel);
 		} else {
-			Listeners.remove(panel, 'popupshown', panel._panelShown);
-			Listeners.remove(panel, 'popuphidden', panel._panelHidden);
+			Listeners.remove(panel, 'popupshown', panel);
+			Listeners.remove(panel, 'popuphidden', panel);
 		}
 		
-		delete panel._keydownPanel;
-		delete panel._mouseOverPanel;
-		delete panel._panelShown;
-		delete panel._panelHidden;
+		delete panel.handleEvent;
 	},
 	
 	closeSubView: function() {

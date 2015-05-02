@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.0';
+Modules.VERSION = '2.1.0';
 
 this.FIT = {
 	get box() { return $(objName+'-findInTabs-box'); },
@@ -85,8 +85,8 @@ this.FIT = {
 					if(item.delayProcess) {
 						item.delayProcess.cancel();
 					}
-					item.delayProcess = aSync(function() {
-						FIT.aSyncSetTab(item.linkedBrowser, item, findQuery);
+					item.delayProcess = aSync(() => {
+						this.aSyncSetTab(item.linkedBrowser, item, findQuery);
 					}, 500);
 					break;
 				}
@@ -147,10 +147,10 @@ this.FIT = {
 		}
 	},
 	
-	onWillFind: function(e) {
+	handleEvent: function(e) {
 		e.preventDefault();
 		e.stopPropagation();
-		FIT.shouldFindAll();
+		this.shouldFindAll();
 	},
 	
 	toggleGroups: function() {
@@ -160,7 +160,7 @@ this.FIT = {
 		this.tabsList.hidden = toggle;
 		
 		if(toggle) {
-			aSync(function() { FIT.autoSelectGroup(); });
+			aSync(() => { this.autoSelectGroup(); });
 		} else {
 			if(this.selectGroup()) {
 				this.shouldFindAll();
@@ -171,7 +171,7 @@ this.FIT = {
 	autoSelectGroup: function() {
 		// This is just weird...
 		if(!this.tabsGroups.itemCount) {
-			aSync(function() { FIT.autoSelectGroup(); }, 10);
+			aSync(() => { this.autoSelectGroup(); }, 10);
 			return;
 		}
 		
@@ -507,7 +507,7 @@ this.FIT = {
 		
 		this.updateFilterTooltip();
 		
-		Timers.init('shouldFindAll', function() { FIT.beginFind(); }, 250);
+		Timers.init('shouldFindAll', () => { this.beginFind(); }, 250);
 	},
 	
 	beginFind: function() {
@@ -669,7 +669,7 @@ this.FIT = {
 				} else {
 					var inBox = tab.boxObject.firstChild;
 					if(!inBox) { return; }
-					while(inBox.className.indexOf('tab-stack') < 0) {
+					while(!inBox.className.contains('tab-stack')) {
 						inBox = inBox.nextSibling;
 						if(!inBox) { return; }
 					}
@@ -693,8 +693,8 @@ this.FIT = {
 	},
 	
 	aSyncSetTab: function(aBrowser, item, word) {
-		aSync(function() { FIT.updateTabItem(item); });
-		aSync(function() { FIT.processTab(aBrowser, item, word); });
+		aSync(() => { this.updateTabItem(item); });
+		aSync(() => { this.processTab(aBrowser, item, word); });
 	},
 	
 	processTab: function(aBrowser, item, word) {
@@ -910,7 +910,7 @@ Modules.LOADMODULE = function() {
 		Messenger.listenAll(msg, FIT);
 	}
 	
-	Listeners.add(window, 'WillFindFindBar', FIT.onWillFind, true);
+	Listeners.add(window, 'WillFindFindBar', FIT, true);
 	
 	// Update FIT lists as needed
 	Observers.add(FIT, 'FIT:Update');
@@ -925,7 +925,7 @@ Modules.LOADMODULE = function() {
 Modules.UNLOADMODULE = function() {
 	deinitFindBar('findInTabs');
 	
-	Listeners.remove(window, 'WillFindFindBar', FIT.onWillFind, true);
+	Listeners.remove(window, 'WillFindFindBar', FIT, true);
 	
 	for(let msg of FIT.MESSAGES) {
 		Messenger.unlistenAll(msg, FIT);

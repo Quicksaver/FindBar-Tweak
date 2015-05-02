@@ -1,6 +1,137 @@
-Modules.VERSION = '2.0.0';
+Modules.VERSION = '2.1.0';
 
 this.highlights = {
+	observe: function(aSubject, aTopic) {
+		if(aTopic == 'ReHighlightAll') {
+			this.reHighlightAll();
+		}
+	},
+	
+	handleEvent: function(e) {
+		switch(e.type) {
+			case 'WillUpdateStatusFindBar':
+				// make sure we don't apply NOTFOUND status to the findbar if it's empty
+				if(e.detail.res == gFindBar.nsITypeAheadFind.FIND_NOTFOUND && !findQuery) {
+					e.preventDefault();
+					e.stopPropagation();
+					gFindBar._updateStatusUI(gFindBar.nsITypeAheadFind.FIND_FOUND);
+				}
+				break;
+			
+			case 'ClosedFindBar':
+				// If the quickfind bar is auto-closing, it should still highlight the results
+				if(gFindBar._findMode != gFindBar.FIND_NORMAL && Timers.delayHighlight) { break; }
+				
+				// Cancel a delayed highlight when closing the find bar
+				Timers.cancel('delayHighlight');
+				
+				// To remove the grid and the esc key listener if there are no highlights
+				if(documentHighlighted && !findQuery) {
+					this.off();
+				}
+				break;
+				
+			case 'ClosedFindBarBackground':
+				// Cancel a delayed highlight when closing the find bar
+				Timers.cancel('delayHighlight');
+				break;
+			
+			case 'WillToggleHighlight':
+				var aHighlight = e.detail;
+				
+				// Bugfix: sometimes when hitting F3 on a new value (i.e. globalFB, input one value in one tab, switch tab, hit F3 to use the same value)
+				// it would highlight all, we should make sure it doesn't.
+				if(!aHighlight && documentHighlighted && highlightedWord && highlightedWord == findQuery) {
+					gFindBar._highlightAnyway = true;
+				}
+				if(aHighlight) {
+					if(!Prefs.highlightOnFindAgain && gFindBar.hidden && !documentHighlighted && !gFindBar._highlightAnyway) {
+						aHighlight = false;
+						e.preventDefault();
+					}
+					gFindBar._highlightAnyway = false;
+				}
+				
+				documentHighlighted = aHighlight;
+				documentReHighlight = false;
+				highlightedWord = (aHighlight) ? findQuery : '';
+				
+				// Make sure we cancel any highlight timer that might be running
+				Timers.cancel('delayHighlight');
+				break;
+			
+			case 'WillFindAgain':
+				// ReDo highlights when hitting FindAgain if necessary (should rarely be triggered actually)
+				if(documentReHighlight) {
+					this.apply(documentHighlighted);
+				}
+				break;
+			
+			case 'FoundAgain':
+				// Trigger highlights when hitting Find Again
+				if(!Prefs.highlightOnFindAgain || isPDFJS || (documentHighlighted && findWord && findWord == findQuery)) { return; }
+				if(gFindBar.hidden && Prefs.hideWhenFinderHidden) { return; } // Don't highlight if it's not supposed to when the findbar is hidden
+				
+				gFindBar._setHighlightTimeout();
+				break;
+			
+			case 'TabSelect':
+				Timers.init('highlightsTabSelected', () => {
+					if(documentReHighlight) {
+						if(gFindBar.hidden) {
+							documentReHighlight = false;
+						} else {
+							this.apply(documentHighlighted);
+						}
+					}
+				}, 0);
+				break;
+		}
+	},
+	
+	onReHighlight: function(bar, data) {
+		if(viewSource || bar == gFindBar) {
+			if(data !== undefined) {
+				this.apply(data);
+			} else {
+				this.apply(documentHighlighted, true);
+			}
+		}
+		else {
+			bar.browser.finder.documentReHighlight = true;
+			if(data !== undefined) {
+				bar.browser.finder.documentHighlighted = data;
+			}
+		}
+	},
+	
+	onHighlights: function(aBrowser, aHighlight) {
+		if(!gFindBarInitialized || gFindBar.browser != aBrowser) { return; }
+		
+		// the highlights commander needs to be updated in case we're surfing between pages that have or don't have highlights on
+		if(aHighlight) {
+			gFindBar.getElement("highlight").checked = true;
+		}
+		
+		if(!documentHighlighted && (!findQuery || gFindBar.hidden)) {
+			highlightedText = '';
+		}
+		else {
+			var bar = gFindBar;
+			Finder.innerTextDeep.then(function(textContent) {
+				try {
+					bar.browser.finder.highlightedText = textContent;
+				}
+				catch(ex) { Cu.reportError(ex); } // catch unhandled exceptions in the promise
+			});
+		}
+		
+		// toggleHighlight() doesn't update the UI in these conditions, we need it to, to update the counter (basically hide it)
+		if(aHighlight && !findQuery) {
+			gFindBar._updateStatusUI(gFindBar.nsITypeAheadFind.FIND_FOUND);
+		}
+	},
+	
 	clean: function() {
 		Messenger.messageBrowser(gFindBar.browser, 'Highlights:Clean');
 		gFindBar._updateStatusUI(gFindBar.nsITypeAheadFind.FIND_FOUND);
@@ -53,8 +184,9 @@ this.highlights = {
 	// Add the reHighlight attribute to all tabs
 	reHighlightAll: function() {
 		// Timer prevents unnecessary multiple rehighlights
-		Timers.init('reHighlightAll', function() {
-			// This happens sometimes when opening new windows, I can't find out how this is getting called before viewSource is defined but it makes no functional difference
+		Timers.init('reHighlightAll', () => {
+			// This happens sometimes when opening new windows,
+			// I can't find out how this is getting called before viewSource is defined but it makes no functional difference
 			if(typeof(viewSource) == 'undefined') { return; }
 			
 			if(!viewSource) {
@@ -65,7 +197,7 @@ this.highlights = {
 				}
 			}
 			
-			highlights.apply(documentHighlighted);
+			this.apply(documentHighlighted);
 		}, 100);
 	},
 	
@@ -89,132 +221,6 @@ this.highlights = {
 				icon._tempPendingTimer.cancel();
 				delete icon._tempPendingTimer;
 			}
-		}
-	},
-	
-	observe: function(aSubject, aTopic) {
-		if(aTopic == 'ReHighlightAll') {
-			this.reHighlightAll();
-		}
-	},
-	
-	// make sure we don't apply NOTFOUND status to the findbar if it's empty
-	onWillUpdateStatusFindBar: function(e) {
-		if(e.detail.res == gFindBar.nsITypeAheadFind.FIND_NOTFOUND && !findQuery) {
-			e.preventDefault();
-			e.stopPropagation();
-			gFindBar._updateStatusUI(gFindBar.nsITypeAheadFind.FIND_FOUND);
-		}
-	},
-	
-	onClose: function(e) {
-		// If the quickfind bar is auto-closing, it should still highlight the results
-		if(e.type == 'ClosedFindBar' && gFindBar._findMode != gFindBar.FIND_NORMAL && Timers.delayHighlight) { return; }
-		
-		// Cancel a delayed highlight when closing the find bar
-		Timers.cancel('delayHighlight');
-		
-		// If we're closing another findbar, do nothing else
-		if(e.type == 'ClosedFindBarBackground') { return; }
-		
-		// To remove the grid and the esc key listener if there are no highlights
-		if(documentHighlighted && !findQuery) {
-			highlights.off();
-		}
-	},
-	
-	onWillToggleHighlight: function(e) {
-		var aHighlight = e.detail;
-		
-		// Bugfix: sometimes when hitting F3 on a new value (i.e. globalFB, input one value in one tab, switch tab, hit F3 to use the same value)
-		// it would highlight all, we should make sure it doesn't.
-		if(!aHighlight && documentHighlighted && highlightedWord && highlightedWord == findQuery) {
-			gFindBar._highlightAnyway = true;
-		}
-		if(aHighlight) {
-			if(!Prefs.highlightOnFindAgain && gFindBar.hidden && !documentHighlighted && !gFindBar._highlightAnyway) {
-				aHighlight = false;
-				e.preventDefault();
-			}
-			gFindBar._highlightAnyway = false;
-		}
-		
-		documentHighlighted = aHighlight;
-		documentReHighlight = false;
-		highlightedWord = (aHighlight) ? findQuery : '';
-		
-		// Make sure we cancel any highlight timer that might be running
-		Timers.cancel('delayHighlight');
-	},
-	
-	// Handler for when switching tabs
-	onTabSelect: function() {
-		Timers.init('highlightsTabSelected', function() {
-			if(documentReHighlight) {
-				if(gFindBar.hidden) {
-					documentReHighlight = false;
-				} else {
-					highlights.apply(documentHighlighted);
-				}
-			}
-		}, 0);
-	},
-	
-	// ReDo highlights when hitting FindAgain if necessary (should rarely be triggered actually)
-	onWillFindAgain: function() {
-		if(documentReHighlight) {
-			highlights.apply(documentHighlighted);
-		}
-	},
-	
-	onReHighlight: function(bar, data) {
-		if(viewSource || bar == gFindBar) {
-			if(data !== undefined) {
-				this.apply(data);
-			} else {
-				this.apply(documentHighlighted, true);
-			}
-		}
-		else {
-			bar.browser.finder.documentReHighlight = true;
-			if(data !== undefined) {
-				bar.browser.finder.documentHighlighted = data;
-			}
-		}
-	},
-	
-	// Trigger highlights when hitting Find Again
-	onFoundAgain: function(e) {
-		if(!Prefs.highlightOnFindAgain || isPDFJS || (documentHighlighted && findWord && findWord == findQuery)) { return; }
-		if(gFindBar.hidden && Prefs.hideWhenFinderHidden) { return; } // Don't highlight if it's not supposed to when the findbar is hidden
-		
-		gFindBar._setHighlightTimeout();
-	},
-	
-	onHighlights: function(aBrowser, aHighlight) {
-		if(!gFindBarInitialized || gFindBar.browser != aBrowser) { return; }
-		
-		// the highlights commander needs to be updated in case we're surfing between pages that have or don't have highlights on
-		if(aHighlight) {
-			gFindBar.getElement("highlight").checked = true;
-		}
-		
-		if(!documentHighlighted && (!findQuery || gFindBar.hidden)) {
-			highlightedText = '';
-		}
-		else {
-			var bar = gFindBar;
-			Finder.innerTextDeep.then(function(textContent) {
-				try {
-					bar.browser.finder.highlightedText = textContent;
-				}
-				catch(ex) { Cu.reportError(ex); } // catch unhandled exceptions in the promise
-			});
-		}
-		
-		// toggleHighlight() doesn't update the UI in these conditions, we need it to, to update the counter (basically hide it)
-		if(aHighlight && !findQuery) {
-			gFindBar._updateStatusUI(gFindBar.nsITypeAheadFind.FIND_FOUND);
 		}
 	}
 };
@@ -271,8 +277,7 @@ Modules.LOADMODULE = function() {
 				this.browser.finder.documentHighlighted = true;
 				this.browser.finder.documentReHighlight = true;
 				
-				var bar = this;
-				Timers.init('delayHighlight', function() {
+				Timers.init('delayHighlight', () => {
 					// We don't want to highlight pages that aren't supposed to be highlighted (happens when switching tabs when delaying highlights)
 					if(gFindBarInitialized && gFindBar == bar) {
 						highlights.apply(gFindBar.getElement("highlight").checked);
@@ -334,16 +339,16 @@ Modules.LOADMODULE = function() {
 		}
 	);
 	
-	Listeners.add(window, 'WillUpdateStatusFindBar', highlights.onWillUpdateStatusFindBar, true);
-	Listeners.add(window, 'ClosedFindBar', highlights.onClose);
-	Listeners.add(window, 'ClosedFindBarBackground', highlights.onClose);
-	Listeners.add(window, 'WillToggleHighlight', highlights.onWillToggleHighlight);
-	Listeners.add(window, 'WillFindAgain', highlights.onWillFindAgain);
-	Listeners.add(window, 'FoundAgain', highlights.onFoundAgain);
+	Listeners.add(window, 'WillUpdateStatusFindBar', highlights, true);
+	Listeners.add(window, 'ClosedFindBar', highlights);
+	Listeners.add(window, 'ClosedFindBarBackground', highlights);
+	Listeners.add(window, 'WillToggleHighlight', highlights);
+	Listeners.add(window, 'WillFindAgain', highlights);
+	Listeners.add(window, 'FoundAgain', highlights);
 	Observers.add(highlights, 'ReHighlightAll');
 	
 	if(!viewSource) {
-		Listeners.add(gBrowser.tabContainer, "TabSelect", highlights.onTabSelect);
+		Listeners.add(gBrowser.tabContainer, "TabSelect", highlights);
 	}
 	
 	Prefs.listen('useCounter', toggleCounter);
@@ -379,16 +384,16 @@ Modules.UNLOADMODULE = function() {
 	Prefs.unlisten('fillSelectedText', toggleFillSelectedText);
 	
 	if(!viewSource) {
-		Listeners.remove(gBrowser.tabContainer, "TabSelect", highlights.onTabSelect);
+		Listeners.remove(gBrowser.tabContainer, "TabSelect", highlights);
 	}
 	
 	Observers.remove(highlights, 'ReHighlightAll');
 	Listeners.remove(window, 'WillUpdateStatusFindBar', highlights.onWillUpdateStatusFindBar, true);
-	Listeners.remove(window, 'ClosedFindBar', highlights.onClose);
-	Listeners.remove(window, 'ClosedFindBarBackground', highlights.onClose);
-	Listeners.remove(window, 'WillToggleHighlight', highlights.onWillToggleHighlight);
-	Listeners.remove(window, 'WillFindAgain', highlights.onWillFindAgain);
-	Listeners.remove(window, 'FoundAgain', highlights.onFoundAgain);
+	Listeners.remove(window, 'ClosedFindBar', highlights);
+	Listeners.remove(window, 'ClosedFindBarBackground', highlights);
+	Listeners.remove(window, 'WillToggleHighlight', highlights);
+	Listeners.remove(window, 'WillFindAgain', highlights);
+	Listeners.remove(window, 'FoundAgain', highlights);
 	
 	deinitFindBar('highlights');
 };

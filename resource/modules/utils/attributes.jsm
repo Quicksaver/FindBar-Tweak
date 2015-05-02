@@ -25,7 +25,7 @@ this.removeAttribute = function(obj, attr) {
 //	(optional) falseval - (str) value to set attr to if condition is false, if not set the attr is removed
 this.toggleAttribute = function(obj, attr, condition, trueval, falseval) {
 	if(!obj || !obj.setAttribute || !obj.removeAttribute) { return; }
-		
+	
 	if(condition) {
 		if(!trueval) { trueval = 'true'; }
 		obj.setAttribute(attr, trueval);

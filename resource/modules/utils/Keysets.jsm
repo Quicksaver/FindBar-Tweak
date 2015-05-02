@@ -1,4 +1,4 @@
-Modules.VERSION = '1.5.0';
+Modules.VERSION = '1.5.1';
 Modules.UTILS = true;
 
 // Keysets - handles editable keysets for the add-on
@@ -133,9 +133,8 @@ this.Keysets = {
 			} else {
 				for(let other of this.delayedOtherKeys) {
 					if(other(exists)) {
-						aSync(function() {
-							if(typeof(Keysets) == 'undefined') { return; }
-							Keysets.register(key);
+						aSync(() => {
+							this.register(key);
 						}, 500);
 						return;
 					}
@@ -213,9 +212,9 @@ this.Keysets = {
 			};
 			
 			var modifiers = k.getAttribute('modifiers').toLowerCase();
-			key.accel = (modifiers.indexOf('accel') > -1 || modifiers.indexOf('control') > -1); // control or command key on mac
-			key.alt = (modifiers.indexOf('alt') > -1); // option key on mac
-			key.shift = (modifiers.indexOf('shift') > -1);
+			key.accel = modifiers.contains('accel') || modifiers.contains('control'); // control or command key on mac
+			key.alt = modifiers.contains('alt'); // option key on mac
+			key.shift = modifiers.contains('shift');
 			
 			key.keycode = k.getAttribute('keycode') || k.getAttribute('key');
 			key.keycode = key.keycode.toUpperCase();
@@ -371,16 +370,16 @@ this.Keysets = {
 	},
 	
 	setAllWindows: function() {
-		Windows.callOnAll(this.setWindow, 'navigator:browser');
+		Windows.callOnAll((aWindow) => { this.setWindow(aWindow); }, 'navigator:browser');
 	},
 	
 	setWindow: function(aWindow) {
-		if(Keysets.queued.length > 0) {
-			while(Keysets.queued.length > 0) {
-				var key = Keysets.queued.shift();
-				Keysets.register(key, true);
+		if(this.queued.length > 0) {
+			while(this.queued.length > 0) {
+				var key = this.queued.shift();
+				this.register(key, true);
 			}
-			Keysets.setAllWindows();
+			this.setAllWindows();
 			return;
 		}
 			
@@ -391,11 +390,11 @@ this.Keysets = {
 		
 		if(UNLOADED) { return; }
 		
-		if(Keysets.registered.length > 0) {
+		if(this.registered.length > 0) {
 			var keyset = aWindow.document.createElement('keyset');
 			keyset.id = objName+'-keyset';
 			
-			for(var r of Keysets.registered) {
+			for(var r of this.registered) {
 				var key = aWindow.document.createElement('key');
 				key.id = r.id;
 				key.setAttribute('Keysets', objName);
@@ -416,14 +415,18 @@ this.Keysets = {
 			
 			aWindow.document.getElementById('main-window').appendChild(keyset);
 		}
+	},
+	
+	observe: function(aSubject, aTopic) {
+		this.setWindow(aSubject);
 	}
 };
 
 Modules.LOADMODULE = function() {
-	Windows.register(Keysets.setWindow, 'domwindowopened', 'navigator:browser');
+	Windows.register(Keysets, 'domwindowopened', 'navigator:browser');
 };
 
 Modules.UNLOADMODULE = function() {
-	Windows.unregister(Keysets.setWindow, 'domwindowopened', 'navigator:browser');
+	Windows.unregister(Keysets, 'domwindowopened', 'navigator:browser');
 	Keysets.setAllWindows(); // removes the keyset object if the add-on has been unloaded
 };

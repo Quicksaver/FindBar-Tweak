@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.0';
+Modules.VERSION = '1.0.1';
 
 this.__defineGetter__('isPDFJS', function() { return Finder.isPDFJS; });
 
@@ -27,7 +27,7 @@ XPCOMUtils.defineLazyGetter(this, "GetClipboardSearchString",
 this.Finder = {
 	_fastFind: null,
 	_docShell: null,
-	_listeners: [],
+	_listeners: new Set(),
 	_previousLink: null,
 	_searchString: null,
 	
@@ -50,13 +50,11 @@ this.Finder = {
 	},
 	
 	addResultListener: function(aListener) {
-		if(this._listeners.indexOf(aListener) === -1) {
-			this._listeners.push(aListener);
-		}
+		this._listeners.add(aListener);
 	},
 	
 	removeResultListener: function(aListener) {
-		this._listeners = this._listeners.filter(l => l != aListener);
+		this._listeners.delete(aListener);
 	},
 	
 	_notify: function(aSearchString, aResult, aFindBackwards, aDrawOutline, aStoreResult = true) {
@@ -440,8 +438,8 @@ this.Finder = {
 		
 		for(let frame = win; frame != topWin; frame = frame.parent) {
 			let rect = frame.frameElement.getBoundingClientRect();
-			let left = frame.getComputedStyle(frame.frameElement, "").borderLeftWidth;
-			let top = frame.getComputedStyle(frame.frameElement, "").borderTopWidth;
+			let left = getComputedStyle(frame.frameElement, "").borderLeftWidth;
+			let top = getComputedStyle(frame.frameElement, "").borderTopWidth;
 			scrollX.value += rect.left + parseInt(left, 10);
 			scrollY.value += rect.top + parseInt(top, 10);
 		}
@@ -966,8 +964,8 @@ this.Finder = {
 		
 		var promise = this._innerText;
 		var text = '';
-		aSync(function() {
-			if(isPDFJS) {
+		aSync(() => {
+			if(this.isPDFJS) {
 				text = 'PDF.JS '+document.URL+' '+(new Date().getTime());
 			}
 			else if(!document) {

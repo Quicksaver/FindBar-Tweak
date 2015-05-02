@@ -1,7 +1,37 @@
-Modules.VERSION = '2.0.0';
+Modules.VERSION = '2.1.0';
 
 this.grids = {
 	template: null,
+	
+	handleEvent: function(e) {
+		switch(e.type) {
+			case 'MozScrolledAreaChanged':
+				this.reposition(500);
+				break;
+				
+			case 'TabSelect':
+				this.reposition(25);
+				break;
+			
+			case 'resize':
+				Timers.init('resizeViewSource', () => { this.resizeViewSource(); }, 0);
+				break;
+		}
+	},
+	
+	observe: function(aSubject, aTopic, aData) {
+		switch(aSubject) {
+			case 'gridAdjustPadding':
+			case 'gridAdjustWidth':
+				this.adjust();
+				break;
+			
+			case 'gridLimit':
+				this.removeAll();
+				Observers.notify('ReHighlightAll');
+				break;
+		}
+	},
 	
 	get: function(bar, toRemove) {
 		for(let child of bar.browser.parentNode.childNodes) {
@@ -144,14 +174,14 @@ this.grids = {
 		var defaultPadding = (WINNT) ? 2 : 0;
 		var defaultWidth = (WINNT) ? 13 : (DARWIN) ? 14 : 12;
 		
-		grids.lastAdjust = '	-moz-margin-start: '+(defaultPadding +Prefs.gridAdjustPadding)+'px;\n';
-		grids.lastAdjust += '	width: '+(defaultWidth +Prefs.gridAdjustWidth)+'px;\n';
+		this.lastAdjust = '	-moz-margin-start: '+(defaultPadding +Prefs.gridAdjustPadding)+'px;\n';
+		this.lastAdjust += '	width: '+(defaultWidth +Prefs.gridAdjustWidth)+'px;\n';
 		
 		var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 		sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 		sscode += '@-moz-document url("'+document.baseURI+'") {\n';
 		sscode += '	window['+objName+'_UUID="'+_UUID+'"] vbox[anonid="findGrid"] {\n';
-		sscode += 		grids.lastAdjust;
+		sscode += 		this.lastAdjust;
 		sscode += '	}\n';
 		sscode += '}';
 		
@@ -160,7 +190,7 @@ this.grids = {
 		var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 		sscode += '@namespace url(http://www.w3.org/1999/xhtml);\n';
 		sscode += 'div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"] {\n';
-		sscode += 	grids.lastAdjust;
+		sscode += 	this.lastAdjust;
 		sscode += '}\n';
 		
 		Styles.load('adjustFrameGrid_'+_UUID, sscode, true);
@@ -169,30 +199,21 @@ this.grids = {
 		dispatch(window, { type: 'AdjustFrameGrid', cancelable: false });
 	},
 	
-	delayResizeViewSource: function() {
-		Timers.init('resizeViewSource', function() { grids.resizeViewSource(); }, 0);
-	},
-	
 	resizeViewSource: function() {
 		var contentPos = gFindBar.browser.getBoundingClientRect();
 		gFindBar.grid.parentNode.style.top = contentPos.top+'px';
 		gFindBar.grid.parentNode.style.height = contentPos.height+'px';
 	},
 	
-	reposition: function(e) {
+	reposition: function(delay) {
 		if(documentHighlighted) {
 			var bar = gFindBar;
 			Timers.init('repositionGrids', () => {
 				if(!gFindBarInitialized || gFindBar != bar) { return; }
 				
 				Messenger.messageBrowser(bar.browser, 'Grid:Reposition');
-			}, (e.type == 'MozScrolledAreaChanged') ? 500 : 25);
+			}, delay);
 		}
-	},
-
-	listenGridLimit: function() {
-		grids.removeAll();
-		Observers.notify('ReHighlightAll');
 	},
 	
 	removeAll: function() {
@@ -221,15 +242,17 @@ Modules.LOADMODULE = function() {
 	var gridDefaults = {};
 	gridDefaults['scrollbar.side'] = 0;
 	Prefs.setDefaults(gridDefaults, 'layout', '');
-	Prefs.listen('scrollbar.side', Messenger.carryPref);
-	Messenger.carryPref('scrollbar.side', Prefs['scrollbar.side']);
+	Prefs.listen('scrollbar.side', Messenger);
+	Messenger.observe('scrollbar.side', 'nsPref:changed', Prefs['scrollbar.side']);
 	
 	Styles.load('grid', 'grid');
 	Styles.load('frameGrid', 'frameGrid');
 	
 	if(!viewSource) {
-		Listeners.add(window, 'MozScrolledAreaChanged', grids.reposition, true);
-		Listeners.add(gBrowser.tabContainer, 'TabSelect', grids.reposition);
+		Listeners.add(window, 'MozScrolledAreaChanged', grids, true);
+		Listeners.add(gBrowser.tabContainer, 'TabSelect', grids);
+	} else {
+		Listeners.add(viewSource, 'resize', grids);
 	}
 	
 	initFindBar('grid',
@@ -283,15 +306,10 @@ Modules.LOADMODULE = function() {
 			Messenger.loadInBrowser(bar.browser, 'grid');
 			
 			if(viewSource) {
-				Listeners.add(viewSource, 'resize', grids.delayResizeViewSource);
 				grids.resizeViewSource();
 			}
 		},
 		function(bar) {
-			if(viewSource) {
-				Listeners.remove(viewSource, 'resize', grids.delayResizeViewSource);
-			}
-			
 			bar.browser.finder.removeMessage('Grid:Attribute');
 			bar.browser.finder.removeMessage('Grid:Style');
 			bar.browser.finder.removeMessage('Grid:Direction');
@@ -314,19 +332,19 @@ Modules.LOADMODULE = function() {
 		}
 	);
 	
-	Prefs.listen('gridAdjustPadding', grids.adjust);
-	Prefs.listen('gridAdjustWidth', grids.adjust);
-	Prefs.listen('gridLimit', grids.listenGridLimit);
+	Prefs.listen('gridAdjustPadding', grids);
+	Prefs.listen('gridAdjustWidth', grids);
+	Prefs.listen('gridLimit', grids);
 	grids.adjust();
 	
 	Observers.notify('ReHighlightAll');
 };
 
 Modules.UNLOADMODULE = function() {
-	Prefs.unlisten('gridAdjustPadding', grids.adjust);
-	Prefs.unlisten('gridAdjustWidth', grids.adjust);
-	Prefs.unlisten('gridLimit', grids.listenGridLimit);
-	Prefs.unlisten('scrollbar.side', Messenger.carryPref);
+	Prefs.unlisten('gridAdjustPadding', grids);
+	Prefs.unlisten('gridAdjustWidth', grids);
+	Prefs.unlisten('gridLimit', grids);
+	Prefs.unlisten('scrollbar.side', Messenger);
 	
 	Styles.unload('adjustGrid_'+_UUID);
 	Styles.unload('adjustFrameGrid_'+_UUID);
@@ -336,8 +354,10 @@ Modules.UNLOADMODULE = function() {
 	grids.removeAll();
 	if(!viewSource) {
 		Timers.cancel('repositionGrids');
-		Listeners.remove(window, 'MozScrolledAreaChanged', grids.reposition, true);
-		Listeners.remove(gBrowser.tabContainer, 'TabSelect', grids.reposition);
+		Listeners.remove(window, 'MozScrolledAreaChanged', grids, true);
+		Listeners.remove(gBrowser.tabContainer, 'TabSelect', grids);
+	} else {
+		Listeners.remove(viewSource, 'resize', grids);
 	}
 	
 	if(UNLOADED || !Prefs.useGrid) {

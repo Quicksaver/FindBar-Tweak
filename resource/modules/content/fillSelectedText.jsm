@@ -1,47 +1,53 @@
-Modules.VERSION = '1.0.0';
+Modules.VERSION = '2.0.0';
 
-this.fillSelectedText = function() {
-	// we need this even if the findbar hasn't been created in this tab yet; the tab and forth afterwards will initialize everything properly
-	if(typeof(Finder) == 'undefined') {
-		Modules.load('gFindBar');
-		Modules.load('mFinder');
-	}
+this.selectedText = {
+	handleEvent: function(e) {
+		switch(e.type) {
+			case 'mouseup':
+				if(e.button == 0 && e.target.nodeName != 'HTML') {
+					this.fill();
+				}
+				break;
+			
+			case 'keyup':
+				switch(e.keyCode) {
+					case e.DOM_VK_PAGE_UP:
+					case e.DOM_VK_PAGE_DOWN:
+					case e.DOM_VK_END:
+					case e.DOM_VK_HOME:
+					case e.DOM_VK_LEFT:
+					case e.DOM_VK_UP:
+					case e.DOM_VK_RIGHT:
+					case e.DOM_VK_DOWN:
+						this.fill();
+						break;
+					
+					default: break;
+			        }
+			        break;
+		}
+	},
 	
-	if(!Finder.isValid) { return; }
-	
-	var selText = Finder.getActiveSelectionText();
-	message('FillSelectedText', selText);
-};
-
-this.fillSelectedTextMouseUp = function(e) {
-	if(e.button != 0 || e.target.nodeName == 'HTML') { return; }
-	
-	fillSelectedText();
-};
-
-this.fillSelectedTextKeyUp = function(e) {
-	switch(e.keyCode) {
-		case e.DOM_VK_PAGE_UP:
-		case e.DOM_VK_PAGE_DOWN:
-		case e.DOM_VK_END:
-		case e.DOM_VK_HOME:
-		case e.DOM_VK_LEFT:
-		case e.DOM_VK_UP:
-		case e.DOM_VK_RIGHT:
-		case e.DOM_VK_DOWN:
-			fillSelectedText();
-			break;
+	fill: function() {
+		// we need this even if the findbar hasn't been created in this tab yet; the tab and forth afterwards will initialize everything properly
+		if(typeof(Finder) == 'undefined') {
+			Modules.load('gFindBar');
+			Modules.load('mFinder');
+		}
 		
-		default: return;
-        }
+		if(!Finder.isValid) { return; }
+		
+		var selText = Finder.getActiveSelectionText();
+		message('FillSelectedText', selText);
+	}
 };
 
 Modules.LOADMODULE = function() {
-	Listeners.add(Scope, 'mouseup', fillSelectedTextMouseUp);
-	Listeners.add(Scope, 'keyup', fillSelectedTextKeyUp);
+	Listeners.add(Scope, 'mouseup', selectedText);
+	Listeners.add(Scope, 'keyup', selectedText);
 };
 
 Modules.UNLOADMODULE = function() {
-	Listeners.remove(Scope, 'mouseup', fillSelectedTextMouseUp);
-	Listeners.remove(Scope, 'keyup', fillSelectedTextKeyUp);
+	Listeners.remove(Scope, 'mouseup', selectedText);
+	Listeners.remove(Scope, 'keyup', selectedText);
 };

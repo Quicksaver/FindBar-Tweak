@@ -1,4 +1,4 @@
-Modules.VERSION = '2.4.0';
+Modules.VERSION = '2.5.0';
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -11,16 +11,19 @@ Modules.BASEUTILS = true;
 //	(optional) trunk - (string) defaults to 'extensions'
 // listen(pref, handler) - add handler as a change event listener to pref
 //	pref - (string) name of preference to append handler to
-//	handler - (function) to be fired on change event, expects (pref, newValue) arguments
+//	handler -	(function) to be fired on change event, expects (pref, newValue) arguments;
+//			or (nsiObserver) with observe(aSubject, aTopic, aData) where
+//				aSubject - (string) name of preference that was changed
+//				aTopic - (string) "nsPref:changed"
+//				aData - new preference value
 // unlisten(pref, handler) - remove handler as a change event listener of pref
 //	see listen()
-// listening(pref, handler) - returns (int) with corresponding listener index in _onChange[] if handler is registered as pref listener, returns (bool) false otherwise
+// listening(pref, handler) - returns (bool) if handler is registered as pref listener, returns (bool) false otherwise
 //	see listen()
 // reset(pref) - resets pref to default value
 //	see listen()
 this.Prefs = {
 	_prefObjects: {},
-	_onChange: {},
 	length: 0,
 	
 	setDefaults: function(prefList, branch, trunk) {
@@ -33,7 +36,7 @@ this.Prefs = {
 		
 		var branchString = ((trunk) ? trunk+'.' : '') +branch+'.';
 		var defaultBranch = Services.prefs.getDefaultBranch(branchString);
-		for(var pref in prefList) {
+		for(let pref in prefList) {
 			if(pref.startsWith('NoSync_')) { continue; }
 			
 			// When updating from a version with prefs of same name but different type would throw an error and stop.
@@ -77,7 +80,7 @@ this.Prefs = {
 		// setting a pref that has the same string name initially (e.g. "something" and "somethingElse"), it would trigger a change event for "something"
 		// when set*Pref()'ing "somethingElse"
 		var syncBranch = Services.prefs.getDefaultBranch('services.sync.prefs.sync.');
-		for(var pref in prefList) {
+		for(let pref in prefList) {
 			if(pref.startsWith('NoSync_')) { continue; }
 			
 			if(!this._prefObjects[pref]) {
@@ -92,9 +95,9 @@ this.Prefs = {
 	
 	_setPref: function(pref, branch, trunk) {
 		this._prefObjects[pref] = {};
-		this._onChange[pref] = [];
 		this.length++;
 		
+		this._prefObjects[pref].listeners = new Set();
 		this._prefObjects[pref].branch = Services.prefs.getBranch(((trunk) ? trunk+'.' : '') +branch+'.');
 		this._prefObjects[pref].type = this._prefObjects[pref].branch.getPrefType(pref);
 		
@@ -121,13 +124,13 @@ this.Prefs = {
 	
 	listen: function(pref, handler) {
 		// failsafe
-		if(typeof(this._onChange[pref]) == 'undefined') {
+		if(typeof(this._prefObjects[pref]) == 'undefined') {
 			Cu.reportError('Setting listener on unset preference: '+pref);
 			return false;
 		}
 		
-		if(this.listening(pref, handler) === false) {
-			this._onChange[pref].push(handler);
+		if(!this.listening(pref, handler)) {
+			this._prefObjects[pref].listeners.add(handler);
 			return true;
 		}
 		return false;
@@ -135,26 +138,20 @@ this.Prefs = {
 	
 	unlisten: function(pref, handler) {
 		// failsafe
-		if(typeof(this._onChange[pref]) == 'undefined') {
+		if(typeof(this._prefObjects[pref]) == 'undefined') {
 			Cu.reportError('Setting listener on unset preference: '+pref);
 			return false;
 		}
 		
-		var i = this.listening(pref, handler)
-		if(i !== false) {
-			this._onChange[pref].splice(i, 1);
+		if(this.listening(pref, handler)) {
+			this._prefObjects[pref].listeners.delete(handler);
 			return true;
 		}
 		return false;
 	},
 	
 	listening: function(pref, handler) {
-		for(let i = 0; i < this._onChange[pref].length; i++) {
-			if(compareFunction(this._onChange[pref][i], handler, true)) {
-				return i;
-			}
-		}
-		return false;
+		return this._prefObjects[pref].listeners.has(handler);
 	},
 	
 	reset: function(pref) {
@@ -163,17 +160,23 @@ this.Prefs = {
 	
 	observe: function(aSubject, aTopic, aData) {
 		let pref = aData;
-		while(!Prefs._onChange[pref]) {
-			if(pref.indexOf('.') == -1) {
+		while(!Prefs._prefObjects[pref]) {
+			if(!pref.contains('.')) {
 				Cu.reportError("Couldn't find listener handlers for preference "+aData);
 				return;
 			}
 			pref = pref.substr(pref.indexOf('.')+1);
 		}
 		
-		for(let handler of Prefs._onChange[pref]) {
+		for(let handler of Prefs._prefObjects[pref].listeners) {
 			// don't block executing of other possible listeners if one fails
-			try { handler(pref, Prefs[pref]); }
+			try {
+				if(handler.observe) {
+					handler.observe(pref, aTopic, Prefs[pref]);
+				} else {
+					handler(pref, Prefs[pref]);
+				}
+			}
 			catch(ex) { Cu.reportError(ex); }
 		}
 	},

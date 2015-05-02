@@ -1,18 +1,24 @@
-Modules.VERSION = '1.0.4';
+Modules.VERSION = '2.0.0';
 
-this.rememberOnOpen = function() {
-	if(gFindBar._findMode == gFindBar.FIND_NORMAL) {
-		Prefs.findbarHidden = gFindBar.hidden;
+this.rememberStartup = {
+	handleEvent: function(e) {
+		switch(e.type) {
+			case 'OpenedFindBar':
+				if(gFindBar._findMode == gFindBar.FIND_NORMAL) {
+					Prefs.findbarHidden = gFindBar.hidden;
+				}
+				break;
+			
+			case 'ClosedFindBar':
+				Prefs.findbarHidden = gFindBar.hidden;
+				break;
+		}
 	}
 };
 
-this.rememberOnClose = function() {
-	Prefs.findbarHidden = gFindBar.hidden;
-};
-
 Modules.LOADMODULE = function() {
-	Listeners.add(window, 'OpenedFindBar', rememberOnOpen);
-	Listeners.add(window, 'ClosedFindBar', rememberOnClose);
+	Listeners.add(window, 'OpenedFindBar', rememberStartup);
+	Listeners.add(window, 'ClosedFindBar', rememberStartup);
 	
 	if(STARTED == APP_STARTUP && !Prefs.findbarHidden && gFindBar.hidden) {
 		gFindBar.onFindCommand();
@@ -24,8 +30,8 @@ Modules.LOADMODULE = function() {
 };
 
 Modules.UNLOADMODULE = function() {
-	Listeners.remove(window, 'OpenedFindBar', rememberOnOpen);
-	Listeners.remove(window, 'ClosedFindBar', rememberOnClose);
+	Listeners.remove(window, 'OpenedFindBar', rememberStartup);
+	Listeners.remove(window, 'ClosedFindBar', rememberStartup);
 	
 	if((UNLOADED && UNLOADED != APP_SHUTDOWN) || !Prefs.onStartup) {
 		Prefs.findbarHidden = true;

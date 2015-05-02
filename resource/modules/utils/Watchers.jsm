@@ -1,4 +1,4 @@
-Modules.VERSION = '2.5.0';
+Modules.VERSION = '2.6.0';
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -6,14 +6,14 @@ Modules.BASEUTILS = true;
 //	addPropertyWatcher(obj, prop, handler, capture) - registers handler as a watcher for obj property prop changes
 //		obj - (xul element or object) to watch for changes
 //		prop - (string) property name in obj to watch
-//		handler - (function) method to fire when prop is set or changed
+//		handler - (function) method or (obj) with propWatcher() method to fire when prop is set or changed
 //		(optional) capture - when (bool) true it cancels setting the property if handler returns (bool) false, defaults to (bool) false
 //	removePropertyWatcher(obj, prop, handler, capture) - unregisters handler as a watcher for prop changes
 //		see addPropertyWatcher()
 //	addAttributeWatcher(obj, attr, handler, capture, iterateAll) - registers handler as a watcher for object attribute attr changes
 //		obj - (xul element or object) to watch for changes
 //		attr - (string) attribute name in obj to watch
-//		handler - (function) method to fire when attr is set, removed or changed
+//		handler - (function) method or (obj) with attrWatcher() method to fire when attr is set, removed or changed
 //		(optional) capture - when (bool) true it cancels setting the attribute if handler returns (bool) false, defaults to (bool) false
 //		(optional) iterateAll -	when (bool) false only triggers handler for the last change in the attribute, merging all the changes queued in between.
 //					when (bool) true triggers handler for every attribute change in the queue. Defaults to (bool) true.
@@ -35,58 +35,73 @@ this.Watchers = {
 		capture = (capture) ? true : false;
 		
 		if(!obj[this._obj].properties[prop]) {
-			var tempVal = obj[prop];
+			var handler = {
+				value: obj[prop],
+				handlers: new Set(),
+				handling: false
+			};
+			
 			// can't watch constants
 			if(!(delete obj[prop])) {
 				this.unsetWatchers(obj);
 				return false;
 			}
 			
-			obj[this._obj].properties[prop] = {
-				value: tempVal,
-				handlers: [],
-				handling: false
-			};
+			obj[this._obj].properties[prop] = handler;
 			
-			obj.__defineGetter__(prop, function () { return this[Watchers._obj].properties[prop].value; });
+			obj.__defineGetter__(prop, function () { return handler.value; });
 			obj.__defineSetter__(prop, function (newVal) {
-				if(this[Watchers._obj].properties[prop].handling) {
-					this[Watchers._obj].properties[prop].value = newVal;
-					return this[Watchers._obj].properties[prop].value;
+				if(handler.handling) {
+					handler.value = newVal;
+					return handler.value;
 				}
-				this[Watchers._obj].properties[prop].handling = true;
+				handler.handling = true;
 				
-				var oldVal = this[Watchers._obj].properties[prop].value;
-				for(var h of this[Watchers._obj].properties[prop].handlers) {
+				var oldVal = handler.value;
+				for(let h of handler.handlers) {
 					if(h.capture) {
 						var continueHandlers = true;
-						try { continueHandlers = h.handler(this, prop, oldVal, newVal); }
+						
+						try {
+							if(h.handler.propWatcher) {
+								continueHandlers = h.handler.propWatcher(this, prop, oldVal, newVal);
+							} else {
+								continueHandlers = h.handler(this, prop, oldVal, newVal);
+							}
+						}
 						catch(ex) { Cu.reportError(ex); }
+						
 						if(continueHandlers === false) {
-							this[Watchers._obj].properties[prop].handling = false;
-							return this[Watchers._obj].properties[prop].value;
+							handler.handling = false;
+							return handler.value;
 						}
 					}
 				}
-				this[Watchers._obj].properties[prop].value = newVal;
-				for(var h of this[Watchers._obj].properties[prop].handlers) {
+				handler.value = newVal;
+				for(let h of handler.handlers) {
 					if(!h.capture) {
-						try { h.handler(this, prop, oldVal, newVal); }
+						try {
+							if(h.handler.propWatcher) {
+								continueHandlers = h.handler.propWatcher(this, prop, oldVal, newVal);
+							} else {
+								continueHandlers = h.handler(this, prop, oldVal, newVal);
+							}
+						}
 						catch(ex) { Cu.reportError(ex); }
 					}
 				}
 				
-				this[Watchers._obj].properties[prop].handling = false;
-				return this[Watchers._obj].properties[prop].value;
+				handler.handling = false;
+				return handler.value;
 			});
 		}
 		else {
-			for(var h of obj[this._obj].properties[prop].handlers) {
-				if(compareFunction(h.handler, handler) && capture == h.capture) { return true; }
+			for(let h of obj[this._obj].properties[prop].handlers) {
+				if(h.handler == handler && capture == h.capture) { return true; }
 			}
 		}
 		
-		obj[this._obj].properties[prop].handlers.push({ handler: handler, capture: capture });
+		obj[this._obj].properties[prop].handlers.add({ handler: handler, capture: capture });
 		obj[this._obj].setters++;
 		return true;
 	},
@@ -95,13 +110,12 @@ this.Watchers = {
 		if(!obj[this._obj] || !obj[this._obj].properties[prop]) { return false; }
 		capture = (capture) ? true : false;
 		
-		for(var i=0; i<obj[this._obj].properties[prop].handlers.length; i++) {
-			if(compareFunction(obj[this._obj].properties[prop].handlers[i].handler, handler)
-			&& capture == obj[this._obj].properties[prop].handlers[i].capture) {
-				obj[this._obj].properties[prop].handlers.splice(i, 1);
-				if(obj[this._obj].properties[prop].handlers.length == 0) {
+		for(let stored of obj[this._obj].properties[prop].handlers) {
+			if(stored.handler == handler && stored.capture == capture) {
+				obj[this._obj].properties[prop].handlers.delete(stored);
+				if(obj[this._obj].properties[prop].handlers.size == 0) {
 					delete obj[prop]; // remove accessors
-					if(obj[this._obj].properties[prop].value != undefined) {
+					if(obj[this._obj].properties[prop].value !== undefined) {
 						obj[prop] = obj[this._obj].properties[prop].value;
 					}
 					delete obj[this._obj].properties[prop];
@@ -124,16 +138,16 @@ this.Watchers = {
 		
 		if(!obj[this._obj].attributes[attr]) {
 			obj[this._obj].disconnect();
-			obj[this._obj].attributes[attr] = [];
+			obj[this._obj].attributes[attr] = new Set();
 			obj[this._obj].reconnect();
 		}
 		else {
-			for(var a of obj[this._obj].attributes[attr]) {
-				if(compareFunction(a.handler, handler) && capture == a.capture && iterateAll == a.iterateAll) { return true; }
+			for(let a of obj[this._obj].attributes[attr]) {
+				if(a.handler == handler && a.capture == capture && a.iterateAll == iterateAll) { return true; }
 			}
 		}
 		
-		obj[this._obj].attributes[attr].push({ handler: handler, capture: capture, iterateAll: iterateAll });
+		obj[this._obj].attributes[attr].add({ handler: handler, capture: capture, iterateAll: iterateAll });
 		obj[this._obj].setters++;
 		return true;
 	},
@@ -143,11 +157,9 @@ this.Watchers = {
 		capture = (capture) ? true : false;
 		iterateAll = (capture || iterateAll) ? true : false;
 		
-		for(var i=0; i<obj[this._obj].attributes[attr].length; i++) {
-			if(compareFunction(obj[this._obj].attributes[attr][i].handler, handler)
-			&& capture == obj[this._obj].attributes[attr][i].capture
-			&& iterateAll == obj[this._obj].attributes[attr][i].iterateAll) {
-				obj[this._obj].attributes[attr].splice(i, 1);
+		for(let stored of obj[this._obj].attributes[attr]) {
+			if(stored.handler == handler && stored.capture == capture && stored.iterateAll == iterateAll) {
+				obj[this._obj].attributes[attr].delete(stored);
 				if(obj[this._obj].attributes[attr].length == 0) {
 					obj[this._obj].disconnect();
 					delete obj[this._obj].attributes[attr];
@@ -167,19 +179,20 @@ this.Watchers = {
 		if(!obj || typeof(obj) != 'object') { return false; }
 		if(obj[this._obj]) { return true; }
 		
-		obj[this._obj] = {
+		var handler = {
 			setters: 0,
 			properties: {}
 		};
+		obj[this._obj] = handler;
 		
 		if(!obj.ownerDocument) { return true; }
 		
-		obj[this._obj].attributes = {};
-		obj[this._obj].mutations = [];
-		obj[this._obj].scheduler = null;
-		obj[this._obj].reconnect = function() {
+		handler.attributes = {};
+		handler.mutations = [];
+		handler.scheduler = null;
+		handler.reconnect = function() {
 			var attrList = [];
-			for(var a in this.attributes) {
+			for(let a in this.attributes) {
 				attrList.push(a);
 			}
 			if(attrList.length > 0) {
@@ -191,29 +204,29 @@ this.Watchers = {
 				this.mutationObserver.observe(obj, observerProperties);
 			}
 		};
-		obj[this._obj].disconnect = function() {
+		handler.disconnect = function() {
 			this.mutationObserver.disconnect();
 		};
-		obj[this._obj].scheduleWatchers = function(mutations, observer) {
-			if(obj[Watchers._obj].schedule) {
-				obj[Watchers._obj].schedule.cancel();
-				obj[Watchers._obj].schedule = null;
+		handler.scheduleWatchers = function(mutations, observer) {
+			if(this.schedule) {
+				this.schedule.cancel();
+				this.schedule = null;
 			}
 			
-			for(var m of mutations) {
-				obj[Watchers._obj].mutations.push(m);
+			for(let m of mutations) {
+				this.mutations.push(m);
 			}
 			
 			// the script could become really heavy if it called the main function everytime (width attribute on sidebar and dragging it for instance)
 			// I'm simply following the changes asynchronously; any delays for heavily changed attributes should be handled properly by the actual handlers.
-			obj[Watchers._obj].schedule = aSync(obj[Watchers._obj].callAttrWatchers);
+			this.schedule = aSync(() => { this.callAttrWatchers(); });
 		};
-		obj[this._obj].callAttrWatchers = function() {
-			obj[Watchers._obj].disconnect();
-			var muts = obj[Watchers._obj].mutations;
-			obj[Watchers._obj].mutations = [];
+		handler.callAttrWatchers = function() {
+			this.disconnect();
+			var muts = this.mutations;
+			this.mutations = [];
 			
-			for(var attr in obj[Watchers._obj].attributes) {
+			for(let attr in this.attributes) {
 				var changes = 0;
 				var oldValue = false;
 				var newValue = obj.hasAttribute(attr) ? obj.getAttribute(attr) : null;
@@ -239,10 +252,17 @@ this.Watchers = {
 						continue captureMutations_loop;
 					}
 					
-					for(var a of obj[Watchers._obj].attributes[attr]) {
+					for(let a of this.attributes[attr]) {
 						if(a.capture) {
 							var continueHandlers = true;
-							try { continueHandlers = a.handler(obj, attr, oldValue, newValue); }
+							
+							try {
+								if(a.handler.attrWatcher) {
+									continueHandlers = a.handler.attrWatcher(obj, attr, oldValue, newValue);
+								} else {
+									continueHandlers = a.handler(obj, attr, oldValue, newValue);
+								}
+							}
 							catch(ex) { Cu.reportError(ex); }
 							
 							if(continueHandlers === false) {
@@ -282,14 +302,26 @@ this.Watchers = {
 							newValue = obj.hasAttribute(attr) ? obj.getAttribute(attr) : null;
 						}
 						
-						for(var a of obj[Watchers._obj].attributes[attr]) {
+						for(let a of this.attributes[attr]) {
 							if(!a.capture) {
 								if(a.iterateAll) {
-									try { a.handler(obj, attr, oldValue, newValue); }
+									try {
+										if(a.handler.attrWatcher) {
+											continueHandlers = a.handler.attrWatcher(obj, attr, oldValue, newValue);
+										} else {
+											continueHandlers = a.handler(obj, attr, oldValue, newValue);
+										}
+									}
 									catch(ex) { Cu.reportError(ex); }
 								}
 								else if(m == muts.length -1) {
-									try { a.handler(obj, attr, firstOldValue, newValue); }
+									try {
+										if(a.handler.attrWatcher) {
+											continueHandlers = a.handler.attrWatcher(obj, attr, firstOldValue, newValue);
+										} else {
+											continueHandlers = a.handler(obj, attr, firstOldValue, newValue);
+										}
+									}
 									catch(ex) { Cu.reportError(ex); }
 								}
 							}
@@ -298,9 +330,9 @@ this.Watchers = {
 				}
 			}
 			
-			obj[Watchers._obj].reconnect();
+			this.reconnect();
 		};
-		obj[this._obj].mutationObserver = new obj.ownerDocument.defaultView.MutationObserver(obj[this._obj].scheduleWatchers);
+		handler.mutationObserver = new obj.ownerDocument.defaultView.MutationObserver((mutations, observer) => { handler.scheduleWatchers(mutations, observer); });
 		
 		return true;
 	},

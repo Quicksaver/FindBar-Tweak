@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.0';
+Modules.VERSION = '1.1.0';
 
 this.FIT = {
 	// this keeps a list of all hits in a page, mapped to an id that can be used to keep things sync'ed up with the chrome process
@@ -67,7 +67,7 @@ this.FIT = {
 		}
 	},
 	
-	onFocus: function(e) {
+	handleEvent: function(e) {
 		if(e.target == content) {
 			message('FIT:Update');
 		}
@@ -191,10 +191,10 @@ this.FIT = {
 		// no point if it's already hovered
 		if(Timers.cancel('clearHoverGrid') && this._hovered == this.hits.all.get(data.hit)) { return; }
 		
-		Timers.init('hoverGrid', function() {
+		Timers.init('hoverGrid', () => {
 			grids.clearHoverRows();
-			FIT._hovered = FIT.hits.all.get(data.hit);
-			grids.hoverHit(FIT._hovered);
+			this._hovered = this.hits.all.get(data.hit);
+			grids.hoverHit(this._hovered);
 		}, 50);
 	},
 	
@@ -205,8 +205,8 @@ this.FIT = {
 		// no point if it's already not hovered
 		if(Timers.cancel('hoverGrid') && !this._hovered) { return; }
 		
-		Timers.init('clearHoverGrid', function() {
-			FIT._hovered = null;
+		Timers.init('clearHoverGrid', () => {
+			this._hovered = null;
 			grids.clearHoverRows();
 		}, 50);
 	},
@@ -263,8 +263,8 @@ this.FIT = {
 				reject();
 			};
 			
-			aSync(function() {
-				if(data.query == FIT._lastQuery && data.caseSensitive == FIT._lastCaseSensitive) {
+			aSync(() => {
+				if(data.query == this._lastQuery && data.caseSensitive == this._lastCaseSensitive) {
 					resolve();
 				} else {
 					reject();
@@ -287,7 +287,7 @@ this.FIT = {
 			|| !PDFJS.viewerApplication.pdfDocument
 			|| (PDFJS.viewerApplication.loadingBar.percent > 0 && PDFJS.viewerApplication.loadingBar.percent < 100)) {
 				this.resetHits();
-				Timers.init('FITprocessText', function() { FIT.processText(data); }, 250);
+				Timers.init('FITprocessText', () => { this.processText(data); }, 250);
 				return;
 			}
 			
@@ -307,7 +307,7 @@ this.FIT = {
 				});
 				
 				// still call this once in a while, even if it's not finished, so that we can see the extraction status
-				Timers.init('FITprocessText', function() { FIT.processText(data); }, 250);
+				Timers.init('FITprocessText', () => { this.processText(data); }, 250);
 				return;
 			}
 		}
@@ -368,7 +368,7 @@ this.FIT = {
 			query: data.query
 		});
 		
-		yield this._segment(data.query);
+		yield this._segment(data.query, data.caseSensitive);
 		
 		this._lastText = textContent;
 	}),
@@ -463,7 +463,7 @@ this.FIT = {
 	},
 	
 	// This segments the text around the matches to construct the richlistitems for the hits list (in chrome)
-	_segment: Task.async(function* (aWord) {
+	_segment: Task.async(function* (aWord, aCaseSensitive) {
 		let count = 0;
 		
 		var isPDF = isPDFJS;
@@ -550,7 +550,7 @@ this.FIT = {
 			if(doLastStart +1 < endContainerText.length && endContainerText[doLastStart] != ' ') {
 				if(h +1 == this.hits.all.size
 				|| ((!isPDF) ? this.hits.all.get(h +1).startContainer != endContainer : this.hits.all.get(h +1).pIdx != range.pIdx)
-				|| 	(endContainerText.indexOf(' ', doLastStart) > -1
+				|| 	(endContainerText.contains(' ', doLastStart)
 					&& this.hits.all.get(h +1)[(!isPDF) ? 'startOffset' : 'offset'] > endContainerText.indexOf(' ', doLastStart))) {
 						var doLastLength = endContainerText.indexOf(' ', doLastStart);
 						if(doLastLength == -1) { doLastLength = endContainerText.length; }
@@ -605,7 +605,7 @@ this.FIT = {
 					&& nextEndContainerText[nextLastStart] != ' ') {
 						if(hh +1 == this.hits.all.size
 						|| ((!isPDF) ? this.hits.all.get(hh +1).startContainer != nextRange.endContainer : this.hits.all.get(hh +1).pIdx != nextRange.pIdx)
-						|| 	(nextEndContainerText.indexOf(' ', nextLastStart) > -1
+						|| 	(nextEndContainerText.contains(' ', nextLastStart)
 							&& this.hits.all.get(hh +1)[(!isPDF) ? 'startOffset' : 'offset'] > nextEndContainerText.indexOf(' ', nextLastStart))) {
 								var fillNextLength = nextEndContainerText.indexOf(' ', nextLastStart);
 								if(fillNextLength == -1) { fillNextLength = nextEndContainerText.length; }
@@ -803,7 +803,10 @@ this.FIT = {
 			// sleep for a little bit, so the UI doesn't lock up in the pages with tons of matches
 			if(++count >= this.kCountIterationMax) {
 				count = 0;
-				yield this._processSleep(0);
+				yield this._processSleep(0, {
+					query: aWord,
+					caseSensitive: aCaseSensitive
+				});
 			}
 		}
 	}),
@@ -1184,7 +1187,7 @@ Modules.LOADMODULE = function() {
 	Modules.load('content/PDFJS');
 	Modules.load('content/highlights');
 	
-	Listeners.add(Scope, 'focus', FIT.onFocus, true);
+	Listeners.add(Scope, 'focus', FIT, true);
 	webProgress.addProgressListener(FIT, Ci.nsIWebProgress.NOTIFY_ALL);
 	DOMContentLoaded.add(FIT);
 	Finder.addResultListener(FIT);
@@ -1199,7 +1202,7 @@ Modules.UNLOADMODULE = function() {
 		unlisten(msg, FIT);
 	}
 	
-	Listeners.remove(Scope, 'focus', FIT.onFocus, true);
+	Listeners.remove(Scope, 'focus', FIT, true);
 	webProgress.removeProgressListener(FIT, Ci.nsIWebProgress.NOTIFY_ALL);
 	DOMContentLoaded.remove(FIT);
 	Finder.removeResultListener(FIT);

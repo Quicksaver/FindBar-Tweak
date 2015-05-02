@@ -1,18 +1,23 @@
-Modules.VERSION = '1.3.0';
+Modules.VERSION = '2.0.0';
 
-this.assumeLastFindValue = function(e) {
-	if(!e.defaultPrevented && gFindBar.hidden && !documentHighlighted && !findQuery) {
-		findQuery = gBrowser._lastFindValue;
-	}
-};
-
-this.assumeLastFindAgainCommandValue = function(e) {
-	if(!e.defaultPrevented && !viewSource && gFindBar.hidden && !documentHighlighted && gBrowser._lastFindValue) {
-		findQuery = gBrowser._lastFindValue;
-	}
-};
-
-this.updateLastFindValueOnQuickFind = {
+this.perTab = {	
+	handleEvent: function(e) {
+		switch(e.type) {
+			case 'WillOpenFindBar':
+				if(!e.defaultPrevented && gFindBar.hidden && !documentHighlighted && !findQuery) {
+					findQuery = gBrowser._lastFindValue;
+				}
+				break;
+			
+			case 'WillFindAgainCommand':
+				if(!e.defaultPrevented && !viewSource && gFindBar.hidden && !documentHighlighted && gBrowser._lastFindValue) {
+					findQuery = gBrowser._lastFindValue;
+				}
+				break;
+		}
+	},
+	
+	// to update the last find value when using quickfind
 	onFindResult: function(data, aBrowser) {
 		if(!gFindBarInitialized || gFindBar.browser != aBrowser) { return; }
 		
@@ -25,18 +30,18 @@ this.updateLastFindValueOnQuickFind = {
 
 Modules.LOADMODULE = function() {
 	// If the findbar has no find value, we should assume the last one used, like it does when it is first created
-	Listeners.add(window, 'WillOpenFindBar', assumeLastFindValue);
+	Listeners.add(window, 'WillOpenFindBar', perTab);
 	// If we are hitting F3 and the find bar is closed, it should use the last globally used value
-	Listeners.add(window, 'WillFindAgainCommand', assumeLastFindAgainCommandValue);
+	Listeners.add(window, 'WillFindAgainCommand', perTab);
 	
 	initFindBar('perTab',
-		function(bar) { bar.browser.finder.addResultListener(updateLastFindValueOnQuickFind); },
-		function(bar) { bar.browser.finder.removeResultListener(updateLastFindValueOnQuickFind); }
+		function(bar) { bar.browser.finder.addResultListener(perTab); },
+		function(bar) { bar.browser.finder.removeResultListener(perTab); }
 	);
 };
 
 Modules.UNLOADMODULE = function() {
 	deinitFindBar('perTab');
-	Listeners.remove(window, 'WillOpenFindBar', assumeLastFindValue);
-	Listeners.remove(window, 'WillFindAgainCommand', assumeLastFindAgainCommandValue);
+	Listeners.remove(window, 'WillOpenFindBar', perTab);
+	Listeners.remove(window, 'WillFindAgainCommand', perTab);
 };

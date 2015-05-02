@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.0';
+Modules.VERSION = '1.1.0';
 
 this.sights = {
 	allSights: new Set(),
@@ -19,14 +19,14 @@ this.sights = {
 	
 	onPDFResult: function(aAction) {
 		if(Prefs.sightsCurrent && aAction != 'findhighlightallchange') {
-			Timers.init('sightsOnPDFState', function() { sights.current(); }, 50);
+			Timers.init('sightsOnPDFState', () => { this.current(); }, 50);
 		}
 		
 		// don't do this immediately, let onPDFMatches take over if it can, as there's no need to repeat
 		if(Prefs.sightsHighlights
 		&& (documentHighlighted != PDFJS.findController.state.highlightAll || Finder.highlightedWord != PDFJS.findController.state.query)) {
 			this._pdfMatches = new Map();
-			Timers.init('sightsOnHighlightsOnPDFState', function() { sights.highlights(); }, 250);
+			Timers.init('sightsOnHighlightsOnPDFState', () => { this.highlights(); }, 250);
 		}
 	},
 	
@@ -40,7 +40,7 @@ this.sights = {
 	
 	onCleanUpHighlights: function() {
 		Timers.cancel('sightsOnScroll');
-		Listeners.remove(Scope, 'scroll', this.onScroll, true);
+		Listeners.remove(Scope, 'scroll', this, true);
 		for(let group of this.allGroups.values()) {
 			if(!group.current) {
 				group.remove();
@@ -48,9 +48,9 @@ this.sights = {
 		}
 	},
 	
-	onScroll: function() {
+	handleEvent: function(e) {
 		if(Prefs.sightsHighlights) {
-			Timers.init('sightsOnScroll', function() { sights.highlights(); }, 10);
+			Timers.init('sightsOnScroll', () => { this.highlights(); }, 10);
 		}
 	},
 	
@@ -226,7 +226,7 @@ this.sights = {
 			if(!page.textLayer
 			|| !page.textLayer.matches
 			|| !page.textLayer.matches[PDFJS.findController.selected.matchIdx]) {
-				Timers.init('currentSights', function() { sights.current(); }, 10);
+				Timers.init('currentSights', () => { this.current(); }, 10);
 				return;
 			}
 			
@@ -278,7 +278,7 @@ this.sights = {
 				if(!page.view.textLayer
 				|| !page.view.textLayer.renderingDone
 				|| page.view.renderingState < 3) {
-					Timers.init('sightsHighlights', function() { sights.highlights(); }, 10);
+					Timers.init('sightsHighlights', () => { this.highlights(); }, 10);
 					return;
 				}
 			}
@@ -344,7 +344,7 @@ this.sights = {
 				}
 			}
 			
-			Listeners.add(Scope, 'scroll', this.onScroll, true);
+			Listeners.add(Scope, 'scroll', this, true);
 			return;
 		}
 		
@@ -367,7 +367,7 @@ this.sights = {
 			}
 		}
 		
-		Listeners.add(Scope, 'scroll', this.onScroll, true);
+		Listeners.add(Scope, 'scroll', this, true);
 	}
 };
 
@@ -384,15 +384,14 @@ this.SightGroup = function(group) {
 	sights.allGroups.set(this.i, this);
 	sights.nextGroup++;
 	
-	this.onScroll = this.onScroll.bind(this);
-	Listeners.add(Scope, 'scroll', this.onScroll, true);
+	Listeners.add(Scope, 'scroll', this, true);
 };
 
 this.SightGroup.prototype = {
-	onScroll: function() {
+	handleEvent: function(e) {
 		if(this.timer) { return; }
 		
-		this.timer = Timers.create(function() {
+		this.timer = aSync(() => {
 			this.timer = null;
 			
 			var scrolls = sights.getPageScroll(this.ownDoc, this.toOwn);
@@ -406,12 +405,16 @@ this.SightGroup.prototype = {
 				sight.centerY -= yDelta;
 			}
 			
-			message('Sights:Scroll', { group: this.i, scrollLeft: scrolls.scrollLeft, scrollTop: scrolls.scrollTop });
-		}, 20, 'once', this);
+			message('Sights:Scroll', {
+				group: this.i,
+				scrollLeft: scrolls.scrollLeft,
+				scrollTop: scrolls.scrollTop
+			});
+		}, 20);
 	},
 	
 	remove: function() {
-		Listeners.remove(Scope, 'scroll', this.onScroll, true);
+		Listeners.remove(Scope, 'scroll', this, true);
 		if(this.timer) {
 			this.timer.cancel();
 		}
@@ -443,7 +446,7 @@ Modules.UNLOADMODULE = function() {
 	Timers.cancel('sightsOnPDFState');
 	Timers.cancel('sightsOnHighlightsOnPDFState');
 	
-	Listeners.remove(Scope, 'scroll', sights.onScroll, true);
+	Listeners.remove(Scope, 'scroll', sights, true);
 	
 	RemoteFinderListener.removeMessage('Sights:Remove');
 	

@@ -1,4 +1,4 @@
-Modules.VERSION = '2.4.1';
+Modules.VERSION = '2.4.2';
 Modules.UTILS = true;
 Modules.CLEAN = false;
 
@@ -40,7 +40,7 @@ Modules.LOADMODULE = function() {
 		
 		try {
 			var attr = aWindow.document.documentElement.getAttribute('Bootstrapped_Overlays').split(' ');
-			if(attr.indexOf(objName) == -1) { return; }
+			if(!attr.contains(objName)) { return; }
 			
 			attr.splice(attr.indexOf(objName), 1);
 			if(attr.length > 0) {

@@ -1,14 +1,14 @@
-Modules.VERSION = '2.0.0';
+Modules.VERSION = '2.1.0';
 
 this.counter = {
 	heldStatus: null,
 	
-	holdStatusForCounter: function(e) {
+	handleEvent: function(e) {
 		// if we're in an empty find, no point in holding
 		if((e.detail.res == Ci.nsITypeAheadFind.FIND_FOUND && !findQuery)
 		// also no point in holding if no matches were found
 		|| e.detail.res == Ci.nsITypeAheadFind.FIND_NOTFOUND) {
-			counter.heldStatus = null;
+			this.heldStatus = null;
 			return;
 		}
 		
@@ -16,12 +16,12 @@ this.counter = {
 		e.preventDefault();
 		e.stopPropagation();
 		
-		counter.heldStatus = e.detail;
+		this.heldStatus = e.detail;
 	}
 };
 
 Modules.LOADMODULE = function() {
-	Listeners.add(window, 'WillUpdateStatusFindBar', counter.holdStatusForCounter, true);
+	Listeners.add(window, 'WillUpdateStatusFindBar', counter, true);
 	
 	initFindBar('counter',
 		function(bar) {
@@ -62,7 +62,7 @@ Modules.LOADMODULE = function() {
 };
 
 Modules.UNLOADMODULE = function() {
-	Listeners.remove(window, 'WillUpdateStatusFindBar', counter.holdStatusForCounter, true);
+	Listeners.remove(window, 'WillUpdateStatusFindBar', counter, true);
 	
 	deinitFindBar('counter');
 	

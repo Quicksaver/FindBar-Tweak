@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.1';
+Modules.VERSION = '2.1.2';
 
 this.FIT = {
 	get box() { return $(objName+'-findInTabs-box'); },
@@ -465,7 +465,7 @@ this.FIT = {
 			}
 		};
 		groupTabs.onkeyup = (e) => {
-			if(e.keyCode == e.DOM_VK_RETURN || e.keyCode == e.DOM_VK_ENTER) {
+			if(e.keyCode == e.DOM_VK_RETURN) {
 				this.toggleGroups();
 			}
 		};

@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.0';
+Modules.VERSION = '2.1.1';
 
 this.FITMini = {
 	get broadcaster() { return $(objName+'-findInTabs-broadcaster'); },
@@ -167,9 +167,12 @@ Modules.LOADMODULE = function() {
 			function(bar) {
 				var toggleButton = document.createElement('toolbarbutton');
 				setAttribute(toggleButton, 'anonid', objName+'-find-tabs');
-				setAttribute(toggleButton, 'class', 'findbar-highlight findbar-tabs tabbable findbar-no-find-fast');
+				setAttribute(toggleButton, 'class', 'findbar-button findbar-tabs tabbable findbar-no-find-fast');
 				setAttribute(toggleButton, 'observes', objName+'-findInTabs-broadcaster');
 				bar.getElement("findbar-container").insertBefore(toggleButton, bar.getElement('find-case-sensitive').nextSibling);
+				
+				// make sure the australis styling is also applied to the FIT button
+				toggleLabels();
 				
 				bar.browser.finder.addResultListener(FITMini);
 			},

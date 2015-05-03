@@ -1,4 +1,4 @@
-Modules.VERSION = '1.7.1';
+Modules.VERSION = '1.7.2';
 
 this.__defineGetter__('findButton', function() {
 	var node = $('find-button');
@@ -135,12 +135,51 @@ this.toggleClose = function() {
 };
 
 this.toggleLabels = function() {
+	var btns = [
+		'highlight',
+		'find-case-sensitive',
+		objName+'-find-tabs',
+		objName+'-find-tabs-update'
+	];
+	
 	initFindBar('toggleLabels',
 		function(bar) {
 			toggleAttribute(bar, 'hideLabels', Prefs.hideLabels);
+			
+			// apply the australis styling to the findbar buttons' icons as well
+			if(!DARWIN) {
+				for(let btnID of btns) {
+					let btn = bar.getElement(btnID);
+					if(btn) {
+						let icon = btn.boxObject.firstChild;
+						while(icon && !icon.classList.contains('toolbarbutton-icon')) {
+							icon = icon.nextSibling;
+						}
+						if(icon && Prefs.hideLabels && !icon.classList.contains('toolbarbutton-text')) {
+							icon.classList.add('toolbarbutton-text');
+						}
+					}
+				}
+			}
+			
 			triggerUIChange(bar);
 		},
 		function(bar) {
+			if(!DARWIN) {
+				for(let btnID of btns) {
+					let btn = bar.getElement(btnID);
+					if(btn) {
+						let icon = btn.boxObject.firstChild;
+						while(icon && !icon.classList.contains('toolbarbutton-icon')) {
+							icon = icon.nextSibling;
+						}
+						if(icon && icon.classList.contains('toolbarbutton-text')) {
+							icon.classList.remove('toolbarbutton-text');
+						}
+					}
+				}
+			}
+			
 			removeAttribute(bar, 'hideLabels');
 		},
 		true

@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.0';
+Modules.VERSION = '2.1.1';
 
 this.FIT = {
 	get box() { return $(objName+'-findInTabs-box'); },
@@ -878,11 +878,14 @@ Modules.LOADMODULE = function() {
 		function(bar) {
 			var updateButton = document.createElement('toolbarbutton');
 			setAttribute(updateButton, 'anonid', objName+'-find-tabs-update');
-			setAttribute(updateButton, 'class', 'findbar-tabs-update findbar-no-find-fast findbar-no-auto-show tabbable');
+			setAttribute(updateButton, 'class', 'findbar-button findbar-tabs-update findbar-no-find-fast findbar-no-auto-show tabbable');
 			setAttribute(updateButton, 'label', Strings.get('findInTabs', 'updateButtonLabel'));
 			setAttribute(updateButton, 'tooltiptext', Strings.get('findInTabs', 'updateButtonTooltip'+(DARWIN ? 'Mac' : 'Win')));
 			setAttribute(updateButton, 'oncommand', objName+'.FIT.shouldFindAll();');
 			bar.getElement("findbar-container").insertBefore(updateButton, bar.getElement('findbar-textbox-wrapper'));
+			
+			// make sure the australis styling is also applied to the FIT update button
+			toggleLabels();
 			
 			// Just a few special modifications to the findbar, to prevent some messages in the error console
 			

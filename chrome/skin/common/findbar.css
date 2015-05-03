@@ -7,33 +7,36 @@
 	
 	/* findbar appearance */
 	
-	findbar[hideLabels] checkbox[anonid="find-case-sensitive"],
 	findbar[noClose] .findbar-closebutton,
 	findbar .findbar-closebutton:not([anonid]) {
 		display: none;
 	}
 	
-	findbar[hideLabels] toolbarbutton label,
-	findbar[hideLabels] checkbox label {
+	findbar[hideLabels] .findbar-button > .toolbarbutton-text:not(.toolbarbutton-icon) {
 		/* I'm not just hiding these through display:none because this way it's like they still exist, so the height of the buttons is unaffected */
 		width: 0 !important;
 		margin-left: 0 !important;
 		margin-right: 0 !important;
+		padding-left: 0 !important;
+		padding-right: 0 !important;
+		border-color: transparent !important;
+		background: transparent !important;
+		box-shadow: none !important;
 	}
 	
-	findbar[hideLabels] toolbarbutton image,
-	findbar[hideLabels] checkbox image {
+	findbar[hideLabels] .findbar-button .toolbarbutton-icon {
 		margin: 0;
-	}
-	
-	findbar[hideLabels] .findbar-highlight .toolbarbutton-icon,
-	findbar[hideLabels] .findbar-case-sensitive .toolbarbutton-icon {
 		display: -moz-box;
 	}
 	
 	findbar[hideLabels] toolbarbutton[anonid="highlight"] {
 		list-style-image: url("chrome://findbartweak/skin/toolbar.png");
-		-moz-image-region: rect(16px 32px 32px 16px);
+		-moz-image-region: rect(0px 32px 16px 16px);
+	}
+	
+	findbar[hideLabels] toolbarbutton[anonid="find-case-sensitive"] {
+		list-style-image: url("chrome://findbartweak/skin/toolbar.png");
+		-moz-image-region: rect(0px 16px 16px 0px);
 	}
 	
 	findbar[keepButtons] toolbarbutton[hidden].tabbable:not(.findbar-no-find-fast):not(.findbar-find-fast),
@@ -45,14 +48,19 @@
 		display: none;
 	}
 	
-	.findbar-cs-button,
-	findbar[hideLabels] toolbarbutton[anonid="find-case-sensitive"] {
-		list-style-image: url("chrome://findbartweak/skin/toolbar.png");
-		-moz-image-region: rect(0px 16px 16px 0px);
-	}
-	
 	image[anonid="find-status-icon"][status="pending"] {
 		-moz-padding-start: 8px;
+	}
+	
+	/* Find in All Tabs */
+	
+	findbar toolbarbutton[anonid="findbartweak-find-tabs"] {
+		list-style-image: url("chrome://findbartweak/skin/findintabs.png");
+		-moz-image-region: rect(0px, 16px, 16px, 0px);
+	}
+	
+	findbar:not([hideLabels]) toolbarbutton[anonid="findbartweak-find-tabs"] .toolbarbutton-icon {
+		display: none;
 	}
 	
 	/* to show the findbar on the right or the left, we just switch the locale direction when it's on the bottom */

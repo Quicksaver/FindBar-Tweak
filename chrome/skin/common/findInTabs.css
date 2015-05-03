@@ -18,11 +18,6 @@
 		text-align: center;
 	}
 	
-	.findbar-tabs {
-		list-style-image: url("chrome://findbartweak/skin/findintabs.png");
-		-moz-image-region: rect(0px, 16px, 16px, 0px);
-	}
-	
 	.findbar-tabs-update {
 		list-style-image: url("chrome://findbartweak/skin/findintabs.png");
 		-moz-image-region: rect(0px, 32px, 16px, 16px);
@@ -125,6 +120,7 @@
 	.findInTabs-bar toolbarbutton[anonid="find-closebutton"],
 	.findInTabs-bar toolbarbutton[anonid="highlight"],
 	.findInTabs-bar label[anonid="match-case-status"],
+	.findInTabs-bar label[anonid="found-matches"],
 	.findInTabs-bar description[anonid="find-status"] {
 		display: none;
 	}

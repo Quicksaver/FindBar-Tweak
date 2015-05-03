@@ -15,14 +15,6 @@
 		border-top: 1px solid #888;
 	}
 	
-	findbar[hideLabels] toolbarbutton[anonid="find-case-sensitive"]:not([checked="true"]) {
-		-moz-image-region: rect(16px 16px 32px 0px);
-	}
-	
-	findbar[hideLabels] toolbarbutton[anonid="highlight"][checked="true"] {
-		-moz-image-region: rect(0px 32px 16px 16px);
-	}
-	
 	/* small findbar at the top */
 	
 	findbar[movetotop] {

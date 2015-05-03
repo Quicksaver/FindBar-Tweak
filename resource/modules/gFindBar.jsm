@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.1';
+Modules.VERSION = '1.0.2';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return FITFull || viewSource || window.gFindBarInitialized; });
@@ -147,6 +147,8 @@ this.baseInit = function(bar) {
 	
 	// We completely override Firefox's own matches counter with ours
 	Piggyback.add('gFindBar', bar, '_updateMatchesCount', function() {});
+	bar._foundMatches.value = '';
+	bar._foundMatches.hidden = true;
 };
 
 this.baseDeinit = function(bar) {

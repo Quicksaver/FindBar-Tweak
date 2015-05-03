@@ -1,4 +1,4 @@
-var defaultsVersion = '1.4.2';
+var defaultsVersion = '1.4.3';
 var objName = 'findbartweak';
 var objPathString = 'findbartweak';
 
@@ -69,7 +69,11 @@ var prefList = {
 	FAYTtimeout: defaultBranch.getIntPref('accessibility.typeaheadfind.timeout'),
 	FAYTenabled: defaultBranch.getBoolPref('accessibility.typeaheadfind'),
 	FAYTprefill: defaultBranch.getBoolPref('accessibility.typeaheadfind.prefillwithselection'),
-	resetNative: false
+	resetNative: false,
+	
+	// for the what's new tab, it's better they're here so they're automatically carried over to content
+	lastVersionNotify: '0',
+	notifyOnUpdates: true
 };
 
 function startAddon(window) {

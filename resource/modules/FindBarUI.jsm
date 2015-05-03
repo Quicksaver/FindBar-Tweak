@@ -1,4 +1,4 @@
-Modules.VERSION = '1.7.0';
+Modules.VERSION = '1.7.1';
 
 this.__defineGetter__('findButton', function() {
 	var node = $('find-button');
@@ -13,10 +13,6 @@ this.__defineGetter__('findButton', function() {
 	
 	return node;
 });
-
-this.doOpenOptions = function() {
-	openOptions();
-};
 
 this.alwaysFindNormal = function(e) {
 	// If opening normal Find bar when quick find is already opened, make sure we trigger the change

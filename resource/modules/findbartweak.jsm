@@ -1,7 +1,11 @@
-Modules.VERSION = '2.0.0';
+Modules.VERSION = '2.0.1';
 
 this.viewSource = false;
 this.FITFull = false;
+
+this.doOpenOptions = function() {
+	openOptions();
+};
 
 this.toggleBlurCloses = function() {
 	Modules.loadIf('blurCloses', Prefs.blurCloses);
@@ -24,6 +28,7 @@ Modules.LOADMODULE = function() {
 	viewSource = (document.documentElement.getAttribute('windowtype') == 'navigator:view-source') && $('viewSource');
 	FITFull = (document.documentElement.getAttribute('windowtype') == 'addon:findInTabs') && $(objPathString+'-findInTabs');
 	
+	Modules.load('whatsNew');
 	Modules.load('gFindBar');
 	if(!FITFull) {
 		Modules.load('mFinder');
@@ -84,4 +89,5 @@ Modules.UNLOADMODULE = function() {
 	}
 	
 	Modules.unload('gFindBar');
+	Modules.unload('whatsNew');
 };

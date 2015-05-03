@@ -1,0 +1,495 @@
+{
+	"current":"2b1",
+	"releases": {
+		"2b1":{
+			"date":"April 27, 2014",
+			"notes":[
+				["changed","Removed compatibility for Firefox 28 and below"],
+				["bugfix","Add-on could fail to (re)load after disabling/updating one of my other add-ons"],
+				["bugfix","After resizing the find text field, it should be properly shrunk when the window is resized, so it doesn't extend outside the window boundaries"],
+				["bugfix","Compatibility with S3.Download Statusbar add-on: toggling the S3 toolbar wouldn't update the findbar's position when it's placed at the top"],
+				["bugfix","Many appearance fixes for Australis"]
+			]
+		},
+		"1.4.18":{
+			"date":"January 26, 2014",
+			"notes":[
+				["changed","With the global findbar, the highlights are no longer kept on a per-tab basis either"],
+				["changed","The find bar on top is no longer hidden when there are notifcations, now it is displayed below them"],
+				["bugfix","&quot;Highlight All by default&quot; would not respect the status of the button when using the global findbar"],
+				["bugfix","Not highlighting all when opening find bar with filling selected text and &quot;Ctrl+F for close&quot; is disabled"],
+				["bugfix","The link in the About tab (in FBT's preferences) to the AMO page would not be built correctly sometimes"],
+				["bugfix","Hitting the Esc key in the Find in All Tabs standalone window will close it instead of closing only its findbar"],
+				["bugfix","Minor appearance fixes"]
+			]
+		},
+		"1.4.17":{
+			"date":"January 5, 2014",
+			"notes":[
+				["new","Add-on version in about tab in preferences"],
+				["new","Status text has a &quot;counter&quot; attribute when the counter is used, to differentiate from the normal status labels"],
+				["bugfix","Filling findbar with selected text wasn't highlighting all occurences when the search query was already the same as the text selection"]
+			]
+		},
+		"1.4.16":{
+			"date":"December 27, 2013",
+			"notes":[
+				["bugfix","It would close the browser window if clicking the close button on the find bar on top"]
+			]
+		},
+		"1.4.15":{
+			"date":"December 27, 2013",
+			"notes":[
+				["changed","The Find in All Tabs lists at the bottom doesn't show the persona behind it since the find bar doesn't either, at least for now"],
+				["bugfix","Compatibility with Australis (Nightly)"],
+				["bugfix","Can't resize (height) the Find in All Tabs lists if they're at the top"]
+			]
+		},
+		"1.4.14":{
+			"date":"November 19, 2013",
+			"notes":[
+				["bugfix","Don't open Find in All Tabs when using the quickfind bar"],
+				["bugfix","Next/Previous buttons disabled when using the global find bar and switching tabs when the find bar isn't empty"],
+				["bugfix","Incompatibility with &quot;Edit Custom Button in Tab&quot; from Custom Buttons add-on and other chrome tabs"],
+				["bugfix","Incompatibility with Update Scanner add-on"],
+				["bugfix","Compatibility with latest Aurora"],
+				["bugfix","XML documents would be collapsed when running a search or opening its view source window"],
+				["unresolved","The add-on breaks on Nightly because of Australis. This will be fixed soon."]
+			]
+		},
+		"1.4.13":{
+			"date":"November 2, 2013",
+			"notes":[
+				["changed","Findbar on top is a bit more narrow to economize screen space; if you're updating from a previous version, you may have to restart firefox for this change to take effect completely"],
+				["bugfix","Findbar always closed when the Find in All Tabs lists were open and the feature &quot;Close findbar when it loses focus&quot; was enabled"],
+				["bugfix","Switching tabs with the Find in All Tabs lists open could sometimes trigger a wrong &quot;Phrase not found&quot; status"],
+				["bugfix","Sometimes, hitting F3 with the find bar closed would use a previously used value, instead of the value that was last used in that find bar"],
+				["bugfix","Severe decrease in performance when using both &quot;Also highlight on find again&quot; and &quot;Remove highlights when the find bar is closed&quot; and hitting F3 with the find bar closed"],
+				["bugfix","High CPU load on some PDF pages sometimes"]
+			]
+		},
+		"1.4.12":{
+			"date":"October 30, 2013",
+			"notes":[
+				["bugfix","Opening new tab with personas (light-weight themes) would show the theme in the background instead of the normal blank page"],
+				["bugfix","Personas (light-weight themes) would not be properly applied to the find bar on top on the right"]
+			]
+		},
+		"1.4.11":{
+			"date":"October 30, 2013",
+			"notes":[
+				["new","FBT's custom preferences are now also synchronized through Firefox Sync!"]
+			]
+		},
+		"1.4.10":{
+			"date":"October 29, 2013",
+			"notes":[
+				["bugfix","Compatibility with some themes (e.g. FXChrome): find bar on top would be cut off (Firefox 25+)"],
+				["bugfix","In Mac OS X the find bar on top would not have a bottom border (Firefox 25+)"],
+				["bugfix","The corners of the find bar on top would not be in their correct position sometimes"]
+			]
+		},
+		"1.4.9":{
+			"date":"October 20, 2013",
+			"notes":[
+				["new","zh-TW locale"],
+				["bugfix","Highlights grid in scrollbar would not be accurate sometimes or would just fail completely"],
+				["bugfix","Compatibility with NoScript add-on, find bar on top would not appear on sites with blocked scripts"],
+				["general","Some performance improvements to the highlights grid and sights"]
+			]
+		},
+		"1.4.8":{
+			"date":"October 18, 2013",
+			"notes":[
+				["bugfix","&quot;Remove highlights when the Findbar is closed&quot; was preventing the highlights to be applied automatically when running a search (Firefox 25+)"]
+			]
+		},
+		"1.4.7":{
+			"date":"October 18, 2013",
+			"notes":[
+				["bugfix","Find in All Tabs and highlights could fail in PDF.JS pages in the last few versions of the add-on"],
+				["bugfix","Many minor fixes and improvements for when using Find in All Tabs and highlights in PDF.JS pages"],
+				["bugfix","PDF.JS loading bar would be hidden by the find bar on top"]
+			]
+		},
+		"1.4.6":{
+			"date":"October 17, 2013",
+			"notes":[
+				["bugfix","Find in All Tabs wouldn't automatically select the current tab when running a new search or updating the results"],
+				["bugfix","Find in All Tabs would sometimes show the current tab twice in the results"]
+			]
+		},
+		"1.4.5":{
+			"date":"October 15, 2013",
+			"notes":[
+				["bugfix","Changing the timeout for closing the quick findbar would not be applied immediately"],
+				["bugfix","If setting the quick findbar closing timeout too fast, the highlights would not be placed sometimes"]
+			]
+		},
+		"1.4.4":{
+			"date":"October 14, 2013",
+			"notes":[
+				["bugfix","Find in All Tabs lists not being updated when dynamic content is loaded sometimes"]
+			]
+		},
+		"1.4.2":{
+			"date":"October 14, 2013",
+			"notes":[
+				["changed","Tweaked a little the behavior of &quot;Highlight All by Default&quot;"],
+				["bugfix","On webpages that dynamically load content (Google search results, deviantArt, etc), highlights wouldn't be updated to reflect the new content"],
+				["bugfix","Sometimes sights would appear when there was no current match"],
+				["bugfix","The &quot;Move to top&quot; checkbox could be disabled if in a previous version you had enabled &quot;Move back to bottom&quot; (the find bar on top was backed out recently in firefox, this preference is no longer present in FBT)"],
+				["bugfix","Find in All Tabs feature was broken in current version of Firefox"],
+				["bugfix","Closing the Find in all Tabs lists through the button in the find bar would leave the find bar open in other tabs"],
+				["bugfix","With the find bar on top, the last button in the bar would be partly covered by the find bar border in Firefox 24 and below"],
+				["bugfix","Conflicts with toolbar buttons of other add-ons"],
+				["bugfix","Highlights grid in scrollbar was not working in GMail"],
+				["bugfix","Other minor bugfixes"]
+			]
+		},
+		"1.4.1":{
+			"date":"October 4, 2013",
+			"notes":[
+				["bugfix","Small bugfix"]
+			]
+		},
+		"1.4":{
+			"date":"October 4, 2013",
+			"notes":[
+				["new","The highlights grid should now work in pages with frames, adding a grid to the scrollbar of each frame (Firefox 22 and above only). Because this represents a higher degree of complexity, the default highlights limit in the grid has been lowered to 100; this value can still be changed at will in the preferences."],
+				["new","Preference to limit the number of sights on screen when applying to all highlights"],
+				["new","Can filter the results in the Find in All Tabs search to: a specific tab group; pinned tabs or view source windows"],
+				["new","Find in All Tabs lists can be opened in a separate window!"],
+				["changed","With the &quot;Findbar starts closed in new tabs&quot; preference enabled, on the new find bar in Firefox 25, if opening the find bar without a previous search present, it will always assume the last search value used in any tab, not just the first time it is opened"],
+				["changed","When there isn't any current match, the results counter only shows the total number of matches found (instead of &quot;0 of # matches&quot;, it will be only &quot;# matches&quot;)"],
+				["changed","The matches counter now correctly distinguishes singular and plural forms (&quot;1 match&quot; vs &quot;2 matches&quot;)"],
+				["bugfix","Sights were not working in frames"],
+				["bugfix","&quot;Fill Findbar with selected text&quot; would cause FBT to fail to initialize in older versions of firefox"],
+				["bugfix","The persona background shouldn't be shown repeated before a new tab is loaded, unless the Find in All Tabs lists are open (it's needed in this case)"],
+				["bugfix","There were some small problems with using Find in All Tabs in pages with frames"],
+				["bugfix","Compatibility with Pale Moon"],
+				["bugfix","Compatibility with Firefox 25 and above"],
+				["bugfix","Performing a Links Only search with highlights would highlight not only links but all occurrences of the search string"],
+				["bugfix","Some issues with forcing a specific type (quick/normal) of find bar in certain conditions"],
+				["general","Performance improvements when using sights on all highlights; together with the new limit preference, this actually becomes a usable feature now!"],
+				["general","Performance improvements when using the highlights grid."],
+				["","Other minor fixes and improvements"]
+			]
+		},
+		"1.3.4":{
+			"date":"September 1, 2013",
+			"notes":[
+				["bugfix","Version 1.3.2 broke sights in the view source window"]
+			]
+		},
+		"1.3.3":{
+			"date":"August 31, 2013",
+			"notes":[
+				["bugfix","When opening an image in a tab that had highlights, the highlights grid would remain after the image had loaded"]
+			]
+		},
+		"1.3.2":{
+			"date":"August 31, 2013",
+			"notes":[
+				["bugfix","Sights would not be correctly placed if using any kind of zoom factor"]
+			]
+		},
+		"1.3.1":{
+			"date":"August 22, 2013",
+			"notes":[
+				["changed","Switched &quot;Quick Findbar&quot; and &quot;Findbar Mode&quot; blocks in preferences dialog to be more intuitive"],
+				["changed","Increased framerate of Focus Location sights style, so animation seems more fluid"],
+				["changed","Removed temporary compatibility fix for Canadian Weather add-on introduced in 1.3, latest version of add-on no longer conflicts with FBT; you should update it!"],
+				["bugfix","Compatibility with OmniSidebar and Firefox 25: sidebar border switch with a border when &quot;Integrate with top chrome&quot; is enabled"],
+				["bugfix","Compatibility with Firefox 25/26: new animations in the latest builds don't play well with FBT features"],
+				["bugfix","Compatibility with Firefox 25: Add-ons Manager tab with an extra top border"]
+			]
+		},
+		"1.3":{
+			"date":"August 8, 2013",
+			"notes":[
+				["new","Compatibility with the new findbar in Firefox 25 (Current Nightly). Although I tested thoroughly, some features may be broken due to several changes needed for this, please let me know about any new bugs."],
+				["new","(Firefox 25) move the findbar back to the bottom of the browser"],
+				["new","(Firefox 25) make the findbar continuous with the rest of the chrome on top"],
+				["new","List of tabs in Find in All Tabs is now ordered by hits, with the tabs with most hits on top"],
+				["removed","&quot;squareLook&quot; and &quot;placeAbove&quot; hidden settings since Firefox 25's new default find bar has the exact same look as what these settings provided"],
+				["bugfix","Findbar on top (above the webpage) is now hidden when there are notifications open, so it doesn't cover the notification."],
+				["bugfix","Some personas would add a shadow to the text in the Find in All Tabs lists, making it very hard to read"],
+				["bugfix","Sometimes switching to a new tab for the first time there would be a small lag"],
+				["bugfix","Native preferences (layout.word_select.*, accessibility.typeaheadfind.*, etc) were locked in about:config and could only be changed in FBT's preferences dialog"],
+				["bugfix","Highlights grid in scrollbar not working in the view source window"],
+				["bugfix","Find in tabs not updating current hit in lists when selecting a result from clicking on an entry"],
+				["bugfix","Hits counter not working with PDF documents in FF24 (maybe 23?) and above"],
+				["bugfix","Enabling and disabling the add-on could fail"],
+				["bugfix","When enabling/disabling personas in Mac OS X, the findbar on top would be placed wrongly"],
+				["bugfix","Find in All Tabs lists prevented the toolbars from being shown when moving the mouse to the top while in fullscreen"],
+				["bugfix","Compatibility with the FindList add-on: textbox would be narrower and covered some text; resizing the textbox would not work right away"],
+				["bugfix","Compatibility with the Canadian Weather add-on: white space at the bottom"],
+				["","Many (many!) performance and appearance fixes and improvements"]
+			]
+		},
+		"1.2.1":{
+			"date":"June 28, 2013",
+			"notes":[
+				["bugfix","Slowdown on loading pages with lots of frames"]
+			]
+		},
+		"1.2.0":{
+			"date":"June 23, 2013",
+			"notes":[
+				["new","Set current search hit color"],
+				["new","The current search hit is also shown in the highlights grid in the scrollbar and in the Find in All Tabs lists"],
+				["new","Set the number of repetitions of the sights animations"],
+				["new","Resize the find text field by dragging its border"],
+				["new","Hide the &quot;Find:&quot; label"],
+				["new","Always use quickfind bar even from keyboard shortcut and toolbar button"],
+				["new","Also highlight on 'Find Again'"],
+				["new","Set whether opening the find bar fills it with the selected text or not"],
+				["new","Option to automatically use selected text in the findbar, search for it and highlight it"],
+				["new","Reset changed native firefox preferences"],
+				["changed","Re-wrote and re-organized preferences dialog"],
+				["changed","Tweaked the logo, more shiny and green"],
+				["bugfix","Compatibility with right-to-left browser layouts"],
+				["bugfix","View source tab items in Find in All Tabs weren't displaying the full window title"],
+				["bugfix","Some tab items in Find in All Tabs wouldn't display the favicon if it was the firefox branding logo or it was a pdf document"],
+				["bugfix","Hits in the Find in All Tabs would not work properly when pointing to an editable node or a frame"],
+				["bugfix","Toolbar button not properly sized sometimes"],
+				["bugfix","a few issues with the buttons and the text field not being properly sized"],
+				["bugfix","Sometimes highlights wouldn't be added when switching tabs"],
+				["bugfix","In some websites when dynamic content is loaded (AJAX), highlights wouldn't be re-done and the highlight all button would be unchecked"],
+				["removed","Temporary fix for highlight all not working in Aurora (FF23), it's not needed anymore"],
+				["removed","zh-TW locale for now, it was currently only partially localized (less than half), will re-add if/when someone updates the localization in babelzilla"],
+				["general","Improved automatic handling of new/changed/closed/unloaded tabs in Find in All Tabs"],
+				["general","Improved performance of Find in All Tabs"],
+				["","Many other tweaks and improvements"]
+			]
+		},
+		"1.1":{
+			"date":"May 30, 2013",
+			"notes":[
+				["new","zh-TW locale"],
+				["new","Compatibility with PDF.JS (pdf documents opened with the firefox integrated pdf reader or the PDF Viewer extension)"],
+				["new","Toolbar button to open and close the findbar"],
+				["new","Can set sights color independently from highlights color"],
+				["new","Can adjust the highlights grid from the preferences dialog"],
+				["new","Find in All Tabs! Search for the text in all opened tabs and windows."],
+				["new","When hiding button labels, the Match case checkbox turns into a button like the others (a checkbox without a label is a bit weird)"],
+				["bugfix","Window elements would jump around at startup if movetoTop feature was enabled"],
+				["bugfix","Several findbar appearance glitches"],
+				["bugfix","Highlight all not working in Aurora (FF23)"],
+				["updated","zh-CN and de locales"],
+				["removed","Integrated compatibility with the NASA Night Launch theme, it was only partially themed anyway and it's better if the theme itself does this from now on"]
+			]
+		},
+		"1.0.1":{
+			"date":"May 10, 2013",
+			"notes":[
+				["new","Two hidden settings: &quot;squareLook&quot; and &quot;placeAbove&quot; for an alternate style when moving the findbar to top, not yet perfect so not yet a full feature"],
+				["new","Can move the contents of the findbar to the right even when it's placed under the webpage as normal"],
+				["bugfix","Compatibility with the viewPartialSource (View Selection Source) window"],
+				["bugfix","Media tab in page info not showing everything"],
+				["bugfix","Now it's successfully reverting the typeaheadfind related preferences when the add-on is disabled, as it should"],
+				["removed","Barlesque compatibility tweaks, this add-on is severely outdated and it was already impossible to make FBT fully compatible with it as it was. Don't despair as I'm already working on an alternative."],
+				["","Other small tweaks and improvements overall"]
+			]
+		},
+		"1":{
+			"date":"April 23, 2013",
+			"notes":[
+				["new","Add-on completely rewritten, it is now restartless with a shiny new logo!"],
+				["new","Ability to reset highlights color to default"],
+				["new","&quot;Findbar starts closed in new tabs&quot; feature"],
+				["new","Close findbar when it loses focus"],
+				["new","Supports the findbar in the View Source window"],
+				["new","Focus sights let you know easily where the occurences are in the page"],
+				["bugfix","Compatibility with Firefox 22"],
+				["bugfix","Window resizing impossible"],
+				["bugfix","Compatibility with the TreeStyleTab add-on"],
+				["removed","Highlights grid next to the scrollbar, it will always be shown in the scrollbar now"],
+				["general","Many stability and performance improvements"],
+				["","I went through a year worth of e-mails to make sure I addressed everyone's issues. If I missed any, I'm sorry, please remind me again about any issue I may have overlooked."]
+			]
+		},
+		"0.5.6":{
+			"date":"September 23, 2011",
+			"notes":[
+				["new","de, pt-PT, sv-SE locales"],
+				["","Other minor fixes and improvements"]
+			]
+		},
+		"0.5.5":{
+			"date":"September 15, 2011",
+			"notes":[
+				["bugfix","Compatibility fix for the Speed Dial add-on"]
+			]
+		},
+		"0.5.4":{
+			"date":"September 11, 2011",
+			"notes":[
+				["bugfix","Compatibility fix for All-in-One Sidebar add-on with sidebar on the right of the window"],
+				["bugfix","Compatibility fix with barlesque, still not perfect, position the add-on bar &quot;on top&quot; only, other options are buggy with findbar on top"],
+				["bugfix","Starting firefox with grid outside of the scrollbar can lead to a bad first page layout"],
+				["bugfix","Clicking a highlight on the grid outside of the scrollbar wouldn't scroll the page to its place"],
+				["","Other minor fixes and improvements"]
+			]
+		},
+		"0.5.3":{
+			"date":"July 15, 2011",
+			"notes":[
+				["updated","Behavior fix to follow AMO guidelines"]
+			]
+		},
+		"0.5.2":{
+			"date":"June 28, 2011",
+			"notes":[
+				["changed","Ctrl+F closing the find bar is optional"],
+				["changed","Choose whether the &quot;Find as you type&quot; feature uses the regular or the quick findbar"],
+				["bugfix","Unchecking &quot;Use highlights grid&quot; while page is highlighted doesn't remove the grid"],
+				["bugfix","Highlights color not applying to actual page highlights when firefox is set to apply changes immediately"],
+				["bugfix","Findbar wouldn't hide when opening about:config"]
+			]
+		},
+		"0.5.1":{
+			"date":"June 25, 2011",
+			"notes":[
+				["bugfix","Page layout screwed up when toggling between grid modes and sometimes when opening a new tab"],
+				["bugfix","Highlights in the scrollbar not showing up sometimes"]
+			]
+		},
+		"0.5":{
+			"date":"June 20, 2011",
+			"notes":[
+				["new","Correctly handle frames and editable content (e.g. the google search box), these are shown with a distinct pattern in the grid"],
+				["new","Delay the highlights when the search term is shorter than a defined number of characters"],
+				["new","Don't populate the highligh grid when there are more than a defined number of highlights"],
+				["changed","Quickfind status text and icon are hidden when using the highlights counter (they're redundant)"],
+				["bugfix","When opening new tabs, the scrollbar becomes transparent on the old tab"],
+				["bugfix","Counter works even if the page isn't highlighted"],
+				["bugfix","Compatibility fix with LessChrome: right clicking the FindBar shouldn't trigger the navigation toolbox to show"],
+				["","Overall improved performance and responsiveness of the add-on"]
+			]
+		},
+		"0.4.12":{
+			"date":"May 30, 2011",
+			"notes":[
+				["bugfix","Highlight grid outside of scrollbar not hiding in the most recent versions"]
+			]
+		},
+		"0.4.11":{
+			"date":"May 30, 2011",
+			"notes":[
+				["bugfix","Compatibility fix for the Tree Style Tab add-on: high cpu load"],
+				["bugfix","Compatibility fix for the AutoPager add-on: when the next pages are loaded by autopager the page is re-highlighted to account for the new content"],
+				["bugfix","Improved placement of highlights in the highlight grid (more accurate, however still not perfect on big pages)"],
+				["bugfix","Options dialog sometimes not responding correctly when toggling certain options"]
+			]
+		},
+		"0.4.10":{
+			"date":"May 29, 2011",
+			"notes":[
+				["bugfix","Compatibility fix for the Clear Fields add-on"],
+				["bugfix","Highlight grid shown in the content area before a new tab is loaded"]
+			]
+		},
+		"0.4.6":{
+			"date":"May 28, 2011",
+			"notes":[
+				["bugfix","Compatibility fixes for the NASA Night Launch theme"],
+				["bugfix","Move findbar to top was broken in linux"],
+				["bugfix","Highlights incorrectly positioned in linux"],
+				["bugfix","Findbar appearing unwanted in chrome pages like the addons manager"]
+			]
+		},
+		"0.4.5":{
+			"date":"May 26, 2011",
+			"notes":[
+				["changed","Hits counter display from '(## hits)' to '(##selected of ##total hits)'"],
+				["bugfix","Hits counter not showing in the quickfindbar"]
+			]
+		},
+		"0.4.4":{
+			"date":"May 23, 2011",
+			"notes":[
+				["changed","'Show Findbar on startup' feature to 'Remember Findbar opened/closed state on startup'"],
+				["bugfix","Scrollbar with weird appearance when grid is visible next to it"]
+			]
+		},
+		"0.4.3":{
+			"date":"May 16, 2011",
+			"notes":[
+				["bugfix","Compatibility fix with LessChrome HD - FindBar won't stay on top of the toolbox if the &quot;move to top&quot; option is checked"]
+			]
+		},
+		"0.4.2":{
+			"date":"May 15, 2011",
+			"notes":[
+				["bugfix","Apply correct preferences related to specific operating systems"]
+			]
+		},
+		"0.4.1":{
+			"date":"May 15, 2011",
+			"notes":[
+				["changed","Tweaked the Highlight grid, it's more responsive and it works better"],
+				["bugfix","Improved scrolling to search result from the highlight grid (not in the scrollbar)"],
+				["bugfix","FindBar on top with personas should be fully compatible now"]
+			]
+		},
+		"0.4":{
+			"date":"May 14, 2011",
+			"notes":[
+				["new","Highlight grid in the scrollbar"],
+				["new","A couple of extra options related to the quickfindbar: enable/disable and timeout"],
+				["bugfix","FindBar on top now works with personas (kind of)"],
+				["updated","Code cleanup and improvement"]
+			]
+		},
+		"0.3.6":{
+			"date":"May 5, 2011",
+			"notes":[
+				["updated","Completly re-did the way the findbar positions itself at the top"]
+			]
+		},
+		"0.3.5":{
+			"date":"May 1, 2011",
+			"notes":[
+				["bugfix","Quick bugfix"]
+			]
+		},
+		"0.3.4":{
+			"date":"May 1, 2011",
+			"notes":[
+				["new","When history remembers highlights it also remembers the highlight grid"],
+				["bugfix","Page display screwed up when both highlights grid and notifications such as popup blocked notification are present, now when there is a notification, the grid will be hidden"],
+				["bugfix","Displaying the bar at the top (again yes, this is really hard)"],
+				["bugfix","Highlights not being removed when they should be (page refresh, history navigation...)"],
+				["bugfix","Compatibility fix: clicking &quot;Find Suggest&quot; suggestions now activate Highlight functions as well"],
+				["","Cleanup"]
+			]
+		},
+		"0.3.3":{
+			"date":"April 25, 2011",
+			"notes":[
+				["general","Updated for comformity with AMO (resets settings from previous versions)"]
+			]
+		},
+		"0.3.2":{
+			"date":"April 20, 2011",
+			"notes":[
+				["bugfix","Highlights grid background"]
+			]
+		},
+		"0.3.1":{
+			"date":"April 20, 2011",
+			"notes":[
+				["bugfix","Displaying the findbar at the top"],
+				["","Cleanup"]
+			]
+		},
+		"0.3":{
+			"date":"April 20, 2011",
+			"notes":[
+				["","Initial release"]
+			]
+		}
+	}
+}

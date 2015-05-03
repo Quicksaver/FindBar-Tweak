@@ -1,0 +1,32 @@
+<!ENTITY whatsNew.title "FindBar Tweak - Release Notes">
+<!ENTITY whatsNew.name "FindBar Tweak">
+
+<!ENTITY whatsNew.version "Version {v}">
+<!ENTITY whatsNew.versionDivider " - ">
+<!ENTITY whatsNew.uptodate "up-to-date, congratulations!">
+<!ENTITY whatsNew.needsupdate "update available!">
+
+<!ENTITY whatsNew.description "Check out &quot;Release Notes&quot; and &quot;Known Issues&quot; for this version below. Let me know of any issues you find, or if you have any suggestions for future releases.">
+<!ENTITY whatsNew.message "More information about the add-on can be found in its Mozilla Add-ons Homepage. If you enjoy the add-on, please consider leaving there a nice review, or making a small contribution to help support its continued development. Every little bit is very appreciated!">
+
+<!ENTITY whatsNew.allVersions "Show notes from all previous versions">
+
+<!ENTITY whatsNew.options "Add-on Options">
+<!ENTITY whatsNew.notifyOnUpdates "Show me this tab on the next update">
+
+<!ENTITY whatsNew.information "More Information">
+<!ENTITY whatsNew.home "Add-on Homepage">
+<!ENTITY whatsNew.fullchangelog "Full Changelog">
+
+<!ENTITY whatsNew.problems "Having Problems?">
+<!ENTITY whatsNew.tech "Open an issue in the support page describing your problem">
+<!ENTITY whatsNew.email "Or send me an e-mail about it">
+
+<!ENTITY whatsNew.author "More from the author">
+<!ENTITY whatsNew.trymore "Try one of my other add-ons for an even better firefox experience!">
+<!ENTITY whatsNew.profile "Find them in my profile">
+
+<!ENTITY whatsNew.share "Share!">
+<!ENTITY whatsNew.friends "Don't be the only one with a great browser. Let your friends in on the awesome!">
+<!ENTITY whatsNew.moreshare "Other services...">
+<!ENTITY whatsNew.tryit "Don't lose time looking for some chunk of text buried somewhere in one of your tabs, the browser should get it immediately for you when you need it! FindBar Tweak will make your find toolbar -just right-!">

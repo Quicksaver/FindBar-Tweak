@@ -35,8 +35,7 @@
 	}
 	
 	.findbar-tabs image,
-	.findbar-tabs-update image,
-	.findbar-cs-button image {
+	.findbar-tabs-update image {
 		background: none;
 		border: none;
 	}

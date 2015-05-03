@@ -2,8 +2,7 @@
 @-moz-document url("chrome://findbartweak/content/findInTabsFull.xul") {
 	
 	.findbar-tabs image,
-	.findbar-tabs-update image,
-	.findbar-cs-button image {
+	.findbar-tabs-update image {
 		min-height: 14px;
 	}
 	

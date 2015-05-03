@@ -7,15 +7,14 @@
 	
 	/* findbar appearance */
 	
-	.browserContainer findbar:not([position="top"]):not([movetotop]) {
+	.browserContainer findbar:not([movetotop]) {
 		border-bottom: none;
 	}
 	
-	findbar:not([position="top"]):not([movetotop]):-moz-lwtheme {
+	findbar:not([movetotop]):-moz-lwtheme {
 		border-top: 1px solid #888;
 	}
 	
-	.findbar-cs-button:not([checked="true"]),
 	findbar[hideLabels] toolbarbutton[anonid="find-case-sensitive"]:not([checked="true"]) {
 		-moz-image-region: rect(16px 16px 32px 0px);
 	}

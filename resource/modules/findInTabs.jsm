@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.3';
+Modules.VERSION = '2.1.4';
 
 this.FIT = {
 	get box() { return $(objName+'-findInTabs-box'); },
@@ -189,7 +189,7 @@ this.FIT = {
 		gFindBar._findField.placeholder = title;
 		setAttribute(document.documentElement, 'title', title);
 	},
-	// docUnloaded
+	
 	isPending: function(node) {
 		return trueAttribute(node, 'pending');
 	},
@@ -218,7 +218,6 @@ this.FIT = {
 		return null;
 	},
 	
-	// verifyFITselection
 	verifySelection: function() {
 		// Re-Do the list if something is invalid
 		if(!this.tabsList.currentItem) { return null; }
@@ -240,16 +239,16 @@ this.FIT = {
 	
 	// When the user selects an item in the tabs list
 	selectTab: function() {
-		var shouldHide = !FIT.verifySelection();
+		var shouldHide = !this.verifySelection();
 		
-		for(let hit of FIT.hits.childNodes) {
-			hit.hidden = shouldHide || (hit != FIT.tabsList.currentItem.linkedHits);
+		for(let hit of this.hits.childNodes) {
+			hit.hidden = shouldHide || (hit != this.tabsList.currentItem.linkedHits);
 		}
 	},
 	
 	// When the user selects an item in the hits list
 	selectHit: function() {
-		var item = FIT.tabsList.currentItem;
+		var item = this.tabsList.currentItem;
 		
 		// Adding these checks prevents various error messages from showing in the console (even though they actually made no difference)
 		if(!item || !item.linkedHits.currentItem || item.linkedHits.currentItem.doNothing) { return; }
@@ -258,27 +257,27 @@ this.FIT = {
 		if(item.linkedHits.currentItem.loadingTab) {
 			item.linkedHits.onselect = null;
 			item.linkedHits.selectedIndex = -1;
-			item.linkedHits.onselect = FIT.selectHit;
+			item.linkedHits.onselect = () => { this.selectHit(); };
 			return;
 		}
 		
-		if(!FIT.verifySelection()) { return; }
+		if(!this.verifySelection()) { return; }
 		
 		var browser = item.linkedBrowser;
-		var tab = FIT.getTabForBrowser(browser);
+		var tab = this.getTabForBrowser(browser);
 		var hits = item.linkedHits;
 		
 		// Load the tab if it's unloaded
 		if(hits.currentItem.isUnloadedTab) {
 			// Something went wrong, this should never happen.
 			if(!tab) {
-				FIT.removeTabItem(item);
+				this.removeTabItem(item);
 				return;
 			}
 			
 			hits.currentItem.loadingTab = true;
-			if(FIT.isPending(tab)) {
-				let win = FIT.getWindowForBrowser(browser);
+			if(this.isPending(tab)) {
+				let win = this.getWindowForBrowser(browser);
 				win.gBrowser.reloadTab(tab);
 			}
 			
@@ -286,7 +285,7 @@ this.FIT = {
 			removeAttribute(item.linkedTitle, 'unloaded');
 			hits.onselect = null;
 			hits.selectedIndex = -1;
-			hits.onselect = FIT.selectHit;
+			hits.onselect = () => { this.selectHit(); };
 			return;
 		}
 		
@@ -306,6 +305,12 @@ this.FIT = {
 			query: findQuery,
 			caseSensitive: gFindBar.getElement("find-case-sensitive").checked,
 			findPrevious: aFindPrevious
+		});
+		
+		// onmousedown is called after onselect, but there's no need to run selectHit() twice
+		hits.onmousedown = null;
+		aSync(() => {
+			hits.onmousedown = () => { this.selectHit(); }
 		});
 	},
 	
@@ -422,7 +427,7 @@ this.FIT = {
 		// Tabs list
 		var newTabs = document.createElement('richlistbox');
 		newTabs.setAttribute('flex', '1');
-		newTabs.onselect = this.selectTab;
+		newTabs.onselect = () => { this.selectTab(); };
 		
 		var newHeader = document.createElement('listheader');
 		var firstCol = document.createElement('treecol');
@@ -626,7 +631,8 @@ this.FIT = {
 		
 		var newHits = document.createElement('richlistbox');
 		newHits.setAttribute('flex', '1');
-		newHits.onselect = this.selectHit;
+		newHits.onselect = () => { this.selectHit(); };
+		newHits.onmousedown = () => { this.selectHit(); };
 		newHits.hidden = (item != this.tabsList.currentItem); // Keep the hits list visible
 		newHits._currentLabel = null;
 		newHits._lastSelected = -1;

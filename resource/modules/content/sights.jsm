@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.0';
+Modules.VERSION = '1.1.1';
 
 this.sights = {
 	allSights: new Set(),
@@ -141,7 +141,7 @@ this.sights = {
 		}
 		
 		// On scrolling, only show sights on those that haven't been shown already
-		if(node.sights && node.sights == query) { return group; }
+		if(!current && node.sights && node.sights == query) { return group; }
 		node.sights = query;
 		
 		var range = {

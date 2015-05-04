@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.0';
+Modules.VERSION = '1.1.1';
 
 this.FIT = {
 	// this keeps a list of all hits in a page, mapped to an id that can be used to keep things sync'ed up with the chrome process
@@ -107,6 +107,10 @@ this.FIT = {
 		return false;
 	},
 	
+	reNotify: function() {
+		Finder._notify(Finder.searchString, Finder._lastFindResult, false, Finder._previousLink);
+	},
+	
 	selectHit: function(data) {
 		// not sure if this could happen, but there's a lot of async going on so...
 		if(!this.hits || this.hits.all.size == 0) { return; }
@@ -114,22 +118,28 @@ this.FIT = {
 		var item = this.hits.items.get(data.item);
 		var hit = (data.hit > -1) ? this.hits.all.get(data.hit) : item.hits.get(item.firstHit);
 		
+		// at this point we're sure we will show a hit somewhere, even if it's just to show the current hit, so we can start focusing the browser
+		message('FIT:FocusMe');
+					
 		if(isPDFJS) {
 			// Don't do anything when the current selection is contained within the ranges of this item.
 			// We don't want to keep re-selecting it.
 			if(PDFJS.findController.selected.pageIdx > -1 && PDFJS.findController.selected.matchIdx > -1) {
 				if(data.hit > -1) {
-					if(hit.pIdx == PDFJS.findController.selected.pageIdx && hit.mIdx == PDFJS.findController.selected.matchIdx) { return; }
+					if(hit.pIdx == PDFJS.findController.selected.pageIdx && hit.mIdx == PDFJS.findController.selected.matchIdx) {
+						PDFJS.callOnPDFResults('find');
+						return;
+					}
 				} else {
 					for(let [ iI, iHit ] of item.hits) {
-						if(iHit.pIdx == PDFJS.findController.selected.pageIdx && iHit.mIdx == PDFJS.findController.selected.matchIdx) { return; }
+						if(iHit.pIdx == PDFJS.findController.selected.pageIdx && iHit.mIdx == PDFJS.findController.selected.matchIdx) {
+							PDFJS.callOnPDFResults('find');
+							return;
+						}
 					}
 				}
 			}
 			
-			// at this point we're sure we will show a hit somewhere, so we can start focusing the browser
-			message('FIT:FocusMe');
-						
 			// Make sure we trigger a find event, so the pdf document renders our matches
 			if(!PDFJS.findController.state
 			|| PDFJS.findController.state.query != data.query
@@ -154,16 +164,19 @@ this.FIT = {
 			// Don't do anything when the current selection is contained within the ranges of this item.
 			// We don't want to keep re-selecting it.
 			if(data.hit > -1) {
-				if(Finder.compareRanges(hit, selRange)) { return; }
+				if(Finder.compareRanges(hit, selRange)) {
+					this.reNotify();
+					return;
+				}
 			} else {
 				for(let [ iI, iHit ] of item.hits) {
-					if(Finder.compareRanges(iHit, selRange)) { return; }
+					if(Finder.compareRanges(iHit, selRange)) {
+						this.reNotify();
+						return;
+					}
 				}
 			}
 		}
-		
-		// at this point we're sure we will show a hit somewhere, so we can start focusing the browser
-		message('FIT:FocusMe');
 		
 		if(Finder.searchString != data.query
 		|| Finder._fastFind.caseSensitive != data.caseSensitive) {
@@ -394,8 +407,6 @@ this.FIT = {
 		let count = 0;
 		
 		for(let hit of this['_'+iterator+'Iterator'](aWord, aCaseSensitive, aWindow)) {
-			var mIdx = this.hits.all.size;
-			
 			if(first === null) {
 				first = this.hits.all.size;
 			}
@@ -548,7 +559,7 @@ this.FIT = {
 				);
 			}
 			if(doLastStart +1 < endContainerText.length && endContainerText[doLastStart] != ' ') {
-				if(h +1 == this.hits.all.size
+				if(!this.hits.all.has(h +1)
 				|| ((!isPDF) ? this.hits.all.get(h +1).startContainer != endContainer : this.hits.all.get(h +1).pIdx != range.pIdx)
 				|| 	(endContainerText.contains(' ', doLastStart)
 					&& this.hits.all.get(h +1)[(!isPDF) ? 'startOffset' : 'offset'] > endContainerText.indexOf(' ', doLastStart))) {
@@ -580,7 +591,7 @@ this.FIT = {
 			var lastRange = range;
 			var hh = h+1;
 			if(completeString.length < this.kHitsLength) {
-				while(hh < this.hits.all.size && this.hits.all.get(hh)[(isPDF) ? 'pIdx' : 'startContainer'] == endContainer) {
+				while(this.hits.all.has(hh) && this.hits.all.get(hh)[(isPDF) ? 'pIdx' : 'startContainer'] == endContainer) {
 					var nextRange = this.hits.all.get(hh);
 					if(isPDF) {
 						var nextString = this._replaceLineBreaks(PDFJS.findController.pageContents[nextRange.pIdx].substr(nextRange.offset, aWord.length));
@@ -603,7 +614,7 @@ this.FIT = {
 					var fillNext = '';
 					if(nextLastStart < nextEndContainerText.length
 					&& nextEndContainerText[nextLastStart] != ' ') {
-						if(hh +1 == this.hits.all.size
+						if(!this.hits.all.has(hh +1)
 						|| ((!isPDF) ? this.hits.all.get(hh +1).startContainer != nextRange.endContainer : this.hits.all.get(hh +1).pIdx != nextRange.pIdx)
 						|| 	(nextEndContainerText.contains(' ', nextLastStart)
 							&& this.hits.all.get(hh +1)[(!isPDF) ? 'startOffset' : 'offset'] > nextEndContainerText.indexOf(' ', nextLastStart))) {

@@ -1,9 +1,9 @@
-Modules.VERSION = '2.0.0';
+Modules.VERSION = '2.0.1';
 
 this.blurCloses = {
 	handleEvent: function(e) {
 		switch(e.type) {
-			'focus':
+			case 'focus':
 				// The timer is for FAYT feature, to give it time to focus the findbar and not the document window
 				Timers.init('blurCloses', () => {
 					var focusedNode = document.commandDispatcher.focusedElement || e.target;
@@ -15,16 +15,16 @@ this.blurCloses = {
 				}, 0);
 				break;
 			
-			'OpenedFindBar':
+			case 'OpenedFindBar':
 				Listeners.add(window, 'focus', this, true);
 				break;
 			
-			'ClosedFindBar':
-			'ClosedFindBarBackground':
+			case 'ClosedFindBar':
+			case 'ClosedFindBarBackground':
 				Listeners.remove(window, 'focus', this, true);
 				break;
 			
-			'TabSelectPrevious':
+			case 'TabSelectPrevious':
 				if(currentTab && currentTab._findBar) {
 					currentTab._findBar.close();
 					if(gFindBarInitialized) {

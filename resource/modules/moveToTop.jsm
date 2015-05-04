@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.2';
+Modules.VERSION = '2.0.3';
 
 this.__defineGetter__('gBrowserBox', function() { return $('browser'); });
 this.__defineGetter__('gAppContent', function() { return $('appcontent'); });
@@ -369,16 +369,19 @@ this.finderTopListener = {
 	}
 };
 
-this.changeLook = function() {
+this.changeLook = function(previous) {
+	var current = trueAttribute(gFindBar, 'inPDFJS');
+	
 	// Apply the special style for the findbar in pdf documents
-	if((isPDFJS && !trueAttribute(gFindBar, 'inPDFJS'))
-	|| (!isPDFJS && trueAttribute(gFindBar, 'inPDFJS'))) {
-		delayMoveTop();
+	if((isPDFJS && !current)
+	|| (!isPDFJS && current)
+	|| (previous !== undefined && current != previous)) {
+		moveTop();
 	}
 };
 
 // Prevent the FindBar from being visible in chrome pages like the add-ons manager
-this.hideOnChrome = function() {
+this.hideOnChrome = function(previous) {
 	// Bugfix for Tree Style Tab (and possibly others): findbar is on the background after uncollapsing
 	// So we do all this stuff aSync, should allow the window to repaint
 	Timers.init('hideOnChrome', function() {
@@ -391,11 +394,15 @@ this.hideOnChrome = function() {
 				// Sometimes switching to the add-ons manager and then back to another tab, the find bar would be poorly positioned
 				moveTop();
 			}
-			
-			changeLook();
-			toggleNotificationState();
 		}
+		
+		changeLook(previous);
+		toggleNotificationState();
 	}, 0);
+};
+
+this.hideOnChromeTabSelect = function() {
+	hideOnChrome(trueAttribute(currentTab._findBar, 'inPDFJS'));
 };
 
 this.hideOnChromeAttrWatcher = function(obj, prop, oldVal, newVal) {
@@ -427,7 +434,7 @@ Modules.LOADMODULE = function() {
 			}
 		);
 		
-		Listeners.add(gBrowser.tabContainer, "TabSelect", hideOnChrome);
+		Listeners.add(gBrowser.tabContainer, "TabSelectPrevious", hideOnChromeTabSelect);
 		Watchers.addAttributeWatcher($('cmd_find'), 'disabled', hideOnChromeAttrWatcher);
 		Observers.add(personaChanged, "lightweight-theme-styling-update");
 	}
@@ -470,7 +477,7 @@ Modules.UNLOADMODULE = function() {
 	if(!viewSource) {
 		Observers.remove(personaChanged, "lightweight-theme-styling-update");
 		Watchers.removeAttributeWatcher($('cmd_find'), 'disabled', hideOnChromeAttrWatcher);
-		Listeners.remove(gBrowser.tabContainer, "TabSelect", hideOnChrome);
+		Listeners.remove(gBrowser.tabContainer, "TabSelectPrevious", hideOnChromeTabSelect);
 		
 		Styles.unload('inNotification_'+_UUID);
 		

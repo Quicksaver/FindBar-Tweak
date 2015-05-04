@@ -1,4 +1,4 @@
-Modules.VERSION = '1.4.0';
+Modules.VERSION = '1.4.1';
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -56,7 +56,7 @@ this.keydownPanel = {
 					
 					switch(e.which) {
 						case e.DOM_VK_A: case e.DOM_VK_B: case e.DOM_VK_C: case e.DOM_VK_D: case e.DOM_VK_E: case e.DOM_VK_F: case e.DOM_VK_G: case e.DOM_VK_H: case e.DOM_VK_I: case e.DOM_VK_J: case e.DOM_VK_K: case e.DOM_VK_L: case e.DOM_VK_M: case e.DOM_VK_N: case e.DOM_VK_O: case e.DOM_VK_P: case e.DOM_VK_Q: case e.DOM_VK_R: case e.DOM_VK_S: case e.DOM_VK_T: case e.DOM_VK_U: case e.DOM_VK_V: case e.DOM_VK_W: case e.DOM_VK_X: case e.DOM_VK_Y: case e.DOM_VK_Z:
-							let items = this.querySelectorAll('menuitem,toolbarbutton.subviewbutton');
+							var items = this.querySelectorAll('menuitem,toolbarbutton.subviewbutton');
 							for(let item of items) {
 								if(keydownPanel.menuItemAccesskeyCode(item.getAttribute('accesskey'), e) == e.which) {
 									e.preventDefault();
@@ -77,7 +77,7 @@ this.keydownPanel = {
 							Listeners.add(this, 'mouseover', this);
 							Listeners.add(this, 'mousemove', this);
 							
-							let items = this.querySelectorAll('menuitem,toolbarbutton.subviewbutton');
+							var items = this.querySelectorAll('menuitem,toolbarbutton.subviewbutton');
 							let active = -1;
 							for(var i=0; i<items.length; i++) {
 								var attr = (items[i].localName == 'menuitem') ? '_moz-menuactive' : 'focused';
@@ -123,7 +123,7 @@ this.keydownPanel = {
 							break;
 						
 						case e.DOM_VK_RETURN:
-							let items = this.querySelectorAll('menuitem,toolbarbutton.subviewbutton');
+							var items = this.querySelectorAll('menuitem,toolbarbutton.subviewbutton');
 							for(let item of items) {
 								var attr = (item.localName == 'menuitem') ? '_moz-menuactive' : 'focused';
 								if(trueAttribute(item, attr)) {
@@ -149,7 +149,7 @@ this.keydownPanel = {
 				case 'mousemove':
 					Listeners.remove(this, 'mouseover', this);
 					Listeners.remove(this, 'mousemove', this);
-					let items = this.querySelectorAll('menuitem,toolbarbutton.subviewbutton');
+					var items = this.querySelectorAll('menuitem,toolbarbutton.subviewbutton');
 					for(let item of items) {
 						var attr = (item.localName == 'menuitem') ? '_moz-menuactive' : 'focused';
 						if(attr == 'focused') {

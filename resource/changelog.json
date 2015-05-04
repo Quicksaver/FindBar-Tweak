@@ -1,6 +1,35 @@
 {
-	"current":"2b1",
+	"current":"2b2",
+	"knownissues":[
+		["While it should be stable and work correctly for the most part, please remember that this is a beta version! With all the changes that have been made since the last release, and with all the new additions that will arrive soon, it's likely there are still many problems to be fixed. Please report any bugs or issues you run into through the support page or directly to my e-mail (links are on the right), and try to be as specific as possible - provide your firefox version, add-on version, operating system, exact steps to reproduce, etc. - so that I can hopefully fix it quickly."]
+	],
 	"releases": {
+		"2b2":{
+			"date":"May 4, 2015",
+			"notes":[
+				["new","Almost complete code rewrite, with many stability and performance enhancements across the board!"],
+				["new","Multiprocess firefox (e10s) compatibility"],
+				["new","Release Notes tab"],
+				["changed","Removed compatibility for Firefox 33 and below"],
+				["changed","Ctrl+Shift+I in the Find in All Tabs window opens the Browser Console instead of the legacy Error Console"],
+				["changed","Renamed and reworked dependencies for the global findbar perference"],
+				["removed","All locales except for en-US. This is only temporary while the add-on is in beta and a lot is changing constantly; all the locales will (hopefully) be back in the next major release."],
+				["removed","Compatibility with LessChrome HD add-on, I recommend you try The Fox, Only Better instead for a similar but improved experience"],
+				["removed","Compatibility with Pale Moon; I'm sorry but its differences to the latest firefox version are just too great to manage"],
+				["removed","Find in All Tabs lists in the browser window; a more intuitive and easier to use replacement is on the way. For the time being, the Find in All Tabs separate dialog will be the only usable mode."],
+				["removed","Matches limit on Find in All Tabs; now it should just run large pages in the background without locking up the browser"],
+				["bugfix","Enhanced compatibility and performance when used together with my other add-ons"],
+				["bugfix","Some appearance fixes for the findbar on top"],
+				["bugfix","Updated findbar buttons appearance styling to match the rest of the browser"],
+				["bugfix","Changing the find query then hitting F3 would sometimes search for the previous query"],
+				["bugfix","Highlights in PDFs were very faint (<a target=\"blank\" href=\"https://github.com/Quicksaver/FindBar-Tweak/issues/172\">issue #172</a>)"],
+				["bugfix","Selecting again the currently selected match in the Find in All Tabs list would not bring its tab up again (<a target=\"blank\" href=\"https://github.com/Quicksaver/FindBar-Tweak/issues/148\">issue #148</a>)"],
+				["bugfix","Switching between PDF and non-PDF tabs could leave the findbar on top placed incorrectly (<a target=\"blank\" href=\"https://github.com/Quicksaver/FindBar-Tweak/issues/142\">issue #142</a>)"],
+				["bugfix","Find query is cleared after switching tabs instead of reusing the same query from the previous tab"],
+				["bugfix","Matches counter wasn't very perceptible in dark themes (<a target=\"blank\" href=\"https://github.com/Quicksaver/FindBar-Tweak/issues/152\">issue #152</a>)"],
+				["updated","Many core modules and firefox API usage"]
+			]
+		},
 		"2b1":{
 			"date":"April 27, 2014",
 			"notes":[

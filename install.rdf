@@ -2,7 +2,7 @@
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 	<Description about="urn:mozilla:install-manifest">
 		<em:id>fbt@quicksaver</em:id>
-		<em:version>2b1</em:version>
+		<em:version>2b2</em:version>
 		<em:type>2</em:type>
 		<em:creator>Quicksaver</em:creator>
 		<em:iconURL>chrome://findbartweak/skin/icon.png</em:iconURL>
@@ -22,7 +22,7 @@
 			<Description>
 				<em:locale>en-US</em:locale>
 				<em:name>FindBar Tweak</em:name>
-				<em:description>Anything between simple tweaks such as placing the findbar in the top corner, to the powerful "Find in All Tabs" tool, FindBar Tweak will make your find toolbar "just right"!</em:description>
+				<em:description>Everything to make your browser's Find Toolbar a powerful and accessible research tool! Please help me test the newest features and fixes, by installing the latest beta version available in the Development Channel.</em:description>
 				<em:homepageURL>https://addons.mozilla.org/en-US/firefox/addon/findbar-tweak/</em:homepageURL>
 			</Description>
 		</em:localized>

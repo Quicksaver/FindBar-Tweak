@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.0';
+Modules.VERSION = '2.0.1';
 
 this.globalFB = {
 	// findBarHiddenState
@@ -43,7 +43,7 @@ this.globalFB = {
 						highlights.off();
 					}
 				}
-				break:
+				break;
 		}
 	},
 	

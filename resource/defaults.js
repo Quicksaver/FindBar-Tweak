@@ -1,4 +1,4 @@
-var defaultsVersion = '1.4.3';
+var defaultsVersion = '1.4.4';
 var objName = 'findbartweak';
 var objPathString = 'findbartweak';
 
@@ -43,7 +43,7 @@ var prefList = {
 	sightsLimit: 10,
 	
 	blurCloses: false,
-	perTab: true,
+	globalFB: false,
 	onStartup: false,
 	findbarHidden: true,
 	

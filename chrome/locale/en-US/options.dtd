@@ -56,7 +56,7 @@
 <!ENTITY OptmovetoTop.labelFF25 "Place above the webpage">
 <!ENTITY OptmovetoRight.label "Place on the right">
 <!ENTITY OptblurCloses.label "Close the Findbar when it loses focus">
-<!ENTITY OptperTab.label "Findbar starts closed in new tabs">
+<!ENTITY OptglobalFB.label "Use a single global Findbar for all tabs">
 <!ENTITY OptonStartup.label "Remember Findbar opened/closed state on startup">
 
 <!ENTITY OptopenFindbar.label "When opening the Findbar">

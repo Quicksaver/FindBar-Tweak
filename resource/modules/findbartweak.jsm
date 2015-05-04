@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.2';
+Modules.VERSION = '2.0.3';
 
 this.viewSource = false;
 this.FITFull = false;
@@ -8,16 +8,16 @@ this.doOpenOptions = function() {
 };
 
 this.toggleBlurCloses = function() {
-	Modules.loadIf('blurCloses', Prefs.blurCloses);
+	Modules.loadIf('blurCloses', !Prefs.globalFB && Prefs.blurCloses);
 };
 
 this.togglePerTab = function() {
-	Modules.loadIf('perTab', !viewSource && !FITFull && Prefs.perTab && !Prefs.blurCloses);
-	Modules.loadIf('globalFB', !viewSource && !FITFull && !Prefs.perTab && !Prefs.blurCloses);
+	Modules.loadIf('perTab', !viewSource && !FITFull && !Prefs.globalFB);
+	Modules.loadIf('globalFB', !viewSource && !FITFull && Prefs.globalFB);
 };
 
 this.toggleRememberStartup = function() {
-	Modules.loadIf('rememberStartup', !viewSource && !FITFull && Prefs.onStartup && !Prefs.perTab && !Prefs.blurCloses);
+	Modules.loadIf('rememberStartup', !viewSource && !FITFull && Prefs.globalFB && Prefs.onStartup);
 };
 
 this.toggleFindInTabs = function() {
@@ -43,12 +43,11 @@ Modules.LOADMODULE = function() {
 	Prefs.listen('findInTabs', toggleFindInTabs);
 	
 	if(!FITFull) {
+		Prefs.listen('globalFB', toggleBlurCloses);
 		Prefs.listen('blurCloses', toggleBlurCloses);
-		Prefs.listen('perTab', togglePerTab);
-		Prefs.listen('blurCloses', togglePerTab);
+		Prefs.listen('globalFB', togglePerTab);
+		Prefs.listen('globalFB', toggleRememberStartup);
 		Prefs.listen('onStartup', toggleRememberStartup);
-		Prefs.listen('perTab', toggleRememberStartup);
-		Prefs.listen('blurCloses', toggleRememberStartup);
 		
 		toggleBlurCloses();
 		togglePerTab();
@@ -75,12 +74,11 @@ Modules.UNLOADMODULE = function() {
 		Modules.unload('globalFB');
 		Modules.unload('blurCloses');
 		
+		Prefs.unlisten('globalFB', toggleBlurCloses);
 		Prefs.unlisten('blurCloses', toggleBlurCloses);
-		Prefs.unlisten('perTab', togglePerTab);
-		Prefs.unlisten('blurCloses', togglePerTab);
+		Prefs.unlisten('globalFB', togglePerTab);
+		Prefs.unlisten('globalFB', toggleRememberStartup);
 		Prefs.unlisten('onStartup', toggleRememberStartup);
-		Prefs.unlisten('perTab', toggleRememberStartup);
-		Prefs.unlisten('blurCloses', toggleRememberStartup);
 	}
 	
 	Modules.unload('compatibilityFix/windowFixes');

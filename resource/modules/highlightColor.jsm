@@ -1,4 +1,4 @@
-Modules.VERSION = '1.2.6';
+Modules.VERSION = '1.2.7';
 
 this.uiBackup = {};
 
@@ -107,7 +107,7 @@ this.setHighlightColorStyleSheet = function(rgb) {
 	// For PDF.JS
 	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 	sscode += '@namespace url(http://www.w3.org/1999/xhtml);\n';
-	sscode += 'body #outerContainer #mainContainer #viewerContainer .textLayer .highlight:not(.selected) { background-color: rgba('+rgb.r+','+rgb.g+','+rgb.b+',0.3) !important; }\n';
+	sscode += 'body #outerContainer #mainContainer #viewerContainer .textLayer .highlight:not(.selected) { background-color: rgb('+rgb.r+','+rgb.g+','+rgb.b+'); }\n';
 	
 	// For grids in frames
 	sscode += 'div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"] div[highlight]:not([current]):not([hover]) {\n';
@@ -168,7 +168,7 @@ this.setSelectColorStyleSheet = function(rgb) {
 	// For PDF.JS
 	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 	sscode += '@namespace url(http://www.w3.org/1999/xhtml);\n';
-	sscode += 'body #outerContainer #mainContainer #viewerContainer .textLayer .highlight.selected { background-color: rgba('+rgb.r+','+rgb.g+','+rgb.b+',0.3) !important; }\n';
+	sscode += 'body #outerContainer #mainContainer #viewerContainer .textLayer .highlight.selected { background-color: rgb('+rgb.r+','+rgb.g+','+rgb.b+'); }\n';
 	
 	// For grids in frames
 	sscode += 'div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"] div[highlight][current],\n';

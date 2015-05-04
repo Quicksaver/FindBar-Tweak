@@ -7,8 +7,14 @@
 	
 	/* findbar appearance */
 	
-	findbar:not([movetotop])[noClose] {
-		-moz-padding-end: 8px;
+	findbar[noClose] {
+		-moz-padding-end: 10px;
+	}
+	
+	/* Find in All Tabs */
+	
+	findbar toolbarbutton[anonid="findbartweak-find-tabs"] {
+		-moz-margin-start: 5px;
 	}
 	
 	/* small findbar at the top */

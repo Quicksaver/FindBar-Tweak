@@ -15,6 +15,13 @@
 		border-top: 1px solid #888;
 	}
 	
+	/* Find in All Tabs */
+	
+	findbar toolbarbutton[anonid="findbartweak-find-tabs"] {
+		-moz-margin-end: 5px;
+		padding: 2px 9px;
+	}
+	
 	/* small findbar at the top */
 	
 	findbar[movetotop] {

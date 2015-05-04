@@ -8,8 +8,13 @@
 	/* findbar appearance */
 	
 	findbar[noClose] .findbar-closebutton,
-	findbar .findbar-closebutton:not([anonid]) {
+	findbar .findbar-closebutton:not([anonid]),
+	findbar label[anonid="found-matches"] {
 		display: none;
+	}
+	
+	findbar .findbar-find-status {
+		-moz-margin-end: 6px !important;
 	}
 	
 	findbar[hideLabels] .findbar-button > .toolbarbutton-text:not(.toolbarbutton-icon) {
@@ -59,7 +64,7 @@
 		-moz-image-region: rect(0px, 16px, 16px, 0px);
 	}
 	
-	findbar:not([hideLabels]) toolbarbutton[anonid="findbartweak-find-tabs"] .toolbarbutton-icon {
+	findbar:not([hideLabels]) toolbarbutton[anonid="findbartweak-find-tabs"] > .toolbarbutton-icon {
 		display: none;
 	}
 	

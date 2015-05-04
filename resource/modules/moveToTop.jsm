@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.1';
+Modules.VERSION = '2.0.2';
 
 this.__defineGetter__('gBrowserBox', function() { return $('browser'); });
 this.__defineGetter__('gAppContent', function() { return $('appcontent'); });
@@ -163,7 +163,7 @@ this.moveTopCorners = function() {
 	}
 	
 	var beforeStart = -CORNER_WIDTH -findBarPaddingStart -(findBarBorderStart -1);
-	var afterStart = gFindBar.clientWidth -container.clientWidth -findBarPaddingEnd +(findBarBorderEnd -1);
+	var afterStart = gFindBar.clientWidth -container.clientWidth +(findBarBorderEnd -1);
 	
 	var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 	sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';

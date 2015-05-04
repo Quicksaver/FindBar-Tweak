@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.1';
+Modules.VERSION = '2.0.2';
 
 this.viewSource = false;
 this.FITFull = false;
@@ -28,7 +28,10 @@ Modules.LOADMODULE = function() {
 	viewSource = (document.documentElement.getAttribute('windowtype') == 'navigator:view-source') && $('viewSource');
 	FITFull = (document.documentElement.getAttribute('windowtype') == 'addon:findInTabs') && $(objPathString+'-findInTabs');
 	
-	Modules.load('whatsNew');
+	if(!viewSource && !FITFull) {
+		Modules.load('whatsNew');
+	}
+	
 	Modules.load('gFindBar');
 	if(!FITFull) {
 		Modules.load('mFinder');

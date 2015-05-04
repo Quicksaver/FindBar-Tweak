@@ -309,8 +309,18 @@
 			</hbox>
 			<description>&findbartweakabout.by;</description>
 			<description class="justify">&findbartweakabout.desc;</description>
-			<label class="text-link closer" href="https://addons.mozilla.org/firefox/addon/findbar-tweak/" value="&findbartweakabout.home;"/>
-			<label class="text-link closer" href="https://github.com/Quicksaver/FindBar-Tweak/issues" value="&findbartweakabout.tech;"/>
+			<label class="text-link closer"
+				tooltiptext="https://addons.mozilla.org/firefox/addon/findbar-tweak/"
+				href="https://addons.mozilla.org/firefox/addon/findbar-tweak/"
+				value="&findbartweakabout.home;"/>
+			<label class="text-link closer"
+				tooltiptext="https://github.com/Quicksaver/FindBar-Tweak/issues"
+				href="https://github.com/Quicksaver/FindBar-Tweak/issues"
+				value="&findbartweakabout.tech;"/>
+			<label	id="releaseNotesLink"
+					class="text-link closer"
+					tooltiptext="about:objPathString"
+					value="&about.notes;"/>
 		</vbox>
 	</prefpane>
 </prefwindow>

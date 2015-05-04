@@ -17,6 +17,10 @@
 		-moz-margin-end: 6px !important;
 	}
 	
+	findbar .findbar-find-status:-moz-lwtheme {
+		color: inherit;
+	}
+	
 	findbar[hideLabels] .findbar-button > .toolbarbutton-text:not(.toolbarbutton-icon) {
 		/* I'm not just hiding these through display:none because this way it's like they still exist, so the height of the buttons is unaffected */
 		width: 0 !important;

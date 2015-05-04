@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.0';
+Modules.VERSION = '2.0.1';
 
 this.textboxResizers = {
 	resizing: false,
@@ -48,6 +48,7 @@ this.textboxResizers = {
 		
 		Prefs.findFieldWidth = parseInt(gFindBar._findField.getAttribute('width'));
 		this.delayMaxWidth();
+		this.widthChanged();
 		
 		if(Prefs.movetoTop && typeof(moveTop) != 'undefined') {
 			moveTop();

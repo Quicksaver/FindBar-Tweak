@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.1';
+Modules.VERSION = '2.1.2';
 
 this.FITMini = {
 	get broadcaster() { return $(objName+'-findInTabs-broadcaster'); },
@@ -172,7 +172,7 @@ Modules.LOADMODULE = function() {
 				bar.getElement("findbar-container").insertBefore(toggleButton, bar.getElement('find-case-sensitive').nextSibling);
 				
 				// make sure the australis styling is also applied to the FIT button
-				toggleLabels();
+				buttonLabels.toggle();
 				
 				bar.browser.finder.addResultListener(FITMini);
 			},

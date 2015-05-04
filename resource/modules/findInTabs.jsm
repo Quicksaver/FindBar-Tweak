@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.2';
+Modules.VERSION = '2.1.3';
 
 this.FIT = {
 	get box() { return $(objName+'-findInTabs-box'); },
@@ -885,7 +885,7 @@ Modules.LOADMODULE = function() {
 			bar.getElement("findbar-container").insertBefore(updateButton, bar.getElement('findbar-textbox-wrapper'));
 			
 			// make sure the australis styling is also applied to the FIT update button
-			toggleLabels();
+			buttonLabels.toggle();
 			
 			// Just a few special modifications to the findbar, to prevent some messages in the error console
 			

@@ -1,4 +1,4 @@
-Modules.VERSION = '1.7.2';
+Modules.VERSION = '1.7.3';
 
 this.__defineGetter__('findButton', function() {
 	var node = $('find-button');
@@ -134,56 +134,51 @@ this.toggleClose = function() {
 	);
 };
 
-this.toggleLabels = function() {
-	var btns = [
+this.buttonLabels = {
+	btns: [
 		'highlight',
 		'find-case-sensitive',
 		objName+'-find-tabs',
 		objName+'-find-tabs-update'
-	];
+	],
 	
-	initFindBar('toggleLabels',
-		function(bar) {
-			toggleAttribute(bar, 'hideLabels', Prefs.hideLabels);
-			
-			// apply the australis styling to the findbar buttons' icons as well
-			if(!DARWIN) {
-				for(let btnID of btns) {
-					let btn = bar.getElement(btnID);
-					if(btn) {
-						let icon = btn.boxObject.firstChild;
-						while(icon && !icon.classList.contains('toolbarbutton-icon')) {
-							icon = icon.nextSibling;
-						}
-						if(icon && Prefs.hideLabels && !icon.classList.contains('toolbarbutton-text')) {
-							icon.classList.add('toolbarbutton-text');
-						}
+	observe: function(aSubject, aTopic, aData) {
+		this.toggle();
+	},
+	
+	toggle: function() {
+		initFindBar('toggleLabels',
+			(bar) => {
+				toggleAttribute(bar, 'hideLabels', Prefs.hideLabels);
+				this.iconsAsText(bar, Prefs.hideLabels);
+				triggerUIChange(bar);
+			},
+			(bar) => {
+				this.iconsAsText(bar);
+				removeAttribute(bar, 'hideLabels');
+			},
+			true
+		);
+	},
+	
+	iconsAsText: function(bar, enable) {
+		// apply the australis styling to the findbar buttons' icons as well; Mac OS X doesn't need this
+		if(DARWIN) { return; }
+		
+		for(let btnID of this.btns) {
+			let btn = bar.getElement(btnID);
+			if(btn) {
+				let icon = document.getAnonymousElementByAttribute(btn, 'class', (enable) ? 'toolbarbutton-icon' : 'toolbarbutton-icon toolbarbutton-text');
+				if(icon) {
+					if(enable) {
+						icon.classList.add('toolbarbutton-text');
+					} else {
+						icon.classList.remove('toolbarbutton-text');
 					}
 				}
 			}
-			
-			triggerUIChange(bar);
-		},
-		function(bar) {
-			if(!DARWIN) {
-				for(let btnID of btns) {
-					let btn = bar.getElement(btnID);
-					if(btn) {
-						let icon = btn.boxObject.firstChild;
-						while(icon && !icon.classList.contains('toolbarbutton-icon')) {
-							icon = icon.nextSibling;
-						}
-						if(icon && icon.classList.contains('toolbarbutton-text')) {
-							icon.classList.remove('toolbarbutton-text');
-						}
-					}
-				}
-			}
-			
-			removeAttribute(bar, 'hideLabels');
-		},
-		true
-	);
+		}
+	}
 };
 
 this.toggleMoveToTop = function() {
@@ -223,13 +218,13 @@ Modules.LOADMODULE = function() {
 	Overlays.overlayURI('chrome://global/content/viewPartialSource.xul', 'findbar');
 	
 	Prefs.listen('hideClose', toggleClose);
-	Prefs.listen('hideLabels', toggleLabels);
+	Prefs.listen('hideLabels', buttonLabels);
 	Prefs.listen('movetoRight', toggleMoveToRight);
 	
 	Modules.load('resizeTextbox');
 	
 	toggleClose();
-	toggleLabels();
+	buttonLabels.toggle();
 	toggleMoveToRight();
 	
 	if(!FITFull) {
@@ -294,7 +289,7 @@ Modules.UNLOADMODULE = function() {
 	}
 		
 	Prefs.unlisten('hideClose', toggleClose);
-	Prefs.unlisten('hideLabels', toggleLabels);
+	Prefs.unlisten('hideLabels', buttonLabels);
 	Prefs.unlisten('movetoRight', toggleMoveToRight);
 	
 	Modules.unload('resizeTextbox');

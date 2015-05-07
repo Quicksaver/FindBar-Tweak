@@ -1,4 +1,4 @@
-Modules.VERSION = '2.6.0';
+Modules.VERSION = '2.6.1';
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -35,7 +35,7 @@ this.Watchers = {
 		capture = (capture) ? true : false;
 		
 		if(!obj[this._obj].properties[prop]) {
-			var handler = {
+			var propHandler = {
 				value: obj[prop],
 				handlers: new Set(),
 				handling: false
@@ -47,18 +47,18 @@ this.Watchers = {
 				return false;
 			}
 			
-			obj[this._obj].properties[prop] = handler;
+			obj[this._obj].properties[prop] = propHandler;
 			
-			obj.__defineGetter__(prop, function () { return handler.value; });
+			obj.__defineGetter__(prop, function () { return propHandler.value; });
 			obj.__defineSetter__(prop, function (newVal) {
-				if(handler.handling) {
-					handler.value = newVal;
-					return handler.value;
+				if(propHandler.handling) {
+					propHandler.value = newVal;
+					return propHandler.value;
 				}
-				handler.handling = true;
+				propHandler.handling = true;
 				
-				var oldVal = handler.value;
-				for(let h of handler.handlers) {
+				var oldVal = propHandler.value;
+				for(let h of propHandler.handlers) {
 					if(h.capture) {
 						var continueHandlers = true;
 						
@@ -72,13 +72,13 @@ this.Watchers = {
 						catch(ex) { Cu.reportError(ex); }
 						
 						if(continueHandlers === false) {
-							handler.handling = false;
-							return handler.value;
+							propHandler.handling = false;
+							return propHandler.value;
 						}
 					}
 				}
-				handler.value = newVal;
-				for(let h of handler.handlers) {
+				propHandler.value = newVal;
+				for(let h of propHandler.handlers) {
 					if(!h.capture) {
 						try {
 							if(h.handler.propWatcher) {
@@ -91,8 +91,8 @@ this.Watchers = {
 					}
 				}
 				
-				handler.handling = false;
-				return handler.value;
+				propHandler.handling = false;
+				return propHandler.value;
 			});
 		}
 		else {

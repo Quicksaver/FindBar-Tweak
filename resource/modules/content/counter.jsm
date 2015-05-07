@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.0';
+Modules.VERSION = '1.0.1';
 
 this.counter = {
 	redoing: false,
@@ -89,13 +89,14 @@ this.counter = {
 			
 			// loop forward (increment) when finding ahead; loop backward (decrement) when finding behind
 			// conditionally setting a method like this is probably more efficient (especially on large pages with tons of highlights) than checking on each loop for this
+			let looper = null;
 			if(!Finder._lastFindPrevious) {
-				function loopCurrent() {
+				looper = function loopCurrent() {
 					c++;
 					if(c == length) { c = 0; }
 				};
 			} else {
-				function loopCurrent() {
+				looper = function loopCurrent() {
 					c--;
 					if(c < 0) { c = length -1; }
 				};
@@ -108,7 +109,7 @@ this.counter = {
 					break;
 				}
 				
-				loopCurrent();
+				looper();
 				i++;
 			}
 			

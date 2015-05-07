@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.0';
+Modules.VERSION = '2.1.1';
 
 this.highlights = {
 	observe: function(aSubject, aTopic) {
@@ -388,7 +388,7 @@ Modules.UNLOADMODULE = function() {
 	}
 	
 	Observers.remove(highlights, 'ReHighlightAll');
-	Listeners.remove(window, 'WillUpdateStatusFindBar', highlights.onWillUpdateStatusFindBar, true);
+	Listeners.remove(window, 'WillUpdateStatusFindBar', highlights, true);
 	Listeners.remove(window, 'ClosedFindBar', highlights);
 	Listeners.remove(window, 'ClosedFindBarBackground', highlights);
 	Listeners.remove(window, 'WillToggleHighlight', highlights);

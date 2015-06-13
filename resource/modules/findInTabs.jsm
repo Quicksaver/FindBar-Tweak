@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.4';
+Modules.VERSION = '2.1.5';
 
 this.FIT = {
 	get box() { return $(objName+'-findInTabs-box'); },
@@ -310,7 +310,7 @@ this.FIT = {
 		// onmousedown is called after onselect, but there's no need to run selectHit() twice
 		hits.onmousedown = null;
 		aSync(() => {
-			hits.onmousedown = () => { this.selectHit(); }
+			hits.onmousedown = (e) => { if(e.target != hits) { this.selectHit(); } }
 		});
 	},
 	
@@ -632,7 +632,7 @@ this.FIT = {
 		var newHits = document.createElement('richlistbox');
 		newHits.setAttribute('flex', '1');
 		newHits.onselect = () => { this.selectHit(); };
-		newHits.onmousedown = () => { this.selectHit(); };
+		newHits.onmousedown = (e) => { if(e.target != newHits) { this.selectHit(); } };
 		newHits.hidden = (item != this.tabsList.currentItem); // Keep the hits list visible
 		newHits._currentLabel = null;
 		newHits._lastSelected = -1;

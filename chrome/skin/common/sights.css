@@ -6,6 +6,10 @@
 	url-prefix("chrome://findbartweak/content/utils/preferences.xul"),
 	url-prefix("about:findbartweak") {
 	
+	window[inDOMFullscreen] hbox[anonid="findSights"] {
+		display: none;
+	}
+	
 	hbox[anonid="findSights"] {
 		pointer-events: none;
 		width: 100%;

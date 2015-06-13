@@ -7,6 +7,10 @@
 	url("chrome://global/content/viewPartialSource.xul"),
 	url-prefix("chrome://updatescan/") {
 	
+	window[inDOMFullscreen] hbox[anonid="gridBox"] {
+		display: none;
+	}
+	
 	hbox[anonid="gridBox"] {
 		pointer-events: none;
 		width: 100%;

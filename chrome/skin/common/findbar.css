@@ -74,19 +74,29 @@
 	
 	/* to show the findbar on the right or the left, we just switch the locale direction when it's on the bottom */
 	
-	findbar:not([movetotop])[movetoright]:-moz-locale-dir(ltr) > hbox.findbar-container,
-	findbar:not([movetotop]):not([movetoright]):-moz-locale-dir(rtl) > hbox.findbar-container {
+	findbar[movetoright]:-moz-locale-dir(ltr) > hbox.findbar-container,
+	findbar:not([movetoright]):-moz-locale-dir(rtl) > hbox.findbar-container {
 		direction: rtl;
 	}
 	
-	findbar:not([movetotop])[movetoright]:-moz-locale-dir(ltr) > hbox.findbar-container > *,
-	findbar:not([movetotop]):not([movetoright]):-moz-locale-dir(rtl) > hbox.findbar-container > * {
+	findbar[movetoright]:-moz-locale-dir(ltr) > hbox.findbar-container > *,
+	findbar:not([movetoright]):-moz-locale-dir(rtl) > hbox.findbar-container > * {
 		direction: ltr;
 	}
 	
-	findbar:not([movetotop])[movetoright]:-moz-locale-dir(ltr) .findbar-find-status,
-	findbar:not([movetotop]):not([movetoright]):-moz-locale-dir(rtl) .findbar-find-status {
+	findbar[movetoright]:-moz-locale-dir(ltr) hbox[anonid="findbar-textbox-wrapper"],
+	findbar:not([movetoright]):-moz-locale-dir(rtl) hbox[anonid="findbar-textbox-wrapper"] {
+		margin: 0 5px;
+	}
+	
+	findbar[movetoright]:-moz-locale-dir(ltr) .findbar-find-status,
+	findbar:not([movetoright]):-moz-locale-dir(rtl) .findbar-find-status {
 		margin: 0 12px !important; /* !important tag is necessary, the original also have !important tags */
+	}
+	
+	findbar[movetotop][movetoright]:-moz-locale-dir(ltr) toolbarbutton[anonid="find-closebutton"],
+	findbar[movetotop]:not([movetoright]):-moz-locale-dir(rtl) toolbarbutton[anonid="find-closebutton"] {
+		-moz-box-ordinal-group: 0;
 	}
 	
 	/* small findbar at the top */

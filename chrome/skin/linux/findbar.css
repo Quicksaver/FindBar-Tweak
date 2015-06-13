@@ -30,13 +30,29 @@
 	}
 	
 	findbar[movetotop] .findbar-container {
-		-moz-padding-start: 3px;
 		padding-top: 1px;
 		padding-bottom: 1px;
 	}
 	
-	findbar[movetotop] .findbar-closebutton {
+	findbar[movetotop]:not([movetoright]):-moz-locale-dir(ltr) > hbox.findbar-container,
+	findbar[movetotop][movetoright]:-moz-locale-dir(rtl) > hbox.findbar-container {
+		-moz-padding-start: 3px;
+	}
+	
+	findbar[movetotop][movetoright]:-moz-locale-dir(ltr) > hbox.findbar-container,
+	findbar[movetotop]:not([movetoright]):-moz-locale-dir(rtl) > hbox.findbar-container {
+		-moz-padding-end: 3px;
+		-moz-padding-start: 0;
+	}
+	
+	findbar[movetotop]:not([movetoright]):-moz-locale-dir(ltr) .findbar-closebutton,
+	findbar[movetotop][movetoright]:-moz-locale-dir(rtl) .findbar-closebutton {
 		-moz-margin-end: 3px;
+	}
+	
+	findbar[movetotop][movetoright]:-moz-locale-dir(ltr) .findbar-closebutton,
+	findbar[movetotop]:not([movetoright]):-moz-locale-dir(rtl) .findbar-closebutton {
+		-moz-margin-start: 3px;
 	}
 	
 	findbar[movetotop] textbox {

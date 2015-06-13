@@ -29,15 +29,34 @@
 	}
 	
 	findbar[movetotop] .findbar-container {
-		-moz-padding-end: 1px;
 		padding-top: 3px;
 		padding-bottom: 3px;
 	}
 	
 	findbar[movetotop] .findbar-closebutton {
-		-moz-padding-start: 1px;
 		padding-top: 5px;
 		padding-bottom: 5px;
+	}
+	
+	findbar[movetotop]:not([movetoright]):-moz-locale-dir(ltr) > hbox.findbar-container,
+	findbar[movetotop][movetoright]:-moz-locale-dir(rtl) > hbox.findbar-container {
+		-moz-padding-end: 1px;
+	}
+	
+	findbar[movetotop][movetoright]:-moz-locale-dir(ltr) > hbox.findbar-container,
+	findbar[movetotop]:not([movetoright]):-moz-locale-dir(rtl) > hbox.findbar-container {
+		-moz-padding-start: 1px;
+		-moz-padding-end: 0;
+	}
+	
+	findbar[movetotop]:not([movetoright]):-moz-locale-dir(ltr) .findbar-closebutton,
+	findbar[movetotop][movetoright]:-moz-locale-dir(rtl) .findbar-closebutton {
+		-moz-padding-start: 1px;
+	}
+	
+	findbar[movetotop][movetoright]:-moz-locale-dir(ltr) .findbar-closebutton,
+	findbar[movetotop]:not([movetoright]):-moz-locale-dir(rtl) .findbar-closebutton {
+		-moz-padding-end: 1px;
 	}
 
 	findbar[movetotop]:not([inPDFJS]) {

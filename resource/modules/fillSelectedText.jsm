@@ -1,10 +1,10 @@
-Modules.VERSION = '2.0.1';
+Modules.VERSION = '2.0.2';
 
 this.fillSelectedText = function(m) {
 	var selText = m.data;
 	
-	if(selText
-	&& (findQuery != selText || (Prefs.highlightByDefault && !documentHighlighted))
+	if((selText || Prefs.emptySelectedText)
+	&& (findQuery != selText || (selText && Prefs.highlightByDefault && !documentHighlighted))
 	&& dispatch(gFindBar, { type: 'WillFillSelectedText' })) {
 		findQuery = selText;
 		highlightedWord = selText; // Make sure we highlight it if needed
@@ -18,7 +18,7 @@ this.fillSelectedText = function(m) {
 			Finder.workAroundFind = false;
 		}, 0);
 		
-		if(Prefs.fillTextShowFindBar && gFindBar.hidden) {
+		if(selText && Prefs.fillTextShowFindBar && gFindBar.hidden) {
 			gFindBar.open(gFindBar.FIND_TYPEAHEAD);
 			
 			if(gFindBar._quickFindTimeout) {

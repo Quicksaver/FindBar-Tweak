@@ -1,4 +1,4 @@
-// VERSION = '1.5.1';
+// VERSION = '1.5.2';
 
 objName = 'findbartweak';
 objPathString = 'findbartweak';
@@ -76,6 +76,7 @@ prefList = {
 	keepSelectContrast: true,
 	
 	fillSelectedText: false,
+	emptySelectedText: true,
 	fillTextShowFindBar: true,
 	layoutEatSpaces: defaultBranch.getBoolPref('layout.word_select.eat_space_to_next_word'),
 	layoutStopAtPunctuation: defaultBranch.getBoolPref('layout.word_select.stop_at_punctuation'),

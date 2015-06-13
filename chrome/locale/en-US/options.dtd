@@ -73,6 +73,7 @@
 <!ENTITY OptctrlFOnFocused.label "Only close when it is already focused">
 <!ENTITY OptSelectingText.label "When Selecting Text">
 <!ENTITY OptfillSelectedText.label "Fill the Findbar with the selected text">
+<!ENTITY OptemptySelectedText.label "Empty the Findbar when no text is selected">
 <!ENTITY OptfillSelectedOpenFindbar.label "Show the Quick Findbar when selected text is used">
 <!ENTITY OptdblClickEatSpaces.label "Double-clicking on a word selects also the following space">
 <!ENTITY OptdblClickStopAtPunctuation.label "Double-clicking on a word stops selection at punctuation">

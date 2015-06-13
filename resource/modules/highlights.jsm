@@ -273,7 +273,7 @@ Modules.LOADMODULE = function() {
 					delay = LONG_DELAY;
 				}
 				
-				// Make sure it triggers the highlight if we switch tabs meanwhile
+				// Make sure it triggers the highlight if we switch tabs in the meantime
 				this.browser.finder.documentHighlighted = true;
 				this.browser.finder.documentReHighlight = true;
 				

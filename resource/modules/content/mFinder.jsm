@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.2';
+Modules.VERSION = '1.0.3';
 
 this.__defineGetter__('isPDFJS', function() { return Finder.isPDFJS; });
 
@@ -1129,6 +1129,10 @@ this.RemoteFinderListener = {
 		
 		this.addMessage("Highlights:Info", (data) => {
 			Finder.highlightsInfo(data);
+		});
+		
+		this.addMessage("SetSearchString", (data) => {
+			Finder._searchString = data;
 		});
 	},
 	

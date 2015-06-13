@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.0';
+Modules.VERSION = '2.0.1';
 
 this.fillSelectedText = function(m) {
 	var selText = m.data;
@@ -34,19 +34,10 @@ this.fillSelectedText = function(m) {
 
 Modules.LOADMODULE = function() {
 	Messenger.listenWindow(window, 'FillSelectedText', fillSelectedText);
-	
-	initFindBar('fillSelectedText',
-		function(bar) {
-			Messenger.loadInBrowser(bar.browser, 'fillSelectedText');
-		},
-		function(bar) {
-			Messenger.unloadFromBrowser(bar.browser,  'fillSelectedText');
-		}
-	);
+	Messenger.loadInWindow(window, 'fillSelectedText');
 };
 
 Modules.UNLOADMODULE = function() {
-	deinitFindBar('fillSelectedText');
-	
+	Messenger.unloadFromWindow(window, 'fillSelectedText');
 	Messenger.unlistenWindow(window, 'FillSelectedText', fillSelectedText);
 };

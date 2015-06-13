@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.1';
+Modules.VERSION = '1.0.2';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -182,6 +182,9 @@ this.RemoteFinder.prototype = {
 	workAroundFind: false,
 	tweakFastFind: function(aSearchString, aLinksOnly, aDrawOutline) {
 		if(this.workAroundFind) {
+			// make sure we still set the searchString in content script, just like if it still performed a search
+			Messenger.messageBrowser(this._browser, 'SetSearchString', aSearchString);
+			
 			this.workAroundFind = false;
 			return;
 		}

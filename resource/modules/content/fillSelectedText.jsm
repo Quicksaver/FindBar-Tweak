@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.0';
+Modules.VERSION = '2.0.1';
 
 this.selectedText = {
 	handleEvent: function(e) {
@@ -31,8 +31,8 @@ this.selectedText = {
 	fill: function() {
 		// we need this even if the findbar hasn't been created in this tab yet; the tab and forth afterwards will initialize everything properly
 		if(typeof(Finder) == 'undefined') {
-			Modules.load('gFindBar');
-			Modules.load('mFinder');
+			Modules.load('content/gFindBar');
+			Modules.load('content/mFinder');
 		}
 		
 		if(!Finder.isValid) { return; }

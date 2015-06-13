@@ -1,18 +1,25 @@
-Modules.VERSION = '2.7.0';
+Modules.VERSION = '2.7.1';
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
 // xmlHttpRequest(url, callback, method) - aid for quickly using the nsIXMLHttpRequest interface
 //	url - (string) to send the request
 //	callback - (function) to be called after request is completed; expects callback(xmlhttp, e) where xmlhttp = xmlhttprequest return object and e = event object
-//	(optional) method - either (string) "POST" or (string) "GET"
-this.xmlHttpRequest = function(url, callback, method) {
-	if(!method) { method = "GET"; }
+//	(optional) method -	either (string) "POST" or (string) "GET"; defaults to "GET";
+//				can also be (string) "JSON", for XHR operations that fetch a JSON object, so the result should be parsed accordingly,
+//				in which case the method used is "GET" as well.
+this.xmlHttpRequest = function(url, callback, method = "GET") {
+	var json = false;
+	if(method == "JSON") {
+		json = true;
+		method = "GET";
+	}
 	
 	var xmlhttp = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Ci.nsIXMLHttpRequest);
 	xmlhttp.open(method, url);
-	if(url.endsWith('.json')) {
+	if(json) {
 		xmlhttp.overrideMimeType("application/json");
+		xmlhttp.responseType = 'json';
 	}
 	xmlhttp.onreadystatechange = function(e) { callback(xmlhttp, e); };
 	xmlhttp.send();

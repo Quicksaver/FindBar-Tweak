@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
 <!DOCTYPE overlay SYSTEM "chrome://findbartweak/locale/options.dtd">
-<overlay id="mac_options_overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 	<checkbox id="ctrlFClosesCheckbox" label="&OptctrlFCloses.mac;"/>
 </overlay>

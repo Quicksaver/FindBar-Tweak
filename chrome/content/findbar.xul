@@ -6,14 +6,14 @@
 	
 	<popupset id="mainPopupSet">
 		<menupopup id="objPathString_findbarMenu">
-			<menuitem label="&MenuOptions.label;" oncommand="objName.doOpenOptions();" />
+			<menuitem label="&MenuOptions.label;" oncommand="objName.openOptions();" />
 		</menupopup>
 	</popupset>
 	
 	<!-- for the View Source window -->
 	<window id="viewSource">
 		<menupopup id="objPathString_findbarMenu">
-			<menuitem label="&MenuOptions.label;" oncommand="objName.doOpenOptions();" />
+			<menuitem label="&MenuOptions.label;" oncommand="objName.openOptions();" />
 		</menupopup>
 	</window>
 	

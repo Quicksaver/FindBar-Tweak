@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<!DOCTYPE options SYSTEM "chrome://findbartweak/locale/options.dtd">
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+			
+	<richlistbox id="categories">
+		<richlistitem id="category-sights"
+			class="category"
+			value="paneSights"
+			tooltiptext="&OptSightsTab.label;"
+			position="4"
+			align="center">
+			
+			<image class="category-icon"/>
+			<label class="category-name" flex="1" value="&OptSightsTab.label;"/>
+		</richlistitem>
+	</richlistbox>
+	
+	<prefpane id="mainPrefPane">
+		<preferences>
+			<preference id="pref-sightsCurrent" name="extensions.findbartweak.sightsCurrent" type="bool"/>
+			<preference id="pref-sightsHighlights" name="extensions.findbartweak.sightsHighlights" type="bool"/>
+			<preference id="pref-sightsStyle" name="extensions.findbartweak.sightsStyle" type="string"/>
+			<preference id="pref-sightsRepeat" name="extensions.findbartweak.sightsRepeat" type="int"/>
+			<preference id="pref-sightsSameColor" name="extensions.findbartweak.sightsSameColor" type="bool"/>
+			<preference id="pref-sightsSameColorAll" name="extensions.findbartweak.sightsSameColorAll" type="bool"/>
+			<preference id="pref-sightsColor" name="extensions.findbartweak.sightsColor" type="string"/>
+			<preference id="pref-sightsAllSameColor" name="extensions.findbartweak.sightsAllSameColor" type="bool"/>
+			<preference id="pref-sightsAllColor" name="extensions.findbartweak.sightsAllColor" type="string"/>
+			<preference id="pref-sightsLimit" name="extensions.findbartweak.sightsLimit" type="int"/>
+		</preferences>
+		
+		<hbox id="header-sights" class="header" collapsed="true" data-category="paneSights">
+			<label class="header-name">&OptSightsTab.label;</label>
+		</hbox>
+		
+		<groupbox align="start" id="paneSights-current" collapsed="true" data-category="paneSights">
+			<caption label="&OptsightsCurrentHit.label;"/>
+			<checkbox label="&OptsightsCurrent.label;" preference="pref-sightsCurrent"/>
+			<vbox align="center" class="indent">
+				<vbox align="start">
+					<checkbox dependson="pref-sightsCurrent" label="&OptsightsSameColorCurrent.label;" preference="pref-sightsSameColor"/>
+					<checkbox dependson="pref-sightsCurrent,!pref-sightsSameColor" label="&OptsightsSameColor.label;" preference="pref-sightsSameColorAll"/>
+				</vbox>
+				<hbox align="center">
+					<colorpicker id="sightsColor"
+						dependson="pref-sightsCurrent,!pref-sightsSameColor,!pref-sightsSameColorAll"
+						type="button"
+						preference="pref-sightsColor"/>
+					<label class="text-link"
+						href="#"
+						dependson="pref-sightsCurrent,!pref-sightsSameColor,!pref-sightsSameColorAll"
+						onclick="if(!this.disabled) { document.getElementById('pref-sightsColor').reset(); return false; }"
+						value="&OptcolorReset.label;"/>
+				</hbox>
+			</vbox>
+		</groupbox>
+		
+		<groupbox align="start" id="paneSights-highlights" collapsed="true" data-category="paneSights">
+			<caption label="&OptsightsAllHighlights.label;"/>
+			<description>&OptsightsHighlights.warning;</description>
+			<checkbox label="&OptsightsHighlights.label;" preference="pref-sightsHighlights"/>
+			<vbox align="center" class="indent">
+				<vbox align="start">
+					<hbox align="center">
+						<label dependson="pref-sightsHighlights" value="&OptsightsLimit.label;"/>
+						<textbox dependson="pref-sightsHighlights"
+							type="number"
+							size="2"
+							min="1"
+							max="100"
+							preference="pref-sightsLimit"/>
+					</hbox>
+					<checkbox dependson="pref-sightsHighlights" label="&OptsightsSameColor.label;" preference="pref-sightsAllSameColor"/>
+				</vbox>
+				<hbox align="center">
+					<colorpicker id="sightsAllColor"
+						dependson="pref-sightsHighlights,!pref-sightsAllSameColor"
+						type="button"
+						preference="pref-sightsAllColor"/>
+					<label class="text-link"
+						href="#"
+						dependson="pref-sightsHighlights,!pref-sightsAllSameColor"
+						onclick="if(!this.disabled) { document.getElementById('pref-sightsAllColor').reset(); return false; }"
+						value="&OptcolorReset.label;"/>
+				</hbox>
+			</vbox>
+		</groupbox>
+		
+		<groupbox align="start" id="paneSights-style" collapsed="true" data-category="paneSights">
+			<caption label="&OptsightsStyle.label;"/>
+			<vbox align="center">
+				<radiogroup preference="pref-sightsStyle">
+					<hbox>
+						<radio dependson="pref-sightsCurrent;pref-sightsHighlights"
+							label="&OptsightsStyle.focus;"
+							value="focus"
+							oncommand="objName.previewSights(this, 'focus');"/>
+						<radio dependson="pref-sightsCurrent;pref-sightsHighlights"
+							label="&OptsightsStyle.circle;"
+							value="circle"
+							oncommand="objName.previewSights(this, 'circle');"/>
+					</hbox>
+				</radiogroup>
+				<hbox align="center">
+					<label value="&OptsightsRepeat.label;"/>
+					<textbox type="number"
+						size="1"
+						min="1"
+						max="9"
+						preference="pref-sightsRepeat"/>
+				</hbox>
+			</vbox>
+		</groupbox>
+		
+		<hbox id="paneSights-findSights" collapsed="true" data-category="paneSights" anonid="findSights" />
+	</prefpane>
+	
+</overlay>

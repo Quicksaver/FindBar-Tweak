@@ -1,7 +1,8 @@
-// This is the file that is loaded as a content script directly. It helps with defining a "separate" environment in the content
-// script, while remaining accessible to the rest of the content scope.
-// We have to redefine objName and objPathString here, because there's no easy way to fetch them automatically from defaults.js.
-// Important: Do not change anything else other than the name of the object (and again at the bottom) and the objName and objPathString properties!
+// VERSION = '1.5.0';
+
+// This script should be loaded by defaultsContent.js, which is in turn loaded directly by the Messenger module.
+// defaultsContent.js should set this object's objName and objPathString properties and call its .init() method.
+// This helps with defining a "separate" environment in the content script, while remaining accessible to the rest of the content scope.
 //
 // Use the Messenger object to send message safely to this object without conflicting with other add-ons.
 // To load or unload modules in the modules/content/ folder into this object, use Messenger's loadIn* methods.
@@ -28,20 +29,30 @@ this.Ci = Components.interfaces;
 this.Cu = Components.utils;
 this.Cm = Components.manager;
 
-this.findbartweak = {
-	objName: 'findbartweak',
-	objPathString: 'findbartweak',
+this.__contentEnvironment = {
+	objName: '',
+	objPathString: '',
+	
+	addonUris: {
+		homepage: '',
+		support: '',
+		fullchangelog: '',
+		email: '',
+		profile: '',
+		api: '',
+		development: ''
+	},
 	
 	initialized: false,
 	listeners: new Set(),
 	_queued: new Set(),
 	
-	version: '1.4.0',
 	isContent: true,
 	Scope: this, // to delete our variable on shutdown later
 	get document () { return content.document; },
 	$: function(id) { return content.document.getElementById(id); },
-	$$: function(sel) { return content.document.querySelectorAll(sel); },
+	$$: function(sel, parent = content.document) { return parent.querySelectorAll(sel); },
+	$ª: function(parent, anonid, anonattr = 'anonid') { return content.document.getAnonymousElementByAttribute(parent, anonattr, anonid); },
 	
 	// easy and useful helpers for when I'm debugging
 	LOG: function(str) {
@@ -139,7 +150,8 @@ this.findbartweak = {
 	},
 	
 	finishInit: function(data) {
-		this.AddonData = data;
+		this.AddonData = data.AddonData;
+		this.addonUris = data.addonUris;
 		this.initialized = true;
 	},
 	
@@ -273,5 +285,3 @@ this.findbartweak = {
 		delete this.Scope[this.objName];
 	}
 };
-
-findbartweak.init();

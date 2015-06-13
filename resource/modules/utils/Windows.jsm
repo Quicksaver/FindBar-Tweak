@@ -1,4 +1,4 @@
-Modules.VERSION = '2.4.0';
+Modules.VERSION = '2.4.1';
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -37,7 +37,7 @@ this.Windows = {
 			var browserEnumerator = this.getEnumerator(type);
 			while(browserEnumerator.hasMoreElements()) {
 				var window = browserEnumerator.getNext();
-				if(window.document.documentURI == aURI && window.document.readyState == 'complete') {
+				if(window.document.documentURI.startsWith(aURI) && window.document.readyState == 'complete') {
 					return aCallback(window);
 				}
 			}
@@ -56,7 +56,7 @@ this.Windows = {
 		var browserEnumerator = this.getEnumerator(aType);
 		while(browserEnumerator.hasMoreElements()) {
 			var window = browserEnumerator.getNext();
-			if(!aURI || window.document.documentURI == aURI) {
+			if(!aURI || window.document.documentURI.startsWith(aURI)) {
 				callOnLoad(window, aCallback, beforeComplete);
 			}
 		}
@@ -109,7 +109,7 @@ this.Windows = {
 			
 			if(watcher.topic == aTopic
 			&& (!watcher.type || aSubject.document.documentElement.getAttribute('windowtype') == watcher.type)
-			&& (!watcher.uri || aSubject.document.documentURI == watcher.uri)) {
+			&& (!watcher.uri || aSubject.document.documentURI.startsWith(watcher.uri))) {
 				if(noBefore) {
 					// don't run this handler if it's been run before
 					if(!watcher.beforeComplete) {

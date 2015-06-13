@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.0';
+Modules.VERSION = '1.1.1';
 
 this.grids = {
 	allHits: new Set(),
@@ -281,7 +281,7 @@ this.grids = {
 				// Special case for GMail
 				// We only place the highlights that are from the main "frame", and use this element's relative position and dimensions to position them.
 				if(document.baseURI.startsWith('https://mail.google.com/mail/')) {
-					ao = document.querySelectorAll('div.AO')[0];
+					ao = $$('div.AO')[0];
 					if(ao) {
 						let hits = Finder._highlights.wins.get(Finder.getWindow);
 						for(let hit of hits) {
@@ -595,12 +595,12 @@ this.grids = {
 		Listeners.remove(Scope, 'resize', this);
 		
 		if(isPDFJS) {
-			var offsetY = document.querySelectorAll('div.toolbar')[0].clientHeight;
+			var offsetY = $$('div.toolbar')[0].clientHeight;
 			this.chromeGrid.style('paddingTop', offsetY +'px');
 		}
 		// Special case for GMail
 		else if(document.baseURI.startsWith('https://mail.google.com/mail/')) {
-			var offsetY = document.querySelectorAll('div.AO')[0].offsetTop;
+			var offsetY = $$('div.AO')[0].offsetTop;
 			this.chromeGrid.style('paddingTop', offsetY +'px');
 		}
 		else {

@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<!DOCTYPE options SYSTEM "chrome://findbartweak/locale/options.dtd">
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	
+	<script type="application/javascript" src="chrome://browser/content/utilityOverlay.js"/>
+	
+	<richlistbox id="categories">
+		<richlistitem id="category-appearance"
+			class="category"
+			value="paneAppearance"
+			tooltiptext="&OptAppearance.label;"
+			position="2"
+			align="center">
+			
+			<image class="category-icon"/>
+			<label class="category-name" flex="1" value="&OptAppearance.label;"/>
+		</richlistitem>
+	</richlistbox>
+	
+	<prefpane id="mainPrefPane">
+		<preferences>
+			<preference id="pref-selectColor" name="extensions.findbartweak.selectColor" type="string"/>
+			<preference id="pref-keepSelectContrast" name="extensions.findbartweak.keepSelectContrast" type="bool"/>
+			<preference id="pref-useCounter" name="extensions.findbartweak.useCounter" type="bool"/>
+			<preference id="pref-movetoTop" name="extensions.findbartweak.movetoTop" type="bool"/>
+			<preference id="pref-movetoRight" name="extensions.findbartweak.movetoRight" type="bool"/>
+			<preference id="pref-hideClose" name="extensions.findbartweak.hideClose" type="bool"/>
+			<preference id="pref-hideLabels" name="extensions.findbartweak.hideLabels" type="bool"/>
+		</preferences>
+		
+		<hbox id="header-appearance" class="header" collapsed="true" data-category="paneAppearance">
+			<label class="header-name">&OptAppearance.label;</label>
+		</hbox>
+		
+		<groupbox align="start" id="paneAppearance-position" collapsed="true" data-category="paneAppearance">
+			<caption label="&Optdisplay.label;"/>
+			<checkbox label="&OptmovetoTop.label;" preference="pref-movetoTop"/>
+			<checkbox label="&OptmovetoRight.label;" preference="pref-movetoRight"/>
+		</groupbox>
+		
+		<groupbox align="start" id="paneAppearance-elements" collapsed="true" data-category="paneAppearance">
+			<caption label="&OptButtonAndLabels.label;"/>
+			<checkbox label="&OptuseCounterNew.label;" preference="pref-useCounter"/>
+			<checkbox label="&OpthideClose.label;" preference="pref-hideClose"/>
+			<checkbox label="&OpthideLabels.labelFF25;" preference="pref-hideLabels"/>
+		</groupbox>
+		
+		<groupbox align="start" id="paneAppearance-currentcolor" collapsed="true" data-category="paneAppearance">
+			<caption label="&OptselectColor.label;"/>
+			<hbox align="start">
+				<vbox align="center">
+					<hbox align="center">
+						<colorpicker id="selectColor" type="button" preference="pref-selectColor"/>
+						<label class="text-link"
+						href="#"
+						onclick="document.getElementById('pref-selectColor').reset(); return false;"
+						value="&OptcolorReset.label;"/>
+					</hbox>
+					<checkbox label="&OptcolorKeepOSdefault.label;" preference="pref-keepSelectContrast"/>
+				</vbox>
+			</hbox>
+		</groupbox>
+	</prefpane>
+	
+</overlay>

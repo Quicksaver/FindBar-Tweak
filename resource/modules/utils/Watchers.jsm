@@ -1,4 +1,4 @@
-Modules.VERSION = '2.6.1';
+Modules.VERSION = '2.6.2';
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -82,9 +82,9 @@ this.Watchers = {
 					if(!h.capture) {
 						try {
 							if(h.handler.propWatcher) {
-								continueHandlers = h.handler.propWatcher(this, prop, oldVal, newVal);
+								h.handler.propWatcher(this, prop, oldVal, newVal);
 							} else {
-								continueHandlers = h.handler(this, prop, oldVal, newVal);
+								h.handler(this, prop, oldVal, newVal);
 							}
 						}
 						catch(ex) { Cu.reportError(ex); }
@@ -307,9 +307,9 @@ this.Watchers = {
 								if(a.iterateAll) {
 									try {
 										if(a.handler.attrWatcher) {
-											continueHandlers = a.handler.attrWatcher(obj, attr, oldValue, newValue);
+											a.handler.attrWatcher(obj, attr, oldValue, newValue);
 										} else {
-											continueHandlers = a.handler(obj, attr, oldValue, newValue);
+											a.handler(obj, attr, oldValue, newValue);
 										}
 									}
 									catch(ex) { Cu.reportError(ex); }
@@ -317,9 +317,9 @@ this.Watchers = {
 								else if(m == muts.length -1) {
 									try {
 										if(a.handler.attrWatcher) {
-											continueHandlers = a.handler.attrWatcher(obj, attr, firstOldValue, newValue);
+											a.handler.attrWatcher(obj, attr, firstOldValue, newValue);
 										} else {
-											continueHandlers = a.handler(obj, attr, firstOldValue, newValue);
+											a.handler(obj, attr, firstOldValue, newValue);
 										}
 									}
 									catch(ex) { Cu.reportError(ex); }

@@ -1,4 +1,4 @@
-Modules.VERSION = '2.3.5';
+Modules.VERSION = '2.4.0';
 Modules.UTILS = true;
 Modules.CLEAN = false;
 
@@ -35,6 +35,9 @@ this.__defineGetter__('Watchers', function() { delete this.Watchers; Modules.loa
 // Keysets - handles editable keysets for the add-on
 this.__defineGetter__('Keysets', function() { Windows; delete this.Keysets; Modules.load('utils/Keysets'); return Keysets; });
 
+// Keysets - handles editable keysets for the add-on
+this.__defineGetter__('PrefPanes', function() { Browsers; delete this.PrefPanes; Modules.load('utils/PrefPanes'); return PrefPanes; });
+
 // closeCustomize() - useful for when you want to close the customize tabs for whatever reason
 this.closeCustomize = function() {
 	Windows.callOnAll(function(aWindow) {
@@ -42,29 +45,6 @@ this.closeCustomize = function() {
 			aWindow.gCustomizeMode.exit();
 		}
 	}, 'navigator:browser');
-};
-
-// openOptions() and closeOptions() - to open/close the extension's options dialog or focus it if already opened in case optionsURL is set
-// I'm not adding these to sandboxTools because closeOptions is always called when shutting down the add-on,
-// so this way it won't load the module when disabling the add-on if it hand't been loaded yet.
-this.openOptions = function() {
-	if(UNLOADED || !Addon.optionsURL) { return; }
-	if(!Windows.callOnMostRecent(function(aWindow) { aWindow.focus(); return true; }, null, Addon.optionsURL)) {
-		window.openDialog(Addon.optionsURL, '', 'chrome,toolbar,resizable=false');
-	}
-};
-this.closeOptions = function() {
-	if(!Addon.optionsURL) { return; }
-	Windows.callOnAll(function(aWindow) { try { aWindow.close(); } catch(ex) {} }, null, Addon.optionsURL);
-};
-
-// fillVersion() - to automatically fill in the version information in the about tab of the preferences dialog
-// 	box - (xul element) where the version number is supposed to appear
-this.fillVersion = function(box) {
-	if(!box || !Addon || !Addon.version) { return; }
-	
-	box.textContent = Addon.version;
-	box.hidden = false;
 };
 
 Modules.UNLOADMODULE = function() {

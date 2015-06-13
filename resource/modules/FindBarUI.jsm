@@ -1,4 +1,4 @@
-Modules.VERSION = '1.7.3';
+Modules.VERSION = '1.7.4';
 
 this.__defineGetter__('findButton', function() {
 	var node = $('find-button');
@@ -168,7 +168,7 @@ this.buttonLabels = {
 		for(let btnID of this.btns) {
 			let btn = bar.getElement(btnID);
 			if(btn) {
-				let icon = document.getAnonymousElementByAttribute(btn, 'class', (enable) ? 'toolbarbutton-icon' : 'toolbarbutton-icon toolbarbutton-text');
+				let icon = $ª(btn, (enable) ? 'toolbarbutton-icon' : 'toolbarbutton-icon toolbarbutton-text', 'class');
 				if(icon) {
 					if(enable) {
 						icon.classList.add('toolbarbutton-text');

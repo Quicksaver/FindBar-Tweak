@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<!DOCTYPE options SYSTEM "chrome://findbartweak/locale/options.dtd">
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+			
+	<richlistbox id="categories">
+		<richlistitem id="category-highlights"
+			class="category"
+			value="paneHighlights"
+			tooltiptext="&OptHighlights.label;"
+			position="3"
+			align="center">
+			
+			<image class="category-icon"/>
+			<label class="category-name" flex="1" value="&OptHighlights.label;"/>
+		</richlistitem>
+	</richlistbox>
+	
+	<prefpane id="mainPrefPane">
+		<preferences>
+			<preference id="pref-highlightByDefault" name="extensions.findbartweak.highlightByDefault" type="bool"/>
+			<preference id="pref-highlightOnFindAgain" name="extensions.findbartweak.highlightOnFindAgain" type="bool"/>
+			<preference id="pref-minNoDelay" name="extensions.findbartweak.minNoDelay" type="int"/>
+			<preference id="pref-highlightColor" name="extensions.findbartweak.highlightColor" type="string"/>
+			<preference id="pref-hideWhenFinderHidden" name="extensions.findbartweak.hideWhenFinderHidden" type="bool"/>
+			<preference id="pref-useGrid" name="extensions.findbartweak.useGrid" type="bool"/>
+			<preference id="pref-gridLimit" name="extensions.findbartweak.gridLimit" type="int"/>
+			<preference id="pref-gridAdjustPadding" name="extensions.findbartweak.gridAdjustPadding" type="int"/>
+			<preference id="pref-gridAdjustWidth" name="extensions.findbartweak.gridAdjustWidth" type="int"/>
+		</preferences>
+		
+		<hbox id="header-highlights" class="header" collapsed="true" data-category="paneHighlights">
+			<label class="header-name">&OptHighlights.label;</label>
+		</hbox>
+		
+		<groupbox align="start" id="paneHighlights-main" collapsed="true" data-category="paneHighlights">
+			<caption label="&OptHighlights.label;"/>
+			<checkbox label="&OpthighlightByDefault.label;" preference="pref-highlightByDefault"/>
+			<checkbox label="&OpthighlightOnFindAgain.label;" preference="pref-highlightOnFindAgain"/>
+			<checkbox label="&OpthideWhenFinderHidden.label;" preference="pref-hideWhenFinderHidden"/>
+			<hbox align="center">
+				<label value="&OptminNoDelay.labela;"/>
+				<textbox type="number"
+					size="1"
+					min="1"
+					max="50"
+					style="text-align: center;"
+					preference="pref-minNoDelay"/>
+				<label value="&OptminNoDelay.labelb;"/>
+			</hbox>
+		</groupbox>
+		
+		<groupbox align="start" id="paneHighlights-grid" collapsed="true" data-category="paneHighlights">
+			<caption label="&Optgrid.label;"/>
+			<checkbox label="&OptgridInScrollbar.label;" preference="pref-useGrid"/>
+			<hbox align="center">
+				<label dependson="pref-useGrid" value="&OptgridLimit.labela;"/>
+				<textbox dependson="pref-useGrid"
+					type="number"
+					size="3"
+					min="1"
+					max="10000"
+					preference="pref-gridLimit"/>
+				<label dependson="pref-useGrid" value="&OptgridLimit.labelb;"/>
+			</hbox>
+			<hbox align="center">
+				<label dependson="pref-useGrid" value="&OptadjustGridPadding.labela;"/>
+				<textbox dependson="pref-useGrid"
+					type="number"
+					size="2"
+					min="-50"
+					max="50"
+					preference="pref-gridAdjustPadding"/>
+				<label dependson="pref-useGrid" value="&OptadjustGridPadding.labelb;"/>
+			</hbox>
+			<hbox align="center">
+				<label dependson="pref-useGrid" value="&OptadjustGridWidth.labela;"/>
+				<textbox dependson="pref-useGrid"
+					type="number"
+					size="2"
+					min="-50"
+					max="50"
+					preference="pref-gridAdjustWidth"/>
+				<label dependson="pref-useGrid" value="&OptadjustGridWidth.labelb;"/>
+			</hbox>
+		</groupbox>
+		
+		<groupbox align="start" id="paneHighlights-color" collapsed="true" data-category="paneHighlights">
+			<caption align="center">
+				<label value="&Optcolor.label;"/>
+				<colorpicker id="highlightsColor" type="button" preference="pref-highlightColor"/>
+				<label class="text-link"
+					href="#"
+					onclick="document.getElementById('pref-highlightColor').reset(); return false;"
+					value="&OptcolorReset.label;"/>
+			</caption>
+		</groupbox>
+	</prefpane>
+	
+</overlay>

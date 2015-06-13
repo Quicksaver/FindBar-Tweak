@@ -1,57 +1,15 @@
-textbox[type="number"] input {
-	text-align: center;
+#categories .category image { list-style-image: url("chrome://findbartweak/skin/panes.png"); }
+#categories .category[value="paneGeneral"] image { -moz-image-region: rect(0px 24px 24px 0px); }
+#categories .category[value="paneAppearance"] image { -moz-image-region: rect(0px 48px 24px 24px); }
+#categories .category[value="paneHighlights"] image { -moz-image-region: rect(0px 72px 24px 48px); }
+#categories .category[value="paneSights"] image { -moz-image-region: rect(0px 96px 24px 72px); }
+#categories .category[value="paneTweaks"] image { -moz-image-region: rect(0px 120px 24px 96px); }
+#categories .category[value="paneAbout"] image { -moz-image-region: rect(0px 144px 24px 120px); }
+
+colorpicker {
+	width: 50px;
 }
 
-.closer {
-	margin-bottom: 0;
-}
-
-#logo {
-	list-style-image: url("chrome://findbartweak/skin/icon.png");
-	margin-top: 20px;
-	margin-bottom: 20px;
-}
-
-.justify {
-	text-align: justify;
-}
-
-#addonVersion {
-	-moz-margin-start: 3px;
-}
-
-/* Bugfix: cropped prefpanes with animateFadeIn, found at https://bugzilla.mozilla.org/show_bug.cgi?id=394793 comment #1 */
-prefpane > .content-box {
-	overflow: -moz-hidden-unscrollable;
-}
-
-.text-link[disabled="true"] {
-	cursor: default;
-	text-decoration: none;
-}
-
-.paneSelector radio[pane] label {
-	margin: 1px 5px 2px 5px;
-}
-.paneSelector radio[pane] {
-	list-style-image: url("chrome://findbartweak/skin/panes.png");
-	padding: 5px 3px 1px;
-}
-.paneSelector radio[pane="generalPane"] {
-	-moz-image-region: rect(0px 32px 32px 0px);
-}
-.paneSelector radio[pane="appearancePane"] {
-	-moz-image-region: rect(0px 64px 32px 32px);
-}
-.paneSelector radio[pane="highlightsPane"] {
-	-moz-image-region: rect(0px 96px 32px 64px);
-}
-.paneSelector radio[pane="sightsPane"] {
-	-moz-image-region: rect(0px 128px 32px 96px);
-}
-.paneSelector radio[pane="tweaksPane"] {
-	-moz-image-region: rect(0px 160px 32px 128px);
-}
-.paneSelector radio[pane="aboutPane"] {
-	-moz-image-region: rect(0px 192px 32px 160px);
+caption colorpicker[type="button"] {
+	-moz-margin-start: 1.5em;
 }

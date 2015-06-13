@@ -1,4 +1,4 @@
-Modules.VERSION = '2.4.0';
+Modules.VERSION = '2.4.2';
 Modules.UTILS = true;
 
 // Browsers - Aid object to track and perform tasks on all document browsers across the windows.
@@ -33,7 +33,7 @@ this.Browsers = {
 					// e10s fix, we don't check remote tabs
 					if(aBrowser.isRemoteBrowser) { continue; }
 					
-					if(!aURI || aBrowser.contentDocument.documentURI == aURI) {
+					if(!aURI || aBrowser.contentDocument.documentURI.startsWith(aURI)) {
 						callOnLoad(aBrowser.contentWindow, aCallback, beforeComplete);
 					}
 				}
@@ -169,11 +169,16 @@ this.Browsers = {
 		var aSubject = aDoc.defaultView;
 		for(let watcher of this.watchers) {
 			if(watcher.topic == aTopic
-			&& (!watcher.uri || aSubject.document.documentURI == watcher.uri)) {
+			&& (!watcher.uri || aSubject.document.documentURI.startsWith(watcher.uri))) {
 				if(watcher.handler.observe) {
-					callOnLoad(aSubject, () => {
-						watcher.handler.observe(aSubject, aTopic);
-					}, watcher.beforeComplete);
+					// we need to make sure that we're calling the right watcher (and thus actually call all watchers),
+					// otherwise the for loop can continue and watcher changes inside the function itself after it's been sent to callOnLoad
+					(function() {
+						var actualWatcher = watcher;
+						callOnLoad(aSubject, () => {
+							actualWatcher.handler.observe(aSubject, aTopic);
+						}, actualWatcher.beforeComplete);
+					})();
 				} else {
 					callOnLoad(aSubject, watcher.handler, watcher.beforeComplete);
 				}

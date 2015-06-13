@@ -1,10 +1,33 @@
-Modules.VERSION = '2.0.3';
+Modules.VERSION = '2.0.4';
 
 this.viewSource = false;
 this.FITFull = false;
 
-this.doOpenOptions = function() {
-	openOptions();
+this.openOptions = function() {
+	// if this is a normal browser window, just open a new preferences tab in it
+	if(!viewSource && !FITFull) {
+		PrefPanes.open(window);
+		return;
+	}
+	
+	// we mostly likely have a browser window from where we came, so use that one to open the preferences tab
+	if(window.opener && !window.opener.closed && window.opener.document.documentElement.getAttribute('windowtype') == 'navigator:browser') {
+		PrefPanes.open(window.opener);
+		return;
+	}
+	
+	// otherwise, try to open a preferences tab in the most recent browser window
+	if(Windows.callOnMostRecent(function(aWindow) {
+		PrefPanes.open(aWindow);
+		return true;
+	}, 'navigator:browser')) {
+		return;
+	}
+	
+	// it's unlikely we get here, but if all else fails, we'll have to open a new browser window to place our preferences tab in it,
+	// since our FITMini doesn't load these utils by default, we can load them now (this way we also only load them when(if!) we actually need them)
+	Services.scriptloader.loadSubScript("chrome://browser/content/utilityOverlay.js", window);
+	window.openUILinkIn(PrefPanes.aboutUri.spec, "window");
 };
 
 this.toggleBlurCloses = function() {
@@ -27,10 +50,6 @@ this.toggleFindInTabs = function() {
 Modules.LOADMODULE = function() {
 	viewSource = (document.documentElement.getAttribute('windowtype') == 'navigator:view-source') && $('viewSource');
 	FITFull = (document.documentElement.getAttribute('windowtype') == 'addon:findInTabs') && $(objPathString+'-findInTabs');
-	
-	if(!viewSource && !FITFull) {
-		Modules.load('whatsNew');
-	}
 	
 	Modules.load('gFindBar');
 	if(!FITFull) {
@@ -90,5 +109,4 @@ Modules.UNLOADMODULE = function() {
 	}
 	
 	Modules.unload('gFindBar');
-	Modules.unload('whatsNew');
 };

@@ -1,4 +1,4 @@
-Modules.VERSION = '1.4.0';
+Modules.VERSION = '1.5.0';
 Modules.UTILS = true;
 
 // Messenger - 	Aid object to communicate with browser content scripts (e10s).
@@ -44,7 +44,7 @@ Modules.UTILS = true;
 // unloadFromAll(aModule) - unloads a module from all content scripts [undoes loadInAll()]
 //	see loadInBrowser()
 this.Messenger = {
-	loadedInAll: [],
+	loadedInAll: new Set(),
 	
 	globalMM: Cc["@mozilla.org/globalmessagemanager;1"].getService(Ci.nsIMessageListenerManager),
 	
@@ -108,15 +108,15 @@ this.Messenger = {
 		if(aWindow.gBrowser && aWindow.gBrowser.tabContainer) {
 			if(!aWindow.gBrowser.tabContainer[objName+'Content']) {
 				aWindow.gBrowser.tabContainer[objName+'Content'] = {
-					modules: [aModule],
+					modules: new Set([aModule]),
 					handleEvent: function(e) {
 						Messenger.messageBrowser(e.target.linkedBrowser, 'reinit');
 					}
 				};
 				aWindow.gBrowser.tabContainer.addEventListener('TabOpen', aWindow.gBrowser.tabContainer[objName+'Content'], true);
 			}
-			else if(aWindow.gBrowser.tabContainer[objName+'Content'].modules.indexOf(aModule) == -1) {
-				aWindow.gBrowser.tabContainer[objName+'Content'].modules.push(aModule);
+			else if(!aWindow.gBrowser.tabContainer[objName+'Content'].modules.has(aModule)) {
+				aWindow.gBrowser.tabContainer[objName+'Content'].modules.add(aModule);
 			}
 		}
 		
@@ -125,9 +125,9 @@ this.Messenger = {
 	
 	unloadFromWindow: function(aWindow, aModule) {
 		if(aWindow.gBrowser && aWindow.gBrowser.tabContainer) {
-			if(aWindow.gBrowser.tabContainer[objName+'Content'] && aWindow.gBrowser.tabContainer[objName+'Content'].modules.indexOf(aModule) != -1) {
-				aWindow.gBrowser.tabContainer[objName+'Content'].modules.splice(aWindow.gBrowser.tabContainer[objName+'Content'].modules.indexOf(aModule), 1);
-				if(aWindow.gBrowser.tabContainer[objName+'Content'].modules.length == 0) {
+			if(aWindow.gBrowser.tabContainer[objName+'Content'] && aWindow.gBrowser.tabContainer[objName+'Content'].modules.has(aModule)) {
+				aWindow.gBrowser.tabContainer[objName+'Content'].modules.delete(aModule);
+				if(aWindow.gBrowser.tabContainer[objName+'Content'].modules.size == 0) {
 					aWindow.gBrowser.tabContainer.removeEventListener('TabOpen', aWindow.gBrowser.tabContainer[objName+'Content'], true);
 					delete aWindow.gBrowser.tabContainer[objName+'Content'];
 				}
@@ -138,16 +138,16 @@ this.Messenger = {
 	},
 	
 	loadInAll: function(aModule) {
-		if(this.loadedInAll.indexOf(aModule) != -1) { return; }
-		this.loadedInAll.push(aModule);
+		if(this.loadedInAll.has(aModule)) { return; }
 		
+		this.loadedInAll.add(aModule);
 		this.messageAll('load', aModule);
 	},
 	
 	unloadFromAll: function(aModule) {
-		if(this.loadedInAll.indexOf(aModule) == -1) { return; }
-		this.loadedInAll.splice(this.loadedInAll.indexOf(aModule), 1);
+		if(!this.loadedInAll.has(aModule)) { return; }
 		
+		this.loadedInAll.delete(aModule);
 		this.messageAll('unload', aModule);
 	},
 	
@@ -157,11 +157,14 @@ this.Messenger = {
 		
 		// can't stringify AddonData directly, because it contains an nsIFile instance (installPath) and an nsIURI instance (resourceURI)
 		var carryData = {
-			id: AddonData.id,
-			initTime: AddonData.initTime,
-			version: AddonData.version,
-			oldVersion: AddonData.oldVersion,
-			newVersion: AddonData.newVersion
+			AddonData: {
+				id: AddonData.id,
+				initTime: AddonData.initTime,
+				version: AddonData.version,
+				oldVersion: AddonData.oldVersion,
+				newVersion: AddonData.newVersion
+			},
+			addonUris: addonUris
 		};	
 		this.messageBrowser(m.target, 'init', carryData);
 		
@@ -211,7 +214,7 @@ this.Messenger = {
 
 Modules.LOADMODULE = function() {
 	Messenger.listenAll('init', Messenger);
-	Messenger.globalMM.loadFrameScript('resource://'+objPathString+'/modules/utils/content.js?'+AddonData.initTime, true);
+	Messenger.globalMM.loadFrameScript('resource://'+objPathString+'/defaultsContent.js?'+AddonData.initTime, true);
 	
 	for(let pref in prefList) {
 		if(pref.startsWith('NoSync_')) { continue; }

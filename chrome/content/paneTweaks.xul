@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!DOCTYPE options SYSTEM "chrome://findbartweak/locale/options.dtd">
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+			
+	<richlistbox id="categories">
+		<richlistitem id="category-tweaks"
+			class="category"
+			value="paneTweaks"
+			tooltiptext="&Opttweaks.label;"
+			position="5"
+			align="center">
+			
+			<image class="category-icon"/>
+			<label class="category-name" flex="1" value="&Opttweaks.label;"/>
+		</richlistitem>
+	</richlistbox>
+	
+	<prefpane id="mainPrefPane">
+		<preferences>
+			<preference id="pref-ctrlFCloses" name="extensions.findbartweak.ctrlFCloses" type="bool"/>
+			<preference id="pref-ctrlFClosesOnValue" name="extensions.findbartweak.ctrlFClosesOnValue" type="bool"/>
+			<preference id="pref-FAYTprefill" name="extensions.findbartweak.FAYTprefill" type="bool"/>
+			<preference id="pref-fillSelectedText" name="extensions.findbartweak.fillSelectedText" type="bool"/>
+			<preference id="pref-fillTextShowFindBar" name="extensions.findbartweak.fillTextShowFindBar" type="bool"/>
+			<preference id="pref-layoutEatSpaces" name="extensions.findbartweak.layoutEatSpaces" type="bool"/>
+			<preference id="pref-layoutStopAtPunctuation" name="extensions.findbartweak.layoutStopAtPunctuation" type="bool"/>
+			<preference id="pref-resetNative" name="extensions.findbartweak.resetNative" type="bool"/>
+		</preferences>
+		
+		<hbox id="header-tweaks" class="header" collapsed="true" data-category="paneTweaks">
+			<label class="header-name">&Opttweaks.label;</label>
+		</hbox>
+		
+		<groupbox align="start" id="paneTweaks-shortcut" collapsed="true" data-category="paneTweaks">
+			<caption label="&OptkeyboardShortcut.label;"/>
+			<checkbox id="ctrlFClosesCheckbox" label="&OptctrlFCloses.win;" preference="pref-ctrlFCloses"/>
+			<checkbox label="&OptctrlFprefill.label;" preference="pref-FAYTprefill"/>
+			<checkbox dependson="pref-ctrlFCloses,pref-FAYTprefill" label="&OptctrlFOnValue.label;" preference="pref-ctrlFClosesOnValue"/>
+		</groupbox>
+		
+		<groupbox align="start" id="paneTweaks-text" collapsed="true" data-category="paneTweaks">
+			<caption label="&OptSelectingText.label;"/>
+			<checkbox label="&OptfillSelectedText.label;" preference="pref-fillSelectedText"/>
+			<checkbox dependson="pref-fillSelectedText" label="&OptfillSelectedOpenFindbar.label;" preference="pref-fillTextShowFindBar"/>
+			<checkbox label="&OptdblClickEatSpaces.label;" preference="pref-layoutEatSpaces"/>
+			<checkbox label="&OptdblClickStopAtPunctuation.label;" preference="pref-layoutStopAtPunctuation"/>
+		</groupbox>
+		
+		<groupbox align="start" id="paneTweaks-natives" collapsed="true" data-category="paneTweaks">
+			<caption label="&OptNativePrefs.label;"/>
+			<description>&OptNativePrefs.warning;</description>
+			<vbox align="center">
+				<checkbox label="&OptResetNativeOnDisabled.label;" preference="pref-resetNative"/>
+				<button label="&OptResetNativeNow.label;" oncommand="objName.resetNativePrefs();"/>
+			</vbox>
+		</groupbox>
+	</prefpane>
+	
+</overlay>

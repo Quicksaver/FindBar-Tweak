@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.1';
+Modules.VERSION = '1.1.2';
 
 this.sights = {
 	allSights: new Set(),
@@ -230,7 +230,7 @@ this.sights = {
 				return;
 			}
 			
-			var sel = page.textLayer.textDivs[page.textLayer.matches[PDFJS.findController.selected.matchIdx].begin.divIdx].querySelectorAll('.highlight.selected');
+			var sel = $$('.highlight.selected', page.textLayer.textDivs[page.textLayer.matches[PDFJS.findController.selected.matchIdx].begin.divIdx]);
 			if(sel.length == 0) { return; }
 			
 			// make sure we place a sight on it, even if's already been sighted for the highlight
@@ -285,7 +285,7 @@ this.sights = {
 			
 			var clientHeight = getDocProperty(PDFJS.unWrap.document, 'clientHeight', true);
 			var clientWidth = getDocProperty(PDFJS.unWrap.document, 'clientWidth', true);
-			var toolbarHeight = PDFJS.unWrap.document.querySelectorAll('div.toolbar')[0].clientHeight;
+			var toolbarHeight = $$('div.toolbar', PDFJS.unWrap.document)[0].clientHeight;
 			
 			var query = PDFJS.findController.state.query;
 			var matches = PDFJS.findController.pageMatches;

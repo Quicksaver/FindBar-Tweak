@@ -1,17 +1,13 @@
-Modules.VERSION = '2.1.0';
+Modules.VERSION = '2.2.0';
 
 this.SIGHTS_SIZE_FOCUS = 400;
 this.SIGHTS_SIZE_CIRCLE = 100;
 
-this.__defineGetter__('preferencesDialog', function() { return (typeof(inPreferences) != 'undefined' && inPreferences); });
+this.__defineGetter__('preferencesDialog', function() { return self.inPreferences; });
 
 this.sights = {
 	handleEvent: function(e) {
 		switch(e.type) {
-			case 'change':
-				this.preferencesColor();
-				break;
-			
 			case 'resize':
 				Timers.init('resizeViewSource', () => { this.resizeViewSource(); }, 0);
 				break;
@@ -35,10 +31,6 @@ this.sights = {
 				Observers.notify('ReHighlightAll');
 				break;
 		}
-	},
-	
-	attrWatcher: function() {
-		this.preferencesColor();
 	},
 	
 	get: function(bar, toRemove) {
@@ -96,7 +88,10 @@ this.sights = {
 					this.timer.cancel();
 					this.removeSights();
 					bSights.groups.delete(this.i);
-					Messenger.messageBrowser(bar.browser, 'Sights:Remove', data.group);
+					
+					if(!preferencesDialog) {
+						Messenger.messageBrowser(bar.browser, 'Sights:Remove', data.group);
+					}
 				},
 				
 				removeSights: function() {
@@ -251,12 +246,8 @@ this.sights = {
 		gFindBar.sights.style.height = contentPos.height+'px';
 	},
 	
-	preferencesColor: function() {
-		sights.color($($('pref-sightsSameColor').value ? 'selectColor' : $('pref-sightsSameColorAll').value ? 'highlightsColor' : 'sightsColor').getAttribute('color'));
-	},
-	
-	color: function(forceSheet) {
-		if(!forceSheet && ((!Prefs.sightsCurrent && !Prefs.sightsHighlights) || preferencesDialog)) { return; }
+	color: function() {
+		if(!preferencesDialog && !Prefs.sightsCurrent && !Prefs.sightsHighlights) { return; }
 		
 		var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 		sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
@@ -264,9 +255,10 @@ this.sights = {
 		sscode += '	url("chrome://browser/content/browser.xul"),\n';
 		sscode += '	url("chrome://global/content/viewSource.xul"),\n';
 		sscode += '	url("chrome://global/content/viewPartialSource.xul"),\n';
-		sscode += '	url("chrome://findbartweak/content/options.xul") {\n';
+		sscode += '	url-prefix("chrome://findbartweak/content/utils/preferences.xul"),\n';
+		sscode += '	url-prefix("about:findbartweak") {\n';
 		
-		var color = forceSheet || (Prefs.sightsSameColor ? Prefs.selectColor : Prefs.sightsSameColorAll ? Prefs.highlightColor : Prefs.sightsColor);
+		var color = Prefs.sightsSameColor ? Prefs.selectColor : Prefs.sightsSameColorAll ? Prefs.highlightColor : Prefs.sightsColor;
 		var m = color.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
 		if(!m) { return; }
 		var rgb = getRGBfromString(m);
@@ -274,31 +266,29 @@ this.sights = {
 		var c = rgb.r+','+rgb.g+','+rgb.b;
 		var o = (darkBackgroundRGB(rgb)) ? '255,255,255' : '0,0,0';
 		
-		sscode += ' :-moz-any(window,prefwindow)['+objName+'_UUID="'+_UUID+'"] box[anonid="highlightSights"][sightsStyle="focus"][current],\n';
-		sscode += ' :-moz-any(window,prefwindow)['+objName+'_UUID="'+_UUID+'"] box[anonid="highlightSights"][sightsStyle="circle"][current] box[innerContainer] box {\n';
+		sscode += ' :root['+objName+'_UUID="'+_UUID+'"] box[anonid="highlightSights"][sightsStyle="focus"][current],\n';
+		sscode += ' :root['+objName+'_UUID="'+_UUID+'"] box[anonid="highlightSights"][sightsStyle="circle"][current] box[innerContainer] box {\n';
 		sscode += '  -moz-border-top-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+', 0.85) rgba('+o+', 0.5) rgba('+c+', 0.4) rgba('+c+', 0.15) !important;\n';
 		sscode += '  -moz-border-bottom-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+', 0.85) rgba('+o+', 0.5) rgba('+c+', 0.4) rgba('+c+', 0.15) !important;\n';
 		sscode += '  -moz-border-left-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+', 0.85) rgba('+o+', 0.5) rgba('+c+', 0.4) rgba('+c+', 0.15) !important;\n';
 		sscode += '  -moz-border-right-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+', 0.85) rgba('+o+', 0.5) rgba('+c+', 0.4) rgba('+c+', 0.15) !important;\n';
 		sscode += ' }\n';
 		
-		if(!forceSheet) {
-			var color = Prefs.sightsAllSameColor ? Prefs.highlightColor : Prefs.sightsAllColor;
-			var m = color.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
-			if(!m) { return; }
-			var rgb = getRGBfromString(m);
-			
-			var c = rgb.r+','+rgb.g+','+rgb.b;
-			var o = (darkBackgroundRGB(rgb)) ? '255,255,255' : '0,0,0';
-			
-			sscode += ' window['+objName+'_UUID="'+_UUID+'"] box[anonid="highlightSights"][sightsStyle="focus"]:not([current]),\n';
-			sscode += ' window['+objName+'_UUID="'+_UUID+'"] box[anonid="highlightSights"][sightsStyle="circle"]:not([current]) box[innerContainer] box {\n';
-			sscode += '  -moz-border-top-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+', 0.85) rgba('+o+', 0.5) rgba('+c+', 0.4) rgba('+c+', 0.15) !important;\n';
-			sscode += '  -moz-border-bottom-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+', 0.85) rgba('+o+', 0.5) rgba('+c+', 0.4) rgba('+c+', 0.15) !important;\n';
-			sscode += '  -moz-border-left-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+', 0.85) rgba('+o+', 0.5) rgba('+c+', 0.4) rgba('+c+', 0.15) !important;\n';
-			sscode += '  -moz-border-right-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+', 0.85) rgba('+o+', 0.5) rgba('+c+', 0.4) rgba('+c+', 0.15) !important;\n';
-			sscode += ' }\n';
-		}
+		var color = Prefs.sightsAllSameColor ? Prefs.highlightColor : Prefs.sightsAllColor;
+		var m = color.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
+		if(!m) { return; }
+		var rgb = getRGBfromString(m);
+		
+		var c = rgb.r+','+rgb.g+','+rgb.b;
+		var o = (darkBackgroundRGB(rgb)) ? '255,255,255' : '0,0,0';
+		
+		sscode += ' window['+objName+'_UUID="'+_UUID+'"] box[anonid="highlightSights"][sightsStyle="focus"]:not([current]),\n';
+		sscode += ' window['+objName+'_UUID="'+_UUID+'"] box[anonid="highlightSights"][sightsStyle="circle"]:not([current]) box[innerContainer] box {\n';
+		sscode += '  -moz-border-top-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+', 0.85) rgba('+o+', 0.5) rgba('+c+', 0.4) rgba('+c+', 0.15) !important;\n';
+		sscode += '  -moz-border-bottom-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+', 0.85) rgba('+o+', 0.5) rgba('+c+', 0.4) rgba('+c+', 0.15) !important;\n';
+		sscode += '  -moz-border-left-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+', 0.85) rgba('+o+', 0.5) rgba('+c+', 0.4) rgba('+c+', 0.15) !important;\n';
+		sscode += '  -moz-border-right-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+', 0.85) rgba('+o+', 0.5) rgba('+c+', 0.4) rgba('+c+', 0.15) !important;\n';
+		sscode += ' }\n';
 		
 		sscode += '}';
 		
@@ -309,15 +299,17 @@ this.sights = {
 Modules.LOADMODULE = function() {
 	Styles.load('sights', 'sights');
 	
-	if(preferencesDialog) {
-		Listeners.add($('pref-sightsSameColor'), 'change', sights);
-		Listeners.add($('pref-sightsSameColorAll'), 'change', sights);
-		Watchers.addAttributeWatcher($('selectColor'), 'color', sights);
-		Watchers.addAttributeWatcher($('highlightsColor'), 'color', sights);
-		Watchers.addAttributeWatcher($('sightsColor'), 'color', sights);
-		sights.preferencesColor();
-		return;
-	}
+	Prefs.listen('selectColor', sights);
+	Prefs.listen('highlightColor', sights);
+	Prefs.listen('sightsColor', sights);
+	Prefs.listen('sightsSameColor', sights);
+	Prefs.listen('sightsSameColorAll', sights);
+	Prefs.listen('sightsAllColor', sights);
+	Prefs.listen('sightsAllSameColor', sights);
+	
+	sights.color();
+	
+	if(preferencesDialog) { return; }
 	
 	if(viewSource) {
 		Listeners.add(viewSource, 'resize', sights);
@@ -361,35 +353,13 @@ Modules.LOADMODULE = function() {
 		}
 	);
 	
-	Prefs.listen('selectColor', sights);
-	Prefs.listen('highlightColor', sights);
-	Prefs.listen('sightsColor', sights);
-	Prefs.listen('sightsSameColor', sights);
-	Prefs.listen('sightsSameColorAll', sights);
-	Prefs.listen('sightsAllColor', sights);
-	Prefs.listen('sightsAllSameColor', sights);
 	Prefs.listen('sightsCurrent', sights);
 	Prefs.listen('sightsHighlights', sights);
 	
-	sights.color();
 	Observers.notify('ReHighlightAll');
 }
 
 Modules.UNLOADMODULE = function() {
-	if(preferencesDialog) {
-		Styles.unload('sightsColor_'+_UUID);
-		Listeners.remove($('pref-sightsSameColor'), 'change', sights);
-		Listeners.remove($('pref-sightsSameColorAll'), 'change', sights);
-		Watchers.removeAttributeWatcher($('selectColor'), 'color', sights);
-		Watchers.removeAttributeWatcher($('highlightsColor'), 'color', sights);
-		Watchers.removeAttributeWatcher($('sightsColor'), 'color', sights);
-		return;
-	}
-	
-	if(viewSource) {
-		Listeners.remove(viewSource, 'resize', sights);
-	}
-	
 	Prefs.unlisten('selectColor', sights);
 	Prefs.unlisten('highlightColor', sights);
 	Prefs.unlisten('sightsColor', sights);
@@ -397,12 +367,18 @@ Modules.UNLOADMODULE = function() {
 	Prefs.unlisten('sightsSameColorAll', sights);
 	Prefs.unlisten('sightsAllColor', sights);
 	Prefs.unlisten('sightsAllSameColor', sights);
+	
+	Styles.unload('sightsColor_'+_UUID);
+	
+	if(preferencesDialog) { return; }
+	
+	if(viewSource) {
+		Listeners.remove(viewSource, 'resize', sights);
+	}
 	Prefs.unlisten('sightsCurrent', sights);
 	Prefs.unlisten('sightsHighlights', sights);
 	
 	deinitFindBar('sights');
-	
-	Styles.unload('sightsColor_'+_UUID);
 	
 	if(UNLOADED || (!Prefs.sightsCurrent && !Prefs.sightsHighlights)) {
 		Styles.unload('sights', 'sights');

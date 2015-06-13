@@ -1,13 +1,22 @@
+// VERSION = '1.8.0';
+
 // This looks for file defaults.js in resource folder, expects:
-//	defaultsVersion - (string) version of defaults.js file, not mandatory but always helpful
 //	objName - (string) main object name for the add-on, to be added to window element
 //	objPathString - (string) add-on path name to use in URIs
-//	prefList: (object) { prefName: defaultValue } - add-on preferences
+//	addonUUID = (string) used to register the add-on's about: uri; must be unique for each add-on! See http://www.famkruithof.net/uuid/uuidgen for generating one
+//	prefList - (object) { prefName: defaultValue } - add-on preferences
+//	paneList - (iterable) of array with a panes arguments to apply to PrefPanes.setList(); see PrefPanes.jsm
+//	addonUris - (object) containing any of the following string properties
+//		homepage: add-on homepage
+//		support: add-on support page
+//		fullchangelog: add-on detailed changelog (usually github commits page)
+//		email: developer e-mail
+//		profile: developer profile or homepage
+//		api: address from where it should fetch the data for the About pane's current development state
+//		development: where the follow ongoing add-on development
 //	startConditions(aData, aReason) -	(optional) (method) should return false if any requirements the add-on needs aren't met,
 //						otherwise return true or call continueStartup(aData, aReason)
-//	onStartup/onShutdown/onInstall/onUninstall(aData, aReason) - (optional) (methods) to be called on startup() and shutdown() to initialize and terminate the add-on
-//	resource folder in installpath, with modules folder containing Modules, sandboxUtils and utils modules
-//	chrome.manifest file with content, locale and skin declarations properly set
+//	onStartup/onShutdown/onInstall/onUninstall(aData, aReason) - (optional) (methods) to be called appropriately as their name suggest
 // handleDeadObject(ex) - 	expects [nsIScriptError object] ex. Shows dead object notices as warnings only in the console.
 //				If the code can handle them accordingly and firefox does its thing, they shouldn't cause any problems.
 // prepareObject(window, aName) - initializes a window-dependent add-on object with utils loaded into it, returns the newly created object
@@ -27,10 +36,8 @@
 //	aCallback - (function(aSubject)) to be called on aSubject
 //	(optional) beforeComplete - (bool) if true, aCallback will be called on aSubject immediately, regardless of its readyState value; defaults to false.
 // disable() - disables the add-on, in general the add-on disabling itself is a bad idea so I shouldn't use it
-// Note: Firefox 34 is the minimum version supported as the modules assume we're in a version with Australis already,
-// along with xulStore already implemented, in detriment of localstore.rdf.
+// Note: Firefox 38 is the minimum version supported as the script assumes the resource path will be automatically loaded from chrome.manifest.
 
-let bootstrapVersion = '1.7.6';
 let UNLOADED = false;
 let STARTED = false;
 let Addon = {};
@@ -41,6 +48,24 @@ let isChrome = true;
 
 // Globals - lets me use objects that I can share through all the windows
 let Globals = {};
+
+// actual add-on data, to be overriden by defaults.js
+let objName = null;
+let objPathString = null;
+let prefList = null;
+let paneList = null;
+let addonUUID = null;
+
+// add-on relevant links, to be overriden by defaults.js
+let addonUris = {
+	homepage: '',
+	support: '',
+	fullchangelog: '',
+	email: '',
+	profile: '',
+	api: '',
+	development: ''
+};
 
 const {classes: Cc, interfaces: Ci, utils: Cu, manager: Cm, results: Cr} = Components;
 Cu.import("resource://gre/modules/Services.jsm");
@@ -100,7 +125,8 @@ function prepareObject(window, aName) {
 		window: window,
 		get document () { return window.document; },
 		$: function(id) { return window.document.getElementById(id); },
-		$$: function(sel) { return window.document.querySelectorAll(sel); }
+		$$: function(sel, parent = window.document) { return parent.querySelectorAll(sel); },
+		$ª: function(parent, anonid, anonattr = 'anonid') { return window.document.getAnonymousElementByAttribute(parent, anonattr, anonid); }
 	};
 	
 	Services.scriptloader.loadSubScript("resource://"+objPathString+"/modules/utils/Modules.jsm", window[objectName]);
@@ -184,31 +210,6 @@ function callOnLoad(aSubject, aCallback, beforeComplete) {
 	}, false);
 }
 
-function setResourceHandler() {
-	let alias = Services.io.newFileURI(AddonData.installPath);
-	let resourceURI = (AddonData.installPath.isDirectory()) ? alias.spec : 'jar:' + alias.spec + '!/';
-	resourceURI += 'resource/';
-	
-	// Set the default strings for the add-on
-	Services.scriptloader.loadSubScript(resourceURI + 'defaults.js', this);
-	
-	alias = Services.io.newURI(resourceURI, null, null);
-	let resource = Services.io.getProtocolHandler("resource").QueryInterface(Ci.nsIResProtocolHandler);
-	resource.setSubstitution(objPathString, alias);
-	
-	// Get the utils.jsm module into our sandbox
-	Services.scriptloader.loadSubScript("resource://"+objPathString+"/modules/utils/Modules.jsm", this);
-	Services.scriptloader.loadSubScript("resource://"+objPathString+"/modules/utils/sandboxUtilsPreload.jsm", this);
-	Modules.load("utils/sandboxUtils");
-}
-
-function removeResourceHandler() {
-	Modules.unload("utils/sandboxUtils");
-	
-	let resource = Services.io.getProtocolHandler("resource").QueryInterface(Ci.nsIResProtocolHandler);
-	resource.setSubstitution(objPathString, null);
-}
-
 function disable() {
 	AddonManager.getAddonByID(AddonData.id, function(addon) {
 		addon.userDisabled = true;
@@ -217,6 +218,12 @@ function disable() {
 
 function continueStartup(aReason) {
 	STARTED = aReason;
+	
+	// append actual preferences panes into the preferences tab
+	if(paneList) {
+		PrefPanes.setList(paneList);
+	}
+	
 	if(typeof(onStartup) == 'function') {
 		onStartup(AddonData, aReason);
 	}
@@ -237,12 +244,21 @@ function startup(aData, aReason) {
 		Addon = addon;
 	});
 	
-	// add resource:// protocol handler so I can access my modules
-	setResourceHandler();
+	// Set the default strings for the add-on
+	let alias = Services.io.newFileURI(AddonData.installPath);
+	let defaultsURI = ((AddonData.installPath.isDirectory()) ? alias.spec : 'jar:' + alias.spec + '!/')+'resource/defaults.js';
+	Services.scriptloader.loadSubScript(defaultsURI, this);
+	
+	// Get the utils.jsm module into our sandbox
+	Services.scriptloader.loadSubScript("resource://"+objPathString+"/modules/utils/Modules.jsm", this);
+	Services.scriptloader.loadSubScript("resource://"+objPathString+"/modules/utils/sandboxUtilsPreload.jsm", this);
+	Modules.load("utils/sandboxUtils");
 	
 	// set add-on preferences defaults
 	// This should come before startConditions() so we can use it in there
-	Prefs.setDefaults(prefList);
+	if(prefList) {
+		Prefs.setDefaults(prefList);
+	}
 	
 	if(typeof(startConditions) != 'function' || startConditions(aReason)) {
 		continueStartup(aReason);
@@ -263,14 +279,12 @@ function shutdown(aData, aReason) {
 	}
 	
 	if(STARTED) {
-		closeOptions();
 		if(typeof(onShutdown) == 'function') {
 			onShutdown(aData, aReason);
 		}
 	}
 	
-	// remove resource://
-	removeResourceHandler();
+	Modules.unload("utils/sandboxUtils");
 	removeOnceListener();
 }
 

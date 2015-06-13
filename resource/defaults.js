@@ -1,6 +1,26 @@
-var defaultsVersion = '1.4.4';
-var objName = 'findbartweak';
-var objPathString = 'findbartweak';
+// VERSION = '1.5.0';
+
+objName = 'findbartweak';
+objPathString = 'findbartweak';
+addonUUID = '9596d590-f177-11e4-b939-0800200c9a66';
+
+addonUris = {
+	homepage: 'https://addons.mozilla.org/firefox/addon/findbar-tweak/',
+	support: 'https://github.com/Quicksaver/FindBar-Tweak/issues',
+	fullchangelog: 'https://github.com/Quicksaver/FindBar-Tweak/commits/master',
+	email: 'mailto:quicksaver@gmail.com',
+	profile: 'https://addons.mozilla.org/firefox/user/quicksaver/',
+	api: 'http://fasezero.com/addons/api/findbartweak',
+	development: 'http://fasezero.com/addons/'
+};
+
+paneList = [
+	[ "paneGeneral" ],
+	[ "paneAppearance" ],
+	[ "paneHighlights" ],
+	[ "paneSights", true ],
+	[ "paneTweaks", true ]
+];
 
 // We define this here so we can use it also as the default value for the preference
 this.__defineGetter__('minTextboxWidth', function() {
@@ -13,9 +33,9 @@ this.__defineGetter__('minTextboxWidth', function() {
 });
 
 // Some of our preferences should coincide with firefox defaults that may change with OS
-var defaultBranch = Services.prefs.getDefaultBranch('');
+let defaultBranch = Services.prefs.getDefaultBranch('');
 
-var prefList = {
+prefList = {
 	highlightByDefault: true,
 	highlightOnFindAgain: false,
 	hideWhenFinderHidden: false,
@@ -69,11 +89,7 @@ var prefList = {
 	FAYTtimeout: defaultBranch.getIntPref('accessibility.typeaheadfind.timeout'),
 	FAYTenabled: defaultBranch.getBoolPref('accessibility.typeaheadfind'),
 	FAYTprefill: defaultBranch.getBoolPref('accessibility.typeaheadfind.prefillwithselection'),
-	resetNative: false,
-	
-	// for the what's new tab, it's better they're here so they're automatically carried over to content
-	lastVersionNotify: '0',
-	notifyOnUpdates: true
+	resetNative: false
 };
 
 function startAddon(window) {
@@ -83,12 +99,6 @@ function startAddon(window) {
 
 function stopAddon(window) {
 	removeObject(window);
-}
-
-function startPreferences(window) {
-	replaceObjStrings(window.document);
-	preparePreferences(window);
-	window[objName].Modules.load('preferences', true);
 }
 
 function onStartup(aReason) {
@@ -104,12 +114,6 @@ function onStartup(aReason) {
 	// Apply the add-on to every window opened and to be opened
 	Windows.callOnAll(startAddon, 'navigator:view-source');
 	Windows.register(startAddon, 'domwindowopened', 'navigator:view-source');
-	
-	// Apply the add-on to every preferences window opened and to be opened
-	Windows.callOnAll(startPreferences, null, "chrome://"+objPathString+"/content/options.xul");
-	Windows.register(startPreferences, 'domwindowopened', null, "chrome://"+objPathString+"/content/options.xul");
-	Browsers.callOnAll(startPreferences, "chrome://"+objPathString+"/content/options.xul");
-	Browsers.register(startPreferences, 'pageshow', "chrome://"+objPathString+"/content/options.xul");
 }
 
 function onShutdown(aReason) {

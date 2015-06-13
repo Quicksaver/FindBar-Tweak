@@ -1,4 +1,4 @@
-Modules.VERSION = '1.5.1';
+Modules.VERSION = '1.6.0';
 Modules.UTILS = true;
 
 // Keysets - handles editable keysets for the add-on
@@ -81,10 +81,67 @@ this.Keysets = {
 	// Restricts available key combos, I'm setting all displaying keys and other common ones to at least need the Ctrl key
 	allCodesAccel: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', ' ', 'VK_PAGE_UP', 'VK_PAGE_DOWN', 'VK_HOME', 'VK_END', 'VK_UP', 'VK_DOWN', 'VK_LEFT', 'VK_RIGHT', '.', ',', ';', '/', '\\', '=', '+', '-', '*', '<', '>' ],
 	
+	// Function keys should work by themselves without any modifiers
 	allCodes: ['VK_F1', 'VK_F2', 'VK_F3', 'VK_F4', 'VK_F5', 'VK_F6', 'VK_F7', 'VK_F8', 'VK_F9', 'VK_F10', 'VK_F11', 'VK_F12', 'VK_F13', 'VK_F14', 'VK_F15', 'VK_F16', 'VK_F17', 'VK_F18', 'VK_F19', 'VK_F20', 'VK_F21', 'VK_F22', 'VK_F23', 'VK_F24'],
 	
-	translateToConstantCode: function(input) {
-		var keycode = input;
+	// all the codes to be filled into selection menus, in the order they should be shown
+	fillCodes: [
+		['none', Strings.get('utils/keys', 'none')],
+		['A'],['B'],['C'],['D'],['E'],['F'],['G'],['H'],['I'],['J'],['K'],['L'],['M'],['N'],['O'],['P'],['Q'],['R'],['S'],['T'],['U'],['V'],['W'],['X'],['Y'],['Z'],
+		[' ', Strings.get('utils/keys', 'spacebar')],
+		['VK_PAGE_UP', Strings.get('utils/keys', 'pageup')],
+		['VK_PAGE_DOWN', Strings.get('utils/keys', 'pagedown')],
+		['VK_HOME', Strings.get('utils/keys', 'home')],
+		['VK_END', Strings.get('utils/keys', 'end')],
+		['VK_UP', Strings.get('utils/keys', 'up')],
+		['VK_DOWN', Strings.get('utils/keys', 'down')],
+		['VK_LEFT', Strings.get('utils/keys', 'left')],
+		['VK_RIGHT', Strings.get('utils/keys', 'right')],
+		['.'],[','],[';'],['/'],['\\'],['='],['+'],['-'],['*'],['<'],['>'],
+		['VK_F1', 'F1'],
+		['VK_F2', 'F2'],
+		['VK_F3', 'F3'],
+		['VK_F4', 'F4'],
+		['VK_F5', 'F5'],
+		['VK_F6', 'F6'],
+		['VK_F7', 'F7'],
+		['VK_F8', 'F8'],
+		['VK_F9', 'F9'],
+		['VK_F10', 'F10'],
+		['VK_F11', 'F11'],
+		['VK_F12', 'F12'],
+		['VK_F13', 'F13'],
+		['VK_F14', 'F14'],
+		['VK_F15', 'F15'],
+		['VK_F16', 'F16'],
+		['VK_F17', 'F17'],
+		['VK_F18', 'F18'],
+		['VK_F19', 'F19'],
+		['VK_F20', 'F20'],
+		['VK_F21', 'F21'],
+		['VK_F22', 'F22'],
+		['VK_F23', 'F23'],
+		['VK_F24', 'F24']
+	],
+	
+	// for the preferences tab, to auto-fill all the key options and labels
+	fillKeyStrings: function(key) {
+		setAttribute(key.accelBox, 'label', Strings.get('utils/keys', DARWIN ? 'command' : 'control'));
+		setAttribute(key.shiftBox, 'label', Strings.get('utils/keys', 'shift'));
+		setAttribute(key.altBox, 'label', Strings.get('utils/keys', DARWIN ? 'option' : 'alt'));
+		
+		for(let entry of this.fillCodes) {
+			let item = key.menu.ownerDocument.createElement('menuitem');
+			item.setAttribute('value', entry[0]);
+			item.setAttribute('label', entry[1] || entry[0]);
+			key.menu.appendChild(item);
+		}
+		
+		// make sure the box label is updated to the current item's label
+		key.node.value = key.node.value;
+	},
+	
+	translateToConstantCode: function(keycode) {
 		if(!keycode.startsWith('DOM_')) {
 			if(!keycode.startsWith('VK_')) {
 				switch(keycode) {

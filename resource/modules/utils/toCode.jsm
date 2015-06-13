@@ -1,4 +1,4 @@
-Modules.VERSION = '1.2.0';
+Modules.VERSION = '1.2.1';
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -38,7 +38,7 @@ this.toCode = {
 				Cu.reportError('Could not find occurence of string '+param[0]+' in '+aName+'! Interrupting modification.');
 				return;
 			}
-			methodCode = methodCode.replace(param[0][0], param[0][1].replace("{([objName])}", objName));
+			methodCode = methodCode.replace(param[0], param[1].replace("{([objName])}", objName));
 		}
 		
 		try {
@@ -46,7 +46,10 @@ this.toCode = {
 			newRecord.newCode = aObj[fnName].toString();
 			this._records.set(aName, newRecord);
 		}
-		catch(ex) { Cu.reportError(ex); }
+		catch(ex) {
+			Cu.reportError('Error modifying '+aName/*+' :: '+methodCode*/);
+			Cu.reportError(ex);
+		}
 	},
 	
 	revert: function(aObj, aName) {

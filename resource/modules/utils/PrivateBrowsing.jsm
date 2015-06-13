@@ -1,10 +1,12 @@
-Modules.VERSION = '3.2.1';
+Modules.VERSION = '3.2.2';
 Modules.UTILS = true;
 
 // PrivateBrowsing - Aid object for private browsing mode
 // get autoStarted - returns (bool) pb permanentPrivateBrowsing
 // get inPrivateBrowing - returns (bool) isWindowPrivate(window) for this window
-// addWatcher(aWatcher) - 	prepares aWatcher to be used as a PB handler
+// isPrivate(aWindow) - returns (bool) whether the provided window is private
+//	aWindow - (chromeWindow) window to check if is in private mode
+// addWatcher(aWatcher) - prepares aWatcher to be used as a PB handler
 //	aWatcher - (object) to register as a pb observer,
 //		expects methods (all optional):
 //			init: called when object is applied as a private browsing mode watcher
@@ -17,7 +19,11 @@ Modules.UTILS = true;
 //	see addWatcher()
 this.PrivateBrowsing = {
 	get autoStarted () { return PrivateBrowsingUtils.permanentPrivateBrowsing; },
-	get inPrivateBrowsing () { return PrivateBrowsingUtils.isWindowPrivate(window); },
+	get inPrivateBrowsing () { return this.isPrivate(window); },
+	
+	isPrivate: function(aWindow) {
+		return PrivateBrowsingUtils.isWindowPrivate(aWindow);
+	},
 	
 	prepare: function(aWatcher) {
 		if(!aWatcher.observe) {

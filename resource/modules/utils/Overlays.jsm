@@ -1,4 +1,4 @@
-Modules.VERSION = '2.14.4';
+Modules.VERSION = '2.15.3';
 Modules.UTILS = true;
 
 // Overlays - to use overlays in my bootstraped add-ons. The behavior is as similar to what is described in https://developer.mozilla.org/en/XUL_Tutorial/Overlays as I could manage.
@@ -9,22 +9,22 @@ Modules.UTILS = true;
 // Overlays can also have their own:
 //	stylesheets by placing at the top of the overlay: <?xml-stylesheet href="chrome://addon/skin/sheet.css" type="text/css"?>
 //	DTD's by the usual method: <!DOCTYPE window [ <!ENTITY % nameDTD SYSTEM "chrome://addon/locale/file.dtd"> %nameDTD; ]>
-//	scripts using the script tag when as a direct child of the overlay element (effects of these won't be undone when unloading the overlay, I have to 
-//		undo it in the onunload function passed to overlayURI() ). Any script that changes the DOM structure might produce unpredictable results!
-//		To avoid using eval unnecessarily, only scripts with src will be imported for now.
+//	scripts using the script tag when as a direct child of the overlay element (effects of these won't be automatically undone when unloading the overlay.
+//		Any script that changes the DOM structure might produce unpredictable results! To avoid using eval unnecessarily, only scripts with src will be imported for now.
 // 
 // The overlay element surrounds the overlay content. It uses the same namespace as XUL window files. The id of these items should exist in the window's content.
 // Its content will be added to the window where a similar element exists with the same id value. If such an element does not exist, that part of the overlay is ignored.
 // If there is content inside both the XUL window and in the overlay, the window's content will be used as is and the overlay's content will be appended to the end.
 // The children of the overlay's element are inserted as children of the base window's element. The following attributes are processed in the order they are declared in the overlay:
-//	If the overlay's element contains an insertbefore attribute, the element is added just before the element in the base window with the id that matches the value of this attribute.
-//	If the overlay's element contains an insertafter attribute, the element is added just after the element in the base window with the id that matches the value of this attribute.
+//	If the overlay's element contains an insertbefore attribute, the element is added just before the element in the base window with the id that matches this attribute.
+//	If the overlay's element contains an insertafter attribute, the element is added just after the element in the base window with the id that matches this attribute.
 //	If the overlay's element contains an position attribute, the element is added at the one-based index specified in this attribute.
 //	Otherwise, the element is added as the last child.
 // If you would like to remove an element that is already in the XUL file, create elements with removeelement attribute.
 // Attention: this won't work in customizable elements, such as toolbars or palette items!
 // To move an already existant node to another place, add a newparent attribute with the id of the new parent element. If it exists, it will be moved there. This can be used
 //	together with insertafter, insertbefore and position attributes, which will be relative to the new parent and consequently new siblings.
+// To remove an attribute from an overlayed element, simply set its value to "__remove".
 // 
 // For overlaying preferences dialogs, you can add new preferences in an unnamed <preferences> element. They will be added to an already existing <preferences> element if present,
 // or the whole element will be overlayed if not.
@@ -48,15 +48,16 @@ Modules.UTILS = true;
 // in the window during startup/load), you can set attribute "waitForSS" with space-separated list of stylesheet URIs for which the element should wait. The element will be collapsed
 // until all the stylesheets in the attribute are loaded.
 // 
-// overlayURI(aURI, aWith, beforeload, onload, onunload) - overlays aWith in all windows with aURI
+// overlayURI(aURI, aWith, aListener) - overlays aWith in all windows with aURI
 //	aURI - (string) uri to be overlayed
 //	aWith - (string) uri to overlay aURI, can be fileName found as chrome://objPathString/content/fileName.xul or already the full uri path
-//	(optional) beforeload ( function(window) ) is called before the window is overlayed, expects a (object) window argument
-//	(optional) onload - ( function(window) ) to be called when aURI is overlayed with aWith, expects a (object) window argument
-//	(optional) onunload - ( function(window) ) to be called when aWith is unloaded from aURI, expects a (object) window argument
+//	(optional) aListener - (object) with any of the following methods:
+//		beforeLoad - ( function(window) ) is called before the window is overlayed, expects a (object) window argument
+//		onLoad - ( function(window) ) to be called when aURI is overlayed with aWith, expects a (object) window argument
+//		onUnload - ( function(window) ) to be called when aWith is unloaded from aURI, expects a (object) window argument
 // removeOverlayURI(aURI, aWith) - removes aWith overlay from all windows with aURI
 //	see overlayURI()
-// overlayWindow(aWindow, aWith, beforeload, onload, onunload) - overlays aWindow with aWith
+// overlayWindow(aWindow, aWith, aListener) - overlays aWindow with aWith
 //	aWindow - (object) window object to be overlayed
 //	see overlayURI()
 // removeOverlayWindow(aWindow, aWith) - removes aWith overlay from aWindow
@@ -74,16 +75,14 @@ this.Overlays = {
 	_obj: '_OVERLAYS_'+objName,
 	overlays: [],
 	
-	overlayURI: function(aURI, aWith, beforeload, onload, onunload) {
+	overlayURI: function(aURI, aWith, aListener) {
 		var path = this.getPath(aWith);
 		if(!path || this.loadedURI(aURI, path) !== false) { return; }
 		
 		var newOverlay = {
 			uri: aURI,
 			overlay: path,
-			beforeload: beforeload || null,
-			onload: onload || null,
-			onunload: onunload || null,
+			listener: aListener || {},
 			document: null,
 			ready: false,
 			persist: {}
@@ -150,7 +149,7 @@ this.Overlays = {
 		});
 	},
 	
-	overlayWindow: function(aWindow, aWith, beforeload, onload, onunload) {
+	overlayWindow: function(aWindow, aWith, aListener) {
 		var path = this.getPath(aWith);
 		if(!path || this.loadedWindow(aWindow, path) !== false) { return; }
 		
@@ -159,9 +158,7 @@ this.Overlays = {
 			traceBack: [],
 			removeMe: function() { Overlays.removeOverlay(aWindow, this); },
 			time: 0,
-			beforeload: beforeload || null,
-			onload: onload || null,
-			onunload: onunload || null,
+			listener: aListener || {},
 			document: null,
 			ready: false,
 			loaded: false,
@@ -199,7 +196,7 @@ this.Overlays = {
 				}
 				
 				replaceObjStrings(overlay.document);
-				Overlays.cleanXUL(overlay.document, overlay);
+				this.cleanXUL(overlay.document, overlay);
 				overlay.ready = true;
 				this.scheduleAll(aWindow);
 			}
@@ -549,8 +546,8 @@ this.Overlays = {
 		}
 		if(i == -1) { return; } 
 		
-		if(overlay.loaded && overlay.onunload) {
-			try { overlay.onunload(aWindow); }
+		if(overlay.loaded && overlay.listener.onUnload) {
+			try { overlay.listener.onUnload(aWindow); }
 			catch(ex) { Cu.reportError(ex); }
 		}
 		
@@ -903,7 +900,7 @@ this.Overlays = {
 					removeMe: function() { Overlays.removeOverlay(aWindow, this); },
 					time: 0,
 					loaded: false,
-					onunload: x.onunload
+					listener: x.listener
 				};
 				aWindow[this._obj].push(aWindow._BEING_OVERLAYED);
 				
@@ -929,8 +926,8 @@ this.Overlays = {
 	},
 	
 	overlayDocument: function(aWindow, overlay) {
-		if(overlay.beforeload) {
-			try { overlay.beforeload(aWindow); }
+		if(overlay.listener.beforeLoad) {
+			try { overlay.listener.beforeLoad(aWindow); }
 			catch(ex) { Cu.reportError(ex); }
 		}
 		
@@ -956,8 +953,8 @@ this.Overlays = {
 		
 		this.persistOverlay(aWindow, overlay);
 		
-		if(overlay.onload) {
-			try { overlay.onload(aWindow); }
+		if(overlay.listener.onLoad) {
+			try { overlay.listener.onLoad(aWindow); }
 			catch(ex) { Cu.reportError(ex); }
 		}
 	},
@@ -1471,14 +1468,13 @@ this.Overlays = {
 			var getNode = aWindow.document.getElementById(trim(id));
 			if(!getNode) { continue; }
 			
-			var curChild = getNode.firstChild;
-			while(curChild) {
-				if(curChild.nodeName == 'preferences' || isAncestor(node, curChild)) {
-					curChild = curChild.nextSibling;
-					continue;
-				}
+			var child = getNode.firstChild
+			while(child) {
+				let move = child;
+				child = child.nextSibling;
+				if(move.nodeName == 'preferences' || isAncestor(node, move)) { continue; }
 				
-				this.appendChild(aWindow, curChild, node);
+				this.appendChild(aWindow, move, node);
 			}
 		}
 	},
@@ -1756,7 +1752,8 @@ this.Overlays = {
 				name: attr.name,
 				value: node.getAttribute(attr.name)
 			});
-		} else {
+		}
+		else if(attr.value != '__remove') {
 			this.traceBack(aWindow, {
 				action: 'addAttribute',
 				node: node,
@@ -1764,7 +1761,14 @@ this.Overlays = {
 			});
 		}
 		
-		try { node.setAttribute(attr.name, attr.value); } catch(ex) {}
+		try { 
+			if(attr.value == '__remove') {
+				node.removeAttribute(attr.name);
+			} else {
+				node.setAttribute(attr.name, attr.value);
+			}
+		}
+		catch(ex) {}
 	},
 	
 	appendXMLSS: function(aWindow, node) {
@@ -1785,30 +1789,38 @@ this.Overlays = {
 		var prefPane = aWindow.document.getElementById(node.parentNode.id);
 		if(!prefPane) { return; }
 		
-		var preferences = prefPane.getElementsByTagName('preferences');
-		if(preferences.length == 0) {
+		var preferences = prefPane.getElementsByTagName('preferences')[0];
+		if(!preferences) {
 			try {
-				var prefsNode = aWindow.document.importNode(node, true);
+				// don't clone, it bugs out saying this.preferences (on each preference) doesn't exist
+				preferences = aWindow.document.createElement('preferences');
 				prefPane.appendChild(preferences);
-			} catch(ex) {}
-			this.traceBack(aWindow, {
-				action: 'addPreferencesElement',
-				prefs: preferences
-			});
-			return;
+				
+				this.traceBack(aWindow, {
+					action: 'addPreferencesElement',
+					prefs: preferences
+				});
+			}
+			catch(ex) { Cu.reportError(ex); }
 		}
 		
-		for(let p of node.childNodes) {
-			if(!p.id) { continue; }
+		for(let child of node.childNodes) {
+			if(!child.id) { continue; }
 			
 			try {
-				var pref = aWindow.document.importNode(p, true);
-				preferences[0].appendChild(pref);
-			} catch(ex) {}
-			this.traceBack(aWindow, {
-				action: 'addPreference',
-				pref: pref
-			});
+				// don't clone, same as above
+				var pref = aWindow.document.createElement('preference');
+				for(let attr of child.attributes) {
+					pref.setAttribute(attr.name, attr.value);
+				}
+				preferences.appendChild(pref);
+				
+				this.traceBack(aWindow, {
+					action: 'addPreference',
+					pref: pref
+				});
+			}
+			catch(ex) { Cu.reportError(ex); }
 		}
 	},
 	

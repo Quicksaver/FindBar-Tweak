@@ -17,7 +17,7 @@
 	
 	<popupset id="mainPopupSet">
 		<menupopup id="objName_findbarMenu">
-			<menuitem label="&MenuOptions.label;" oncommand="objName.doOpenOptions();" />
+			<menuitem label="&MenuOptions.label;" oncommand="objName.openOptions();" />
 		</menupopup>
 	</popupset>
 	

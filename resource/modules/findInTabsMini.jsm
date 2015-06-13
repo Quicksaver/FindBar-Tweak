@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.2';
+Modules.VERSION = '2.1.3';
 
 this.FITMini = {
 	get broadcaster() { return $(objName+'-findInTabs-broadcaster'); },
@@ -132,7 +132,70 @@ this.FITMini = {
 		Observers.notify('FIT:Update', browser, 'updateBrowser');
 	},
 	
+	onLoad: function() {
+		if(viewSource) {
+			FITSandbox.viewSources.add(window);
+		} else {
+			FITSandbox.navigators.add(window);
+		}
+		
+		initFindBar('findInTabsMini',
+			(bar) => {
+				var toggleButton = document.createElement('toolbarbutton');
+				setAttribute(toggleButton, 'anonid', objName+'-find-tabs');
+				setAttribute(toggleButton, 'class', 'findbar-button findbar-tabs tabbable findbar-no-find-fast');
+				setAttribute(toggleButton, 'observes', objName+'-findInTabs-broadcaster');
+				bar.getElement("findbar-container").insertBefore(toggleButton, bar.getElement('find-case-sensitive').nextSibling);
+				
+				// make sure the australis styling is also applied to the FIT button
+				buttonLabels.toggle();
+				
+				bar.browser.finder.addResultListener(this);
+			},
+			(bar) => {
+				bar.browser.finder.removeResultListener(this);
+				
+				bar.getElement(objName+'-find-tabs').remove();
+			}
+		);
+		
+		Messenger.listenWindow(window, 'FIT:Find', this);
+		
+		if(!viewSource) {
+			// Update FIT lists as needed
+			Listeners.add(gBrowser.tabContainer, 'TabClose', this);
+			Listeners.add(gBrowser.tabContainer, 'TabSelect', this);
+			Listeners.add(gBrowser.tabContainer, 'TabOpen', this);
+		}
+		
+		Observers.add(this, 'FIT:Load');
+		Observers.add(this, 'FIT:Unoad');
+		
+		// make sure all browsers in this window have the FIT content script loaded, in case it is needed
+		if(FITSandbox.fulls.size > 0) {
+			this.observe(null, 'FIT:Load');
+		}
+		
+		if(Services.wm.getMostRecentWindow(null) == window) {
+			this.sendToUpdate();
+		}
+	},
+	
 	onUnload: function() {
+		deinitFindBar('findInTabsMini');
+		deinitFindBar('findInTabsContent');
+		
+		Observers.remove(this, 'FIT:Load');
+		Observers.remove(this, 'FIT:Unoad');
+		
+		if(!viewSource) {
+			Listeners.remove(gBrowser.tabContainer, 'TabClose', this);
+			Listeners.remove(gBrowser.tabContainer, 'TabSelect', this);
+			Listeners.remove(gBrowser.tabContainer, 'TabOpen', this);
+		}
+		
+		Messenger.unlistenWindow(window, 'FIT:Find', this);
+		
 		if((window.closed || window.willClose) && !UNLOADED && Prefs.findInTabs) {
 			if(!viewSource) {
 				FITSandbox.navigators.delete(window);
@@ -155,55 +218,7 @@ Modules.LOADMODULE = function() {
 		return;
 	}
 	
-	Overlays.overlayWindow(window, 'findInTabsMini', null, function() {
-		alwaysRunOnClose.push(FITMini.onUnload);
-		if(viewSource) {
-			FITSandbox.viewSources.add(window);
-		} else {
-			FITSandbox.navigators.add(window);
-		}
-		
-		initFindBar('findInTabsMini',
-			function(bar) {
-				var toggleButton = document.createElement('toolbarbutton');
-				setAttribute(toggleButton, 'anonid', objName+'-find-tabs');
-				setAttribute(toggleButton, 'class', 'findbar-button findbar-tabs tabbable findbar-no-find-fast');
-				setAttribute(toggleButton, 'observes', objName+'-findInTabs-broadcaster');
-				bar.getElement("findbar-container").insertBefore(toggleButton, bar.getElement('find-case-sensitive').nextSibling);
-				
-				// make sure the australis styling is also applied to the FIT button
-				buttonLabels.toggle();
-				
-				bar.browser.finder.addResultListener(FITMini);
-			},
-			function(bar) {
-				bar.browser.finder.removeResultListener(FITMini);
-				
-				bar.getElement(objName+'-find-tabs').remove();
-			}
-		);
-		
-		Messenger.listenWindow(window, 'FIT:Find', FITMini);
-		
-		if(!viewSource) {
-			// Update FIT lists as needed
-			Listeners.add(gBrowser.tabContainer, 'TabClose', FITMini);
-			Listeners.add(gBrowser.tabContainer, 'TabSelect', FITMini);
-			Listeners.add(gBrowser.tabContainer, 'TabOpen', FITMini);
-		}
-		
-		Observers.add(FITMini, 'FIT:Load');
-		Observers.add(FITMini, 'FIT:Unoad');
-		
-		// make sure all browsers in this window have the FIT content script loaded, in case it is needed
-		if(FITSandbox.fulls.size > 0) {
-			FITMini.observe(null, 'FIT:Load');
-		}
-		
-		if(Services.wm.getMostRecentWindow(null) == window) {
-			FITMini.sendToUpdate();
-		}
-	});
+	Overlays.overlayWindow(window, 'findInTabsMini', FITMini);
 };
 
 Modules.UNLOADMODULE = function() {
@@ -212,22 +227,5 @@ Modules.UNLOADMODULE = function() {
 		return;
 	}
 	
-	deinitFindBar('findInTabsMini');
-	deinitFindBar('findInTabsContent');
-	
-	Observers.remove(FITMini, 'FIT:Load');
-	Observers.remove(FITMini, 'FIT:Unoad');
-	
-	if(!viewSource) {
-		Listeners.remove(gBrowser.tabContainer, 'TabClose', FITMini);
-		Listeners.remove(gBrowser.tabContainer, 'TabSelect', FITMini);
-		Listeners.remove(gBrowser.tabContainer, 'TabOpen', FITMini);
-	}
-	
-	Messenger.unlistenWindow(window, 'FIT:Find', FITMini);
-	
 	Overlays.removeOverlayWindow(window, 'findInTabsMini');
-	
-	// this should run in alwaysRunOnClose but making sure here either way, doesn't hurt
-	FITMini.onUnload();
 };

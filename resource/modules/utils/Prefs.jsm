@@ -1,4 +1,4 @@
-Modules.VERSION = '2.5.0';
+Modules.VERSION = '2.5.1';
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -160,7 +160,7 @@ this.Prefs = {
 	
 	observe: function(aSubject, aTopic, aData) {
 		let pref = aData;
-		while(!Prefs._prefObjects[pref]) {
+		while(!this._prefObjects[pref]) {
 			if(!pref.contains('.')) {
 				Cu.reportError("Couldn't find listener handlers for preference "+aData);
 				return;
@@ -168,13 +168,13 @@ this.Prefs = {
 			pref = pref.substr(pref.indexOf('.')+1);
 		}
 		
-		for(let handler of Prefs._prefObjects[pref].listeners) {
+		for(let handler of this._prefObjects[pref].listeners) {
 			// don't block executing of other possible listeners if one fails
 			try {
 				if(handler.observe) {
-					handler.observe(pref, aTopic, Prefs[pref]);
+					handler.observe(pref, aTopic, this[pref]);
 				} else {
-					handler(pref, Prefs[pref]);
+					handler(pref, this[pref]);
 				}
 			}
 			catch(ex) { Cu.reportError(ex); }

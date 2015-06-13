@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.1';
+Modules.VERSION = '1.0.2';
 
 this.__defineGetter__('isPDFJS', function() { return Finder.isPDFJS; });
 
@@ -419,7 +419,7 @@ this.Finder = {
 		let selection = win.getSelection();
 		if(!selection.rangeCount || selection.isCollapsed) {
 			// The selection can be into an input or a textarea element.
-			let nodes = win.document.querySelectorAll("input, textarea");
+			let nodes = $$("input, textarea", win.document);
 			for(let node of nodes) {
 				if(node instanceof Ci.nsIDOMNSEditableElement && node.editor) {
 					let sc = node.editor.selectionController;

@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.3';
+Modules.VERSION = '2.0.4';
 
 this.__defineGetter__('gBrowserBox', function() { return $('browser'); });
 this.__defineGetter__('gAppContent', function() { return $('appcontent'); });
@@ -77,7 +77,7 @@ this.moveTop = function() {
 	if(!viewSource && TabsToolbar && !TabsToolbar.collapsed && TabsToolbar.getAttribute('treestyletab-tabbar-autohide-state') != 'hidden') {
 		// This is also needed when the tabs are on the left, the width of the findbar doesn't follow with the rest of the window for some reason
 		if(TabsToolbar.getAttribute('treestyletab-tabbar-position') == 'left' || TabsToolbar.getAttribute('treestyletab-tabbar-position') == 'right') {
-			var TabsSplitter = document.getAnonymousElementByAttribute($('content'), 'class', 'treestyletab-splitter');
+			var TabsSplitter = $ª($('content'), 'treestyletab-splitter', 'class');
 			topStyle.maxWidth -= TabsToolbar.clientWidth;
 			topStyle.maxWidth -= TabsSplitter.clientWidth +(TabsSplitter.clientLeft *2);
 			if(TabsToolbar.getAttribute('treestyletab-tabbar-position') == 'left') {

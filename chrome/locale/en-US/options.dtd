@@ -1,12 +1,8 @@
-<!ENTITY Optwindow.style "width: 33.5em;">
-
-<!ENTITY Options.title "FindBar Tweak">
 <!ENTITY OptHighlights.label "Highlights">
 <!ENTITY OptSightsTab.label "Sights">
 <!ENTITY OptGeneral.label "General">
 <!ENTITY OptAppearance.label "Appearance">
 <!ENTITY Opttweaks.label "Tweaks">
-<!ENTITY Optabout.label "About">
 
 <!ENTITY Optgen.label "Findbar Options">
 <!ENTITY Optdisplay.label "Findbar Position">
@@ -84,10 +80,3 @@
 <!ENTITY OptNativePrefs.warning "The add-on should handle everything automatically. Only use these if you absolutely need it!">
 <!ENTITY OptResetNativeOnDisabled.label "Reset all changed native preferences when disabling the add-on">
 <!ENTITY OptResetNativeNow.label "Reset all changed native preferences">
-
-<!ENTITY findbartweakabout.name "FindBar Tweak">
-<!ENTITY findbartweakabout.by "by Quicksaver">
-<!ENTITY findbartweakabout.desc "All information about the add-on and its developer can be found in its Mozilla Add-ons Homepage. If you liked the add-on, please consider leaving there a nice review or a small contribution to help support its continued development. Bug reports and suggestions can be made in the technical support webpage.">
-<!ENTITY findbartweakabout.home "Add-on Homepage">
-<!ENTITY findbartweakabout.tech "Technical Support">
-<!ENTITY about.notes "Release Notes">

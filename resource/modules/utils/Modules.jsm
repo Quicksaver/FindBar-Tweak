@@ -25,7 +25,7 @@ this.self = this;
 //				so that they only unload on the very end; like above, should only be used in backbone modules
 //	Modules.CLEAN - (bool) if false, this module won't be removed by clean(); defaults to true
 this.Modules = {
-	version: '2.6.0',
+	version: '2.6.1',
 	modules: new Set(),
 	moduleVars: {},
 	
@@ -76,8 +76,9 @@ this.Modules = {
 			if(!Globals.moduleCache[aModule]) {
 				var tempScope = {
 					Modules: {},
-					$: function(a) { return null; },
-					$$: function(a) { return null; }
+					$: function() { return null; },
+					$$: function() { return null; },
+					$ª: function() { return null; }
 				};
 				try { Services.scriptloader.loadSubScript(path, tempScope); }
 				catch(ex) {
@@ -87,6 +88,7 @@ this.Modules = {
 				delete tempScope.Modules;
 				delete tempScope.$;
 				delete tempScope.$$;
+				delete tempScope.$ª;
 				
 				var scopeVars = [];
 				for(let v in tempScope) {

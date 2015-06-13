@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+<?xml-stylesheet href="chrome://browser/skin/preferences/preferences.css"?>
+<?xml-stylesheet href="chrome://global/skin/in-content/common.css"?>
+<?xml-stylesheet href="chrome://browser/skin/preferences/in-content/preferences.css"?>
+<?xml-stylesheet href="chrome://findbartweak/skin/utils/preferences.css"?>
+<?xml-stylesheet href="chrome://findbartweak/skin/defaults.css"?>
+<!DOCTYPE overlay SYSTEM "chrome://findbartweak/locale/defaults.dtd">
+<page	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+		title="&preferences.title;">
+	
+	<stack flex="1">
+		<hbox flex="1">
+			<richlistbox id="categories"/>
+			
+			<vbox class="main-content" flex="1">
+				<prefpane id="mainPrefPane"/>
+			</vbox>
+		</hbox>
+	</stack>
+</page>

@@ -1,4 +1,4 @@
-Modules.VERSION = '1.4.1';
+Modules.VERSION = '2.0.0';
 Modules.UTILS = true;
 
 // dependsOn - object that adds a dependson attribute functionality to xul preference elements.
@@ -26,49 +26,49 @@ this.dependsOn = {
 		
 		var fields = $$("[preference='"+e.target.id+"']");
 		var elements = this.getAll();
-		var alreadyChanged = [];
+		var alreadyChanged = new Set();
 		
-		for(var field of fields) {
+		for(let field of fields) {
 			if(!field.id) { continue; }
 			
-			for(var node of elements) {
-				if(alreadyChanged.indexOf(node) > -1) { continue; }
+			for(let node of elements) {
+				if(alreadyChanged.has(node)) { continue; }
 				
 				if(node.getAttribute('dependson').contains(field.id)) {
 					this.updateElement(node);
-					alreadyChanged.push(node);
+					alreadyChanged.add(node);
 				}
 			}
 		}
 		
-		for(var node of elements) {
-			if(alreadyChanged.indexOf(node) > -1) { continue; }
+		for(let node of elements) {
+			if(alreadyChanged.has(node)) { continue; }
 			
 			if(node.getAttribute('dependson').contains(e.target.id)) {
 				this.updateElement(node);
-				alreadyChanged.push(node);
+				alreadyChanged.add(node);
 			}
 		}
 	},
 	
 	updateAll: function() {
-		var elements = this.getAll();
-		for(var node of elements) {
+		let elements = this.getAll();
+		for(let node of elements) {
 			this.updateElement(node);
 		}
 	},
 	
 	updateElement: function(el) {
-		var attr = el.getAttribute('dependson');
+		let attr = el.getAttribute('dependson');
 		if(!attr) { return; }
 		
-		var dependencies = attr.split(',');
-		for(var d of dependencies) {
-			var alternates = d.split(';');
-			var a = 0;
+		let dependencies = attr.split(',');
+		for(let d of dependencies) {
+			let alternates = d.split(';');
+			let a = 0;
 			while(a < alternates.length) {
-				var inverse = false;
-				var dependency = alternates[a].split(':');
+				let inverse = false;
+				let dependency = alternates[a].split(':');
 				if(dependency[0].contains('!')) {
 					inverse = true;
 					dependency[0] = dependency[0].replace('!', '');
@@ -81,7 +81,7 @@ this.dependsOn = {
 					dependency[1] = trim(dependency[1]);
 				}
 				
-				var pref = $(dependency[0]);
+				let pref = $(dependency[0]);
 				if(!pref) {
 					Cu.reportError("Element of ID '"+dependency[0]+"' could not be found!");
 					return;
@@ -121,75 +121,255 @@ this.dependsOn = {
 };
 
 
-// This is so scales are properly initialized if they have a preference attribute, should work in most cases.
-// If you want to bypass this you can set onsyncfrompreference attribute on scale
+// initScales - every <scale> node should be properly initialized if it has a preference attribute; should work in most cases.
+// If you want to bypass this you can set onsyncfrompreference attribute on the scale.
 this.initScales = function() {
 	var scales = $$('scale');
-	for(var scale of scales) {
+	for(let scale of scales) {
 		if(!scale.getAttribute('onsyncfrompreference') && scale.getAttribute('preference')) {
 			scale.value = $(scale.getAttribute('preference')).value;
 		}
 	}
 };
 
-this.sizeProperly = function() {
-	// If there's only one pane, this shouldn't be needed
-	if(document.documentElement.preferencePanes.length <= 1) { return; }
+// keys - should automatically take care of all the labels, entries and actions of any keysets to be registered through the Keysets object.
+// It looks for and expects each keyset to be layouted (is this even a word?) in the XUL options page as such:
+// 	<checkbox keysetAccel="keyName" preference="pref-to-accel"/>
+//	<checkbox keysetAlt="keyName" preference="pref-to-alt"/>
+//	<checkbox keysetShift="keyName" preference="pref-to-shift"/>
+//	<menulist keyset="keyName" preference="pref-to-keycode"/>
+this.keys = {
+	all: [],
 	
-	if(document.documentElement._shouldAnimate) {
-		// Bugfix: opening preferences with lastSelected as any other than the first would incorrectly set the height of the window to the height of the first pane (general),
-		// leaving extra empty space in the bottom.
-		// Bugfix: if the first pane isn't the biggest, it will incorrectly set its height to be larger than it should as well (for some reason...)
-		var paneDeckContainer = document.getAnonymousElementByAttribute(document.documentElement, 'class', 'paneDeckContainer');
-		var contentBox = document.getAnonymousElementByAttribute(document.documentElement.currentPane, 'class', 'content-box');
-		var paneStyle = getComputedStyle(document.documentElement.currentPane);
-		var paneHeight = contentBox.clientHeight + parseInt(paneStyle.paddingTop) + parseInt(paneStyle.paddingBottom);
-		if(paneDeckContainer.clientHeight != paneHeight) {
-			window.resizeBy(0, paneHeight - paneDeckContainer.clientHeight);
+	handleEvent: function(e) {
+		this.fillKeyCodes();
+	},
+	
+	init: function() {
+		let done = new Set();
+		let all = $$('[keyset]');
+		for(let node of all) {
+			let id = node.getAttribute('keyset');
+			if(done.has(id)) { continue; }
+			done.add(id);
+			
+			if(!node.firstChild) {
+				node.appendChild(document.createElement('menupopup'));
+			}
+			
+			let key = {
+				id: id,
+				node: node,
+				accelBox: $$('[keysetAccel="'+id+'"]')[0],
+				shiftBox: $$('[keysetShift="'+id+'"]')[0],
+				altBox: $$('[keysetAlt="'+id+'"]')[0],
+				get disabled () { return trueAttribute(this.node, 'disabled'); },
+				get keycode () { return this.node.value; },
+				get accel () { return this.accelBox.checked; },
+				get shift () { return this.shiftBox.checked; },
+				get alt () { return this.altBox.checked; },
+				get menu () { return this.node.firstChild; }
+			};
+			
+			this.all.push(key);
+			Keysets.fillKeyStrings(key);
+			
+			Listeners.add(key.node, 'command', this);
+			Listeners.add(key.accelBox, 'command', this);
+			Listeners.add(key.shiftBox, 'command', this);
+			Listeners.add(key.altBox, 'command', this);
 		}
-	}
-	else {
-		// Bugfix: I really hate panes sometimes... I think this is because the first pane isn't the biggest as well...
-		// When opening the dialog with a pane other than the first, it would be shorter than it should, taking the height of the first pane.
-		var largestPane = document.documentElement.preferencePanes[0];
-		var contentBox = document.getAnonymousElementByAttribute(document.documentElement.preferencePanes[0], 'class', 'content-box');
-		for(var i=1; i<document.documentElement.preferencePanes.length; i++) {
-			var nextBox = document.getAnonymousElementByAttribute(document.documentElement.preferencePanes[i], 'class', 'content-box');
-			if(nextBox.clientHeight > contentBox.clientHeight) {
-				largestPane = document.documentElement.preferencePanes[i];
-				contentBox = nextBox;
+	},
+	
+	uninit: function() {
+		for(let key of this.all) {
+			Listeners.remove(key.node, 'command', this);
+			Listeners.remove(key.accelBox, 'command', this);
+			Listeners.remove(key.shiftBox, 'command', this);
+			Listeners.remove(key.altBox, 'command', this);
+		}
+	},
+	
+	fillKeycodes: function() {
+		for(let key of this.all) {
+			let available = Keysets.getAvailable(key, this.all);
+			if(!available[key.keycode]) {
+				key.keycode = 'none';
+			}
+			
+			var item = key.menu.firstChild.nextSibling;
+			while(item) {
+				item.setAttribute('hidden', 'true');
+				item.setAttribute('disabled', 'true');
+				item = item.nextSibling;
+			}
+			if(key.keycode == 'none') {
+				key.menu.parentNode.selectedItem = key.menu.firstChild;
+				$(key.menu.parentNode.getAttribute('preference')).value = 'none';
+			}
+			
+			for(let item of key.menu.childNodes) {
+				let keycode = item.getAttribute('value');
+				if(!available[keycode]) { continue; }
+				
+				item.removeAttribute('hidden');
+				item.removeAttribute('disabled');
+				if(keycode == key.keycode) {
+					key.menu.parentNode.selectedItem = item;
+					// It has the annoying habit of re-selecting the first (none) entry when selecting a menuitem with '*' as value
+					if(keycode == '*') {
+						var itemIndex = key.menu.parentNode.selectedIndex;
+						aSync(function() { key.menu.parentNode.selectedIndex = itemIndex; });
+					}
+				}
 			}
 		}
-		
-		var paneDeckContainer = document.getAnonymousElementByAttribute(document.documentElement, 'class', 'paneDeckContainer');
-		var paneStyle = getComputedStyle(largestPane);
-		var paneHeight = contentBox.clientHeight + parseInt(paneStyle.paddingTop) + parseInt(paneStyle.paddingBottom);
-		if(paneDeckContainer.clientHeight != paneHeight) {
-			window.resizeBy(0, paneHeight - paneDeckContainer.clientHeight);
+	}
+};
+
+// In case I need subdialogs:
+//   http://mxr.mozilla.org/mozilla-central/source/browser/components/preferences/in-content/subdialogs.js
+//   http://mxr.mozilla.org/mozilla-central/source/browser/components/preferences/in-content/preferences.xul#197
+
+// categories - aid to properly display preferences in a tab, just like the current native options tab
+// adapted from http://mxr.mozilla.org/mozilla-central/source/browser/components/preferences/in-content/preferences.js
+// unlike in the original, we don't use hidden, instead we use collapsed to switch between panels, so that all the bindings remain applied throughout the page.
+this.categories = {
+	lastHash: "",
+	
+	get categories () { return $('categories'); },
+	get prefPane () { return $('mainPrefPane'); },
+	
+	handleEvent: function(e) {
+		switch(e.type) {
+			case 'select':
+				this.gotoPref(e.target.value)
+				break;
+			
+			case 'keydown':
+				if(e.keyCode == e.DOM_VK_TAB) {
+					setAttribute(this.categories, "keyboard-navigation", "true");
+				}
+				break;
+			
+			case 'mousedown':
+				removeAttribute(this.categories, "keyboard-navigation");
+				break;
+			
+			case 'hashchange':
+				this.gotoPref();
+				break;
 		}
+	},
+	
+	init: function() {
+		document.documentElement.instantApply = true;
+		
+		Listeners.add(this.categories, "select", this);
+		Listeners.add(document.documentElement, "keydown", this);
+		Listeners.add(this.categories, "mousedown", this);
+		Listeners.add(window, "hashchange", this);
+		
+		this.gotoPref();
+		this.dynamicPadding();
+	},
+	
+	uninit: function() {
+		Listeners.remove(this.categories, "select", this);
+		Listeners.remove(document.documentElement, "keydown", this);
+		Listeners.remove(this.categories, "mousedown", this);
+		Listeners.remove(window, "hashchange", this);
+	},
+	
+	// Make the space above the categories list shrink on low window heights
+	dynamicPadding: function() {
+		let catPadding = parseInt(getComputedStyle(this.categories).paddingTop);
+		let fullHeight = this.categories.lastElementChild.getBoundingClientRect().bottom;
+		let mediaRule = `
+			@media (max-height: ${fullHeight}px) {
+				#categories {
+					padding-top: calc(100vh - ${fullHeight - catPadding}px);
+				}
+			}
+		`;
+		let mediaStyle = document.createElementNS('http://www.w3.org/1999/xhtml', 'html:style');
+		mediaStyle.setAttribute('type', 'text/css');
+		mediaStyle.appendChild(document.createCDATASection(mediaRule));
+		document.documentElement.appendChild(mediaStyle);
+	},
+	
+	gotoPref: function(aCategory) {
+		const kDefaultCategoryInternalName = this.categories.lastElementChild.value;
+		let hash = document.location.hash;
+		let category = aCategory || hash.substr(1) || Prefs.lastPrefPane || kDefaultCategoryInternalName;
+		category = this.friendlyPrefCategoryNameToInternalName(category);
+		
+		// Updating the hash (below) or changing the selected category will re-enter gotoPref.
+		if(this.lastHash == category) { return; }
+		
+		let item = this.categories.querySelector(".category[value="+category+"]");
+		if(!item) {
+			category = kDefaultCategoryInternalName;
+			item = this.categories.querySelector(".category[value="+category+"]");
+		}
+		
+		let newHash = this.internalPrefCategoryNameToFriendlyName(category);
+		if(this.lastHash || category != kDefaultCategoryInternalName) {
+			document.location.hash = newHash;
+		}
+		
+		// Need to set the lastHash before setting categories.selectedItem since the categories 'select' event will re-enter the gotoPref codepath.
+		this.lastHash = category;
+		this.categories.selectedItem = item;
+		setAttribute(document.documentElement, 'currentcategory', category);
+		Prefs.lastPrefPane = category; // I can't save the last category in a persisted attribute because it persists to the hashed url
+		
+		window.history.replaceState(category, document.title);
+		this.search(category, "data-category");
+		document.querySelector(".main-content").scrollTop = 0;
+	},
+	
+	search: function(aQuery, aAttribute) {
+		let elements = this.prefPane.children;
+		for(let element of elements) {
+			if(element.nodeName == 'preferences') { continue; }
+			
+			let attributeValue = element.getAttribute(aAttribute);
+			element.collapsed = (attributeValue != aQuery);
+		}
+	},
+	
+	friendlyPrefCategoryNameToInternalName: function(aName) {
+		if(aName.startsWith("pane")) {
+			return aName;
+		}
+		
+		return "pane" + aName.substring(0,1).toUpperCase() + aName.substr(1);
+	},
+	
+	// This function is duplicated inside of utilityOverlay.js's openPreferences.
+	internalPrefCategoryNameToFriendlyName: function(aName) {
+		return (aName || "").replace(/^pane./, function(toReplace) { return toReplace[4].toLowerCase(); });
 	}
 };
 
 Modules.LOADMODULE = function() {
-	dependsOn.updateAll();
-	Listeners.add(window, "change", dependsOn, false);
-	
-	initScales();
-	
-	window._sizeToContent = window.sizeToContent;
-	window.sizeToContent = function() {
-		window._sizeToContent();
-		sizeProperly();
-	};
-	
-	sizeProperly();
+	callOnLoad(window, function() {
+		dependsOn.updateAll();
+		Listeners.add(window, "change", dependsOn);
+		Listeners.add($('selectColor'), 'select', function(e) { console.log(e); }, true);
+		Listeners.add($('selectColor'), 'change', function(e) { console.log(e); }, true);
+		
+		initScales();
+		keys.init();
+		categories.init();
+	});
 };
 
 Modules.UNLOADMODULE = function() {
-	window.sizeToContent = window._sizeToContent;
-	delete window._sizeToContent;
-	
-	Listeners.remove(window, "change", dependsOn, false);
+	Listeners.remove(window, "change", dependsOn);
+	keys.uninit();
+	categories.uninit();
 	
 	if(UNLOADED) {
 		window.close();

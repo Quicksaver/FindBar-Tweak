@@ -1,4 +1,4 @@
-Modules.VERSION = '1.7.5';
+Modules.VERSION = '1.7.6';
 
 this.__defineGetter__('findButton', function() {
 	var node = $('find-button');
@@ -246,9 +246,33 @@ Modules.LOADMODULE = function() {
 			}
 		}
 		
-		initFindBar('contextMenu',
-			function(bar) { setAttribute(bar, 'context', objPathString+'_findbarMenu'); },
-			function(bar) { if(!bar._destroying) { removeAttribute(bar, 'context'); } }
+		initFindBar('FindBarUI',
+			function(bar) {
+				setAttribute(bar, 'context', objPathString+'_findbarMenu');
+				
+				// Ctrl+Enter in the findField should toggle Highlight All even if it's empty
+				Piggyback.add('FindBarUI', bar._findField, '_handleEnter', function(e) {
+					let metaKey = DARWIN ? e.metaKey : e.ctrlKey;
+					if(metaKey) {
+						this.findbar.getElement("highlight").click();
+						return;
+					}
+					
+					if(this.findbar._findMode == this.findbar.FIND_NORMAL) {
+						if(this.findbar._findField.value) {
+							this.findbar.onFindAgainCommand(e.shiftKey);
+						}
+					} else {
+						this.findbar._finishFAYT(aEvent);
+					}
+				});
+			},
+			function(bar) {
+				if(bar._destroying) { return; }
+				
+				Piggyback.revert('FindBarUI', bar._findField, '_handleEnter');
+				removeAttribute(bar, 'context');
+			}
 		);
 		
 		Prefs.listen('movetoTop', toggleMoveToTop);
@@ -285,7 +309,8 @@ Modules.UNLOADMODULE = function() {
 		if(!viewSource) {
 			Listeners.remove(gBrowser.tabContainer, "TabSelect", toggleButtonState);
 		}
-		deinitFindBar('contextMenu');
+		
+		deinitFindBar('FindBarUI');
 	
 		if(!viewSource) {
 			Listeners.remove(window, 'beforecustomization', unsetFindButton);

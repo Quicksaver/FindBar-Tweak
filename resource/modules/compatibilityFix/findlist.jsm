@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.1';
+Modules.VERSION = '1.0.2';
 
 this.overrideFindlistWidth = function() {
 	Prefs.fieldWidth = Prefs.findFieldWidth;
@@ -7,6 +7,8 @@ this.overrideFindlistWidth = function() {
 			bar.getElement('findbar-textbox').style.width = Prefs.fieldWidth+'px';
 		},
 		function(bar) {
+			if(bar._destroying) { return; }
+			
 			bar.getElement('findbar-textbox').style.width = '';
 		},
 		true

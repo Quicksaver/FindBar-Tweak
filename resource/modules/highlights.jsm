@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.1';
+Modules.VERSION = '2.1.2';
 
 this.highlights = {
 	observe: function(aSubject, aTopic) {
@@ -325,6 +325,8 @@ Modules.LOADMODULE = function() {
 		}, 
 		function(bar) {
 			Messenger.unloadFromBrowser(bar.browser, 'highlights');
+			
+			if(bar._destroying) { return; }
 			
 			bar.browser.finder.removeResultListener(highlights);
 			bar.browser.finder.removeMessage('ReHighlight');

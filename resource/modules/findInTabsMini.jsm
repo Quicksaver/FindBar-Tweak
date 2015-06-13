@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.3';
+Modules.VERSION = '2.1.4';
 
 this.FITMini = {
 	get broadcaster() { return $(objName+'-findInTabs-broadcaster'); },
@@ -153,6 +153,8 @@ this.FITMini = {
 				bar.browser.finder.addResultListener(this);
 			},
 			(bar) => {
+				if(bar._destroying) { return; }
+				
 				bar.browser.finder.removeResultListener(this);
 				
 				bar.getElement(objName+'-find-tabs').remove();
@@ -183,7 +185,6 @@ this.FITMini = {
 	
 	onUnload: function() {
 		deinitFindBar('findInTabsMini');
-		deinitFindBar('findInTabsContent');
 		
 		Observers.remove(this, 'FIT:Load');
 		Observers.remove(this, 'FIT:Unoad');

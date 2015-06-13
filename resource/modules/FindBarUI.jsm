@@ -1,4 +1,4 @@
-Modules.VERSION = '1.7.4';
+Modules.VERSION = '1.7.5';
 
 this.__defineGetter__('findButton', function() {
 	var node = $('find-button');
@@ -128,6 +128,8 @@ this.toggleClose = function() {
 			triggerUIChange(bar);
 		},
 		function(bar) {
+			if(bar._destroying) { return; }
+			
 			removeAttribute(bar, 'noClose');
 		},
 		true
@@ -154,6 +156,8 @@ this.buttonLabels = {
 				triggerUIChange(bar);
 			},
 			(bar) => {
+				if(bar._destroying) { return; }
+				
 				this.iconsAsText(bar);
 				removeAttribute(bar, 'hideLabels');
 			},
@@ -191,6 +195,8 @@ this.toggleMoveToRight = function(startup) {
 			toggleAttribute(bar, 'movetoright', Prefs.movetoRight);
 		},
 		function(bar) {
+			if(bar._destroying) { return; }
+			
 			removeAttribute(bar, 'movetoright');
 		},
 		true
@@ -203,6 +209,8 @@ this.toggleKeepButtons = function(startup) {
 			toggleAttribute(bar, 'keepButtons', Prefs.keepButtons);
 		},
 		function(bar) {
+			if(bar._destroying) { return; }
+			
 			removeAttribute(bar, 'keepButtons');
 		},
 		true
@@ -240,7 +248,7 @@ Modules.LOADMODULE = function() {
 		
 		initFindBar('contextMenu',
 			function(bar) { setAttribute(bar, 'context', objPathString+'_findbarMenu'); },
-			function(bar) { removeAttribute(bar, 'context'); }
+			function(bar) { if(!bar._destroying) { removeAttribute(bar, 'context'); } }
 		);
 		
 		Prefs.listen('movetoTop', toggleMoveToTop);

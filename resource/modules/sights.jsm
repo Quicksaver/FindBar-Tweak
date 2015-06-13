@@ -1,4 +1,4 @@
-Modules.VERSION = '2.2.0';
+Modules.VERSION = '2.2.1';
 
 this.SIGHTS_SIZE_FOCUS = 400;
 this.SIGHTS_SIZE_CIRCLE = 100;
@@ -338,9 +338,11 @@ Modules.LOADMODULE = function() {
 			}
 		},
 		function(bar) {
-			bar.browser.finder.removeMessage('Sights:Add');
-			bar.browser.finder.removeMessage('Sights:Scroll');
-			bar.browser.finder.removeMessage('Sights:Remove');
+			if(!bar._destroying) {
+				bar.browser.finder.removeMessage('Sights:Add');
+				bar.browser.finder.removeMessage('Sights:Scroll');
+				bar.browser.finder.removeMessage('Sights:Remove');
+			}
 			
 			Messenger.unloadFromBrowser(bar.browser, 'sights');
 			

@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.0';
+Modules.VERSION = '2.1.1';
 
 this.counter = {
 	heldStatus: null,
@@ -51,8 +51,11 @@ Modules.LOADMODULE = function() {
 			Messenger.loadInBrowser(bar.browser, 'counter');
 		},
 		function(bar) {
-			bar.browser.finder.removeMessage('Counter:Result');
 			Messenger.unloadFromBrowser(bar.browser, 'counter');
+			
+			if(bar._destroying) { return; }
+			
+			bar.browser.finder.removeMessage('Counter:Result');
 			
 			bar._findStatusDesc.textContent = '';
 		}

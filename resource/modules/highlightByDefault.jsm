@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.0';
+Modules.VERSION = '2.1.1';
 
 this.highlightByDefault = {
 	apply: function(bar) {
@@ -53,9 +53,11 @@ Modules.LOADMODULE = function() {
 			}
 		},
 		function(bar) {
-			bar.browser.finder.removeMessage('HighlightByDefault');
-			
 			Messenger.unloadFromBrowser(bar.browser, 'highlightByDefault');
+			
+			if(bar._destroying) { return; }
+			
+			bar.browser.finder.removeMessage('HighlightByDefault');
 			
 			if(!viewSource) {
 				var highlightBtn = bar.getElement('highlight');

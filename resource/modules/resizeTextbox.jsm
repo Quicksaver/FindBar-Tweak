@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.1';
+Modules.VERSION = '2.0.2';
 
 this.textboxResizers = {
 	resizing: false,
@@ -63,6 +63,8 @@ this.textboxResizers = {
 				setAttribute(bar._findField, 'width', Prefs.findFieldWidth);
 			},
 			function(bar) {
+				if(bar._destroying) { return; }
+				
 				removeAttribute(bar._findField, 'width');
 			},
 			true
@@ -122,6 +124,8 @@ Modules.LOADMODULE = function() {
 				setAttribute(bar._findField.parentNode, 'flex', '1');
 			},
 			function(bar) {
+				if(bar._destroying) { return; }
+				
 				removeAttribute(bar._findField, 'flex');
 				removeAttribute(bar._findField.parentNode, 'flex');
 			}
@@ -157,6 +161,8 @@ Modules.LOADMODULE = function() {
 			bar._findField.parentNode.insertBefore(rightResizer, bar._findField.nextSibling);
 		},
 		function(bar) {
+			if(bar._destroying) { return; }
+			
 			Watchers.removeAttributeWatcher(bar._findField, 'width', textboxResizers);
 			
 			bar.getElement("find-left-resizer").remove();

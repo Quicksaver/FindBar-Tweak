@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.0';
+Modules.VERSION = '1.0.1';
 
 Modules.LOADMODULE = function() {
 	// define when we're in a PDF file
@@ -62,10 +62,12 @@ Modules.LOADMODULE = function() {
 			// ensure we get the current PDFJS state
 		},
 		function(bar) {
-			Piggyback.revert('PDFJS', bar, '_dispatchFindEvent');
-			
-			bar.browser.finder.removeMessage("PDFJS:Result");
-			bar.browser.finder.removeMessage("PDFJS:State");
+			if(!bar._destroying) {
+				Piggyback.revert('PDFJS', bar, '_dispatchFindEvent');
+				
+				bar.browser.finder.removeMessage("PDFJS:Result");
+				bar.browser.finder.removeMessage("PDFJS:State");
+			}
 			
 			Messenger.unloadFromBrowser(bar.browser, 'PDFJS');
 		}

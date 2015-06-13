@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.4';
+Modules.VERSION = '2.0.5';
 
 this.__defineGetter__('gBrowserBox', function() { return $('browser'); });
 this.__defineGetter__('gAppContent', function() { return $('appcontent'); });
@@ -331,6 +331,8 @@ this.setOnTop = function(e) {
 				bar.style.maxHeight = height+'px';
 			},
 			function(bar) {
+				if(bar._destroying) { return; }
+				
 				removeAttribute(bar, 'movetotop');
 				bar.style.maxHeight = '';
 			},
@@ -429,7 +431,9 @@ Modules.LOADMODULE = function() {
 				bar.browser.finder.addResultListener(finderTopListener);
 			},
 			function(bar) {
-				bar.browser.finder.removeResultListener(finderTopListener);
+				if(!bar._destroying) {
+					bar.browser.finder.removeResultListener(finderTopListener);
+				}
 				Messenger.unloadFromBrowser(bar.browser, 'moveToTop');
 			}
 		);
@@ -449,6 +453,8 @@ Modules.LOADMODULE = function() {
 			removeAttribute(bar._mainCloseButton, 'anonid');
 		},
 		function(bar) {
+			if(bar._destroying) { return; }
+			
 			bar._topCloseButton.remove();
 			setAttribute(bar._mainCloseButton, 'anonid', 'find-closebutton');
 			delete bar._mainCloseButton;
@@ -463,6 +469,8 @@ Modules.LOADMODULE = function() {
 		initFindBar('resetTopState',
 			function(bar) {},
 			function(bar) {
+				if(bar._destroying) { return; }
+				
 				hideIt(bar, true);
 				removeAttribute(bar, 'inPDFJS');
 				removeAttribute(bar, 'inNotification');

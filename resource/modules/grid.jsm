@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.0';
+Modules.VERSION = '2.1.1';
 
 this.grids = {
 	template: null,
@@ -310,17 +310,19 @@ Modules.LOADMODULE = function() {
 			}
 		},
 		function(bar) {
-			bar.browser.finder.removeMessage('Grid:Attribute');
-			bar.browser.finder.removeMessage('Grid:Style');
-			bar.browser.finder.removeMessage('Grid:Direction');
-			bar.browser.finder.removeMessage('Grid:Hit:Create');
-			bar.browser.finder.removeMessage('Grid:Hit:Hover');
-			bar.browser.finder.removeMessage('Grid:Hit:Current');
-			bar.browser.finder.removeMessage('Grid:Row:Append');
-			bar.browser.finder.removeMessage('Grid:Row:Remove');
-			bar.browser.finder.removeMessage('Grid:Row:SetAttribute');
-			bar.browser.finder.removeMessage('Grid:Row:RemoveAttribute');
-			bar.browser.finder.removeMessage('Grid:Row:Style');
+			if(!bar._destroying) {
+				bar.browser.finder.removeMessage('Grid:Attribute');
+				bar.browser.finder.removeMessage('Grid:Style');
+				bar.browser.finder.removeMessage('Grid:Direction');
+				bar.browser.finder.removeMessage('Grid:Hit:Create');
+				bar.browser.finder.removeMessage('Grid:Hit:Hover');
+				bar.browser.finder.removeMessage('Grid:Hit:Current');
+				bar.browser.finder.removeMessage('Grid:Row:Append');
+				bar.browser.finder.removeMessage('Grid:Row:Remove');
+				bar.browser.finder.removeMessage('Grid:Row:SetAttribute');
+				bar.browser.finder.removeMessage('Grid:Row:RemoveAttribute');
+				bar.browser.finder.removeMessage('Grid:Row:Style');
+			}
 			
 			Messenger.unloadFromBrowser(bar.browser, 'grid');
 			

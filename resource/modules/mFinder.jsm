@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.0';
+Modules.VERSION = '1.0.1';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -368,6 +368,7 @@ Modules.LOADMODULE = function() {
 		},
 		function(bar) {
 			Messenger.unloadFromBrowser(bar.browser, 'mFinder');
+			
 			if(bar.browser._remoteFinder || bar.browser._finder) {
 				bar.browser.finder.deinit();
 			}
@@ -376,6 +377,8 @@ Modules.LOADMODULE = function() {
 			} else {
 				bar.browser._finder = null;
 			}
+			
+			if(bar._destroying) { return; }
 			
 			// this would usually be set when setting bar.browser, but there's no need to do all of that just for registering it with Finder
 			bar.browser.finder.addResultListener(bar);

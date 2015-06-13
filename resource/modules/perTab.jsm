@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.0';
+Modules.VERSION = '2.0.1';
 
 this.perTab = {	
 	handleEvent: function(e) {
@@ -36,7 +36,7 @@ Modules.LOADMODULE = function() {
 	
 	initFindBar('perTab',
 		function(bar) { bar.browser.finder.addResultListener(perTab); },
-		function(bar) { bar.browser.finder.removeResultListener(perTab); }
+		function(bar) { if(!bar._destroying) { bar.browser.finder.removeResultListener(perTab); } }
 	);
 };
 

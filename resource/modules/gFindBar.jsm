@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.2';
+Modules.VERSION = '1.0.3';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return FITFull || viewSource || window.gFindBarInitialized; });
@@ -152,24 +152,26 @@ this.baseInit = function(bar) {
 };
 
 this.baseDeinit = function(bar) {
-	if(!FITFull) {
-		Piggyback.revert('gFindBar', bar, 'open');
-		Piggyback.revert('gFindBar', bar, 'close');
-		Piggyback.revert('gFindBar', bar, '_updateFindUI');
-		Piggyback.revert('gFindBar', bar, '_updateStatusUI');
+	if(!bar._destroying) {
+		if(!FITFull) {
+			Piggyback.revert('gFindBar', bar, 'open');
+			Piggyback.revert('gFindBar', bar, 'close');
+			Piggyback.revert('gFindBar', bar, '_updateFindUI');
+			Piggyback.revert('gFindBar', bar, '_updateStatusUI');
+			
+			bar._findStatusDesc.hidden = false;
+			bar._findStatusIcon.hidden = false;
+		}
 		
-		bar._findStatusDesc.hidden = false;
-		bar._findStatusIcon.hidden = false;
+		delete bar._quickFindTimeoutLength;
+		bar._quickFindTimeoutLength = bar.__quickFindTimeoutLength;
+		delete bar.__quickFindTimeoutLength;
+		
+		Piggyback.revert('gFindBar', bar, '_find');
+		Piggyback.revert('gFindBar', bar, '_findAgain');
+		Piggyback.revert('gFindBar', bar, 'onFindAgainCommand');
+		Piggyback.revert('gFindBar', bar, '_updateMatchesCount');
 	}
-	
-	delete bar._quickFindTimeoutLength;
-	bar._quickFindTimeoutLength = bar.__quickFindTimeoutLength;
-	delete bar.__quickFindTimeoutLength;
-	
-	Piggyback.revert('gFindBar', bar, '_find');
-	Piggyback.revert('gFindBar', bar, '_findAgain');
-	Piggyback.revert('gFindBar', bar, 'onFindAgainCommand');
-	Piggyback.revert('gFindBar', bar, '_updateMatchesCount');
 	
 	Messenger.unloadFromBrowser(bar.browser, 'gFindBar');
 	Messenger.unloadFromBrowser(bar.browser, 'viewSource');
@@ -257,20 +259,44 @@ this.initializeListener = function(e) {
 
 this.tabRemotenessChanged = function(e) {
 	if(gBrowser.isFindBarInitialized(e.target)) {
-		try {
-			// not really sure if this is needed since we're physically destroying the findbar later, but making sure either way
-			if(e.target._findBar._browser && e.target._findBar._browser.messageManager) {
-				e.target._findBar._browser.messageManager.sendAsyncMessage("Findbar:Disconnect");
-				e.target._findBar._browser.messageManager.removeMessageListener("Findbar:Keypress", e.target._findBar);
-				e.target._findBar._browser.messageManager.removeMessageListener("Findbar:Mouseup", e.target._findBar);
+		destroyFindBar(e.target);
+	}
+};
+
+this.destroyFindBar = function(tab) {
+	var bar = tab._findBar;
+	if(!bar) { return; }
+	
+	bar._destroying = true;
+	
+	if(bar[objName+'_initialized'] && bar[objName+'_initialized'].length > 0) {
+		// we have to uninitialize from last to first!
+		var routines = [];
+		for(let r in initRoutines) {
+			routines.unshift(r);
+		}
+		for(let r of routines) {
+			if(bar[objName+'_initialized'][r]) {
+				initRoutines[r].deinit(bar);
+				delete bar[objName+'_initialized'][r];
+				bar[objName+'_initialized'].length--;
 			}
 		}
-		catch(ex) {} // don't really care if this fails
-		
-		e.target._findBar.destroy();
-		e.target._findBar.remove();
-		e.target._findBar = null;
 	}
+	
+	try {
+		// not really sure if this is needed since we're physically destroying the findbar later, but making sure either way
+		if(bar._browser && bar._browser.messageManager) {
+			bar._browser.messageManager.sendAsyncMessage("Findbar:Disconnect");
+			bar._browser.messageManager.removeMessageListener("Findbar:Keypress", bar);
+			bar._browser.messageManager.removeMessageListener("Findbar:Mouseup", bar);
+		}
+	}
+	catch(ex) {} // don't really care if this fails
+	
+	bar.destroy();
+	bar.remove();
+	tab._findBar = null;
 };
 
 Modules.LOADMODULE = function() {

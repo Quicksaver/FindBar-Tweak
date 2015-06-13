@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.16';
+Modules.VERSION = '1.1.17';
 
 Modules.LOADMODULE = function() {
 	if(!viewSource && !FITFull) {
@@ -21,6 +21,8 @@ Modules.LOADMODULE = function() {
 		AddonManager.getAddonByID("s3download@statusbar", function(addon) {
 			Modules.loadIf('compatibilityFix/S3', (addon && addon.isActive));
 		});
+		
+		Modules.load('compatibilityFix/InstantFox');
 	}
 	
 	AddonManager.getAddonByID('clearfields@alex.alexander.googlepages.com', function(addon) {
@@ -41,4 +43,5 @@ Modules.UNLOADMODULE = function() {
 	Modules.unload('compatibilityFix/noScript');
 	Modules.unload('compatibilityFix/TreeStyleTab');
 	Modules.unload('compatibilityFix/autopager');
+	Modules.unload('compatibilityFix/InstantFox');
 };

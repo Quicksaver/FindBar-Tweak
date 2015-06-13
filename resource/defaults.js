@@ -1,4 +1,4 @@
-// VERSION = '1.5.0';
+// VERSION = '1.5.1';
 
 objName = 'findbartweak';
 objPathString = 'findbartweak';
@@ -81,7 +81,7 @@ prefList = {
 	layoutStopAtPunctuation: defaultBranch.getBoolPref('layout.word_select.stop_at_punctuation'),
 	
 	ctrlFCloses: true,
-	ctrlFClosesOnValue: true,
+	ctrlFClosesOnFocused: true,
 	keepButtons: false,
 	FAYTmode: 'quick',
 	

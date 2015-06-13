@@ -70,7 +70,7 @@
 <!ENTITY OptctrlFCloses.win "Ctrl+F also closes the Findbar">
 <!ENTITY OptctrlFCloses.mac "Command+F also closes the Findbar">
 <!ENTITY OptctrlFprefill.label "Fill the Findbar with the selected text when opening it">
-<!ENTITY OptctrlFOnValue.label "Only close when search is the same as the selected text">
+<!ENTITY OptctrlFOnFocused.label "Only close when it is already focused">
 <!ENTITY OptSelectingText.label "When Selecting Text">
 <!ENTITY OptfillSelectedText.label "Fill the Findbar with the selected text">
 <!ENTITY OptfillSelectedOpenFindbar.label "Show the Quick Findbar when selected text is used">

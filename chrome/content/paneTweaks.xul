@@ -18,7 +18,7 @@
 	<prefpane id="mainPrefPane">
 		<preferences>
 			<preference id="pref-ctrlFCloses" name="extensions.findbartweak.ctrlFCloses" type="bool"/>
-			<preference id="pref-ctrlFClosesOnValue" name="extensions.findbartweak.ctrlFClosesOnValue" type="bool"/>
+			<preference id="pref-ctrlFClosesOnFocused" name="extensions.findbartweak.ctrlFClosesOnFocused" type="bool"/>
 			<preference id="pref-FAYTprefill" name="extensions.findbartweak.FAYTprefill" type="bool"/>
 			<preference id="pref-fillSelectedText" name="extensions.findbartweak.fillSelectedText" type="bool"/>
 			<preference id="pref-fillTextShowFindBar" name="extensions.findbartweak.fillTextShowFindBar" type="bool"/>
@@ -33,9 +33,9 @@
 		
 		<groupbox align="start" id="paneTweaks-shortcut" collapsed="true" data-category="paneTweaks">
 			<caption label="&OptkeyboardShortcut.label;"/>
-			<checkbox id="ctrlFClosesCheckbox" label="&OptctrlFCloses.win;" preference="pref-ctrlFCloses"/>
 			<checkbox label="&OptctrlFprefill.label;" preference="pref-FAYTprefill"/>
-			<checkbox dependson="pref-ctrlFCloses,pref-FAYTprefill" label="&OptctrlFOnValue.label;" preference="pref-ctrlFClosesOnValue"/>
+			<checkbox id="ctrlFClosesCheckbox" label="&OptctrlFCloses.win;" preference="pref-ctrlFCloses"/>
+			<checkbox class="indent" dependson="pref-ctrlFCloses" label="&OptctrlFOnFocused.label;" preference="pref-ctrlFClosesOnFocused"/>
 		</groupbox>
 		
 		<groupbox align="start" id="paneTweaks-text" collapsed="true" data-category="paneTweaks">

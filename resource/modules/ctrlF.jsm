@@ -1,16 +1,9 @@
-Modules.VERSION = '2.0.0';
+Modules.VERSION = '2.1.0';
 
 this.ctrlF = function() {
-	// See if there is text selection and if it's the same as the findbar's value
-	if(Prefs.ctrlFClosesOnValue && Prefs.FAYTprefill && !gFindBar.hidden) {
-		Finder.getTextSelection.then(selText => {
-			if(selText && selText != findQuery) {
-				openFindBar();
-				return;
-			}
-			
-			ctrlFToggles();
-		});
+	// See if the findbar should only be closed when it's focused
+	if(Prefs.ctrlFClosesOnFocused && !gFindBar.hidden && !isAncestor(document.commandDispatcher.focusedElement, gFindBar)) {
+		openFindBar();
 		return;
 	}
 	

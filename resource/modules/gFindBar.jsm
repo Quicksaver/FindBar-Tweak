@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.3';
+Modules.VERSION = '1.0.4';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return FITFull || viewSource || window.gFindBarInitialized; });
@@ -24,6 +24,20 @@ this.baseInit = function(bar) {
 	Messenger.loadInBrowser(bar.browser, 'gFindBar');
 	
 	if(!FITFull) {
+		// In FF40 _findMode was changed to a getter of __findMode
+		var prop = (bar.__findMode !== undefined) ? '__findMode' : '_findMode';
+		bar['_'+prop] = bar[prop];
+		delete bar[prop];
+		bar.__defineGetter__(prop, function() { return this['_'+prop]; });
+		bar.__defineSetter__(prop, function(v) {
+			if(this['_'+prop] != v) {
+				let previous = this['_'+prop];
+				this['_'+prop] = v;
+				dispatch(this, { type: 'FindModeChange', cancelable: false, detail: { before: previous, after: v } });
+			}
+			return v;
+		});
+			
 		Piggyback.add('gFindBar', bar, 'open', function(aMode) {
 			var suffix = (!viewSource && this.browser != gBrowser.mCurrentBrowser) ? 'Background' : '';
 			
@@ -154,6 +168,11 @@ this.baseInit = function(bar) {
 this.baseDeinit = function(bar) {
 	if(!bar._destroying) {
 		if(!FITFull) {
+			var prop = (bar.__findMode !== undefined) ? '__findMode' : '_findMode';
+			delete bar[prop];
+			bar[prop] = bar['_'+prop];
+			delete bar['_'+prop];
+			
 			Piggyback.revert('gFindBar', bar, 'open');
 			Piggyback.revert('gFindBar', bar, 'close');
 			Piggyback.revert('gFindBar', bar, '_updateFindUI');

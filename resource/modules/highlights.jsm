@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.3';
+Modules.VERSION = '2.1.4';
 
 this.highlights = {
 	observe: function(aSubject, aTopic) {
@@ -73,6 +73,13 @@ this.highlights = {
 				if(gFindBar.hidden && Prefs.hideWhenFinderHidden) { return; } // Don't highlight if it's not supposed to when the findbar is hidden
 				
 				gFindBar._setHighlightTimeout();
+				break;
+			
+			case 'FindModeChange':
+				// if the find mode is being changed to or from links only, any current highlights will no longer be valid
+				if(documentHighlighted && (e.detail.before == gFindBar.FIND_LINKS || e.detail.after == gFindBar.FIND_LINKS)) {
+					this.off();
+				}
 				break;
 			
 			case 'TabSelect':
@@ -347,6 +354,7 @@ Modules.LOADMODULE = function() {
 	Listeners.add(window, 'WillToggleHighlight', highlights);
 	Listeners.add(window, 'WillFindAgain', highlights);
 	Listeners.add(window, 'FoundAgain', highlights);
+	Listeners.add(window, 'FindModeChange', highlights);
 	Observers.add(highlights, 'ReHighlightAll');
 	
 	if(!viewSource) {
@@ -396,6 +404,7 @@ Modules.UNLOADMODULE = function() {
 	Listeners.remove(window, 'WillToggleHighlight', highlights);
 	Listeners.remove(window, 'WillFindAgain', highlights);
 	Listeners.remove(window, 'FoundAgain', highlights);
+	Listeners.remove(window, 'FindModeChange', highlights);
 	
 	deinitFindBar('highlights');
 };

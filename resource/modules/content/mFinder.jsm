@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.3';
+Modules.VERSION = '1.0.4';
 
 this.__defineGetter__('isPDFJS', function() { return Finder.isPDFJS; });
 
@@ -141,6 +141,15 @@ this.Finder = {
 	// - aLinksOnly Only consider nodes that are links for the search.
 	// - aDrawOutline Puts an outline around matched links.
 	findAgain: function(aFindBackwards, aLinksOnly, aDrawOutline) {
+		// the searchString in fastFind could be wrong, i.e. when we select text and highlight it with Prefs.fillSelectedText
+		if(this.searchString != this._fastFind.searchString) {
+			this.fastFind(this.searchString, aLinksOnly, aDrawOutline);
+			
+			// usually in this case the first result will be the current selected text
+			this.findAgain(aFindBackwards, aLinksOnly, aDrawOutline);
+			return;
+		}
+		
 		this._lastFindResult = this._fastFind.findAgain(aFindBackwards, aLinksOnly);
 		this._lastFindPrevious = aFindBackwards;
 		this._notify(this._fastFind.searchString, this._lastFindResult, aFindBackwards, aDrawOutline);

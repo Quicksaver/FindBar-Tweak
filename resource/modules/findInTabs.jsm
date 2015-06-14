@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.5';
+Modules.VERSION = '2.1.6';
 
 this.FIT = {
 	get box() { return $(objName+'-findInTabs-box'); },
@@ -398,6 +398,59 @@ this.FIT = {
 		return false;
 	},
 	
+	// the queue is a way to "sequentially" load the info in all tabs with a degree of asynchronicity and ensuring the UI doesn't lock up while it happens
+	orders: {
+		queue: [],
+		active: null,
+		timer: null,
+		
+		clear: function() {
+			this.active = null;
+			if(this.timer) {
+				this.timer.cancel();
+				this.timer = null;
+			}
+			this.queue = [];
+		},
+		
+		add: function(order) {
+			this.queue.push(order);
+			
+			if(!this.active) {
+				this.step();
+			}
+		},
+		
+		step: function() {
+			if(this.timer) {
+				this.timer.cancel();
+				this.timer = null;
+			}
+			
+			if(this.queue.length == 0) { return; }
+			
+			let order = this.queue.shift()();
+			this.active = order;
+			
+			let proceed = () => {
+				// in case another order stepped up, it will take care of proceeding in the queue
+				if(this.active != order) { return; }
+				
+				this.timer.cancel();
+				this.active = null;
+				this.timer = null;
+				this.step();
+			};
+			
+			// once an order finishes, we can move immediately to the next one
+			order.then(proceed);
+			
+			// if this order takes too long to finish, move on to the next one,
+			// there's no need to wait for completion on every single one, it will eventually catch up
+			this.timer = aSync(proceed);
+		}
+	},
+	
 	// The main commander of the FIT function, cleans up results and schedules new ones if the box is opened	
 	shouldFindAll: function() {
 		if(this.tabsList) {
@@ -415,7 +468,10 @@ this.FIT = {
 				return;
 			}
 		}
-				
+		
+		// previous queued orders are irrelevant
+		this.orders.clear();
+		
 		// Remove previous results if they exist
 		while(this.tabs.firstChild) { this.tabs.firstChild.remove(); }
 		while(this.hits.firstChild) { this.hits.firstChild.remove(); }
@@ -641,7 +697,7 @@ this.FIT = {
 		item.linkedHits = newHits;
 	},
 	
-	updateTabItem: function(item) {
+	updateTabItem: Task.async(function* (item) {
 		var newTitle = item.linkedBrowser.contentTitle || item.linkedBrowser.currentURI.spec;
 		
 		// I want the value on the title of the window, not just the URI of where the view source is pointing at
@@ -663,31 +719,35 @@ this.FIT = {
 		item.linkedTitle.setAttribute('value', newTitle);
 		
 		// Let's make it pretty with the favicons
-		PlacesUtils.favicons.getFaviconDataForPage(item.linkedBrowser.currentURI, function(aURI) {
-			if(aURI) { item.linkedFavicon.setAttribute('src', aURI.spec); }
-			
-			// Since the API didn't return an URI, lets try to use the favicon image displayed in the tabs
-			else {
-				if(isSource) {
-					// I'm actually not adding a favicon if it's the view source window, I don't think it makes much sense to do it,
-					// and it's easier to distinguish these windows in the list this way.
-					//item.linkedFavicon.setAttribute('src', 'chrome://branding/content/icon16.png');
-				} else {
-					var inBox = tab.boxObject.firstChild;
-					if(!inBox) { return; }
-					while(!inBox.className.contains('tab-stack')) {
-						inBox = inBox.nextSibling;
+		yield new Promise(function(resolve, reject) {
+			PlacesUtils.favicons.getFaviconDataForPage(item.linkedBrowser.currentURI, function(aURI) {
+				if(aURI) { item.linkedFavicon.setAttribute('src', aURI.spec); }
+				
+				// Since the API didn't return an URI, lets try to use the favicon image displayed in the tabs
+				else {
+					if(isSource) {
+						// I'm actually not adding a favicon if it's the view source window, I don't think it makes much sense to do it,
+						// and it's easier to distinguish these windows in the list this way.
+						//item.linkedFavicon.setAttribute('src', 'chrome://branding/content/icon16.png');
+					} else {
+						var inBox = tab.boxObject.firstChild;
 						if(!inBox) { return; }
+						while(!inBox.className.contains('tab-stack')) {
+							inBox = inBox.nextSibling;
+							if(!inBox) { return; }
+						}
+						
+						var icon = inBox.getElementsByClassName('tab-icon-image');
+						if(icon.length < 1) { return; }
+						
+						item.linkedFavicon.setAttribute('src', icon[0].getAttribute('src'));
 					}
-					
-					var icon = inBox.getElementsByClassName('tab-icon-image');
-					if(icon.length < 1) { return; }
-					
-					item.linkedFavicon.setAttribute('src', icon[0].getAttribute('src'));
 				}
-			}
+				
+				resolve();
+			});
 		});
-	},
+	}),
 	
 	// This sets up a tab item in the list, corresponding to the provided window
 	setTabEntry: function(aBrowser) {
@@ -699,20 +759,28 @@ this.FIT = {
 	},
 	
 	aSyncSetTab: function(aBrowser, item, word) {
-		aSync(() => { this.updateTabItem(item); });
-		aSync(() => { this.processTab(aBrowser, item, word); });
+		this.updateTabItem(item);
+		this.orders.add(() => { return this.processTab(aBrowser, item, word); });
 	},
 	
-	processTab: function(aBrowser, item, word) {
+	processTab: Task.async(function* (aBrowser, item, word) {
 		// Because this method can be called with a delay, we should make sure the findword still exists
 		if(!findQuery || findQuery != word) { return; }
 		
-		var loadingTab = (item.linkedHits && item.linkedHits.childNodes.length > 0 && item.linkedHits.childNodes[0].loadingTab);
 		Messenger.messageBrowser(aBrowser, 'FIT:ProcessText', {
 			query: findQuery,
 			caseSensitive: gFindBar.getElement("find-case-sensitive").checked
 		});
-	},
+		
+		// this task doesn't finish until we hear back from the browser
+		yield new Promise(function(resolve, reject) {
+			var listener = function() {
+				Messenger.unlistenBrowser(aBrowser, 'FIT:FinishedProcessText', listener);
+				resolve();
+			}
+			Messenger.listenBrowser(aBrowser, 'FIT:FinishedProcessText', listener);
+		});
+	}),
 	
 	// creates an 'unloaded' entry for the corresponding tab
 	unloadedTab: function(item, data) {

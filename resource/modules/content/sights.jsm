@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.2';
+Modules.VERSION = '1.1.3';
 
 this.sights = {
 	allSights: new Set(),
@@ -211,49 +211,58 @@ this.sights = {
 		}
 	},
 	
-	current: function(e) {
+	scheduled: null,
+	current: function() {
+		if(this.scheduled) {
+			this.scheduled.cancel();
+			this.scheduled = null;
+		}
 		this.cancelCurrent();
 		
-		// For pdf in PDF.JS
-		if(isPDFJS) {
-			if(document.readyState != 'complete' && document.readyState != 'interactive') { return; }
+		this.scheduled = aSync(() => {
+			this.scheduled = null;
 			
-			// no current match
-			if(!PDFJS.findController || PDFJS.findController.selected.matchIdx == -1 || PDFJS.findController.selected.pageIdx == -1) { return; }
-			
-			// Let's get the right one
-			var page = PDFJS.viewerApplication.pdfViewer.pages[PDFJS.findController.selected.pageIdx];
-			if(!page.textLayer
-			|| !page.textLayer.matches
-			|| !page.textLayer.matches[PDFJS.findController.selected.matchIdx]) {
-				Timers.init('currentSights', () => { this.current(); }, 10);
+			// For pdf in PDF.JS
+			if(isPDFJS) {
+				if(document.readyState != 'complete' && document.readyState != 'interactive') { return; }
+				
+				// no current match
+				if(!PDFJS.findController || PDFJS.findController.selected.matchIdx == -1 || PDFJS.findController.selected.pageIdx == -1) { return; }
+				
+				// Let's get the right one
+				var page = PDFJS.viewerApplication.pdfViewer.pages[PDFJS.findController.selected.pageIdx];
+				if(!page.textLayer
+				|| !page.textLayer.matches
+				|| !page.textLayer.matches[PDFJS.findController.selected.matchIdx]) {
+					Timers.init('currentSights', () => { this.current(); }, 10);
+					return;
+				}
+				
+				var sel = $$('.highlight.selected', page.textLayer.textDivs[page.textLayer.matches[PDFJS.findController.selected.matchIdx].begin.divIdx]);
+				if(sel.length == 0) { return; }
+				
+				// make sure we place a sight on it, even if's already been sighted for the highlight
+				delete sel[0].sights;
+				
+				this.build(sel[0]);
 				return;
 			}
 			
-			var sel = $$('.highlight.selected', page.textLayer.textDivs[page.textLayer.matches[PDFJS.findController.selected.matchIdx].begin.divIdx]);
-			if(sel.length == 0) { return; }
+			// Normal HTML files
 			
-			// make sure we place a sight on it, even if's already been sighted for the highlight
-			delete sel[0].sights;
+			// no point in doing anything if not searched for anything
+			if(!Finder.searchString) { return; }
 			
-			this.build(sel[0]);
-			return;
-		}
-		
-		// Normal HTML files
-		
-		// no point in doing anything if not searched for anything
-		if(!Finder.searchString) { return; }
-		
-		var sel = Finder.currentTextSelection;
-		if(sel.rangeCount == 1) {
-			var range = sel.getRangeAt(0);
-			
-			// Don't sight emptiness
-			if(range.startContainer == range.endContainer && range.startOffset == range.endOffset) { return; }
-			
-			this.build(range);
-		}
+			var sel = Finder.currentTextSelection;
+			if(sel.rangeCount == 1) {
+				var range = sel.getRangeAt(0);
+				
+				// Don't sight emptiness
+				if(range.startContainer == range.endContainer && range.startOffset == range.endOffset) { return; }
+				
+				this.build(range);
+			}
+		}, 50);
 	},
 	
 	// Hide the current sights

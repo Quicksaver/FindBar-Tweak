@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.6';
+Modules.VERSION = '1.0.7';
 
 this.__defineGetter__('isPDFJS', function() { return Finder.isPDFJS; });
 
@@ -992,7 +992,6 @@ this.Finder = {
 				text = innerText(body);
 			}
 			
-			message('InnerTextResult', text);
 			promise.resolve(text);
 		});
 		
@@ -1011,7 +1010,6 @@ this.Finder = {
 				textDeep += this.getInnerTextFrames(content);
 			}
 			
-			message('InnerTextDeepResult', textDeep);
 			this._innerTextDeep.resolve(textDeep);
 		});
 		
@@ -1140,11 +1138,15 @@ this.RemoteFinderListener = {
 		});
 		
 		this.addMessage("InnerText", () => {
-			Finder.innerText;
+			Finder.innerText.then(text => {
+				message('InnerTextResult', text);
+			});
 		});
 		
 		this.addMessage("InnerTextDeep", () => {
-			Finder.innerTextDeep;
+			Finder.innerTextDeep.then(textDeep => {
+				message('InnerTextDeepResult', textDeep);
+			});
 		});
 		
 		this.addMessage("Highlights:Info", (data) => {
@@ -1152,7 +1154,7 @@ this.RemoteFinderListener = {
 		});
 		
 		this.addMessage("SetSearchString", (data) => {
-			Finder._searchString = data;
+			Finder._notify(data, Ci.nsITypeAheadFind.FIND_FOUND, false, false);
 		});
 	},
 	

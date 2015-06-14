@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.1';
+Modules.VERSION = '1.1.2';
 
 this.FIT = {
 	// this keeps a list of all hits in a page, mapped to an id that can be used to keep things sync'ed up with the chrome process
@@ -51,7 +51,12 @@ this.FIT = {
 				break;
 			
 			case 'FIT:ProcessText':
-				this.processText(m.data);
+				// we need to tell the main script when the process finishes
+				new Promise((resolve, reject) => {
+					this.processText(m.data, resolve);
+				}).then(() => {
+					message('FIT:FinishedProcessText');
+				});
 				break;
 			
 			case 'FIT:ResetHits':
@@ -186,7 +191,7 @@ this.FIT = {
 		
 		// Then, we use fastFind until it finds our range.
 		// This is the only way I found to also update the browser._fastFind object, manually setting the range in the controllers doesn't do this,
-		// because of that, we often end up with multiple selections on screen, and the cursor position wouldn't seem to update.
+		// because of that, we often ended up with multiple selections on screen, and the cursor position wouldn't seem to update.
 		Finder.findRange(data.query, hit, data.caseSensitive, data.findPrevious, this.hits.all.size);
 	},
 	
@@ -286,7 +291,7 @@ this.FIT = {
 		});
 	},
 	
-	processText: Task.async(function* (data) {
+	processText: Task.async(function* (data, resolve) {
 		if(this._abortProcess) {
 			this._abortProcess();
 		}
@@ -300,7 +305,7 @@ this.FIT = {
 			|| !PDFJS.viewerApplication.pdfDocument
 			|| (PDFJS.viewerApplication.loadingBar.percent > 0 && PDFJS.viewerApplication.loadingBar.percent < 100)) {
 				this.resetHits();
-				Timers.init('FITprocessText', () => { this.processText(data); }, 250);
+				Timers.init('FITprocessText', () => { this.processText(data, resolve); }, 250);
 				return;
 			}
 			
@@ -316,11 +321,11 @@ this.FIT = {
 				message('FIT:UnloadedTab', { label: label, doNothing: true });
 				
 				Promise.all(PDFJS.findController.extractTextPromises).then(() => {
-					this.processText(data);
+					this.processText(data, resolve);
 				});
 				
 				// still call this once in a while, even if it's not finished, so that we can see the extraction status
-				Timers.init('FITprocessText', () => { this.processText(data); }, 250);
+				Timers.init('FITprocessText', () => { this.processText(data, resolve); }, 250);
 				return;
 			}
 		}
@@ -331,6 +336,7 @@ this.FIT = {
 		&& !this.docUnloaded()
 		&& (!isPDFJS || document.readyState != 'interactive')) {
 			this.resetHits();
+			resolve();
 			return;
 		}
 		
@@ -339,6 +345,7 @@ this.FIT = {
 		&& (!document || !(document instanceof content.HTMLDocument) || !document.body)) {
 			this.resetHits();
 			message('FIT:RemoveTab');
+			resolve();
 			return;
 		}
 		
@@ -346,6 +353,7 @@ this.FIT = {
 		if(this.docUnloaded()) {
 			this.resetHits();
 			message('FIT:UnloadedTab', { isUnloadedTab: true });
+			resolve();
 			return;
 		}
 		
@@ -367,6 +375,7 @@ this.FIT = {
 		&& this._lastText == textContent
 		&& this._lastQuery == data.query
 		&& this._lastCaseSensitive == data.caseSensitive) {
+			resolve();
 			return;
 		}
 		
@@ -384,6 +393,7 @@ this.FIT = {
 		yield this._segment(data.query, data.caseSensitive);
 		
 		this._lastText = textContent;
+		resolve();
 	}),
 	
 	_getAllHits: Task.async(function* (aWord, aCaseSensitive, aWindow) {

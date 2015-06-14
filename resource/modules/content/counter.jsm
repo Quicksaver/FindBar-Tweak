@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.1';
+Modules.VERSION = '1.0.2';
 
 this.counter = {
 	redoing: false,
@@ -18,6 +18,12 @@ this.counter = {
 	
 	onHighlightFinished: function() {
 		this.fill();
+	},
+	
+	onFindResult: function() {
+		if(document instanceof Ci.nsIDOMXMLDocument) {
+			this.fill();
+		}
 	},
 	
 	onFindAgain: function() {
@@ -61,6 +67,11 @@ this.counter = {
 			}
 			
 			message('Counter:Result', str);
+			return;
+		}
+		
+		if(document instanceof Ci.nsIDOMXMLDocument) {
+			message('Counter:Result', '__heldStatus__');
 			return;
 		}
 		

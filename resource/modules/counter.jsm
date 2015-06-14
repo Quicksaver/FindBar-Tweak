@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.1';
+Modules.VERSION = '2.1.2';
 
 this.counter = {
 	heldStatus: null,
@@ -26,6 +26,19 @@ Modules.LOADMODULE = function() {
 	initFindBar('counter',
 		function(bar) {
 			bar.browser.finder.addMessage('Counter:Result', data => {
+				if(data && data == '__heldStatus__') {
+					if(counter.heldStatus) {
+						let res = counter.heldStatus.res;
+						let aFindPrevious = counter.heldStatus.aFindPrevious;
+						bar.__updateStatusUI(res, aFindPrevious);
+						
+						if(gFindBarInitialized && bar == gFindBar) {
+							dispatch(bar, { type: 'UpdatedStatusFindBar', cancelable: false, detail: { res: res, aFindPrevious: aFindPrevious } });
+						}
+					}
+					return;
+				}
+				
 				var res = (data || !findQuery || !Finder.searchString) ? Ci.nsITypeAheadFind.FIND_FOUND : Ci.nsITypeAheadFind.FIND_NOTFOUND;
 				var aFindPrevious = null;
 				if(counter.heldStatus) {

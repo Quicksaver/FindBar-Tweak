@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.5';
+Modules.VERSION = '1.0.6';
 
 this.__defineGetter__('isPDFJS', function() { return Finder.isPDFJS; });
 
@@ -45,8 +45,10 @@ this.Finder = {
 		webProgress.removeProgressListener(this, Ci.nsIWebProgress.NOTIFY_ALL);
 		DOMContentLoaded.remove(this);
 		
-		removeAttribute(document.documentElement, objName+'-highlighted');
-		removeAttribute(document.documentElement, objName+'-reHighlight');
+		if(document instanceof Ci.nsIDOMHTMLDocument) {
+			removeAttribute(document.documentElement, objName+'-highlighted');
+			removeAttribute(document.documentElement, objName+'-reHighlight');
+		}
 	},
 	
 	addResultListener: function(aListener) {
@@ -225,6 +227,9 @@ this.Finder = {
 	},
 	
 	highlight: Task.async(function* (aHighlight, aWord, aLinksOnly) {
+		// nsFind doesn't work in XML files apparently
+		if(document instanceof Ci.nsIDOMXMLDocument) { return; }
+		
 		// if we're calling highlight() again, we need to ensure any currently sleeping previous highlight() is stopped
 		if(this._abortHighlight) {
 			this._abortHighlight();
@@ -954,7 +959,7 @@ this.Finder = {
 	},
 	
 	// should Finder even be used in this browser?
-	get isValid() { return viewSource || (document instanceof Ci.nsIDOMHTMLDocument) || (document instanceof Ci.nsIDOMXMLDocument); },
+	get isValid() { return viewSource || document instanceof Ci.nsIDOMHTMLDocument || document instanceof Ci.nsIDOMXMLDocument; },
 	
 	isFinderValid: function() {
 		// do aSync so we don't fire more than necessary
@@ -1033,16 +1038,16 @@ this.Finder = {
 	
 	// main indicators of whether the highlights are on or off,
 	// these are attributes of the documentElement so that they're preserved when surfing back/forward
-	get documentHighlighted() { return (document && trueAttribute(document.documentElement, objName+'-highlighted')); },
+	get documentHighlighted() { return document instanceof Ci.nsIDOMHTMLDocument && trueAttribute(document.documentElement, objName+'-highlighted'); },
 	set documentHighlighted(v) {
-		if(this.documentHighlighted != v) {
+		if(document instanceof Ci.nsIDOMHTMLDocument && this.documentHighlighted != v) {
 			toggleAttribute(document.documentElement, objName+'-highlighted', v);
 			message('highlightsResult', { documentHighlighted: v });
 		}
 	},
-	get documentReHighlight() { return (document && trueAttribute(document.documentElement, objName+'-reHighlight')); },
+	get documentReHighlight() { return document instanceof Ci.nsIDOMHTMLDocument && trueAttribute(document.documentElement, objName+'-reHighlight'); },
 	set documentReHighlight(v) {
-		if(this.documentReHighlight != v) {
+		if(document instanceof Ci.nsIDOMHTMLDocument && this.documentReHighlight != v) {
 			toggleAttribute(document.documentElement, objName+'-reHighlight', v);
 			message('highlightsContent', { documentReHighlight: v });
 		}
@@ -1057,11 +1062,15 @@ this.Finder = {
 		for(var d in data) {
 			switch (d) {
 				case 'documentHighlighted':
-					toggleAttribute(document.documentElement, objName+'-highlighted', data[d]);
+					if(document instanceof Ci.nsIDOMHTMLDocument) {
+						toggleAttribute(document.documentElement, objName+'-highlighted', data[d]);
+					}
 					break;
 					
 				case 'documentReHighlight':
-					toggleAttribute(document.documentElement, objName+'-reHighlight', data[d]);
+					if(document instanceof Ci.nsIDOMHTMLDocument) {
+						toggleAttribute(document.documentElement, objName+'-reHighlight', data[d]);
+					}
 					break;
 					
 				default:

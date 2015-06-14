@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.2';
+Modules.VERSION = '1.0.3';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -200,8 +200,8 @@ this.RemoteFinder.prototype = {
 		Messenger.messageBrowser(this._browser, 'FindAgain', { findBackwards: aFindBackwards, linksOnly: aLinksOnly, drawOutline: aDrawOutline });
 	},
 	
-	highlight: function(aHighlight, aWord) {
-		Messenger.messageBrowser(this._browser, 'Highlight', { highlight: aHighlight, word: aWord });
+	highlight: function(aHighlight, aWord, aLinksOnly) {
+		Messenger.messageBrowser(this._browser, 'Highlight', { highlight: aHighlight, word: aWord, linksOnly: aLinksOnly });
 	},
 	
 	enableSelection: function() {

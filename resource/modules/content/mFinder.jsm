@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.4';
+Modules.VERSION = '1.0.5';
 
 this.__defineGetter__('isPDFJS', function() { return Finder.isPDFJS; });
 
@@ -224,7 +224,7 @@ this.Finder = {
 		return searchString;
 	},
 	
-	highlight: Task.async(function* (aHighlight, aWord) {
+	highlight: Task.async(function* (aHighlight, aWord, aLinksOnly) {
 		// if we're calling highlight() again, we need to ensure any currently sleeping previous highlight() is stopped
 		if(this._abortHighlight) {
 			this._abortHighlight();
@@ -237,7 +237,7 @@ this.Finder = {
 			}
 		}
 		
-		let found = yield this._highlight(aHighlight, aWord);
+		let found = yield this._highlight(aHighlight, aWord, aLinksOnly);
 		this._lastFindResult = found ? Ci.nsITypeAheadFind.FIND_FOUND : Ci.nsITypeAheadFind.FIND_NOTFOUND;
 		
 		for(let l of this._listeners) {
@@ -385,9 +385,11 @@ this.Finder = {
 		}
 	},
 	
-	_highlightIterator: Task.async(function* (aWord, aWindow, aHighlight, aOnFind) {
+	_highlightIterator: Task.async(function* (aWord, aWindow, aHighlight, aLinksOnly, aOnFind) {
 		let count = 0;
 		for(let range of this._findIterator(aWord, aWindow)) {
+			if(aLinksOnly && !this._rangeStartsInLink(range)) { continue; }
+			
 			aOnFind(range);
 			
 			// We can stop now if all we're looking for is the found status
@@ -491,7 +493,7 @@ this.Finder = {
 	buildHighlights: new Set(),
 	
 	// Modified to more accurately handle frames
-	_highlight: Task.async(function* (aHighlight, aWord, aWindow) {
+	_highlight: Task.async(function* (aHighlight, aWord, aLinksOnly, aWindow) {
 		let win = aWindow || this.getWindow;
 		
 		if(!aWindow) {
@@ -513,7 +515,7 @@ this.Finder = {
 		
 		let found = false;
 		for(let i = 0; win.frames && i < win.frames.length; i++) {
-			if(yield this._highlight(aHighlight, aWord, win.frames[i])) {
+			if(yield this._highlight(aHighlight, aWord, aLinksOnly, win.frames[i])) {
 				found = true;
 			}
 		}
@@ -528,7 +530,7 @@ this.Finder = {
 		// Bugfix: when using neither the highlights nor the counter, toggling the highlights off would trigger the "Phrase not found" status
 		// because textFound would never have had the chance to be verified. This doesn't need to happen if a frame already triggered the found status.
 		if(aHighlight || this._highlights || !found) {
-			yield this._highlightIterator(aWord, win, aHighlight, aRange => {
+			yield this._highlightIterator(aWord, win, aHighlight, aLinksOnly, aRange => {
 				found = true;
 				
 				// No need to do any of this if all we're looking for is the found status
@@ -753,7 +755,7 @@ this.Finder = {
 		
 		const XLink_NS = "http://www.w3.org/1999/xlink";
 		do {
-			if(node instanceof HTMLAnchorElement) {
+			if(node instanceof node.ownerGlobal.HTMLAnchorElement) {
 				isInsideLink = node.hasAttribute("href");
 				break;
 			} else if(typeof node.hasAttributeNS == "function" && node.hasAttributeNS(XLink_NS, "href")) {
@@ -1109,7 +1111,7 @@ this.RemoteFinderListener = {
 		});
 		
 		this.addMessage("Highlight", (data) => {
-			Finder.highlight(data.highlight, data.word);
+			Finder.highlight(data.highlight, data.word, data.linksOnly);
 		});
 		
 		this.addMessage("RemoveSelection", () => {

@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.2';
+Modules.VERSION = '2.1.3';
 
 this.highlights = {
 	observe: function(aSubject, aTopic) {
@@ -302,7 +302,7 @@ Modules.LOADMODULE = function() {
 					}
 					
 					this.browser._lastSearchHighlight = aHighlight;
-					this.browser.finder.highlight(aHighlight, word);
+					this.browser.finder.highlight(aHighlight, word, this._findMode == this.FIND_LINKS);
 				}
 			});
 			

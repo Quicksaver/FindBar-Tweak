@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.4';
+Modules.VERSION = '2.1.5';
 
 this.highlights = {
 	observe: function(aSubject, aTopic) {
@@ -78,7 +78,9 @@ this.highlights = {
 			case 'FindModeChange':
 				// if the find mode is being changed to or from links only, any current highlights will no longer be valid
 				if(documentHighlighted && (e.detail.before == gFindBar.FIND_LINKS || e.detail.after == gFindBar.FIND_LINKS)) {
-					this.off();
+					// in case the findQuery is empty, as is the default behavior when opening quickfind/links only, the previous highlights will be removed;
+					// otherwise, they will be reapplied
+					this.apply(findQuery);
 				}
 				break;
 			

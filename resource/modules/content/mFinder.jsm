@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.7';
+Modules.VERSION = '1.0.8';
 
 this.__defineGetter__('isPDFJS', function() { return Finder.isPDFJS; });
 
@@ -46,8 +46,9 @@ this.Finder = {
 		DOMContentLoaded.remove(this);
 		
 		if(document instanceof Ci.nsIDOMHTMLDocument) {
-			removeAttribute(document.documentElement, objName+'-highlighted');
-			removeAttribute(document.documentElement, objName+'-reHighlight');
+			// can't load attributes module, so leave these in
+			document.documentElement.removeAttribute(objName+'-highlighted');
+			document.documentElement.removeAttribute(objName+'-reHighlight');
 		}
 	},
 	

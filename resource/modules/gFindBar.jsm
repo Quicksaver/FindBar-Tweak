@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.4';
+Modules.VERSION = '1.0.5';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return FITFull || viewSource || window.gFindBarInitialized; });
@@ -168,7 +168,7 @@ this.baseInit = function(bar) {
 this.baseDeinit = function(bar) {
 	if(!bar._destroying) {
 		if(!FITFull) {
-			var prop = (bar.__findMode !== undefined) ? '__findMode' : '_findMode';
+			var prop = (bar.___findMode !== undefined) ? '__findMode' : '_findMode';
 			delete bar[prop];
 			bar[prop] = bar['_'+prop];
 			delete bar['_'+prop];

@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.2';
+Modules.VERSION = '1.1.3';
 
 this.FIT = {
 	// this keeps a list of all hits in a page, mapped to an id that can be used to keep things sync'ed up with the chrome process
@@ -1226,5 +1226,9 @@ Modules.UNLOADMODULE = function() {
 	Listeners.remove(Scope, 'focus', FIT, true);
 	webProgress.removeProgressListener(FIT, Ci.nsIWebProgress.NOTIFY_ALL);
 	DOMContentLoaded.remove(FIT);
-	Finder.removeResultListener(FIT);
+	
+	// we could have loaded mFinder while initializing this module, in which case it will be disabled first
+	if(self.Finder) {
+		Finder.removeResultListener(FIT);
+	}
 };

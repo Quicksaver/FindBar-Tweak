@@ -1,4 +1,4 @@
-Modules.VERSION = '1.7.6';
+Modules.VERSION = '1.7.7';
 
 this.__defineGetter__('findButton', function() {
 	var node = $('find-button');
@@ -263,7 +263,7 @@ Modules.LOADMODULE = function() {
 							this.findbar.onFindAgainCommand(e.shiftKey);
 						}
 					} else {
-						this.findbar._finishFAYT(aEvent);
+						this.findbar._finishFAYT(e);
 					}
 				});
 			},

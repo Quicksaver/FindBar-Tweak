@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.0';
+Modules.VERSION = '1.0.1';
 
 this.__defineGetter__('InstantFox', function() { return window.InstantFox; });
 
@@ -45,8 +45,10 @@ this.instantFox = {
 	},
 	
 	disable: function() {
-		Piggyback.revert('findbartweak', InstantFox.pageLoader, 'beforeSwap');
-		Piggyback.revert('findbartweak', InstantFox.pageLoader, 'afterSwap');
+		if(InstantFox) {
+			Piggyback.revert('findbartweak', InstantFox.pageLoader, 'beforeSwap');
+			Piggyback.revert('findbartweak', InstantFox.pageLoader, 'afterSwap');
+		}
 	}
 };
 

@@ -10,74 +10,114 @@
 <!ENTITY Optgrid.label "Highlights Grid">
 
 <!ENTITY OpthighlightByDefault.label "Highlight all matches by default">
+<!ENTITY OpthighlightByDefault.tooltip "When opening the Findbar, the Highlight All button will be already checked, so whenever you run any Find operation it will show you all the matches from the start.">
 <!ENTITY OpthideWhenFinderHidden.label "Remove highlights when the Findbar is closed">
+<!ENTITY OpthideWhenFinderHidden.tooltip "In short, no Findbar open = no highlights shown. This includes the Quick Findbar! As soon as the Findbar is closed, all the matches are removed from the page.">
 <!ENTITY OptgridInScrollbar.label "Show highlights grid in the scrollbar">
-<!ENTITY OptuseCounterNew.label "Show matches counter in the Findbar">
+<!ENTITY OptgridInScrollbar.tooltip "The relative position of each highlighted match in the webpage will be shown on the scrollbar.">
+<!ENTITY OptuseCounter.label "Show matches counter in the Findbar">
+<!ENTITY OptuseCounter.tooltip "On every Find operation, the number of matches found in the webpage will be shown at the end of the Find toolbar.">
 <!ENTITY OptfindInTabs.label "Enable 'Find in All Tabs'">
+<!ENTITY OptfindInTabs.tooltip "A button is placed in the Findbar to open the 'Find in All Tabs' dialog, which lets you quickly find any word in all your opened tabs and windows.">
 <!ENTITY OptmultipleFITFull.label "Allow multiple instances of the 'Find in All Tabs' window">
+<!ENTITY OptmultipleFITFull.tooltip "When this is disabled, subsequent clicks on the 'Find in All Tabs' button will reuse any already opened 'Find in All Tabs' dialog instead of opening a new one each time.">
 
 <!ENTITY Optcolor.label "Highlights Color">
+<!ENTITY Optcolor.tooltip "Change the color used to highlight matches in the page.">
 <!ENTITY OptselectColor.label "Current Hit Color">
+<!ENTITY OptselectColor.tooltip "When you first run a Find operation, or when you hit F3 or the previous/next buttons to run through the matches, the current match should be shown in a different color from the other highlights to distinguish it.">
 <!ENTITY OptcolorReset.label "(reset)">
 <!ENTITY OptcolorKeepOSdefault.label "Keep default contrast color (recommended)">
+<!ENTITY OptcolorKeepOSdefault.tooltip "The contrast color is, depending on the webpage background, either the color of the text when the current hit color is used as its background, or vice versa. It is either white or black, depending on the color chosen above. While the above color setting affects only the current hit in Find operations, its contrast color can't be changed without also changing the contrast of all text selections. Disable this with caution, to not make text selections unreadable!">
 
 <!ENTITY OpthighlightOnFindAgain.label "Also highlight on 'Find Again' (F3)">
+<!ENTITY OpthighlightOnFindAgain.tooltip "If the Highlight All button is checked, running through the matches by pressing F3 or hitting the previous/next buttons will also highlight all the matches, if they aren't already.">
 <!ENTITY OptgridLimit.labela "Don't use the grid if it exceeds">
 <!ENTITY OptgridLimit.labelb "highlights">
+<!ENTITY OptgridLimit.tooltip "This is only for the highlights grid in the scrollbar! If there are too many results, which could slow down the process and lag the browser because of it, the highlights grid in the scrollbar will not be used.">
 <!ENTITY OptminNoDelay.labela "Delay highlights if search term is shorter than">
 <!ENTITY OptminNoDelay.labelb "characters">
+<!ENTITY OptminNoDelay.tooltip "When you first start typing in the Findbar, it's unlikely you're looking for just those one or two first characters. This delays the Find operation for short words for 1.5 seconds, to give you time to type the rest of your query. Note that it will still find matches for short words if you let that time pass without entering any more characters.">
 <!ENTITY OptadjustGridPadding.labela "Adjust distance between the grid and the border:">
 <!ENTITY OptadjustGridPadding.labelb "pixels">
+<!ENTITY OptadjustGridPadding.tooltip "Adjust the relative position of the highlights grid if needed, to better fit themes that change the appearance of the scrollbar.">
 <!ENTITY OptadjustGridWidth.labela "Adjust width of the grid:">
 <!ENTITY OptadjustGridWidth.labelb "pixels">
+<!ENTITY OptadjustGridWidth.tooltip "Adjust the width of the marks in the highlights grid if needed, to better fit themes that change the appearance of the scrollbar.">
 
 <!ENTITY Optsights.label "Focus Sights">
 <!ENTITY OptsightsCurrentHit.label "Current Hit">
 <!ENTITY OptsightsAllHighlights.label "All Highlights">
 <!ENTITY OptsightsCurrent.label "Show sights on the current search hit">
+<!ENTITY OptsightsCurrent.tooltip "When you Find a word, or when you run through the matches by hitting F3 or hitting the previous/next buttons, a target will be shown on your screen around the current hit, so that you can see it easily without having to actually look for it.">
 <!ENTITY OptsightsHighlights.label "Show sights on all the highlighted hits">
+<!ENTITY OptsightsHighlights.tooltip "Place a target around every highlight visible on the webpage. When you scroll the page, more targets will be placed as other highlights are scrolled into view.">
 <!ENTITY OptsightsHighlights.warning "Warning: This can be very resource intensive! Rendering and page scrolling may become slow!">
 <!ENTITY OptsightsStyle.label "Sights Style (click to preview)">
 <!ENTITY OptsightsStyle.focus "Focus Location">
 <!ENTITY OptsightsStyle.circle "Circle Location">
 <!ENTITY OptsightsRepeat.label "Animation repetitions:">
-<!ENTITY OptsightsColor.label "Sights Color">
+<!ENTITY OptsightsColor.tooltip "Configure the color used for these sights.">
 <!ENTITY OptsightsSameColor.label "Use the same color from highlights">
+<!ENTITY OptsightsSameColor.tooltip "The color used for these sights will be the same as the color used to highlight all matches in the webpage (Highlights pane).">
 <!ENTITY OptsightsSameColorCurrent.label "Use the same color from the current hit">
+<!ENTITY OptsightsSameColorCurrent.tooltip "The color used for these sights will be the same as the color used to distinguish the current match (Appearance pane).">
 <!ENTITY OptsightsLimit.label "Maximum number of sights on screen:">
+<!ENTITY OptsightsLimit.tooltip "This feature can be very resource intensive. It is better to limit the maximum number of visible sights to an amount that doesn't lag the browser when rendering them.">
 
-<!ENTITY OpthideLabels.labelFF25 "Show button icons instead of labels">
+<!ENTITY OpthideLabels.label "Show button icons instead of labels">
+<!ENTITY OpthideLabels.tooltip "By default the toolbar buttons have a text label. This changes them to images, making them move visibly distinguishable and also more compact.">
 <!ENTITY OpthideClose.label "Hide the Findbar close button">
+<!ENTITY OpthideClose.tooltip "The Findbar's close button will not be available to close it.">
 <!ENTITY OptmovetoTop.label "Move to the top of the browser">
-<!ENTITY OptmovetoTop.labelFF25 "Place above the webpage">
+<!ENTITY OptmovetoTop.tooltip "A slimmer Findbar will be placed at the top of the webpage, in a corner above it.">
 <!ENTITY OptmovetoRight.label "Place on the right">
+<!ENTITY OptmovetoRight.tooltip "The Findbar's input field and buttons will be reversed and aligned on the right. If the Findbar is moved to the top, the whole Findbar appears on the top right corner instead of on the left.">
 <!ENTITY OptblurCloses.label "Close the Findbar when it loses focus">
+<!ENTITY OptblurCloses.tooltip "As soon as you click anywhere on the webpage, or move the cursor to another place like the location bar, the Findbar will close automatically.">
 <!ENTITY OptglobalFB.label "Use a single global Findbar for all tabs">
+<!ENTITY OptglobalFB.tooltip "When you open the Findbar in one tab, then switch to another tab, you should see the Findbar still open in the new tab.">
 <!ENTITY OptonStartup.label "Remember Findbar opened/closed state on startup">
+<!ENTITY OptonStartup.tooltip "If you close the browser with the Findbar still open, the next time you start the browser it will be already opened.">
 
 <!ENTITY OptopenFindbar.label "When opening the Findbar">
 <!ENTITY OptquickFindOptions.label "Quick Findbar">
 <!ENTITY OptkeepButtons.label "Show buttons in the Quick Findbar">
+<!ENTITY OptkeepButtons.tooltip "By default, the Quick Findbar doesn't have any buttons, it is just the input box for quick find operations. With this you can still access the Highlight All and Match Case functions when using it.">
 <!ENTITY OptFAYT.label "Search for text when I start typing">
+<!ENTITY OptFAYT.tooltip "Hit any key while browsing a webpage, and the Quick Findbar will pop out to find that text. The cursor is placed in it, so you can keep typing to change the find query.">
 <!ENTITY OptFAYTTimeout.beforeLabel "Autoclose after">
 <!ENTITY OptFAYTTimeout.afterLabel "seconds">
+<!ENTITY OptFAYTTimeout.tooltip "The Quick Findbar will automatically close after a period of inactivity. Remember that it will also close if you focus anything else, such as when clicking on the webpage.">
 <!ENTITY OptFAYTmode.caption "Findbar Mode">
-<!ENTITY OptFAYTmode.quickFind "Use Quick Findbar when I start typing to search for text">
-<!ENTITY OptFAYTmode.normalFind "Always use normal Findbar">
-<!ENTITY OptFAYTmode.alwaysQuick "Always use Quick Findbar">
+<!ENTITY OptFAYTmode.quickFind.label "Use Quick Findbar when I start typing to search for text">
+<!ENTITY OptFAYTmode.quickFind.tooltip "Default mode. The Quick Findbar is used when you type anywhere on the webpage, while to access the normal Findbar you need to use the keyboard shortcut or toggle its toolbar button.">
+<!ENTITY OptFAYTmode.normalFind.label "Always use normal Findbar">
+<!ENTITY OptFAYTmode.normalFind.tooltip "The normal Findbar is used even when you type anywhere on the webpage, it will not close automatically on a delay or when it loses focus (unless you enable that preference above).">
+<!ENTITY OptFAYTmode.alwaysQuick.label "Always use Quick Findbar">
+<!ENTITY OptFAYTmode.alwaysQuick.tooltip "The Quick Findbar is used even when you use the keyboard shortcut, it will always automatically close after a delay or when it loses focus.">
 
 <!ENTITY OptkeyboardShortcut.label "Keyboard Shortcut">
 <!ENTITY OptctrlFCloses.win "Ctrl+F also closes the Findbar">
 <!ENTITY OptctrlFCloses.mac "Command+F also closes the Findbar">
+<!ENTITY OptctrlFCloses.tooltip "You can open the Findbar and then close it when you no longer need it through the same keyboard shortcut.">
 <!ENTITY OptctrlFprefill.label "Fill the Findbar with the selected text when opening it">
+<!ENTITY OptctrlFprefill.tooltip "If there is any text selected in the webpage when the Findbar is opened, this text is automatically copied to the Findbar to be used as a find query. If 'Highlight All by Default' is enabled, it will find all occurences of the selected text immediately.">
 <!ENTITY OptctrlFOnFocused.label "Only close when it is already focused">
+<!ENTITY OptctrlFOnFocused.tooltip "The keyboard shortcut will always first place the cursor in the Findbar, copying any selected text in the webpage into it if the above preference is enabled. It will only close the Findbar when the cursor is already in it.">
 <!ENTITY OptSelectingText.label "When Selecting Text">
 <!ENTITY OptfillSelectedText.label "Fill the Findbar with the selected text">
+<!ENTITY OptfillSelectedText.tooltip "Every time any word is selected in the webpage, it will be automatically copied to the Findbar to be used as a find query. If 'Highlight All by Default' is enabled, selecting text in a webpage will immediately highlight all occurences of the selection.">
 <!ENTITY OptemptySelectedText.label "Empty the Findbar when no text is selected">
+<!ENTITY OptemptySelectedText.tooltip "Likewise from above, if you click anywhere in the webpage to unselect text, the Findbar will be cleared and all the highlights will be removed as well.">
 <!ENTITY OptfillSelectedOpenFindbar.label "Show the Quick Findbar when selected text is used">
-<!ENTITY OptdblClickEatSpaces.label "Double-clicking on a word selects also the following space">
+<!ENTITY OptfillSelectedOpenFindbar.tooltip "When the Findbar is filled with the selected text, it will briefly appear to show that this happened.">
+<!ENTITY OptglobalBehavior.warning "Warning: the following preferences are not specific to the Findbar, they affect the browser globally, such as in webpages, the location bar and any other place where text selection is possible. Change these with caution!">
+<!ENTITY OptdblClickEatSpaces.label "Double-clicking on a word also selects the following space">
 <!ENTITY OptdblClickStopAtPunctuation.label "Double-clicking on a word stops selection at punctuation">
 <!ENTITY OptNativePrefs.label "Firefox Native Preferences">
-<!ENTITY OptNativePrefs.warning "The add-on should handle everything automatically. Only use these if you absolutely need it!">
+<!ENTITY OptNativePrefs.description "Some preferences, such as the highlights colors or the Quick Findbar preferences, already exist in Firefox, they are only shown here to be more easily accessed and customized. The add-on should handle them automatically, so only use these if you absolutely need it!">
 <!ENTITY OptResetNativeOnDisabled.label "Reset all changed native preferences when disabling the add-on">
+<!ENTITY OptResetNativeOnDisabled.tooltip "If any residual changes remain, such as the highlights color not being properly reset to default, when you disable the add-on, enable this to ensure that they are reset.">
 <!ENTITY OptResetNativeNow.label "Reset all changed native preferences">
+<!ENTITY OptResetNativeNow.tooltip "Reset them to their default values now.">

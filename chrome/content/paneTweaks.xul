@@ -34,26 +34,53 @@
 		
 		<groupbox align="start" id="paneTweaks-shortcut" collapsed="true" data-category="paneTweaks">
 			<caption label="&OptkeyboardShortcut.label;"/>
-			<checkbox label="&OptctrlFprefill.label;" preference="pref-FAYTprefill"/>
-			<checkbox id="ctrlFClosesCheckbox" label="&OptctrlFCloses.win;" preference="pref-ctrlFCloses"/>
-			<checkbox class="indent" dependson="pref-ctrlFCloses" label="&OptctrlFOnFocused.label;" preference="pref-ctrlFClosesOnFocused"/>
+			<checkbox label="&OptctrlFprefill.label;"
+				tooltiptext="&OptctrlFprefill.tooltip;"
+				preference="pref-FAYTprefill"/>
+			<checkbox id="ctrlFClosesCheckbox"
+				label="&OptctrlFCloses.win;"
+				tooltiptext="&OptctrlFCloses.tooltip;"
+				preference="pref-ctrlFCloses"/>
+			<checkbox label="&OptctrlFOnFocused.label;"
+				tooltiptext="&OptctrlFOnFocused.tooltip;"
+				class="indent"
+				dependson="pref-ctrlFCloses"
+				preference="pref-ctrlFClosesOnFocused"/>
 		</groupbox>
 		
 		<groupbox align="start" id="paneTweaks-text" collapsed="true" data-category="paneTweaks">
 			<caption label="&OptSelectingText.label;"/>
-			<checkbox label="&OptfillSelectedText.label;" preference="pref-fillSelectedText"/>
-			<checkbox class="indent" dependson="pref-fillSelectedText" label="&OptemptySelectedText.label;" preference="pref-emptySelectedText"/>
-			<checkbox class="indent" dependson="pref-fillSelectedText" label="&OptfillSelectedOpenFindbar.label;" preference="pref-fillTextShowFindBar"/>
+			<checkbox label="&OptfillSelectedText.label;"
+				tooltiptext="&OptfillSelectedText.tooltip;"
+				preference="pref-fillSelectedText"/>
+			<checkbox label="&OptemptySelectedText.label;"
+				tooltiptext="&OptemptySelectedText.tooltip;"
+				class="indent"
+				dependson="pref-fillSelectedText"
+				preference="pref-emptySelectedText"/>
+			<checkbox label="&OptfillSelectedOpenFindbar.label;"
+				tooltiptext="&OptfillSelectedOpenFindbar.tooltip;"
+				class="indent"
+				dependson="pref-fillSelectedText"
+				preference="pref-fillTextShowFindBar"/>
+		</groupbox>
+		
+		<groupbox align="start" id="paneTweaks-dblClick" collapsed="true" data-category="paneTweaks">
+			<description>&OptglobalBehavior.warning;</description>
 			<checkbox label="&OptdblClickEatSpaces.label;" preference="pref-layoutEatSpaces"/>
 			<checkbox label="&OptdblClickStopAtPunctuation.label;" preference="pref-layoutStopAtPunctuation"/>
 		</groupbox>
 		
 		<groupbox align="start" id="paneTweaks-natives" collapsed="true" data-category="paneTweaks">
 			<caption label="&OptNativePrefs.label;"/>
-			<description>&OptNativePrefs.warning;</description>
+			<description>&OptNativePrefs.description;</description>
 			<vbox align="center">
-				<checkbox label="&OptResetNativeOnDisabled.label;" preference="pref-resetNative"/>
-				<button label="&OptResetNativeNow.label;" oncommand="objName.resetNativePrefs();"/>
+				<checkbox label="&OptResetNativeOnDisabled.label;"
+					tooltiptext="&OptResetNativeOnDisabled.tooltip;"
+					preference="pref-resetNative"/>
+				<button label="&OptResetNativeNow.label;"
+					tooltiptext="&OptResetNativeNow.tooltip;"
+					oncommand="objName.resetNativePrefs();"/>
 			</vbox>
 		</groupbox>
 	</prefpane>

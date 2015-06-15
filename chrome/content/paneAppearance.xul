@@ -34,29 +34,29 @@
 		
 		<groupbox align="start" id="paneAppearance-position" collapsed="true" data-category="paneAppearance">
 			<caption label="&Optdisplay.label;"/>
-			<checkbox label="&OptmovetoTop.label;" preference="pref-movetoTop"/>
-			<checkbox label="&OptmovetoRight.label;" preference="pref-movetoRight"/>
+			<checkbox label="&OptmovetoTop.label;" tooltiptext="&OptmovetoTop.tooltip;" preference="pref-movetoTop"/>
+			<checkbox label="&OptmovetoRight.label;" tooltiptext="&OptmovetoRight.tooltip;" preference="pref-movetoRight"/>
 		</groupbox>
 		
 		<groupbox align="start" id="paneAppearance-elements" collapsed="true" data-category="paneAppearance">
 			<caption label="&OptButtonAndLabels.label;"/>
-			<checkbox label="&OptuseCounterNew.label;" preference="pref-useCounter"/>
-			<checkbox label="&OpthideClose.label;" preference="pref-hideClose"/>
-			<checkbox label="&OpthideLabels.labelFF25;" preference="pref-hideLabels"/>
+			<checkbox label="&OptuseCounter.label;" tooltiptext="&OptuseCounter.tooltip;" preference="pref-useCounter"/>
+			<checkbox label="&OpthideClose.label;" tooltiptext="&OpthideClose.tooltip;" preference="pref-hideClose"/>
+			<checkbox label="&OpthideLabels.label;" tooltiptext="&OpthideLabels.tooltip;" preference="pref-hideLabels"/>
 		</groupbox>
 		
 		<groupbox align="start" id="paneAppearance-currentcolor" collapsed="true" data-category="paneAppearance">
 			<caption label="&OptselectColor.label;"/>
 			<hbox align="start">
 				<vbox align="center">
-					<hbox align="center">
+					<hbox align="center" tooltiptext="&OptselectColor.tooltip;">
 						<colorpicker id="selectColor" type="button" preference="pref-selectColor"/>
 						<label class="text-link"
 						href="#"
 						onclick="document.getElementById('pref-selectColor').reset(); return false;"
 						value="&OptcolorReset.label;"/>
 					</hbox>
-					<checkbox label="&OptcolorKeepOSdefault.label;" preference="pref-keepSelectContrast"/>
+					<checkbox label="&OptcolorKeepOSdefault.label;" tooltiptext="&OptcolorKeepOSdefault.tooltip;" preference="pref-keepSelectContrast"/>
 				</vbox>
 			</hbox>
 		</groupbox>

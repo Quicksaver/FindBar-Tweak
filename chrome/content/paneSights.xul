@@ -35,13 +35,19 @@
 		
 		<groupbox align="start" id="paneSights-current" collapsed="true" data-category="paneSights">
 			<caption label="&OptsightsCurrentHit.label;"/>
-			<checkbox label="&OptsightsCurrent.label;" preference="pref-sightsCurrent"/>
+			<checkbox label="&OptsightsCurrent.label;" tooltiptext="&OptsightsCurrent.tooltip;" preference="pref-sightsCurrent"/>
 			<vbox align="center" class="indent">
 				<vbox align="start">
-					<checkbox dependson="pref-sightsCurrent" label="&OptsightsSameColorCurrent.label;" preference="pref-sightsSameColor"/>
-					<checkbox dependson="pref-sightsCurrent,!pref-sightsSameColor" label="&OptsightsSameColor.label;" preference="pref-sightsSameColorAll"/>
+					<checkbox label="&OptsightsSameColorCurrent.label;"
+						tooltiptext="&OptsightsSameColorCurrent.tooltip;"
+						dependson="pref-sightsCurrent"
+						preference="pref-sightsSameColor"/>
+					<checkbox label="&OptsightsSameColor.label;"
+						tooltiptext="&OptsightsSameColor.tooltip;"
+						dependson="pref-sightsCurrent,!pref-sightsSameColor"
+						preference="pref-sightsSameColorAll"/>
 				</vbox>
-				<hbox align="center">
+				<hbox align="center" tooltiptext="&OptsightsColor.tooltip;">
 					<colorpicker id="sightsColor"
 						dependson="pref-sightsCurrent,!pref-sightsSameColor,!pref-sightsSameColorAll"
 						type="button"
@@ -58,10 +64,10 @@
 		<groupbox align="start" id="paneSights-highlights" collapsed="true" data-category="paneSights">
 			<caption label="&OptsightsAllHighlights.label;"/>
 			<description>&OptsightsHighlights.warning;</description>
-			<checkbox label="&OptsightsHighlights.label;" preference="pref-sightsHighlights"/>
+			<checkbox label="&OptsightsHighlights.label;" tooltiptext="&OptsightsHighlights.tooltip;" preference="pref-sightsHighlights"/>
 			<vbox align="center" class="indent">
 				<vbox align="start">
-					<hbox align="center">
+					<hbox align="center" tooltiptext="&OptsightsLimit.tooltip;">
 						<label dependson="pref-sightsHighlights" value="&OptsightsLimit.label;"/>
 						<textbox dependson="pref-sightsHighlights"
 							type="number"
@@ -70,9 +76,12 @@
 							max="100"
 							preference="pref-sightsLimit"/>
 					</hbox>
-					<checkbox dependson="pref-sightsHighlights" label="&OptsightsSameColor.label;" preference="pref-sightsAllSameColor"/>
+					<checkbox label="&OptsightsSameColor.label;"
+						tooltiptext="&OptsightsSameColor.tooltip;"
+						dependson="pref-sightsHighlights"
+						preference="pref-sightsAllSameColor"/>
 				</vbox>
-				<hbox align="center">
+				<hbox align="center" tooltiptext="&OptsightsColor.tooltip;">
 					<colorpicker id="sightsAllColor"
 						dependson="pref-sightsHighlights,!pref-sightsAllSameColor"
 						type="button"
@@ -91,13 +100,15 @@
 			<vbox align="center">
 				<radiogroup preference="pref-sightsStyle">
 					<hbox>
-						<radio dependson="pref-sightsCurrent;pref-sightsHighlights"
-							label="&OptsightsStyle.focus;"
+						<radio label="&OptsightsStyle.focus;"
 							value="focus"
+							class="smallindent"
+							dependson="pref-sightsCurrent;pref-sightsHighlights"
 							oncommand="objName.previewSights(this, 'focus');"/>
-						<radio dependson="pref-sightsCurrent;pref-sightsHighlights"
-							label="&OptsightsStyle.circle;"
+						<radio label="&OptsightsStyle.circle;"
 							value="circle"
+							class="smallindent"
+							dependson="pref-sightsCurrent;pref-sightsHighlights"
 							oncommand="objName.previewSights(this, 'circle');"/>
 					</hbox>
 				</radiogroup>

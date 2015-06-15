@@ -1,4 +1,4 @@
-Modules.VERSION = '1.5.0';
+Modules.VERSION = '1.5.1';
 Modules.UTILS = true;
 
 // Messenger - 	Aid object to communicate with browser content scripts (e10s).
@@ -234,6 +234,6 @@ Modules.UNLOADMODULE = function() {
 	
 	Windows.callOnAll(Messenger.cleanWindow, 'navigator:browser');
 	
-	Messenger.globalMM.removeDelayedFrameScript('resource://'+objPathString+'/modules/utils/content.js?'+AddonData.initTime);
+	Messenger.globalMM.removeDelayedFrameScript('resource://'+objPathString+'/defaultsContent.js?'+AddonData.initTime);
 	Messenger.messageAll('shutdown');
 };

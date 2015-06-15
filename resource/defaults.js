@@ -120,7 +120,6 @@ function onStartup(aReason) {
 function onShutdown(aReason) {
 	// remove the add-on from all windows
 	Windows.callOnAll(stopAddon, null, null, true);
-	Browsers.callOnAll(stopAddon, null, true);
 	
 	Modules.unload('compatibilityFix/sandboxFixes');
 	Modules.unload('findInTabsSandbox');

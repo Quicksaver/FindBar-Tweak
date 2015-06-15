@@ -388,8 +388,6 @@ Modules.LOADMODULE = function() {
 	callOnLoad(window, function() {
 		dependsOn.updateAll();
 		Listeners.add(window, "change", dependsOn);
-		Listeners.add($('selectColor'), 'select', function(e) { console.log(e); }, true);
-		Listeners.add($('selectColor'), 'change', function(e) { console.log(e); }, true);
 		
 		initScales();
 		keys.init();

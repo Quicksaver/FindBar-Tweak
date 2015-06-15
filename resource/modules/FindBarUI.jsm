@@ -1,4 +1,4 @@
-Modules.VERSION = '1.7.7';
+Modules.VERSION = '1.7.8';
 
 this.__defineGetter__('findButton', function() {
 	var node = $('find-button');
@@ -252,10 +252,13 @@ Modules.LOADMODULE = function() {
 				
 				// Ctrl+Enter in the findField should toggle Highlight All even if it's empty
 				Piggyback.add('FindBarUI', bar._findField, '_handleEnter', function(e) {
-					let metaKey = DARWIN ? e.metaKey : e.ctrlKey;
-					if(metaKey) {
-						this.findbar.getElement("highlight").click();
-						return;
+					if(this.findbar._findMode == this.findbar.FIND_NORMAL
+					|| (this.findbar._findMode == this.findbar.FIND_TYPEAHEAD && Prefs.keepButtons)) {
+						let metaKey = DARWIN ? e.metaKey : e.ctrlKey;
+						if(metaKey) {
+							this.findbar.getElement("highlight").click();
+							return;
+						}
 					}
 					
 					if(this.findbar._findMode == this.findbar.FIND_NORMAL) {

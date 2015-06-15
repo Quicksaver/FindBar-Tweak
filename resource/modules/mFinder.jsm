@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.3';
+Modules.VERSION = '1.0.4';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -228,7 +228,13 @@ this.RemoteFinder.prototype = {
 	},
 	
 	keyPress: function(e) {
-		Messenger.messageBrowser(this._browser, 'KeyPress', { keyCode: e.keyCode, shiftKey: e.shiftKey });
+		Messenger.messageBrowser(this._browser, 'KeyPress', {
+			keyCode: e.keyCode,
+			ctrlKey: e.ctrlKey,
+			altKey: e.altKey,
+			shiftKey: e.shiftKey,
+			metaKey: e.metaKey
+		});
 	},
 	
 	// We completely override Firefox's own matches counter with ours, just leaving this dummy function here in case someone tries to use it for now.

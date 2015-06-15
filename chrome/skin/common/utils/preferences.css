@@ -1,13 +1,18 @@
 @namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
 
-.smallindent {
-	-moz-margin-start: 14px;
-}
-
 .header,
 caption {
 	text-shadow: 0 1px 0 rgba(255,255,255,0.75);
 	color: #484848;
+}
+
+/* for radio checkboxes displayed horizontally */
+.smallindent {
+	-moz-margin-start: 14px;
+}
+.smallindent[focused="true"] > .radio-label-box {
+	-moz-margin-start: -1px;
+	-moz-margin-end: 0;
 }
 
 /* nodes that aren't visible but should still occupy their space in the layout */

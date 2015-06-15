@@ -6,13 +6,12 @@ caption {
 	color: #484848;
 }
 
-/* for radio checkboxes displayed horizontally */
+/* for checkboxes displayed horizontally */
 .smallindent {
-	-moz-margin-start: 14px;
+	-moz-margin-end: 14px;
 }
-.smallindent[focused="true"] > .radio-label-box {
-	-moz-margin-start: -1px;
-	-moz-margin-end: 0;
+groupbox label.smallindent {
+	-moz-margin-end: 14px !important;
 }
 
 /* nodes that aren't visible but should still occupy their space in the layout */

@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.3';
+Modules.VERSION = '1.0.4';
 Modules.UTILS = true;
 
 // PrefPanes - handles the preferences tab and all its contents for the add-on
@@ -106,7 +106,20 @@ this.PrefPanes = {
 			sscode += '	#bank .balance { position: relative; height: 50%; top: 0.4em; }\n';
 			sscode += '}';
 			
-			Styles.load('PrefPanesFix', sscode, true);
+			Styles.load('PrefPanesHtmlFix', sscode, true);
+		}
+		
+		// and this doesn't seem need in current Aurora (FF40+)
+		if(Services.vc.compare(Services.appinfo.version, '40.0a2') < 0) {	
+			var sscode = '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
+			sscode += '@-moz-document url-prefix("'+this.chromeUri+'")'+(this.aboutUri ? ', url-prefix("'+this.aboutUri.spec+'")' : '')+' {\n';
+			sscode += '	.smallindent[focused="true"] > .radio-label-box {\n';
+			sscode += '		-moz-margin-start: -1px;\n';
+			sscode += '		-moz-margin-end: 0;\n';
+			sscode += '	}\n';
+			sscode += '}';
+			
+			Styles.load('PrefPanesXulFix', sscode, true);
 		}
 		
 		// if we're in a dev version, ignore all this
@@ -134,7 +147,8 @@ this.PrefPanes = {
 		
 		this.closeAll();
 		
-		Styles.unload('PrefPanesFix');
+		Styles.unload('PrefPanesHtmlFix');
+		Styles.unload('PrefPanesXulFix');
 		
 		Browsers.unregister(this, 'pageshow', this.chromeUri);
 		

@@ -1,4 +1,4 @@
-Modules.VERSION = '2.15.3';
+Modules.VERSION = '2.15.4';
 Modules.UTILS = true;
 
 // Overlays - to use overlays in my bootstraped add-ons. The behavior is as similar to what is described in https://developer.mozilla.org/en/XUL_Tutorial/Overlays as I could manage.
@@ -1856,7 +1856,11 @@ this.Overlays = {
 			var areaId = null;
 			var areas = CustomizableUI.areas;
 			for(let area of areas) {
-				var inArea = CustomizableUI.getWidgetIdsInArea(area);
+				// this will throw if called too early for an area whose placements have not been fetched yet,
+				// it's ok because once they are, the widget will be placed in it anyway
+				try { var inArea = CustomizableUI.getWidgetIdsInArea(area); }
+				catch(ex) { continue; }
+				
 				if(inArea.indexOf(id) > -1) {
 					if(CustomizableUI.getAreaType(area) != CustomizableUI.TYPE_TOOLBAR) { break; }
 					

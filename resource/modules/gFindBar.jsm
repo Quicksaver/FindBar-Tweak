@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.5';
+Modules.VERSION = '1.0.6';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return FITFull || viewSource || window.gFindBarInitialized; });
@@ -76,6 +76,9 @@ this.baseInit = function(bar) {
 			window.close();
 			return;
 		}
+		
+		// don't let Firefox's fullscreen handler close the findbar, instead we hide it through CSS so it is still there after exiting fullscreen
+		if(!viewSource && trueAttribute(document.documentElement, 'inDOMFullscreen')) {	return; }
 		
 		var suffix = (!viewSource && this.browser != gBrowser.mCurrentBrowser) ? 'Background' : '';
 		

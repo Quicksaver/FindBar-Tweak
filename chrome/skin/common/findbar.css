@@ -5,6 +5,10 @@
 	url("chrome://global/content/viewPartialSource.xul"),
 	url("chrome://findbartweak/content/findInTabsFull.xul") {
 	
+	window[inDOMFullscreen] findbar {
+		visibility: collapse;
+	}
+	
 	/* findbar appearance */
 	
 	findbar[noClose] .findbar-closebutton,

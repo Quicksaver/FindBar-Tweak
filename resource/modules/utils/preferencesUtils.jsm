@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.1';
+Modules.VERSION = '2.0.2';
 Modules.UTILS = true;
 
 // dependsOn - object that adds a dependson attribute functionality to xul preference elements.
@@ -330,7 +330,7 @@ this.categories = {
 	},
 	
 	gotoPref: function(aCategory) {
-		const kDefaultCategoryInternalName = this.categories.lastElementChild.value;
+		const kDefaultCategoryInternalName = this.categories.firstElementChild.value;
 		let hash = document.location.hash;
 		let category = aCategory || hash.substr(1) || Prefs.lastPrefPane || kDefaultCategoryInternalName;
 		category = this.friendlyPrefCategoryNameToInternalName(category);
@@ -353,7 +353,12 @@ this.categories = {
 		this.lastHash = category;
 		this.categories.selectedItem = item;
 		setAttribute(document.documentElement, 'currentcategory', category);
-		Prefs.lastPrefPane = category; // I can't save the last category in a persisted attribute because it persists to the hashed url
+		
+		// I can't save the last category in a persisted attribute because it persists to the hashed url;
+		// don't remember the About pane, there's no need to and it would hardly be useful
+		if(category != 'paneAbout') {
+			Prefs.lastPrefPane = category;
+		}
 		
 		window.history.replaceState(category, document.title);
 		this.search(category, "data-category");

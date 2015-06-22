@@ -13,14 +13,13 @@ div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"] {
 	opacity: 0.7;
 }
 
-div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"] > div:not(.topSpacer):not(.bottomSpacer) {
-	position: relative;
-}
-
 div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"],
 div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"] > div {
 	display: flex;
 	flex-direction: column;
+	
+	/* make sure websites don't mess with the grid's layout */
+	position: relative;
 }
 
 div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"] > div > div:not([highlight]) {

@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.1';
+Modules.VERSION = '2.1.2';
 
 this.grids = {
 	template: null,
@@ -189,7 +189,7 @@ this.grids = {
 		
 		var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 		sscode += '@namespace url(http://www.w3.org/1999/xhtml);\n';
-		sscode += 'div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"] {\n';
+		sscode += 'div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"] {\n';
 		sscode += 	this.lastAdjust;
 		sscode += '}\n';
 		

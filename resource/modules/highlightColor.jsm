@@ -1,4 +1,4 @@
-Modules.VERSION = '1.2.7';
+Modules.VERSION = '1.2.8';
 
 this.uiBackup = {};
 
@@ -110,7 +110,7 @@ this.setHighlightColorStyleSheet = function(rgb) {
 	sscode += 'body #outerContainer #mainContainer #viewerContainer .textLayer .highlight:not(.selected) { background-color: rgb('+rgb.r+','+rgb.g+','+rgb.b+'); }\n';
 	
 	// For grids in frames
-	sscode += 'div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"] div[highlight]:not([current]):not([hover]) {\n';
+	sscode += 'div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"] div[highlight]:not([current]):not([hover]) {\n';
 	sscode += '	background-color: '+Prefs.highlightColor+';\n';
 	sscode += '}\n';
 	
@@ -171,8 +171,8 @@ this.setSelectColorStyleSheet = function(rgb) {
 	sscode += 'body #outerContainer #mainContainer #viewerContainer .textLayer .highlight.selected { background-color: rgb('+rgb.r+','+rgb.g+','+rgb.b+'); }\n';
 	
 	// For grids in frames
-	sscode += 'div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"] div[highlight][current],\n';
-	sscode += 'div[ownedByFindBarTweak][anonid="gridBox"] div[anonid="findGrid"] div[highlight][hover] {\n';
+	sscode += 'div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"] div[highlight][current],\n';
+	sscode += 'div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"] div[highlight][hover] {\n';
 	sscode += '	background-color: '+Prefs.selectColor+';\n';
 	sscode += '}\n';
 	

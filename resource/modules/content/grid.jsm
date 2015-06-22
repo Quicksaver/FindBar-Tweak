@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.2';
+Modules.VERSION = '1.1.3';
 
 this.grids = {
 	allHits: new Set(),
@@ -206,7 +206,7 @@ this.grids = {
 		
 		// We need to ensure specificity
 		// and that if the grid remains when the add-on is disabled, it doesn't affect the webpage it is placed into.
-		setAttribute(boxNode, 'ownedByFindBarTweak', 'true');
+		setAttribute(boxNode, 'ownedbyfindbartweak', 'true');
 		
 		if(html) {
 			setAttribute(boxNode, 'hidden', 'true');

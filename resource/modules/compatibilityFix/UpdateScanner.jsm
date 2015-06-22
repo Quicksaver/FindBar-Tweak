@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.0';
+Modules.VERSION = '2.0.1';
 
 this.UpdateScanner = {
 	handleEvent: function(e) {
@@ -26,7 +26,7 @@ this.UpdateScanner = {
 		var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 		sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 		sscode += '@-moz-document url-prefix("chrome://updatescan/") {\n';
-		sscode += '	hbox[ownedByFindBarTweak][anonid="gridBox"] vbox[anonid="findGrid"] {\n';
+		sscode += '	hbox[ownedbyfindbartweak][anonid="gridBox"] vbox[anonid="findGrid"] {\n';
 		sscode += 		grids.lastAdjust;
 		sscode += '	}\n';
 		sscode += '}\n';
@@ -38,11 +38,11 @@ this.UpdateScanner = {
 		var sscode = '/*FindBar Tweak CSS declarations of variable values*/\n';
 		sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 		sscode += '@-moz-document url-prefix("chrome://updatescan/") {\n';
-		sscode += '	hbox[ownedByFindBarTweak][anonid="gridBox"] vbox[anonid="findGrid"] vbox[highlight]:not([current]):not([hover]) {\n';
+		sscode += '	hbox[ownedbyfindbartweak][anonid="gridBox"] vbox[anonid="findGrid"] vbox[highlight]:not([current]):not([hover]) {\n';
 		sscode += '		background-color: '+Prefs.highlightColor+';\n';
 		sscode += '	}\n';
-		sscode += '	hbox[ownedByFindBarTweak][anonid="gridBox"] vbox[anonid="findGrid"] vbox[highlight][current],\n';
-		sscode += '	hbox[ownedByFindBarTweak][anonid="gridBox"] vbox[anonid="findGrid"] vbox[highlight][hover] {\n';
+		sscode += '	hbox[ownedbyfindbartweak][anonid="gridBox"] vbox[anonid="findGrid"] vbox[highlight][current],\n';
+		sscode += '	hbox[ownedbyfindbartweak][anonid="gridBox"] vbox[anonid="findGrid"] vbox[highlight][hover] {\n';
 		sscode += '		background-color: '+Prefs.selectColor+';\n';
 		sscode += '	}\n';
 		sscode += '}';

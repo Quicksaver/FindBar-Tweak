@@ -50,16 +50,16 @@
 	
 	/* For HBox frame grids */
 	
-	hbox[anonid="gridBox"][ownedByFindBarTweak],
-	hbox[anonid="gridBox"][ownedByFindBarTweak] vbox[anonid="findGrid"] {
+	hbox[anonid="gridBox"][ownedbyfindbartweak],
+	hbox[anonid="gridBox"][ownedbyfindbartweak] vbox[anonid="findGrid"] {
 		display: flex;
 	}
 	
-	hbox[anonid="gridBox"][ownedByFindBarTweak] vbox[anonid="findGrid"] {
+	hbox[anonid="gridBox"][ownedbyfindbartweak] vbox[anonid="findGrid"] {
 		flex-direction: column;
 	}
 	
-	hbox[anonid="gridBox"][ownedByFindBarTweak] vbox[anonid="findGrid"] > vbox:not(.topSpacer):not(.bottomSpacer) {
+	hbox[anonid="gridBox"][ownedbyfindbartweak] vbox[anonid="findGrid"] > vbox:not(.topSpacer):not(.bottomSpacer) {
 		height: 100%;
 	}
 	

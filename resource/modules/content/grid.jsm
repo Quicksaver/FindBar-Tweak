@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.3';
+Modules.VERSION = '1.1.4';
 
 this.grids = {
 	allHits: new Set(),
@@ -143,8 +143,18 @@ this.grids = {
 			grid = boxNode.firstChild;
 		}
 		
+		// we append the grid to the frameElement's .offsetParent, so its offset values can be used in it to properly position it
+		if(!frame.frameElement.offsetParent) { return; }
+		
+		// the offset values apparently can't be trusted if .offsetParent is static (even though by definition .offsetParent should return the closest positioned ancestor),
+		// although it's doubtful it will happen, here's to hoping I don't break websites with this change
+		// see https://github.com/Quicksaver/FindBar-Tweak/issues/197
+		if(getComputedStyle(frame.frameElement.offsetParent).position == 'static') {
+			frame.frameElement.offsetParent.style.position = 'relative';
+		}
+		
 		// ok we should be able to safely add it to the document now
-		owner.documentElement.appendChild(boxNode);
+		frame.frameElement.offsetParent.appendChild(boxNode);
 		
 		grid.linkedFrame = frame;
 		this.frames.add(grid);
@@ -323,7 +333,13 @@ this.grids = {
 						while(parent) {
 							// but not if we're at the root of a frameset
 							if(parent != content || !frameset) {
-								frameRows.push(this.placeHighlight(this.get(parent), frameElement, true));
+								// if the outer frame (main content) is not scrollable, such as in the case for most websites
+								// using iframes as if they were the main content itself, don't place the patterned rows,
+								// the frame's own scrollbar will have its own grid anyway
+								if((parent.document.documentElement && parent.document.documentElement.scrollTopMax > 0)
+								|| (parent.document.body && parent.document.body.scrollTopMax > 0)) {
+									frameRows.push(this.placeHighlight(this.get(parent), frameElement, true));
+								}
 							}
 							
 							if(parent == content) { break; }
@@ -632,21 +648,18 @@ this.grids = {
 	
 	// This places the grid over the linked frame element
 	placeGridOnFrame: function(grid) {
-		var placement = grid.linkedFrame.frameElement.getClientRects()[0];
-		if(!placement) { return; } // If for example the frame is invisible
+		if(!grid.linkedFrame.frameElement.offsetParent) { return; } // If for example the frame is invisible
 		
 		var frameStyle = getComputedStyle(grid.linkedFrame.frameElement);
 		
-		var top = placement.top +parseInt(frameStyle.borderTopWidth) +parseInt(frameStyle.paddingTop);
-		var left = placement.left +parseInt(frameStyle.borderLeftWidth) +parseInt(frameStyle.paddingLeft);
-		var width = placement.right
-			-placement.left
+		var top = grid.linkedFrame.frameElement.offsetTop +parseInt(frameStyle.borderTopWidth) +parseInt(frameStyle.paddingTop);
+		var left = grid.linkedFrame.frameElement.offsetLeft +parseInt(frameStyle.borderLeftWidth) +parseInt(frameStyle.paddingLeft);
+		var width = grid.linkedFrame.frameElement.offsetWidth
 			-parseInt(frameStyle.borderLeftWidth)
 			-parseInt(frameStyle.paddingLeft)
 			-parseInt(frameStyle.borderRightWidth)
 			-parseInt(frameStyle.paddingRight);
-		var height = placement.bottom
-			-placement.top
+		var height = grid.linkedFrame.frameElement.offsetHeight
 			-parseInt(frameStyle.borderTopWidth)
 			-parseInt(frameStyle.paddingTop)
 			-parseInt(frameStyle.borderBottomWidth)

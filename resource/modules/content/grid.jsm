@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.1';
+Modules.VERSION = '1.1.2';
 
 this.grids = {
 	allHits: new Set(),
@@ -899,19 +899,25 @@ this.GridRow = function(aGrid, aNode) {
 
 this.GridRow.prototype = {
 	setAttribute: function(attr, val) {
-		if(this.node) {
-			this.node.setAttribute(attr, val);
-			return;
+		try {
+			if(this.node) {
+				this.node.setAttribute(attr, val);
+				return;
+			}
 		}
+		catch(ex) { /* nothing to do here */ }
 		
 		message('Grid:Row:SetAttribute', { i: this.i, attr: attr, val: val });
 	},
 	
 	removeAttribute: function(attr) {
-		if(this.node) {
-			this.node.removeAttribute(attr);
-			return;
+		try {
+			if(this.node) {
+				this.node.removeAttribute(attr);
+				return;
+			}
 		}
+		catch(ex) { /* nothing to do here */ }
 		
 		message('Grid:Row:RemoveAttribute', { i: this.i, attr: attr });
 	},

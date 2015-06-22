@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.4';
+Modules.VERSION = '1.1.5';
 
 this.grids = {
 	allHits: new Set(),
@@ -11,6 +11,8 @@ this.grids = {
 	chromeGrid: {
 		_lastUsedRow: 0,
 		rows: [],
+		
+		get linkedFrame () { return content; },
 		
 		setAttribute: function(attr, val) {
 			message('Grid:Attribute', { attr: attr, val: val });
@@ -90,6 +92,20 @@ this.grids = {
 			return this.chromeGrid;
 		}
 		
+		// use the parent document's scrollbar if the frame is extended up to its maximum height, as in when it "seamlessly" integrates with its parent's contents
+		try {
+			if(frame.parent
+			&& frame.document.documentElement.scrollTopMax == 0 && getComputedStyle(frame.document.documentElement).overflowY != 'scroll'
+			&& (!frame.document.body || (frame.document.body.scrollTopMax == 0 && getComputedStyle(frame.document.body).overflowY != 'scroll'))) {
+				return this.get(frame.parent);
+			}
+		}
+		catch(ex) {
+			// it doesn't really matter what happened, in the end it means we won't be able to use a grid for this frame
+			Cu.reportError(ex);
+			return null;
+		}
+		
 		var owner = frame.parent && frame.parent.document;
 		var boxNode = null;
 		var grid = null;
@@ -144,7 +160,7 @@ this.grids = {
 		}
 		
 		// we append the grid to the frameElement's .offsetParent, so its offset values can be used in it to properly position it
-		if(!frame.frameElement.offsetParent) { return; }
+		if(!frame.frameElement.offsetParent) { return null; }
 		
 		// the offset values apparently can't be trusted if .offsetParent is static (even though by definition .offsetParent should return the closest positioned ancestor),
 		// although it's doubtful it will happen, here's to hoping I don't break websites with this change
@@ -326,7 +342,7 @@ this.grids = {
 				}
 				
 				// We're placing a highlight in a frame, so we should also place that frame in its parent's grid
-				else if(win != content) {
+				else if(grid.linkedFrame != content) {
 					try {
 						let frameElement = win.frameElement;
 						let parent = win.parent;
@@ -343,7 +359,7 @@ this.grids = {
 							}
 							
 							if(parent == content) { break; }
-							frameElement = parent.frameElement
+							frameElement = parent.frameElement;
 							parent = parent.parent;
 						}
 					}
@@ -525,12 +541,9 @@ this.grids = {
 				if(grid.linkedAO) {
 					var scrollTop = grid.linkedAO.firstChild.scrollTop;
 					var scrollHeight = grid.linkedAO.firstChild.scrollHeight;
-				} else if(grid.linkedFrame) {
+				} else {
 					var scrollTop = getDocProperty(grid.linkedFrame.document, 'scrollTop');
 					var scrollHeight = getDocProperty(grid.linkedFrame.document, 'scrollHeight');
-				} else {
-					var scrollTop = getDocProperty(document, 'scrollTop');
-					var scrollHeight = getDocProperty(document, 'scrollHeight');
 				}
 				
 				var placeNode = node;
@@ -549,6 +562,17 @@ this.grids = {
 				if(grid.linkedAO) {
 					absTop -= grid.linkedAO.offsetTop;
 					absBot -= grid.linkedAO.offsetTop;
+				}
+				
+				// when adding highlights to a grid that doesn't belong to the match's iframe, we need to account for the iframe's relative position as well
+				else if(!isPDFJS) {
+					var par = (node.ownerDocument) ? node.ownerDocument.defaultView : (node.startContainer) ? node.startContainer.ownerDocument.defaultView : null;
+					while(par && par.frameElement && par != grid.linkedFrame) {
+						var framePos = par.frameElement.getBoundingClientRect();
+						absTop += framePos.top;
+						absBot += framePos.top;
+						par = par.parent;
+					}
 				}
 				
 				absTop = (absTop + scrollTop) / scrollHeight;
@@ -757,7 +781,7 @@ this.grids = {
 			return;
 		}
 		
-		let doc = (grid.linkedFrame) ? grid.linkedFrame.document : document;
+		let doc = grid.linkedFrame.document;
 		let scrollTopMax = getDocProperty(doc, 'scrollTopMax');
 		let scrollLeftMax = getDocProperty(doc, 'scrollLeftMax');
 		

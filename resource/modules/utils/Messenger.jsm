@@ -165,7 +165,7 @@ this.Messenger = {
 				newVersion: AddonData.newVersion
 			},
 			addonUris: addonUris
-		};	
+		};
 		this.messageBrowser(m.target, 'init', carryData);
 		
 		// carry the preferences current values into content

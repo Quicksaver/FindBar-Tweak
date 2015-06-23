@@ -1,4 +1,4 @@
-// VERSION = '1.5.0';
+// VERSION = '1.5.1';
 
 // This script should be loaded by defaultsContent.js, which is in turn loaded directly by the Messenger module.
 // defaultsContent.js should set this object's objName and objPathString properties and call its .init() method.
@@ -93,7 +93,11 @@ this.__contentEnvironment = {
 		
 		switch(name) {
 			case 'shutdown':
-				this.unload();
+				// when updating the add-on, the new content script is loaded before the shutdown message is received by the previous script (go figure...),
+				// so we'd actually be unloading both the old and new scripts, that's obviously not what we want!
+				if(this.AddonData.initTime) {
+					this.unload();
+				}
 				break;
 				
 			case 'load':

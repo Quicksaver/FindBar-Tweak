@@ -1,4 +1,4 @@
-Modules.VERSION = '2.5.1';
+Modules.VERSION = '2.5.2';
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -168,7 +168,14 @@ this.Prefs = {
 			pref = pref.substr(pref.indexOf('.')+1);
 		}
 		
+		// in case we remove a listener and re-add it inside that same listener, it would be part of the iterable object as a new listener, creating an endless loop,
+		// so we call only the listeners that were set at the time the change occurred
+		var handlers = new Set();
 		for(let handler of this._prefObjects[pref].listeners) {
+			handlers.add(handler);
+		}
+		
+		for(let handler of handlers) {
 			// don't block executing of other possible listeners if one fails
 			try {
 				if(handler.observe) {

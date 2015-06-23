@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.0';
+Modules.VERSION = '1.0.1';
 
 this.resetNativePrefs = function() {
 	Prefs.reset('typeaheadfind');
@@ -10,12 +10,4 @@ this.resetNativePrefs = function() {
 	Prefs.reset('textHighlightBackground');
 	Prefs.reset('textSelectForeground');
 	Prefs.reset('textSelectBackgroundAttention');
-	
-	$('pref-typeaheadfind').value = $('pref-typeaheadfind').valueFromPreferences;
-	$('pref-timeout').value = $('pref-timeout').valueFromPreferences;
-	$('pref-FAYTprefill').value = $('pref-FAYTprefill').valueFromPreferences;
-	$('pref-layoutEatSpaces').value = $('pref-layoutEatSpaces').valueFromPreferences;
-	$('pref-layoutStopAtPunctuation').value = $('pref-layoutStopAtPunctuation').valueFromPreferences;
-	$('pref-highlightColor').value = $('pref-highlightColor').valueFromPreferences;
-	$('pref-selectColor').value = $('pref-selectColor').valueFromPreferences;
 };

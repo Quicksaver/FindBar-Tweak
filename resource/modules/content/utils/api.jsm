@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.0';
+Modules.VERSION = '1.0.1';
 
 this.api = {
 	onDOMContentLoaded: function(e) {
@@ -18,6 +18,15 @@ this.api = {
 	},
 	
 	checkPage: function() {
+		if(document.readyState != 'complete') {
+			var waiting = () => {
+				content.removeEventListener('load', waiting);
+				this.checkPage();
+			};
+			content.addEventListener('load', waiting);
+			return;
+		}
+				
 		if(document.documentURI.startsWith(addonUris.development)) {
 			var unwrap = XPCNativeWrapper.unwrap(content);
 			if(unwrap.enable) {

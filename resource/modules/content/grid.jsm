@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.5';
+Modules.VERSION = '1.1.6';
 
 this.grids = {
 	allHits: new Set(),
@@ -95,8 +95,8 @@ this.grids = {
 		// use the parent document's scrollbar if the frame is extended up to its maximum height, as in when it "seamlessly" integrates with its parent's contents
 		try {
 			if(frame.parent
-			&& frame.document.documentElement.scrollTopMax == 0 && getComputedStyle(frame.document.documentElement).overflowY != 'scroll'
-			&& (!frame.document.body || (frame.document.body.scrollTopMax == 0 && getComputedStyle(frame.document.body).overflowY != 'scroll'))) {
+			&& frame.document.documentElement.scrollTopMax == 0
+			&& (!frame.document.body || frame.document.body.scrollTopMax == 0)) {
 				return this.get(frame.parent);
 			}
 		}

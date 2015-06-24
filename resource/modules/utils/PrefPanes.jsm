@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.4';
+Modules.VERSION = '1.0.5';
 Modules.UTILS = true;
 
 // PrefPanes - handles the preferences tab and all its contents for the add-on
@@ -160,17 +160,26 @@ this.PrefPanes = {
 	
 	// we have to wait for Session Store to finish, otherwise our tab will be overriden by a session-restored tab
 	openWhenReady: function() {
+		// in theory, the add-on could be disabled inbetween aSync calls
 		if(typeof(PrefPanes) == 'undefined') { return; }
 		
-		var aWindow = window; // most recent window, if it doesn't exist yet it means we're still starting up, so give it a second
+		// most recent window, if it doesn't exist yet it means we're still starting up, so give it a moment
+		var aWindow = window;
 		if(!aWindow || !aWindow.SessionStore) {
 			aSync(() => { this.openWhenReady(); }, 500);
 			return;
 		}
 		
+		// SessionStore should have registered the window and initialized it, to ensure it doesn't overwrite our tab with any saved ones
+		// (ours will open in addition to session-saved tabs)
 		var state = JSON.parse(aWindow.SessionStore.getBrowserState());
-		// we're in a window, so "a" window should exist...
 		if(state.windows.length == 0) {
+			aSync(() => { this.openWhenReady(); }, 500);
+			return;
+		}
+		
+		// also ensure the window is fully initialized before trying to open a new tab
+		if(!aWindow.gBrowserInit || !aWindow.gBrowserInit.delayedStartupFinished) {
 			aSync(() => { this.openWhenReady(); }, 500);
 			return;
 		}

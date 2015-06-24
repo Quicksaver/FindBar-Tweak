@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.5';
+Modules.VERSION = '2.0.6';
 
 this.__defineGetter__('gBrowserBox', function() { return $('browser'); });
 this.__defineGetter__('gAppContent', function() { return $('appcontent'); });
@@ -227,11 +227,7 @@ this.stylePersonaFindBar = function() {
 	var barStyle = getComputedStyle(gFindBar);
 	
 	// Another personas in OSX tweak
-	var offsetWindowPadding = windowStyle.backgroundPosition;
 	var offsetY = -moveTopStyle.top;
-	if(offsetWindowPadding.contains(' ') && offsetWindowPadding.contains('px', offsetWindowPadding.indexOf(' ') +1)) {
-		offsetY += parseInt(offsetWindowPadding.substr(offsetWindowPadding.indexOf(' ') +1, offsetWindowPadding.indexOf('px', offsetWindowPadding.indexOf(' ') +1)));
-	}
 	
 	if(barStyle.direction == 'ltr') {
 		var borderStart = parseInt(barStyle.borderLeftWidth);

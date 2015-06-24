@@ -1,23 +1,32 @@
 {
-	"current":"2b2",
+	"current":"2",
 	"knownissues":[
-		["While it should be stable and work correctly for the most part, please remember that this is a beta version! With all the changes that have been made since the last release, and with all the new additions that will arrive soon, it's likely there are still many problems to be fixed. Please report any bugs or issues you run into through the support page or directly to my e-mail (links are on the right), and try to be as specific as possible - provide your firefox version, add-on version, operating system, exact steps to reproduce, etc. - so that I can hopefully fix it quickly."]
+		["There may be some issues when typing while the Findbar is still opening, especially on slower computers loading large tabs. This does not affect the functionality of the add-on, although it can definitely be bothersome when you don't expect it. I am already trying to improve the responsiveness of the Findbar in order to avoid this (<a target=\"blank\" href=\"https://github.com/Quicksaver/FindBar-Tweak/issues/198\">issue #198</a>)"]
 	],
 	"releases": {
-		"2b2":{
-			"date":"May 4, 2015",
+		"2":{
+			"date":"June 24, 2015",
 			"notes":[
 				["new","Almost complete code rewrite, with many stability and performance enhancements across the board!"],
 				["new","Multiprocess firefox (e10s) compatibility"],
-				["new","Release Notes tab"],
-				["changed","Removed compatibility for Firefox 33 and below"],
+				["new","Brand new preferences tab with a new \"About\" pane"],
+				["new","Remove highlights when clicking on page (clearing selection) when \"Fill with selected text\" is enabled"],
+				["new","es locale"],
+				["changed","The active development process for the add-on is undergoing a few changes, check out the information and links at the top of this pane for more details"],
 				["changed","Ctrl+Shift+I in the Find in All Tabs window opens the Browser Console instead of the legacy Error Console"],
 				["changed","Renamed and reworked dependencies for the global findbar perference"],
-				["removed","All locales except for en-US. This is only temporary while the add-on is in beta and a lot is changing constantly; all the locales will (hopefully) be back in the next major release."],
-				["removed","Compatibility with LessChrome HD add-on, I recommend you try The Fox, Only Better instead for a similar but improved experience"],
+				["changed","\"Only close when search is the same as the selected text\" preference to \"Only close when it is already focused\" (<a target=\"blank\" href=\"https://github.com/Quicksaver/FindBar-Tweak/issues/98\">issue #98</a>)"],
+				["changed","With the findbar at the top and on the right, the buttons order is reversed, so they don't jump around when it changes, such as with the matches counter and such (<a target=\"blank\" href=\"https://github.com/Quicksaver/FindBar-Tweak/issues/186\">issue #186</a>)"],
+				["removed","Compatibility with Firefox 37 and below"],
+				["removed","pl, sv-SE and zh-TW locales (too incomplete)"],
+				["removed","Compatibility with <a target=\"blank\" href=\"https://addons.mozilla.org/firefox/addon/prospector-lesschrome-hd/\">LessChrome HD</a>, I recommend you try <a target=\"blank\" href=\"https://addons.mozilla.org/firefox/addon/the-fox-only-better/\">The Fox, Only Better</a> instead for a similar but improved experience"],
 				["removed","Compatibility with Pale Moon; I'm sorry but its differences to the latest firefox version are just too great to manage"],
 				["removed","Find in All Tabs lists in the browser window; a more intuitive and easier to use replacement is on the way. For the time being, the Find in All Tabs separate dialog will be the only usable mode."],
 				["removed","Matches limit on Find in All Tabs; now it should just run large pages in the background without locking up the browser"],
+				["bugfix","Add-on could fail to (re)load after disabling/updating one of my other add-ons"],
+				["bugfix","After resizing the find text field, it should be properly shrunk when the window is resized, so it doesn't extend outside the window boundaries"],
+				["bugfix","Compatibility with <a target=\"blank\" href=\"https://addons.mozilla.org/firefox/addon/s3download-statusbar/\">Download Manager (S3)</a>: toggling the S3 toolbar wouldn't update the findbar's position when it's placed at the top"],
+				["bugfix","Many appearance fixes for Australis"],
 				["bugfix","Enhanced compatibility and performance when used together with my other add-ons"],
 				["bugfix","Some appearance fixes for the findbar on top"],
 				["bugfix","Updated findbar buttons appearance styling to match the rest of the browser"],
@@ -27,17 +36,16 @@
 				["bugfix","Switching between PDF and non-PDF tabs could leave the findbar on top placed incorrectly (<a target=\"blank\" href=\"https://github.com/Quicksaver/FindBar-Tweak/issues/142\">issue #142</a>)"],
 				["bugfix","Find query is cleared after switching tabs instead of reusing the same query from the previous tab"],
 				["bugfix","Matches counter wasn't very perceptible in dark themes (<a target=\"blank\" href=\"https://github.com/Quicksaver/FindBar-Tweak/issues/152\">issue #152</a>)"],
-				["updated","Many core modules and firefox API usage"]
-			]
-		},
-		"2b1":{
-			"date":"April 27, 2014",
-			"notes":[
-				["changed","Removed compatibility for Firefox 28 and below"],
-				["bugfix","Add-on could fail to (re)load after disabling/updating one of my other add-ons"],
-				["bugfix","After resizing the find text field, it should be properly shrunk when the window is resized, so it doesn't extend outside the window boundaries"],
-				["bugfix","Compatibility with S3.Download Statusbar add-on: toggling the S3 toolbar wouldn't update the findbar's position when it's placed at the top"],
-				["bugfix","Many appearance fixes for Australis"]
+				["bugfix","Compatibility with <a target=\"blank\" href=\"https://addons.mozilla.org/firefox/addon/instantfox/\">InstantFox Quick Search</a>: after previewing search results, the findbar would stop working in that tab (<a target=\"blank\" href=\"https://github.com/Quicksaver/FindBar-Tweak/issues/124\">issue #124</a>)"],
+				["bugfix","Highlights grid and sights shouldn't be visible in HTML5 fullscreen (<a target=\"blank\" href=\"https://github.com/Quicksaver/FindBar-Tweak/issues/184\">issue #184</a>)"],
+				["bugfix","With the cursor in the findbar, Ctrl+Enter should always toggle Highlight All, even if the find query is empty"],
+				["bugfix","It should only highlight links when finding in \"links only\" mode (<a target=\"blank\" href=\"https://github.com/Quicksaver/FindBar-Tweak/issues/187\">issue #187</a>)"],
+				["bugfix","Entering HTML5 fullscreen would close the findbar instead of just hiding it, so it wouldn't be open after exiting fullscreen (<a target=\"blank\" href=\"https://github.com/Quicksaver/FindBar-Tweak/issues/196\">issue #196</a>)"],
+				["bugfix","Highlights grid of iframes could sometimes be positioned out of its scrollbar"],
+				["bugfix","On pages using iframes as their main content, don't place the frame's corresponding patterned hit in the main scrollbar, since it probably will never be visible anyway (<a target=\"blank\" href=\"https://github.com/Quicksaver/FindBar-Tweak/issues/197\">issue #197</a>)"],
+				["bugfix","On pages using non-scrollable iframes embedded in their content, matches in these frames should appear in the main scrollbar's highlights grid (<a target=\"blank\" href=\"https://github.com/Quicksaver/FindBar-Tweak/issues/93\">issue #93</a>)"],
+				["updated","Many core modules and firefox API usage"],
+				["","Other minor fixes and improvements"]
 			]
 		},
 		"1.4.18":{

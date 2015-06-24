@@ -1,0 +1,5 @@
+<!ENTITY MenuOptions.label "Opções da Barra de Procura">
+<!ENTITY FITbutton.label "Procurar em todos os Separadores">
+<!ENTITY FITbutton.tooltip.win "Procurar a frase em todos os separadores (Ctrl+F3)">
+<!ENTITY FITbutton.tooltip.mac "Procurar a frase em todos os separadores (Comando+F3)">
+<!ENTITY FITbutton.accesskey "P">

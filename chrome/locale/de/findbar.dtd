@@ -1,0 +1,5 @@
+<!ENTITY MenuOptions.label "Suchleisten-Einstellungen (Findbar Tweaks)">
+<!ENTITY FITbutton.label "In allen Tabs suchen">
+<!ENTITY FITbutton.tooltip.win "Ausdruck in allen offenen Tabs suchen (Strg+F3)">
+<!ENTITY FITbutton.tooltip.mac "Ausdruck in allen offenen Tabs suchen (Befehlstaste+F3)">
+<!ENTITY FITbutton.accesskey "T">

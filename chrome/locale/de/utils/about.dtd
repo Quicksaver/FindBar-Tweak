@@ -1,0 +1,24 @@
+<!ENTITY about.paneTitle "Über">
+<!ENTITY about.version "Version {v}">
+<!ENTITY about.versionDivider " - ">
+<!ENTITY about.uptodate "aktuell; herzlichen Glückwunsch!">
+<!ENTITY about.needsupdate "Update verfügbar!">
+<!ENTITY about.description "Sehen Sie sich im Folgenden die &quot;Versionshinweise&quot; und &quot;Bekannten Probleme&quot; für diese Version an. Melden Sie mir alle Fehler, die Sie finden, oder Vorschläge für zukünftige Versionen.">
+<!ENTITY about.descriptionB "Das Add-on ist kostenlos, aber die Lösung von Problemen, die Umsetzung neuer Funktionen und die Tests sind zum Teil aufwendige und schwierige Arbeit. Wenn Ihnen das Add-on gefällt, unterstützten Sie bitte die weitere Entwicklung. Wie es im Link heißt, &quot;Sie können helfen&quot;!">
+<!ENTITY about.allVersions "Versionshinweise aller vorherigen Versionen anzeigen">
+<!ENTITY about.notifyOnUpdates "Diesen Tab beim nächsten Update anzeigen">
+<!ENTITY about.development "Entwicklungsstatus">
+<!ENTITY about.helpdevelopment "SIE KÖNNEN HELFEN">
+<!ENTITY about.information "Weitere Informationen">
+<!ENTITY about.home "Homepage des Add-ons">
+<!ENTITY about.fullchangelog "Vollständige Liste der Änderungen">
+<!ENTITY about.problems "Haben Sie Schwierigkeiten?">
+<!ENTITY about.tech "Erstellen Sie auf der Hilfeseite einen Fehlerbericht, der Ihr Problem beschreibt">
+<!ENTITY about.email "Oder schreiben Sie mir eine E-Mail darüber">
+<!ENTITY about.author "Mehr von diesem Autor">
+<!ENTITY about.trymore "Probieren Sie eines meiner anderen Add-ons aus, um ein noch besseres Firefox-Erlebnis zu haben!">
+<!ENTITY about.profile "Sie finden Sie in meinen Profil">
+<!ENTITY about.share "Teilen!">
+<!ENTITY about.friends "Seien Sie nicht der Einzige mit einem tollen Browser. Teilen Sie ihn mit Ihren Freunden!">
+<!ENTITY about.moreshare "Weitere Dienste…">
+<!ENTITY about.tryit "Verlieren Sie keine Zeit mit der Suche nach einem Textstück, das in einem Ihrer Tabs steckt! FindBar Tweak verwandelt Ihre Suchleiste in ein mächtiges Suchwerkzeug!">

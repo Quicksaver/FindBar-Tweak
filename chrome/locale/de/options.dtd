@@ -1,0 +1,115 @@
+<!ENTITY OptHighlights.label "Hervorhebungen">
+<!ENTITY OptSightsTab.label "Ringförmige Hervorhebung">
+<!ENTITY OptGeneral.label "Allgemein">
+<!ENTITY OptAppearance.label "Erscheinungsbild">
+<!ENTITY Opttweaks.label "Anpassungsmöglichkeiten">
+<!ENTITY Optgen.label "Suchleisten-Einstellungen">
+<!ENTITY Optdisplay.label "Position der Suchleiste">
+<!ENTITY OptButtonAndLabels.label "Schaltflächen und Beschriftungen">
+<!ENTITY Optgrid.label "Hervorhebungsbalken">
+<!ENTITY OpthighlightByDefault.label "Automatisch alle Vorkommen des gesuchten Begriffs hervorheben">
+<!ENTITY OpthighlightByDefault.tooltip "Beim Öffnen der Suchleiste ist die Schaltfläche „Alles hervorheben“ schon aktiviert, so dass bei einer Suchaktion von Anfang an alle Ergebnisse angezeigt werden.">
+<!ENTITY OpthideWhenFinderHidden.label "Hervorhebungen entfernen, wenn die Suchleiste geschlossen wird">
+<!ENTITY OpthideWhenFinderHidden.tooltip "Kurz gesagt, Suchleiste geschlossen = keine Hervorhebungen. Das betrifft auch die Schnellsuchleiste! Sobald die Suchleiste geschlossen ist, werden alle Treffer von der Seite entfernt.">
+<!ENTITY OptgridInScrollbar.label "Hervorhebungsbalken innerhalb der Bildlaufleiste anzeigen">
+<!ENTITY OptgridInScrollbar.tooltip "Die relative Position jedes hervorgehobenen Treffers wird in der Bildlaufleiste angezeigt.">
+<!ENTITY OptuseCounter.label "Zähler der Suchtreffer in der Suchleiste anzeigen">
+<!ENTITY OptuseCounter.tooltip "Bei jeder Suchaktion wird die Zahl der Treffer auf der Webseite am Ende der Suchleiste angezeigt.">
+<!ENTITY OptfindInTabs.label "„In allen Tabs suchen“ aktivieren">
+<!ENTITY OptfindInTabs.tooltip "In der Suchleiste wird eine Schaltfläche platziert, um den Dialog „In allen Tabs suchen“ zu öffnen, mit dem Sie schnell ein Wort in allen Ihren offenen Tabs und Fenstern suchen können.">
+<!ENTITY OptmultipleFITFull.label "Mehrere Instanzen des Fensters „In allen Tabs suchen“ erlauben">
+<!ENTITY OptmultipleFITFull.tooltip "Wenn dies deaktiviert ist, verwenden weitere Klicks auf die Schaltfläche „In allen Tabs suchen“ einen bereits geöffneten „In allen Tabs suchen“-Dialog, anstatt immer einen neuen zu öffnen.">
+<!ENTITY Optcolor.label "Markierungsfarbe">
+<!ENTITY Optcolor.tooltip "Ändern Sie die Farbe zur Hervorhebung auf der Seite.">
+<!ENTITY OptselectColor.label "Farbe des aktuellen Treffers">
+<!ENTITY OptselectColor.tooltip "Wenn Sie zum ersten Mal eine Suchaktion ausführen oder F3 bzw. die Schaltflächen „vor/weiter“ verwenden, um die Treffer durchzugehen, sollte der aktuelle Treffer zur Unterscheidung in einer anderen Farbe als die übrigen angezeigt werden.">
+<!ENTITY OptcolorReset.label "(zurücksetzen)">
+<!ENTITY OptcolorKeepOSdefault.label "Standardkontrastfarbe beibehalten (empfohlen)">
+<!ENTITY OptcolorKeepOSdefault.tooltip "Die Kontrastfarbe ist, abhängig von der Webseite, entweder die Farbe des Textes wenn die Farbe für den aktuellen Treffer als Hintergrund verwendet wird, oder umgekehrt. Sie ist entweder weiß oder schwarz, abhängig von der oben gewählten Farbe. Die obige Farbeinstellung betrifft zwar nur den aktuellen Treffer einer Suchaktion, seine Kontrastfarbe kann aber nicht geändert werden, ohne dass auch der Kontrast der gesamten Textauswahl geändert wird. Deaktivieren Sie diese Funktion nur mit Bedacht, damit ausgewählter Text nicht unlesbar wird!">
+<!ENTITY OpthighlightOnFindAgain.label "Auch beim „Erneuten Suchen“ (F3) hervorheben">
+<!ENTITY OpthighlightOnFindAgain.tooltip "Wenn die Schaltfläche „Alles hervorheben“ aktiviert ist, werden beim Durchgehen der Treffer Drücken von F3 oder der Schaltflächen „vor/weiter“ auch alle Treffer hervorgehoben, falls dies noch nicht geschehen ist.">
+<!ENTITY OptgridLimit.labela "Den Hervorhebungsbalken bei mehr als">
+<!ENTITY OptgridLimit.labelb "Hervorhebungen nicht anzeigen">
+<!ENTITY OptgridLimit.tooltip "Dies betrifft nur den Hervorhebungsbalken in der Bildlaufleiste! Wenn es zu viele Ergebnisse gibt, was den Prozess und den Browser verlangsamen könnte, wird der Hervorhebungsbalken in der Bildlaufleiste nicht verwendet.">
+<!ENTITY OptminNoDelay.labela "Hervorhebungen verzögert einblenden bei weniger als">
+<!ENTITY OptminNoDelay.labelb "Zeichen">
+<!ENTITY OptminNoDelay.tooltip "Wenn Sie das erste Mal etwas in die Suchleiste eingeben, wird Ihr Suchbegriff vermutlich nicht mit den ersten zwei Zeichen gefunden. Dies verzögert die Suchaktion bei kurzen Worten für 1,5 Sekunden, um Ihnen Zeit zur Eingabe Ihrer restlichen Anfrage zu geben. Beachten Sie, dass Sie weiterhin Treffer für kurze Wörter finden können, wenn Sie die Zeit verstreichen lassen, ohne weiterer Zeichen einzugeben.">
+<!ENTITY OptadjustGridPadding.labela "Abstand zwischen Muster und Rand anpassen:">
+<!ENTITY OptadjustGridPadding.labelb "Pixel">
+<!ENTITY OptadjustGridPadding.tooltip "Die relative Position des Hervorhebungsbalkens, falls nötig, anpassen, um besser zu Themes zu passen, die das Aussehen der Bildlaufleiste ändern.">
+<!ENTITY OptadjustGridWidth.labela "Breite des Musters anpassen:">
+<!ENTITY OptadjustGridWidth.labelb "Pixel">
+<!ENTITY OptadjustGridWidth.tooltip "Die Breite der Markierungen im Hervorhebungsbalkens, falls nötig, anpassen, um besser zu Themes zu passen, die das Aussehen der Bildlaufleiste ändern.">
+<!ENTITY Optsights.label "Fundstellenhervorhebung">
+<!ENTITY OptsightsCurrentHit.label "Aktueller Treffer">
+<!ENTITY OptsightsAllHighlights.label "Alle Hervorhebungen">
+<!ENTITY OptsightsCurrent.label "Aktuellen Suchtreffer kurzzeitig ringförmig hervorheben">
+<!ENTITY OptsightsCurrent.tooltip "Wenn Sie ein Wort finden oder beim Durchgehen der Treffer Drücken von F3 oder der Schaltflächen „vor/weiter“ wird auf Ihrem Bildschirm eine Zielmarkierung um den aktuellen Treffer angezeigt, so dass Sie ihn direkt sehen, ohne danach suchen zu müssen.">
+<!ENTITY OptsightsHighlights.label "Alle markierten Vorkommen des gesuchten Begriffs kurzzeitig ringförmig hervorheben">
+<!ENTITY OptsightsHighlights.tooltip "Eine Zielmarkierung um jede sichtbare Hervorhebung auf der Webseite platzieren. Wenn Sie die Seite blättern, werden weiter Zielmarkierungen hinzugefügt, sobald neue Hervorhebungen sichtbar werden.">
+<!ENTITY OptsightsHighlights.warning "Zur Beachtung: Dies kann sehr ressourcenintensiv sein! Darstellung und seitenweises Blättern können sehr verlangsamt werden!">
+<!ENTITY OptsightsStyle.label "Stil der Hervorhebung (Anklicken, um eine Vorschau anzuzeigen)">
+<!ENTITY OptsightsStyle.focus "Fokussierender Kreisring">
+<!ENTITY OptsightsStyle.circle "Rotierender Kreisring">
+<!ENTITY OptsightsRepeat.label "Wiederholung von Animationen:">
+<!ENTITY OptsightsColor.tooltip "Die Farbeinstellungen für diese Hervorhebung anpassen.">
+<!ENTITY OptsightsSameColor.label "Identische Farbe wie bei den Hervorhebungen verwenden">
+<!ENTITY OptsightsSameColor.tooltip "Die für diese Hervorhebung verwendete Farbe ist die gleiche wie für die Hervorhebung aller Treffer auf der Webseite (Bereich „Hervorhebung“).">
+<!ENTITY OptsightsSameColorCurrent.label "Gleiche Farbe wie beim aktuellen Treffer verwenden">
+<!ENTITY OptsightsSameColorCurrent.tooltip "Die für diese Hervorhebung verwendete Farbe ist die gleiche wie für die Unterscheidung des aktuellen Treffers (Bereich „Erscheinungsbild“).">
+<!ENTITY OptsightsLimit.label "Maximale Anzahl der angezeigten Hervorhebungen:">
+<!ENTITY OptsightsLimit.tooltip "Diese Funktion kann sehr ressourcenintensiv sein. Es ist besser, die maximale Zahl der sichtbaren Hervorhebungen auf eine Zahl zu ändern, die den Browser bei der Darstellung nicht verlangsamt.">
+<!ENTITY OpthideLabels.label "Symbole der Schaltflächen anstelle der Beschriftung anzeigen">
+<!ENTITY OpthideLabels.tooltip "Standardmäßig haben die Schaltflächen auf der Symbolleiste eine Textbeschriftung. Hiermit werden sie in Grafiken umgewandelt, wodurch sie einfacher unterscheidbar und kompakter werden.">
+<!ENTITY OpthideClose.label "Die Schaltfläche „Schließen“ ausblenden">
+<!ENTITY OpthideClose.tooltip "Die Schaltfläche „Schließen“ wird nicht zum Schließen der Suchleiste zur Verfügung stehen.">
+<!ENTITY OptmovetoTop.label "Ans obere Ende des Browsers verschieben">
+<!ENTITY OptmovetoTop.tooltip "Oben in einer Ecke der Seite wird eine schmalere Suchleiste angezeigt.">
+<!ENTITY OptmovetoRight.label "Rechts anordnen">
+<!ENTITY OptmovetoRight.tooltip "Das Eingabefeld und die Schaltflächen der Suchleiste werden umgekehrt und rechtsbündig angeordnet. Wenn Sie Suchleiste nach oben verschoben wird, erscheint die gesamte Suchleiste in der rechten oberen Ecke, anstelle der linken.">
+<!ENTITY OptblurCloses.label "Die Suchleiste schließen, wenn sie den Fokus verliert">
+<!ENTITY OptblurCloses.tooltip "Sobald Sie irgendwo auf der Webseite klicken oder die Schreibmarke an eine andere Stelle, wie die Adressleiste, bewegen, schließt sich die Suchleiste automatisch.">
+<!ENTITY OptglobalFB.label "Eine einzelne globale Suchleiste für alle Tabs verwenden">
+<!ENTITY OptglobalFB.tooltip "Sobald Sie die Suchleiste in einem Tab öffnen und dann zu einem anderen Tab wechseln, sollten Sie die Suchleiste auch im neuen Tab geöffnet vorfinden.">
+<!ENTITY OptonStartup.label "Den Zustand der Such-Symbolleiste (eingeblendet/ausgeblendet) beim Start wiederherstellen">
+<!ENTITY OptonStartup.tooltip "Wenn Sie den Browser schließen, während die Suchleiste noch geöffnet ist, wird sie beim nächsten Start des Browsers direkt wieder geöffnet.">
+<!ENTITY OptopenFindbar.label "Beim Öffnen der Suchleiste">
+<!ENTITY OptquickFindOptions.label "Schnellsuchleiste">
+<!ENTITY OptkeepButtons.label "Schaltflächen in der Suchleiste anzeigen">
+<!ENTITY OptkeepButtons.tooltip "Standardmäßig hat die Schnellsuchleiste keine Schaltflächen, sie ist nur das Eingabefeld für schnelle Suchaktionen. Mit dieser Option können Sie dabei weiterhin die Funktionen „Alle hervorheben“ und „Groß-/Kleinschreibung beachten“ verwenden.">
+<!ENTITY OptFAYT.label "Suche bereits beim Eintippen starten">
+<!ENTITY OptFAYT.tooltip "Drücken Sie eine beliebige Taste, wenn Sie sich auf einer Webseite befinden, und die Schnellsuchleiste erscheint, um diesen Text zu suchen. Die Schreibmarke wird darin platziert, so dass Sie weitertippen und Ihre Suchanfrage finden können.">
+<!ENTITY OptFAYTTimeout.beforeLabel "Such-Symbolleiste automatisch schließen nach">
+<!ENTITY OptFAYTTimeout.afterLabel "Sekunden">
+<!ENTITY OptFAYTTimeout.tooltip "Die Schnellsuchleiste wird automatisch nach einer gewissen Zeit der Inaktivität geschlossen. Beachten Sie, dass sie sich auch schließt, wenn Sie den Fokus wechseln und beispielsweise auf die Webseite klicken.">
+<!ENTITY OptFAYTmode.caption "Suchleistenmodus">
+<!ENTITY OptFAYTmode.quickFind.label "Schnellsuchleiste bereits beim Eintippen starten">
+<!ENTITY OptFAYTmode.quickFind.tooltip "Standardeinstellung. Die Schnellsuchleiste wird verwendet, wenn Sie irgendwo auf der Webseite Text eingeben, während Sie für den Zugriff auf die normale Suchleiste das Tastaturkürzel oder die Schaltfläche in der Symbolleiste verwenden müssen.">
+<!ENTITY OptFAYTmode.normalFind.label "Immer die normale Suchleiste verwenden">
+<!ENTITY OptFAYTmode.normalFind.tooltip "Die normale Suchleiste wird auch dann verwendet, wenn Sie irgendwo auf der Webseite Text eingeben, sie schließt sich nicht automatisch nach einer Verzögerung oder wenn sie den Fokus verliert (es sei denn, Sie aktivieren die obige Einstellung).">
+<!ENTITY OptFAYTmode.alwaysQuick.label "Immer die Schnellsuchleiste verwenden">
+<!ENTITY OptFAYTmode.alwaysQuick.tooltip "Die Schnellsuchleiste wird sogar dann verwendet, wenn Sie das Tastaturkürzel verwenden, sie schließt sich immer automatisch nach einer Verzögerung oder wenn sie den Fokus verliert.">
+<!ENTITY OptkeyboardShortcut.label "Tastaturkürzel">
+<!ENTITY OptctrlFCloses.win "Strg+F um die Suchleiste zu schließen">
+<!ENTITY OptctrlFCloses.mac "Befehlstaste+F um die Suchleiste zu schließen">
+<!ENTITY OptctrlFCloses.tooltip "Sie können die Suchleiste mit dem selben Tastaturkürzel öffnen und schließen, wenn Sie sie nicht mehr benötigen.">
+<!ENTITY OptctrlFprefill.label "Suchleiste beim Öffnen mit ausgewähltem Text füllen">
+<!ENTITY OptctrlFprefill.tooltip "Wenn Text auf der Webseite ausgewählt und die Suchleiste geöffnet ist, wird der Text automatisch als Suchbegriff in die Suchleiste kopiert. Wenn „Standardmäßig alles hervorheben“ aktiviert ist, werden sofort alle Treffer für den ausgewählten Text gesucht.">
+<!ENTITY OptctrlFOnFocused.label "Nur schließen, wenn bereits fokussiert">
+<!ENTITY OptctrlFOnFocused.tooltip "Das Tastaturkürzel platziert zunächst die Schreibmarke in der Suchleiste, ausgewählter Text auf der Seite wird in die Suchleiste kopiert, wenn die obige Einstellung aktiviert ist. Die Suchleiste wird nur dann geschlossen, wenn die Schreibmarke sich bereits darin befindet.">
+<!ENTITY OptSelectingText.label "Beim Auswählen von Text">
+<!ENTITY OptfillSelectedText.label "Die Suchleiste mit dem ausgewählten Text füllen">
+<!ENTITY OptfillSelectedText.tooltip "Jedes Mal, wenn Text auf der Webseite ausgewählt wird, wird er automatisch als Suchbegriff in die Suchleiste kopiert. Wenn „Standardmäßig alles hervorheben“ aktiviert ist, werden bei Auswahl von Text auf einer Webseite sofort alle Treffer für den ausgewählten Text hervorgehoben.">
+<!ENTITY OptemptySelectedText.label "Die Suchleiste leeren, wenn kein Text ausgewählt wird">
+<!ENTITY OptemptySelectedText.tooltip "Wie oben, wenn Sie auf der Webseite irgendwo hinklicken, um die Auswahl von Text aufzuheben, wird die Suchleiste geleert und die Hervorhebungen werden ebenfalls entfernt.">
+<!ENTITY OptfillSelectedOpenFindbar.label "Die Schnellsuchleiste anzeigen, wenn ausgewählter Text verwendet wird">
+<!ENTITY OptfillSelectedOpenFindbar.tooltip "Wenn die Suchleiste mit dem ausgewählten Text gefüllt ist, erscheint sie kurz, um dies anzuzeigen.">
+<!ENTITY OptglobalBehavior.warning "Warnung: Die folgenden Einstellungen betreffen nicht nur die Suchleiste, sondern den gesamten Browser, wie auf Webseiten, der Adressleiste und allen anderen Stellen, an denen Textauswahl möglich ist. Ändern Sie dies mit Bedacht!">
+<!ENTITY OptdblClickEatSpaces.label "Doppelklick auf ein Wort wählt auch das folgende Leerzeichen aus">
+<!ENTITY OptdblClickStopAtPunctuation.label "Doppelklick auf ein Wort setzt Markierung bis zum nächsten Satzzeiten">
+<!ENTITY OptNativePrefs.label "Firefox-Standardeinstellungen">
+<!ENTITY OptNativePrefs.description "Einige Einstellungen, wie die Farben zum Hervorheben oder die Einstellungen der Schnellsuchleiste existieren in Firefox bereits, sie werden hier nur angezeigt, um einfacher zugänglich und anpassbar zu sein. Das Add-on sollte automatisch damit umgehen können, verwenden Sie diese daher nur, wenn es unbedingt nötig ist!">
+<!ENTITY OptResetNativeOnDisabled.label "Alle geänderten Standardeinstellungen beim Deaktivieren des Add-ons zurücksetzen">
+<!ENTITY OptResetNativeOnDisabled.tooltip "Wenn beim Deaktivieren des Add-ons noch Änderungen verbleiben, also beispielsweise die Farbe der Hervorhebungen nicht auf die Standardeinstellung gesetzt wird, aktivieren Sie diese Option, um alle Werte zurückzusetzen.">
+<!ENTITY OptResetNativeNow.label "Alle geänderten Standardeinstellungen zurücksetzen">
+<!ENTITY OptResetNativeNow.tooltip "Jetzt auf Standardwerte zurücksetzen.">

@@ -1,0 +1,115 @@
+<!ENTITY OptHighlights.label "Realces">
+<!ENTITY OptSightsTab.label "Miras">
+<!ENTITY OptGeneral.label "Geral">
+<!ENTITY OptAppearance.label "Aparência">
+<!ENTITY Opttweaks.label "Afinações">
+<!ENTITY Optgen.label "Opções da Barra de Procura">
+<!ENTITY Optdisplay.label "Posição da Barra de Procura">
+<!ENTITY OptButtonAndLabels.label "Botões e Legendas">
+<!ENTITY Optgrid.label "Grelha de Realces">
+<!ENTITY OpthighlightByDefault.label "Realçar todas as ocorrências por defeito">
+<!ENTITY OpthighlightByDefault.tooltip "Ao abrir a barra de procura, o botão de Realçar Todos estará ja ativo, assim quando correres qualquer procura todos os resultados serão mostrados logo desde o início.">
+<!ENTITY OpthideWhenFinderHidden.label "Remover os realces quando a barra de procura é fechada">
+<!ENTITY OpthideWhenFinderHidden.tooltip "Em resumo, sem barra de procura aberta = sem realces. Isto incluí a Barra de Procura Rápida! Assim que a barra de procura fecha, todos os realces são removidos da página.">
+<!ENTITY OptgridInScrollbar.label "Mostrar a grelha de realces na barra de rolagem">
+<!ENTITY OptgridInScrollbar.tooltip "A posição relativa de cada resultado realçado na página é mostrada na barra de rolamento.">
+<!ENTITY OptuseCounter.label "Mostrar o contador de ocorrências na barra de procura">
+<!ENTITY OptuseCounter.tooltip "Em cada procura, o número de resultados encontrados na página é mostrado na barra de procura.">
+<!ENTITY OptfindInTabs.label "Utilizar 'Procura em todos os Separadores'">
+<!ENTITY OptfindInTabs.tooltip "É adicionado um botão à barra de procura para abrir a janela de 'Procura em Todos os Separadores', que te permite procurar rapidamente qualquer palavra em todos os separadores e janelas abertas.">
+<!ENTITY OptmultipleFITFull.label "Permitir várias janelas distintas da &quot;Procura em Todos os Separadores&quot;">
+<!ENTITY OptmultipleFITFull.tooltip "Quando esta opção está inativa, cliques subsequentes no botão 'Procura em Todos os Separadores' irão reutilizar uma janela de 'Procura em Todos os Separadores' já aberta, em vez de abrir uma nova de cada vez.">
+<!ENTITY Optcolor.label "Cor dos realces">
+<!ENTITY Optcolor.tooltip "Muda a cor usada para realçar resultados na página.">
+<!ENTITY OptselectColor.label "Cor da ocorrência atual">
+<!ENTITY OptselectColor.tooltip "Quando procuras inicialmente, ou quando primes F3 ou um dos botões anterior/próximo para saltar entre os resultados, o resultado atual deve ser mostrado numa cor diferente dos restantes, para que possa ser distinguível.">
+<!ENTITY OptcolorReset.label "(reset)">
+<!ENTITY OptcolorKeepOSdefault.label "Manter a cor de contraste do sistema (recomendado)">
+<!ENTITY OptcolorKeepOSdefault.tooltip "A cor de contraste pode ser, dependendo do fundo da página, ou a cor do texto quando a cor do resultado atual é usado como o seu fundo, ou vice versa. Ou é preto ou branco, dependendo da cor escolhida acima. Embora a definição da cor acima afecta apenas o resultado atual em operações de procura, a sua cor de contraste não pode ser alterada sem alterar também a cor de contraste de todas as seleções de text. Desativa esta opção com precaução, para não tornares seleções de texto ilegíveis!">
+<!ENTITY OpthighlightOnFindAgain.label "Também marcar todas as ocorrências ao &quot;Procurar outra vez&quot; (F3)">
+<!ENTITY OpthighlightOnFindAgain.tooltip "Se o botão de Realçar Todos estive ativo, ao correr entre os resultados premindo F3 ou um dos botões anterior/próximo irá realçar todos os resultados, se já não estiverem.">
+<!ENTITY OptgridLimit.labela "Não usar a grelha se exceder os">
+<!ENTITY OptgridLimit.labelb "realces">
+<!ENTITY OptgridLimit.tooltip "Isto é apenas para a grelha de realces na barra de rolamento! Se forem encontrados demasiados resultados, o que poderia abrandar o processo e empancar o navegador, a grelha de realces não será mostrada.">
+<!ENTITY OptminNoDelay.labela "Atrasar o realce se o termo de procura for menor que">
+<!ENTITY OptminNoDelay.labelb "caracteres">
+<!ENTITY OptminNoDelay.tooltip "Quando começas a introduzir texto na barra de procura, é improvável que estejas à procura apenas desses um ou dois caracteres. A procura é atrasada para palavras pequenas por 1,5 segundos, para te dar tempo de introduzir o resto da palavra. Nota que a procura será realizada na mesma para palavras pequenas se não introduzires mais caracteres após esse tempo.">
+<!ENTITY OptadjustGridPadding.labela "Ajustar distância da grelha à margem do navegador:">
+<!ENTITY OptadjustGridPadding.labelb "píxeis">
+<!ENTITY OptadjustGridPadding.tooltip "Ajusta a posição relativa da grelha de realces se for necessário, para encaixar melhor em temas que mudam o aspeto da barra de rolamento.">
+<!ENTITY OptadjustGridWidth.labela "Ajustar a largura da grelha:">
+<!ENTITY OptadjustGridWidth.labelb "píxeis">
+<!ENTITY OptadjustGridWidth.tooltip "Ajudar a largura das marcas na grelha de realces se for necessário, para encaixar melhor em temas que mudam o aspeto da barra de rolamento.">
+<!ENTITY Optsights.label "Miras de Localização">
+<!ENTITY OptsightsCurrentHit.label "Ocorrência Atual">
+<!ENTITY OptsightsAllHighlights.label "Todas as Ocorrências">
+<!ENTITY OptsightsCurrent.label "Mostra mira na ocorrência atual">
+<!ENTITY OptsightsCurrent.tooltip "Quando procuras uma palavra, ou quando corres entre os resultados ao premir F3 ou um dos botões anterior/próximo, é mostrado um alvo no ecrã em torno do resultado atual, para que possas vê-lo facilmente sem teres de andar à procura.">
+<!ENTITY OptsightsHighlights.label "Mostra miras em todas as ocorrências">
+<!ENTITY OptsightsHighlights.tooltip "Mostra um alvo em torno de cada realce visível na página. Quando deslocas a página, mais alvos são mostrados à medida que os realces aparecem.">
+<!ENTITY OptsightsHighlights.warning "Atenção: Este modo pode tornar-se um processo muito intensivo, atrasando a velocidade de apresentação e de rolamento da página.">
+<!ENTITY OptsightsStyle.label "Estilo das Miras (carregar para pre-visualizar)">
+<!ENTITY OptsightsStyle.focus "Mira de Focagem">
+<!ENTITY OptsightsStyle.circle "Circundar a Localização">
+<!ENTITY OptsightsRepeat.label "Repetições da animação:">
+<!ENTITY OptsightsColor.tooltip "Configura a cor usada para estes alvos.">
+<!ENTITY OptsightsSameColor.label "Usar a mesma cor dos realces">
+<!ENTITY OptsightsSameColor.tooltip "A cor usada para estes alvos será a mesma que a cor usada para realçar todos os resultados na página (painel Realces).">
+<!ENTITY OptsightsSameColorCurrent.label "Usar a mesma cor da ocorrência atual">
+<!ENTITY OptsightsSameColorCurrent.tooltip "A cor usada para estes alvos será a mesma que a cor usada para distinguir o resultado atual (painel Aparência).">
+<!ENTITY OptsightsLimit.label "Número máximo de Miras no ecrã:">
+<!ENTITY OptsightsLimit.tooltip "Esta funcionalidade pode ser muito intensiva. É melhor limitar o número máximo de alvos visíveis para estes não bloquearem o navegador.">
+<!ENTITY OpthideLabels.label "Mostrar ícones nos botões em vez de texto">
+<!ENTITY OpthideLabels.tooltip "Por defeito os botões da barra de procura têm texto. Isto mostra-os como imagens, tornado-os mais distinguíveis visualmente e também mais compactos.">
+<!ENTITY OpthideClose.label "Esconder o botão de fecho da barra de procura">
+<!ENTITY OpthideClose.tooltip "O botão de fecho da barra de procura não poderá ser usado para a fechar.">
+<!ENTITY OptmovetoTop.label "Mover para o topo da janela">
+<!ENTITY OptmovetoTop.tooltip "Uma barra de procura mais pequena e compacta é mostrada ao cimo da página, num canto sobre ela.">
+<!ENTITY OptmovetoRight.label "Colocar à direita">
+<!ENTITY OptmovetoRight.tooltip "A caixa de texto e os botões da barra de procura são espelhados e alinhados à direita. Se a barra de procura for movida para cima, toda ela é mostrada no canto superior direito em vez de no esquerdo.">
+<!ENTITY OptblurCloses.label "Fechar a barra de procura ao realizar outra ação">
+<!ENTITY OptblurCloses.tooltip "Assim que carregas em qualquer ponto da página, ou moves o cursor para outro sítio como a barra de endereço, a barra de procura irá fechar automaticamente.">
+<!ENTITY OptglobalFB.label "Usar uma única barra de procura global para todos os separadores">
+<!ENTITY OptglobalFB.tooltip "Ao abrires a barra de proucra num separador, e depois mudares para outro separador, a barra de procura deverá manter-se aberta nesse novo separador.">
+<!ENTITY OptonStartup.label "Lembrar o estado aberto/fechado da barra de procura ao iniciar">
+<!ENTITY OptonStartup.tooltip "Se fechares o navegador com a barra de procura ainda aberta, da próxima vez que iniciares o navegador ela já estará aberta.">
+<!ENTITY OptopenFindbar.label "Ao abrir a Barra de Procura">
+<!ENTITY OptquickFindOptions.label "Barra de Procura Rápida">
+<!ENTITY OptkeepButtons.label "Mostrar botões na barra de procura rápida">
+<!ENTITY OptkeepButtons.tooltip "Por defeito, a Barra de Procura Rápida não mostra quaisquer botões, apenas a caixa de texto para procuras rápidas. Com isto podes aceder às funções de Realçar Todos e Sensível a Maiúsculas ao utilizá-la.">
+<!ENTITY OptFAYT.label "Procurar logo ao introduzir texto">
+<!ENTITY OptFAYT.tooltip "Prime qualquer tecla ao navegar numa página, e a Barra de Procura Rápida irá aparecer para procurar esse texto. O cursor já está colocado nela, para que possas continuar a inserir texto e mudar o termo de procura.">
+<!ENTITY OptFAYTTimeout.beforeLabel "Fechar automaticamente após">
+<!ENTITY OptFAYTTimeout.afterLabel "segundos">
+<!ENTITY OptFAYTTimeout.tooltip "A Barra de Procura Rápida irá fechar automaticamente após um período de inatividade. Lembra-te que também irá fechar ser focares qualquer outro elemento, como ao clicar em qualquer ponto da página.">
+<!ENTITY OptFAYTmode.caption "Tipo da Barra de Procura">
+<!ENTITY OptFAYTmode.quickFind.label "Usar a barra de procura rápida ao introduzir texto para procurar">
+<!ENTITY OptFAYTmode.quickFind.tooltip "Modo predefinido. A Barra de Procura Rápida é utilizada quando primes uma tecla em qualquer ponto da página, enquanto que para aceder à barra de procura normal é preciso utilizar o seu atalho de teclado ou o botão de Procura na barra de ferramentas.">
+<!ENTITY OptFAYTmode.normalFind.label "Usar sempre a barra de procura normal">
+<!ENTITY OptFAYTmode.normalFind.tooltip "A barra de procura normal é utilizada mesmo que primas uma tecla na página, não irá fechar automaticamente após algum tempo nem quando perde o cursor (a menos que essa opção esteja ativa).">
+<!ENTITY OptFAYTmode.alwaysQuick.label "Usar sempre a barra de procura rápida">
+<!ENTITY OptFAYTmode.alwaysQuick.tooltip "A Barra de Procura Rápida é utilizada mesmo quando se usa o atalho de teclado normal, irá sempre fechar automaticamente após um período de inatividade ou quando perde o cursor.">
+<!ENTITY OptkeyboardShortcut.label "Atalho de Teclado">
+<!ENTITY OptctrlFCloses.win "Ctrl+F para também fechar a barra de procura">
+<!ENTITY OptctrlFCloses.mac "Comando+F para também fechar a barra de procura">
+<!ENTITY OptctrlFCloses.tooltip "Podes abrir a barra de procurar e depois fechá-la quando já não precisares, através do mesmo atalho de teclado.">
+<!ENTITY OptctrlFprefill.label "Usar o texto selecionado na barra de procura ao ser aberta">
+<!ENTITY OptctrlFprefill.tooltip "Se estiver algum texto selecionado na página quando a barra de procura é aberta, esse texto é copiado para a barra de procura para ser usado como termo de pesquisa. Se 'Realçar Todos por Defeito' estiver ativo, todas as ocorrências do texto selecionado são imediatamente realçadas.">
+<!ENTITY OptctrlFOnFocused.label "Só fechar quando já estiver focada">
+<!ENTITY OptctrlFOnFocused.tooltip "O atalho de teclado coloca primeiro o cursor na barra de procura, copiando qualquer texto selecionado na página se a opção acima estiver ativa. Só fecha a barra de procura quando o cursor já está nela.">
+<!ENTITY OptSelectingText.label "Ao Selecionar Texto">
+<!ENTITY OptfillSelectedText.label "Copiar o texto para a barra de procura">
+<!ENTITY OptfillSelectedText.tooltip "Sempre que uma palavvra é selecionada na página, será automaticamente copiada para a barra de procura para ser usada como termo de pesquisa. Se 'Realçar todos por defeito' estiver ativo, selecionar texto na página realça imediatamente todas as ocorrências da seleção.">
+<!ENTITY OptemptySelectedText.label "Limpar a barra de procura quando não há texto selecionado">
+<!ENTITY OptemptySelectedText.tooltip "Semelhante à acima, ao clicar na página para remover a seleção de texto, o termo de pesquisa na barra de procura é limpo e todos os realces também são removidos.">
+<!ENTITY OptfillSelectedOpenFindbar.label "Mostrar a barra de procura rápida quando o texto selecionado é usado">
+<!ENTITY OptfillSelectedOpenFindbar.tooltip "Quando a barra de procura é preenchida com o texto selecionado, ela aparece brevemente para mostrar que isto aconteceu.">
+<!ENTITY OptglobalBehavior.warning "Aviso: as opções seguintes não são específicas para a barra de procura, elas afetam todo o navegador, como em páginas, a barra de endereço e qualquer outro local em que é possível selecionar texto. Altera com precaução!">
+<!ENTITY OptdblClickEatSpaces.label "Duplo-clique numa palavra também seleciona o espaço a seguir">
+<!ENTITY OptdblClickStopAtPunctuation.label "Duplo-clique numa palavra termina a seleção na pontuação">
+<!ENTITY OptNativePrefs.label "Preferências Nativas do Firefox">
+<!ENTITY OptNativePrefs.description "Algumas opções, como a cor dos realces ou as preferências da Barra de Procura Rápida, já exitem no Firefox, apenas são mostradas aqui para serem mais facilmente acedidas e costumizadas. O extra deve geri-las automaticamente, utiliza estas opções apenas se realmente precisares!">
+<!ENTITY OptResetNativeOnDisabled.label "Restaurar todas as preferências nativas alteradas ao desligar o extra">
+<!ENTITY OptResetNativeOnDisabled.tooltip "Se ficarem algumas alterações. como a cor dos realces não ser devidamente reposta, ao desativar o extra, ativa esta opção para te certificares de que isso acontece.">
+<!ENTITY OptResetNativeNow.label "Restaurar todas as preferências nativas">
+<!ENTITY OptResetNativeNow.tooltip "Repõe os seus valores de origem agora.">

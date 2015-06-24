@@ -31,5 +31,38 @@
 				<em:description>Between simple tweaks such as placing the findbar in the top corner, to the powerful "Find in All Tabs" tool, it has everything to make the Find Toolbar a powerful and accessible research tool!</em:description>
 			</Description>
 		</em:localized>
+		<em:localized>
+			<Description>
+				<em:locale>de</em:locale>
+				<em:name>FindBar Tweak</em:name>
+				<em:description>Findbar Tweak hat alles – von einfachen Anpassungen wie einer Suchleiste am oberen Rand bis zum mächtigen Werkzeug „In allen Tabs suchen“, um die Suchleiste zu einem mächtigen und zugänglichen Suchwerkzeug zu machen!</em:description>
+				<em:translator>Michael Köhler, Wawuschel @ babelzilla</em:translator>
+			</Description>
+		</em:localized>
+		<em:localized>
+			<Description>
+				<em:locale>es</em:locale>
+				<em:name>FindBar Tweak</em:name>
+				<em:description>Desde simples ajustes como situar la barra de búsqueda en una esquina superior, a la potente herramienta "Buscar en todas las pestañas", ¡lo tiene todo para hacer de la barra de búsqueda una herramientas de indagación potente y accesible!</em:description>
+				<em:translator>strel</em:translator>
+			</Description>
+		</em:localized>
+		<em:localized>
+			<Description>
+				<em:locale>pt-PT</em:locale>
+				<em:name>Barra de Procura Refinada</em:name>
+				<em:description>Entre pequenas alterações como mover a barra de procura para o canto superior, à "Procura em todos os separadores", tem tudo para tornar a Barra de Procura numa ferramenta de pesquisa poderosa e acessível!</em:description>
+				<em:translator>Quicksaver</em:translator>
+			</Description>
+		</em:localized>
+		<em:localized>
+			<Description>
+				<em:locale>zh-CN</em:locale>
+				<em:name>FindBar Tweak</em:name>
+				<em:description>诸多简单实用的改进，从简单的调整查找栏到右上角，到强大的“查找所有标签页”工具等。一切都是为了将您的“查找工具栏”变成一个强大又易于使用的搜索工具！</em:description>
+				<em:translator>http://t.qq.com/HeartBlade, YFdyh000</em:translator>
+			</Description>
+		</em:localized>
+		
 	</Description>
 </RDF>

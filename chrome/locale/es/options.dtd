@@ -1,0 +1,115 @@
+<!ENTITY OptHighlights.label "Resaltados">
+<!ENTITY OptSightsTab.label "Miras">
+<!ENTITY OptGeneral.label "General">
+<!ENTITY OptAppearance.label "Apariencia">
+<!ENTITY Opttweaks.label "Ajustes">
+<!ENTITY Optgen.label "Opciones de barra de búsqueda">
+<!ENTITY Optdisplay.label "Posición de la barra de búsqueda">
+<!ENTITY OptButtonAndLabels.label "Botones y etiquetas">
+<!ENTITY Optgrid.label "Parrilla de resaltados">
+<!ENTITY OpthighlightByDefault.label "Resaltar por defecto todas las coincidencias">
+<!ENTITY OpthighlightByDefault.tooltip "Al abrir la barra de búsqueda, el botón 'Resaltar todo' ya estará marcado, así que en cualquier momento en que realice una operación de búsqueda resaltará todas las coincidencias desde el principio.">
+<!ENTITY OpthideWhenFinderHidden.label "Retirar resaltes al cerrar la barra de búsqueda">
+<!ENTITY OpthideWhenFinderHidden.tooltip "Brevemente, si la barra de búsquedas no está abierta = no se muestran resaltados. ¡Esto incluye a la barra de búsqueda rápida! Tan pronto como la barra de búsqueda se cierra, el resalte de todas las coincidencias se retira de la página.">
+<!ENTITY OptgridInScrollbar.label "Mostrar parrilla de resaltados en la barra de desplazamiento">
+<!ENTITY OptgridInScrollbar.tooltip "La posición relativa de cada coincidencia resaltada en la página web se mostrará en la barra de desplazamiento.">
+<!ENTITY OptuseCounter.label "Mostrar contador de coincidencias en la barra de búsqueda">
+<!ENTITY OptuseCounter.tooltip "En cada operación de búsqueda, el número de coincidencias encontrado en la página web se mostrará al final de la barra de búsqueda.">
+<!ENTITY OptfindInTabs.label "Habilitar 'Buscar en todas las pestañas'">
+<!ENTITY OptfindInTabs.tooltip "Se sitúa un botón en la barra de búsqueda para abrir el cuadro de diálogo 'Buscar en todas las pestañas', que le permite buscar rápidamente cualquier palabra en todas sus pestañas y ventanas abiertas.">
+<!ENTITY OptmultipleFITFull.label "Permitir múltiples instancias de la ventana 'Buscar en todas las pestañas'">
+<!ENTITY OptmultipleFITFull.tooltip "Cuando esto esté deshabilitado, los clics subsiguientes en el botón 'Buscar en todas las pestañas' reutilizarán cualquier cuadro de diálogo 'Buscar en todas las pestañas' abierto, en lugar de abrir uno nuevo cada vez.">
+<!ENTITY Optcolor.label "Color de los resaltados">
+<!ENTITY Optcolor.tooltip "Cambia el color usado para resaltar coincidencias en la página.">
+<!ENTITY OptselectColor.label "Color de la coincidencia actual">
+<!ENTITY OptselectColor.tooltip "Cuando inicie una operación de búsqueda, o cuando pulse F3 o los botones Anterior/Siguiente para recorrer las coincidencias, para distinguirla, la coincidencia actual debe mostrarse en un color diferente al de los demás resaltados.">
+<!ENTITY OptcolorReset.label "(restablecer)">
+<!ENTITY OptcolorKeepOSdefault.label "Mantener el color de contraste predeterminado (recomendado)">
+<!ENTITY OptcolorKeepOSdefault.tooltip "El color de contraste, dependiendo del fondo de la página web, es o bien el color del texto cuando el color de la coincidencia actual es el usado para el fondo, o a la inversa. Es blanco o negro, dependiendo del color elegido arriba. Mientras que la configuración de color de arriba afecta sólo a la coincidencia actual en las operaciones de búsqueda, su color de contraste no se puede cambiar sin cambiar a la vez el contraste de todas las selecciones de texto. ¡Deshabilite esto con precaución, para no hacer ilegibles todas las selecciones de texto!">
+<!ENTITY OpthighlightOnFindAgain.label "Resaltar también al 'Buscar de nuevo' (F3)">
+<!ENTITY OpthighlightOnFindAgain.tooltip "Si se marca el botón 'Resaltar todo', al recorrer las coincidencias, pulsando F3 o los botones Anterior/Siguiente, también se resaltarán todas las coincidencias, si no lo estaban ya.">
+<!ENTITY OptgridLimit.labela "No usar la parrilla si se exceden los">
+<!ENTITY OptgridLimit.labelb "resaltados">
+<!ENTITY OptgridLimit.tooltip "¡Esto es sólo para la parrilla de resaltados en la barra de desplazamiento! Si hay demasiadas coincidencias, algo que podría retardar el proceso y ralentizar el navegador, no se usará la parrilla de resaltados en la barra de desplazamiento.">
+<!ENTITY OptminNoDelay.labela "Retrasar la aparición de los resaltados si el criterio de búsqueda tiene menos de">
+<!ENTITY OptminNoDelay.labelb "caracteres">
+<!ENTITY OptminNoDelay.tooltip "Cuando comience a escribir por primera vez en la barra de búsqueda, es improbable que su criterio de búsqueda consista en esos uno o dos primeros caracteres. Esta opción retrasa la operación de búsqueda para palabras cortas durante 1,5 segundos, para darle tiempo a que escriba el resto del texto de su consulta. Observe que todavía se buscarán las coindencias de palabras cortas si permite que ese tiempo pase sin introducir ningún caracter más.">
+<!ENTITY OptadjustGridPadding.labela "Ajustar distancia entre la parrilla y el borde:">
+<!ENTITY OptadjustGridPadding.labelb "píxeles">
+<!ENTITY OptadjustGridPadding.tooltip "Si es necesario, ajusta la posición relativa de la parrilla de resaltados para ajustar mejor los temas decorativos que cambian la apariencia de la barra de desplazamiento.">
+<!ENTITY OptadjustGridWidth.labela "Ajustar anchura de la parrilla:">
+<!ENTITY OptadjustGridWidth.labelb "píxeles">
+<!ENTITY OptadjustGridWidth.tooltip "Si es necesario, ajusta la anchura de las marcas en la parrilla de resaltados para ajustar mejor los temas decorativos que cambian la apariencia de la barra de desplazamiento.">
+<!ENTITY Optsights.label "Miras">
+<!ENTITY OptsightsCurrentHit.label "Coincidencia actual">
+<!ENTITY OptsightsAllHighlights.label "Todos los resaltados">
+<!ENTITY OptsightsCurrent.label "Mostrar miras sobre la coincidencia actual de la búsqueda">
+<!ENTITY OptsightsCurrent.tooltip "Cuando encuentre una palabra, o cuando recorra las coincidencias pulsando F3 o los botones Anterior/Siguiente, se mostrará un punto de mira en su pantalla alrededor de la coincidencia actual para que puede verla fácilmente sin siquiera tener que mirar hacia ella.">
+<!ENTITY OptsightsHighlights.label "Mostrar miras en todas las coincidencias resaltadas">
+<!ENTITY OptsightsHighlights.tooltip "Coloca un punto de mira alrededor de cada resaltado visible en la página web. Al desplazarse por la página, se colocarán más puntos de mira al aparecer otros resaltados a la vista.">
+<!ENTITY OptsightsHighlights.warning "Advertencia: ¡Esto puede ser muy intensivo en recursos! ¡La combinación de sobreimpresionado y desplazamiento por la página puede ralentizar mucho!">
+<!ENTITY OptsightsStyle.label "Estilo de miras (clic para previsualizar)">
+<!ENTITY OptsightsStyle.focus "Posición del punto">
+<!ENTITY OptsightsStyle.circle "Posición del círculo">
+<!ENTITY OptsightsRepeat.label "Repeticiones de la animación:">
+<!ENTITY OptsightsColor.tooltip "Configura el color usado para estas miras.">
+<!ENTITY OptsightsSameColor.label "Usar el mismo color que los resaltados">
+<!ENTITY OptsightsSameColor.tooltip "El color usado para estas miras será el mismo que el usado para resaltar todas las coincidencias en la página web (panel de Resaltados).">
+<!ENTITY OptsightsSameColorCurrent.label "Usar el mismo color que coincidencia actual">
+<!ENTITY OptsightsSameColorCurrent.tooltip "El color usado para estas miras será el mismo que el usado para distinguir la coincidencia actual (panel de Apariencia).">
+<!ENTITY OptsightsLimit.label "Número máximo de miras en pantalla:">
+<!ENTITY OptsightsLimit.tooltip "Esta característica puede ser muy intensiva en recursos. Es mejor limitar el número máximo de miras visibles a una cantidad que no ralentice el navegador al sobreimpresionarlas.">
+<!ENTITY OpthideLabels.label "Mostrar iconos de botón en lugar de etiquetas">
+<!ENTITY OpthideLabels.tooltip "Por defecto, los botones de la barra de herramientas vienen con una etiqueta de texto. Esto las reemplaza por imágenes, haciendo los botones visualmente más distinguibles además de más compactos.">
+<!ENTITY OpthideClose.label "Ocultar el botón de cierre de la barra de búsqueda">
+<!ENTITY OpthideClose.tooltip "El botón de cierre de la barra de búsqueda no estará disponible para cerrarla.">
+<!ENTITY OptmovetoTop.label "Mover a la parte superior del navegador">
+<!ENTITY OptmovetoTop.tooltip "Se situará una barra de búsqueda más delgada en la parte superior de la página web, en una esquina sobre ella.">
+<!ENTITY OptmovetoRight.label "Situar a la derecha">
+<!ENTITY OptmovetoRight.tooltip "El campo de entrada y los botones de la barra de búsqueda se invertirán y se alinearán a la derecha. Si la barra de búsqueda se mueve a la parte superior, toda la barra de búsqueda aparecerá en la esquina superior derecha en lugar de a la izquierda.">
+<!ENTITY OptblurCloses.label "Cerrar la barra de búsqueda cuando pierda el foco">
+<!ENTITY OptblurCloses.tooltip "Tan pronto como haga clic en cualquier parte de la página web, o cambie el cursor a otro lugar como la barra de direcciones, la barra de búsqueda se cerrará automáticamente.">
+<!ENTITY OptglobalFB.label "Usar una única barra de búsqueda global para todas las pestañas">
+<!ENTITY OptglobalFB.tooltip "Cuando abra la barra de búsqueda en una pestaña y luego cambie a otra pestaña, debe ver la barra de búsqueda aún abierta en la nueva pestaña.">
+<!ENTITY OptonStartup.label "Recordar el estado abierto/cerrado de la barra de búsqueda al iniciar">
+<!ENTITY OptonStartup.tooltip "Si cierra el navegador con la barra de búsqueda aún abierta, la próxima vez que inicie el navegador seguirá abierta.">
+<!ENTITY OptopenFindbar.label "Al abrir la barra de búsqueda">
+<!ENTITY OptquickFindOptions.label "Barra de búsqueda rápida">
+<!ENTITY OptkeepButtons.label "Mostrar botones en la barra de búsqueda rápida">
+<!ENTITY OptkeepButtons.tooltip "Por defecto, la barra de búsqueda rápida no tiene ningún botón, sólo lleva el campo de entrada para operaciones rápidas de búsqueda. Con esta opción aún puede acceder a las funciones 'Resaltar todo' y 'Coincidencia de mayúsculas/minúsculas' al usarla.">
+<!ENTITY OptFAYT.label "Buscar texto directamente en cuanto comienzo a escribirlo">
+<!ENTITY OptFAYT.tooltip "Al navegar por una página web pulse cualquier tecla y la barra de búsqueda rápida aparecerá para buscar ese texto. El cursor se colocará sobre ella, así que puede seguir escribiendo para ir cambiando el criterio de búsqueda.">
+<!ENTITY OptFAYTTimeout.beforeLabel "Autocerrar tras">
+<!ENTITY OptFAYTTimeout.afterLabel "segundos">
+<!ENTITY OptFAYTTimeout.tooltip "La barra de búsqueda rápida se cerrará automáticamente tras un periodo de inactividad. Recuerde que también se cerrará cuando pierda el foco, como al hacer clic en la página web.">
+<!ENTITY OptFAYTmode.caption "Modo de la barra de búsqueda">
+<!ENTITY OptFAYTmode.quickFind.label "Usar la barra de búsqueda rápida para buscar texto directamente en cuanto comienzo a escribirlo">
+<!ENTITY OptFAYTmode.quickFind.tooltip "Modo predeterminado. La barra de búsqueda rápida se usa cuando escribe en cualquier parte de la página web, mientras que para acceder a la barra de búsqueda normal tiene que usar el atajo de teclado o accionar su botón en la barra de herramientas.">
+<!ENTITY OptFAYTmode.normalFind.label "Usar siempre la barra de búsqueda normal">
+<!ENTITY OptFAYTmode.normalFind.tooltip "La barra de búsqueda normal se usará incluso cuando escriba en cualquier parte de la página web, no se cerrará automáticamente tras un periodo de tiempo o cuando pierda el foco (a menos que habilite esa preferencia arriba).">
+<!ENTITY OptFAYTmode.alwaysQuick.label "Usar siempre la barra de búsqueda rápida">
+<!ENTITY OptFAYTmode.alwaysQuick.tooltip "La barra de búsqueda rápida se usará incluso cuando utilice el atajo de teclado, siempre se cerrará automáticamente tras un periodo de tiempo o cuando pierda el foco.">
+<!ENTITY OptkeyboardShortcut.label "Atajo de teclado">
+<!ENTITY OptctrlFCloses.win "Ctrl+F también cierra la barra de búsqueda">
+<!ENTITY OptctrlFCloses.mac "Command+F también cierra la barra de búsqueda">
+<!ENTITY OptctrlFCloses.tooltip "Puede abrir la barra de búsqueda y luego cerrarla cuando ya no la necesite mediante el mismo atajo de teclado.">
+<!ENTITY OptctrlFprefill.label "Rellenar la barra de búsqueda con el texto seleccionado al abrirla">
+<!ENTITY OptctrlFprefill.tooltip "Si está seleccionado cualquier texto en la página web al abrir la barra de búsqueda, este texto se copiará automáticamente a la barra de búsqueda para usarlo como criterio de búsqueda. Si 'Resaltar por defecto todas las coincidencias' está habilitada, buscará inmediatamente todas las apariciones del texto seleccionado.">
+<!ENTITY OptctrlFOnFocused.label "Cerrar sólo cuando ya tenga el foco">
+<!ENTITY OptctrlFOnFocused.tooltip "El atajo de teclado siempre colocará primero el cursor sobre la barra de búsqueda, copiando en ella cualquier texto seleccionado en la página web, si la preferencia de arriba está habilitada. Sólo cerrará la barra de búsqueda una vez que el cursor esté sobre ella.">
+<!ENTITY OptSelectingText.label "Al seleccionar texto">
+<!ENTITY OptfillSelectedText.label "Rellenar la barra de búsqueda con el texto seleccionado">
+<!ENTITY OptfillSelectedText.tooltip "Cada vez que seleccione una palabra en la página web, se copiará automáticamente a la barra de búsqueda para usarla como criterio de búsqueda. Si &quot;Resaltar por defecto todas las coincidencias&quot; está habilitada, seleccionar texto en una página web inmediatamente resaltará todas las apariciones de la selección.">
+<!ENTITY OptemptySelectedText.label "Vaciar la barra de búsqueda cuando no haya texto seleccionado">
+<!ENTITY OptemptySelectedText.tooltip "De forma similar, si hace clic en cualquier parte de la página web sin seleccionar texto, la barra de búsqueda se despejará y todos los resaltes también se retirarán.">
+<!ENTITY OptfillSelectedOpenFindbar.label "Enseñar la barra de búsqueda rápida cuando se use el texto seleccionado">
+<!ENTITY OptfillSelectedOpenFindbar.tooltip "Cuando la barra de búsqueda rápida se rellene con el texto seleccionado, aparecerá brevemente para mostrar que esto ha sucedido.">
+<!ENTITY OptglobalBehavior.warning "Advertencia: Las siguientes preferencias no son específicas de la barra de búsqueda, afectan globalmente al navegador, por ejemplo en páginas web, en la barra de direcciones, y en cualquier otra parte donde la selección de texto sea posible. ¡Cámbielas con cuidado!">
+<!ENTITY OptdblClickEatSpaces.label "Doble-clic sobre una palabra selecciona también el espacio siguiente">
+<!ENTITY OptdblClickStopAtPunctuation.label "Doble-clic sobre una palabra detiene la selección en un signo de puntuación">
+<!ENTITY OptNativePrefs.label "Preferencias nativas de Firefox">
+<!ENTITY OptNativePrefs.description "Algunas preferencias, como los colores de resaltados o las preferencias de la barra de búsqueda rápida, ya existen en Firefox, se muestran aquí sólo para que sean de más fácil acceso y personalización. El complemento manejarlas automáticamente de forma indirecta, así que ¡úselas sólo si las necesita ineludiblemente!">
+<!ENTITY OptResetNativeOnDisabled.label "Al deshabilitar el complemento, restablecer todas las preferencias nativas cambiadas">
+<!ENTITY OptResetNativeOnDisabled.tooltip "Si cualquier cambio residual permanece, como que el color de los resaltados no se restablezca a su valor predeterminado al deshabilitar el complemento, habilite esto para asegurarse de que se restablecen.">
+<!ENTITY OptResetNativeNow.label "Restablecer todas las preferencias nativas cambiadas">
+<!ENTITY OptResetNativeNow.tooltip "Las restablece en este instante a sus valores predeterminados.">

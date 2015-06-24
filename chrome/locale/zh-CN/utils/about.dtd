@@ -1,0 +1,24 @@
+<!ENTITY about.paneTitle "关于">
+<!ENTITY about.version "版本 {v}">
+<!ENTITY about.versionDivider "　-　">
+<!ENTITY about.uptodate "已是最新！">
+<!ENTITY about.needsupdate "有更新可用！">
+<!ENTITY about.description "在下面查看此版本的“发行说明”和“已知问题”。如果您发现了任何问题，或者您对未来的版本有任何建议，让我们知道。">
+<!ENTITY about.descriptionB "本附加组件是免费的，但解决问题、添加新功能，以及确保一切都在每个新的 Firefox 版本中工作正常是很费力并且很费时间的。如果您喜欢本附加组件，请支持它继续发展。作为纽带的链接是“您可以帮助”！">
+<!ENTITY about.allVersions "显示此前所有版本的发行说明">
+<!ENTITY about.notifyOnUpdates "在下次更新后显示此标签页">
+<!ENTITY about.development "开发状态">
+<!ENTITY about.helpdevelopment "您可以帮助">
+<!ENTITY about.information "更多信息">
+<!ENTITY about.home "附加组件主页">
+<!ENTITY about.fullchangelog "完整的变更日志">
+<!ENTITY about.problems "遇到问题？">
+<!ENTITY about.tech "在支持页面中打开一个 issue，描述您的问题">
+<!ENTITY about.email "或者给我发电子邮件">
+<!ENTITY about.author "作者的一点话">
+<!ENTITY about.trymore "试试我其他的附加组件，获得一个更美好的 Firefox 体验！">
+<!ENTITY about.profile "在我的个人概要中找到它们">
+<!ENTITY about.share "分享！">
+<!ENTITY about.friends "不要独享一个绝佳的浏览器。与你的朋友分享它们！">
+<!ENTITY about.moreshare "其他服务...">
+<!ENTITY about.tryit "不再浪费时间寻找存在于某个标签页中的一小段文本。FindBar Tweak 将您的查找工具栏变成一个强大的搜索工具！">

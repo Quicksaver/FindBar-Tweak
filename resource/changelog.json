@@ -5,7 +5,7 @@
 	],
 	"releases": {
 		"2":{
-			"date":"June 24, 2015",
+			"date":"June 25, 2015",
 			"notes":[
 				["new","Almost complete code rewrite, with many stability and performance enhancements across the board!"],
 				["new","Multiprocess firefox (e10s) compatibility"],

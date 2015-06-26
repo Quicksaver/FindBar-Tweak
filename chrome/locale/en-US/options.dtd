@@ -66,7 +66,7 @@
 <!ENTITY OptsightsLimit.tooltip "This feature can be very resource intensive. It is better to limit the maximum number of visible sights to an amount that doesn't lag the browser when rendering them.">
 
 <!ENTITY OpthideLabels.label "Show button icons instead of labels">
-<!ENTITY OpthideLabels.tooltip "By default the toolbar buttons have a text label. This changes them to images, making them move visibly distinguishable and also more compact.">
+<!ENTITY OpthideLabels.tooltip "By default the toolbar buttons have a text label. This changes them to images, making them more visibly distinguishable and also more compact.">
 <!ENTITY OpthideClose.label "Hide the Findbar close button">
 <!ENTITY OpthideClose.tooltip "The Findbar's close button will not be available to close it.">
 <!ENTITY OptmovetoTop.label "Move to the top of the browser">

@@ -1,0 +1,24 @@
+<!ENTITY about.paneTitle "À propos">
+<!ENTITY about.version "Version {v}">
+<!ENTITY about.versionDivider " - ">
+<!ENTITY about.uptodate "à jour, félicitation !">
+<!ENTITY about.needsupdate "mise à jour disponible !">
+<!ENTITY about.description "Ci-dessous, vous trouverez les « Notes de version » et « Problèmes connus ». Faites-moi savoir si vous remarquez un quelconque problème, ou si vous avez des suggestions pour les prochaines sorties.">
+<!ENTITY about.descriptionB "Le module est gratuit, mais corriger les problème, ajouter de nouvelles fonctionnalités et s'assurer que tout fonctionne à chaque sortie d'une nouvelle version de Firefox est laborieux et parfois difficile. Si vous appréciez ce module, veuillez encourager la poursuite de son développement. Comme dit le lien, « Vous pouvez aider » !">
+<!ENTITY about.allVersions "Afficher les notes de toutes les versions précédentes">
+<!ENTITY about.notifyOnUpdates "Me montrer cet onglet lors de la prochaine mise à jour">
+<!ENTITY about.development "État du développement">
+<!ENTITY about.helpdevelopment "VOUS POUVEZ AIDER">
+<!ENTITY about.information "Plus d'informations">
+<!ENTITY about.home "Page d'accueil du module complémentaire">
+<!ENTITY about.fullchangelog "Liste complète des modifications">
+<!ENTITY about.problems "Vous avez des problèmes ?">
+<!ENTITY about.tech "Ouvrez un nouveau problème, en le décrivant, sur la page de soutien technique">
+<!ENTITY about.email "Ou envoyez-moi un courriel">
+<!ENTITY about.author "Du même auteur">
+<!ENTITY about.trymore "Essayez un de mes autres modules pour une expérience de Firefox encore meilleure !">
+<!ENTITY about.profile "Trouvez-les dans mon profil">
+<!ENTITY about.share "Partagez !">
+<!ENTITY about.friends "Ne soyez pas le seul à avoir un navigateur exceptionnel. Faites-en part à vos amis !">
+<!ENTITY about.moreshare "Autres services...">
+<!ENTITY about.tryit "Ne perdez pas de temps à chercher un bout de texte enfoui quelque part dans un de vos onglets ! FindBar Tweak transforme votre barre d'outils de recherche en un outil puissant !">

@@ -1,0 +1,115 @@
+<!ENTITY OptHighlights.label "Surlignage">
+<!ENTITY OptSightsTab.label "Mire">
+<!ENTITY OptGeneral.label "Général">
+<!ENTITY OptAppearance.label "Apparence">
+<!ENTITY Opttweaks.label "Réglages">
+<!ENTITY Optgen.label "Options de la barre">
+<!ENTITY Optdisplay.label "Position de la barre">
+<!ENTITY OptButtonAndLabels.label "Boutons et texte">
+<!ENTITY Optgrid.label "Repères de surlignage">
+<!ENTITY OpthighlightByDefault.label "Tout surligner par défaut">
+<!ENTITY OpthighlightByDefault.tooltip "Lors de l'ouverture de la barre, le bouton « Tout surligner » sera déjà pressé, si bien que lorsque vous lancerez une quelconque opération de recherche, cela vous montrera toutes les occurrences dès le début.">
+<!ENTITY OpthideWhenFinderHidden.label "Enlever le surlignage lorsque la barre est fermée">
+<!ENTITY OpthideWhenFinderHidden.tooltip "En clair, barre pas ouverte = aucun surlignage. Cela s'applique aussi à la recherche rapide ! Dès que la barre est fermée, toutes les occurrences disparaissent de la page.">
+<!ENTITY OptgridInScrollbar.label "Afficher des repères de surlignage dans la barre de défilement">
+<!ENTITY OptgridInScrollbar.tooltip "La position relative de chaque occurrence surlignée dans la page Web sera affichée dans la barre de défilement.">
+<!ENTITY OptuseCounter.label "Afficher le compteur des occurrences dans la barre">
+<!ENTITY OptuseCounter.tooltip "Pour chaque opération de recherche, le nombre d'occurrences trouvées dans la page Web sera affiché au bout de la barre.">
+<!ENTITY OptfindInTabs.label "Activer « Rechercher dans tous les onglets »">
+<!ENTITY OptfindInTabs.tooltip "Un bouton est placé sur la barre afin d'ouvrir la fenêtre « Rechercher dans tous les onglets », qui vous permet de trouver rapidement un mot parmi tous vos onglets et fenêtres ouverts.">
+<!ENTITY OptmultipleFITFull.label "Autoriser plusieurs instances de la fenêtre « Rechercher dans tous les onglets »">
+<!ENTITY OptmultipleFITFull.tooltip "Lorsque ceci est désactivé, les clics ultérieurs sur le bouton « Rechercher dans tous les onglets » réutilisera toute fenêtre « Rechercher dans tous les onglets » déjà ouverte, au lieu d'en ouvrir une nouvelle à chaque fois.">
+<!ENTITY Optcolor.label "Couleur du surlignage">
+<!ENTITY Optcolor.tooltip "Modifie la couleur utilisée pour surligner les occurrences sur la page.">
+<!ENTITY OptselectColor.label "Couleur de l'occurrence actuelle">
+<!ENTITY OptselectColor.tooltip "Lorsque vous démarrez une opération de recherche pour la première fois, ou si vous pressez F3 ou les boutons précédente/suivante pour circuler à travers les occurrences, l'occurrence actuelle devrait utiliser une couleur de surlignage différente des autres occurrences afin de la distinguer.">
+<!ENTITY OptcolorReset.label "(réinitialiser)">
+<!ENTITY OptcolorKeepOSdefault.label "Conserver la couleur de contraste par défaut (recommandé)">
+<!ENTITY OptcolorKeepOSdefault.tooltip "La couleur de contraste est, en fonction de l'arrière-plan de la page Web, soit la couleur du texte lorsque la couleur de l'occurrence actuelle est utilisée comme son arrière-plan, ou vice versa. C'est soit blanc soit noir, en fonction de la couleur choisie ci-dessus. Alors que le paramètre de couleur ci-dessus affecte seulement l'occurrence actuelle lors d'une opération de recherche, sa couleur de contraste ne peut pas être modifiée sans modifier également le contraste de toutes les sélections de texte. Désactivez donc ceci avec précaution, afin de ne pas rendre les sélections de texte illisibles !">
+<!ENTITY OpthighlightOnFindAgain.label "Surligner également pour « Rechercher à nouveau » (F3)">
+<!ENTITY OpthighlightOnFindAgain.tooltip "Si le bouton « Tout surligner » est activé, circuler entre les occurrences en pressant F3 ou en utilisant les boutons précédente/prochaine surlignera également toutes les occurrences, si elles ne le sont pas déjà.">
+<!ENTITY OptgridLimit.labela "Ne pas utiliser de repères s'il y a plus de">
+<!ENTITY OptgridLimit.labelb "caractère(s) surligné(s)">
+<!ENTITY OptgridLimit.tooltip "Ceci s'applique uniquement aux repères dans la barre de défilement ! S'il y a trop de résultats, ce qui pourrait ralentir le processus et faire saccader le navigateur à cause d'eux, les repères dans la barre de défilement ne seront pas utilisés.">
+<!ENTITY OptminNoDelay.labela "Différer le surlignage si le terme recherché est plus court que">
+<!ENTITY OptminNoDelay.labelb "caractère(s)">
+<!ENTITY OptminNoDelay.tooltip "Lorsque vous commencez à taper dans la barre, il est peu probable que vous ne recherchiez que ces un ou deux premiers caractères. Ceci diffère l'opération de recherche pour les mots courts de 1 seconde et demie, afin de vous donnez du temps pour saisir le reste de votre requête. Notez qu'il sera toujours trouvé des occurrences pour les mots courts si vous laissez ce temps passer sans entrer de nouveaux caractères.">
+<!ENTITY OptadjustGridPadding.labela "Ajuster la distance entre les repères et la bordure :">
+<!ENTITY OptadjustGridPadding.labelb "pixel(s)">
+<!ENTITY OptadjustGridPadding.tooltip "Ajuste la position relative des repères si besoin, pour mieux s'harmoniser avec les thèmes qui modifient l'apparence de la barre de défilement.">
+<!ENTITY OptadjustGridWidth.labela "Ajuster la largeur des repères :">
+<!ENTITY OptadjustGridWidth.labelb "pixel(s)">
+<!ENTITY OptadjustGridWidth.tooltip "Ajuste la largeur des repères si besoin, pour mieux s'harmoniser avec les thèmes qui modifient l'apparence de la barre de défilement.">
+<!ENTITY Optsights.label "Mire de focus">
+<!ENTITY OptsightsCurrentHit.label "Occurrence actuelle">
+<!ENTITY OptsightsAllHighlights.label "Tous les éléments surlignés">
+<!ENTITY OptsightsCurrent.label "Afficher une mire sur l'occurrence actuelle">
+<!ENTITY OptsightsCurrent.tooltip "Lorsque vous recherchez un mot, ou lorsque vous circulez entre les occurrences en pressant F3 ou les boutons précédente/suivante, une cible sera affichée sur votre écran autour de l'occurrence actuelle, afin que vous la remarquiez facilement sans avoir besoin de la chercher du regard.">
+<!ENTITY OptsightsHighlights.label "Afficher une mire sur toutes les occurrences surlignées">
+<!ENTITY OptsightsHighlights.tooltip "Positionne une cible autour de tout texte surligné visible sur la page Web. Lorsque vous faites défiler la page, d'autres cibles sont mises en place à mesure que de nouveaux éléments surlignés apparaissent.">
+<!ENTITY OptsightsHighlights.warning "Attention : ceci peut être très gourmand en ressources ! Le rendu et le défilement de la page peuvent devenir lents !">
+<!ENTITY OptsightsStyle.label "Style de mire (cliquez sur les options pour avoir un aperçu)">
+<!ENTITY OptsightsStyle.focus "Se resserrer sur l'emplacement">
+<!ENTITY OptsightsStyle.circle "Encercler l'emplacement">
+<!ENTITY OptsightsRepeat.label "Nombre de fois où jouer l'animation :">
+<!ENTITY OptsightsColor.tooltip "Configure la couleur utilisée pour ces mires.">
+<!ENTITY OptsightsSameColor.label "Utiliser la même couleur que le surlignage">
+<!ENTITY OptsightsSameColor.tooltip "La couleur utilisée pour ces mires sera identique à celle utilisée pour surligner toutes les occurrences de la page Web (voir l'onglet « Surlignage »).">
+<!ENTITY OptsightsSameColorCurrent.label "Utiliser la même couleur que l'occurrence actuelle">
+<!ENTITY OptsightsSameColorCurrent.tooltip "La couleur utilisée pour ces mires sera identique à celle utilisée pour distinguer l'occurrence actuelle (voir l'onglet « Apparence »).">
+<!ENTITY OptsightsLimit.label "Nombre maximal de mires à l'écran :">
+<!ENTITY OptsightsLimit.tooltip "Cette fonctionnalité peut être très gourmande en ressources. Il est préférable de limiter le nombre maximal de mires visibles à un niveau qui ne ralentit pas le navigateur lors de leur affichage.">
+<!ENTITY OpthideLabels.label "Afficher des icônes pour les boutons, au lieu du texte">
+<!ENTITY OpthideLabels.tooltip "Par défaut, les boutons de barre d'outils n'affichent que du texte. Ceci les transforme en images, les rendant plus discernables visuellement et aussi plus compacts.">
+<!ENTITY OpthideClose.label "Cacher le bouton de fermeture de la barre">
+<!ENTITY OpthideClose.tooltip "Le bouton de fermeture de la barre ne sera pas disponible pour fermer celle-ci.">
+<!ENTITY OptmovetoTop.label "En haut">
+<!ENTITY OptmovetoTop.tooltip "Une barre d'outils plus petite sera placée en haut de la page Web, dans un coin au-dessus d'elle.">
+<!ENTITY OptmovetoRight.label "À droite">
+<!ENTITY OptmovetoRight.tooltip "Le champ de saisie de la barre ainsi que ses boutons seront inversés et alignés à droite. Si la barre est déplacée en haut, elle apparait entièrement dans le coin en haut à droite au lieu de la gauche.">
+<!ENTITY OptblurCloses.label "Fermer la barre lorsqu'elle perd le focus">
+<!ENTITY OptblurCloses.tooltip "Dès que vous cliquez n'importe où dans la page Web, ou déplacez le curseur à un autre endroit comme la barre d'adresse, la barre d'outils de recherche se fermera automatiquement.">
+<!ENTITY OptglobalFB.label "Utiliser une unique barre globale pour tous les onglets">
+<!ENTITY OptglobalFB.tooltip "Lorsque vous ouvrez la barre dans un onglet, puis allez dans un autre onglet, vous devriez voir la barre toujours ouverte dans ce nouvel onglet.">
+<!ENTITY OptonStartup.label "Au démarrage, se souvenir de l'état ouvert/fermé de la barre">
+<!ENTITY OptonStartup.tooltip "Si vous fermez le navigateur avec la barre toujours ouverte, la prochaine fois que vous démarrerez le navigateur elle sera déjà ouverte.">
+<!ENTITY OptopenFindbar.label "Lors de l'ouverture de la barre">
+<!ENTITY OptquickFindOptions.label "Barre rapide">
+<!ENTITY OptkeepButtons.label "Afficher les boutons dans la barre rapide">
+<!ENTITY OptkeepButtons.tooltip "Par défaut, la barre rapide n'a pas de bouton, seul le champ de saisie s'affiche pour des opérations de recherche rapide. Avec ceci vous pouvez toujours accéder aux fonctions « Tout surligner » et « Respecter la casse » lorsque vous l'utilisez.">
+<!ENTITY OptFAYT.label "Rechercher le texte lorsque je commence à écrire (n'importe où sur la page)">
+<!ENTITY OptFAYT.tooltip "Pressez n'importe quelle touche lorsque vous parcourez une page Web, et la barre rapide apparaitra pour trouver ce texte. Le curseur est placé à l'intérieur, alors vous pouvez continuer de taper pour modifier la requête de recherche.">
+<!ENTITY OptFAYTTimeout.beforeLabel "Fermeture automatique après">
+<!ENTITY OptFAYTTimeout.afterLabel "seconde(s)">
+<!ENTITY OptFAYTTimeout.tooltip "La barre rapide se fermera automatiquement après une période d'inactivité. Souvenez-vous qu'elle se fermera également si le focus est sur un autre élement, tel que lors d'un clic dans une page Web.">
+<!ENTITY OptFAYTmode.caption "Mode de la barre">
+<!ENTITY OptFAYTmode.quickFind.label "Utiliser la barre rapide lorsque du texte est saisi (n'importe où sur la page) pour rechercher celui-ci">
+<!ENTITY OptFAYTmode.quickFind.tooltip "Mode par défaut. La barre rapide est utilisée lorsque vous pressez une touche, n'importe où sur une page Web, alors que pour accéder à la barre normale vous devez utiliser le raccourci clavier ou presser le bouton de barre d'outils.">
+<!ENTITY OptFAYTmode.normalFind.label "Toujours utiliser la barre normale">
+<!ENTITY OptFAYTmode.normalFind.tooltip "La barre normale est utilisée même lorsque vous pressez une touche, n'importe où sur une page Web, elle ne se fermera pas automatiquement après un délai ni quand elle perd le focus (à moins que vous n'activiez ce paramètre, au-dessus).">
+<!ENTITY OptFAYTmode.alwaysQuick.label "Toujours utiliser la barre rapide">
+<!ENTITY OptFAYTmode.alwaysQuick.tooltip "La barre rapide est utilisée même lorsque vous vous servez du raccourci clavier, et se fermera toujours automatiquement après un délai ou lorsqu'elle perd le focus.">
+<!ENTITY OptkeyboardShortcut.label "Raccourci clavier">
+<!ENTITY OptctrlFCloses.win "Ctrl+F ferme également la barre">
+<!ENTITY OptctrlFCloses.mac "Commande+F ferme également la barre">
+<!ENTITY OptctrlFCloses.tooltip "Vous pouvez ouvrir la barre et puis la fermer quand vous n'en avez plus besoin grâce au même raccourci clavier.">
+<!ENTITY OptctrlFprefill.label "Lors de son ouverture, remplir la barre avec le texte sélectionné">
+<!ENTITY OptctrlFprefill.tooltip "Si du texte est sélectionné dans la page Web lors de l'ouverture de la barre, ce texte est automatiquement copié dans cette dernière pour être utilisée en tant que requête de recherche. Si « Tout surligner par défaut » est activé, cela cherchera automatiquement toutes les occurrences du texte sélectionné.">
+<!ENTITY OptctrlFOnFocused.label "Fermer uniquement lorsqu'elle a déjà le focus">
+<!ENTITY OptctrlFOnFocused.tooltip "Le raccourci clavier placera toujours le curseur dans la barre, en copiant tout texte sélectionné dans la page Web si le paramètre au-dessus est activé. Il fermera la barre seulement si le curseur est déjà dedans.">
+<!ENTITY OptSelectingText.label "Lors d'une sélection de texte">
+<!ENTITY OptfillSelectedText.label "Remplir la barre avec le texte sélectionné">
+<!ENTITY OptfillSelectedText.tooltip "Chaque fois qu'un mot est sélectionné dans la page Web, il sera automatiquement copié dans la barre pour être utilisé en tant que requête de recherche. Si « Tout surligner par défaut » est activé, sélectionner du texte dans une page Web surlignera automatiquement toutes les occurrences de la sélection.">
+<!ENTITY OptemptySelectedText.label "Vider la barre lorsqu'aucun texte n'est sélectionné">
+<!ENTITY OptemptySelectedText.tooltip "De même que ci-dessus, si vous cliquez n'importe où dans la page Web afin de supprimer une sélection de texte, la barre sera vidée et le surlignage sera retiré de toutes les occurrences.">
+<!ENTITY OptfillSelectedOpenFindbar.label "Afficher la barre rapide lorsque le texte sélectionné est utilisé">
+<!ENTITY OptfillSelectedOpenFindbar.tooltip "Lorsque la barre est remplie avec le texte sélectionné, elle apparaitre brièvement pour montrer que ceci est survenu.">
+<!ENTITY OptglobalBehavior.warning "Attention : les paramètres suivants ne sont pas spécifiques à la barre d'outils de recherche, ils affectent le navigateur de manière globale, telle que dans les pages Web, la barre d'adresse et tout autre endroit où la sélection de texte est possible. Ne modifiez ces paramètres qu'avec précaution !">
+<!ENTITY OptdblClickEatSpaces.label "Un double-clic sur un mot sélectionne également l'espace suivant">
+<!ENTITY OptdblClickStopAtPunctuation.label "Un double-clic sur un mot arrête la sélection à la ponctuation">
+<!ENTITY OptNativePrefs.label "Préférences natives de Firefox">
+<!ENTITY OptNativePrefs.description "Certains paramètres, tels que la couleur de surlignage ou les réglages de barre rapide, existent déjà dans Firefox ; ils sont affichés ici uniquement dans le but d'y accéder et de les personnaliser facilement. Le module devrait les gérer automatiquement, alors ne les utilisez qu'en cas d'absolue nécessité !">
+<!ENTITY OptResetNativeOnDisabled.label "Lors de la désactivation du module, réinitialiser toutes les préférences natives qui ont été modifiées">
+<!ENTITY OptResetNativeOnDisabled.tooltip "Si une quelconque modification résiduelle reste (telle que la couleur de surlignage non réinitialisée correctement à sa valeur par défaut) lorsque vous désactivez le module, activez ceci pour vous assurer qu'elles seront réinitialisées.">
+<!ENTITY OptResetNativeNow.label "Réinitialiser toutes les préférences natives qui ont été modifiées">
+<!ENTITY OptResetNativeNow.tooltip "Les réinitialise immédiatement à leur valeur par défaut.">

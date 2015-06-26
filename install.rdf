@@ -49,6 +49,14 @@
 		</em:localized>
 		<em:localized>
 			<Description>
+				<em:locale>fr</em:locale>
+				<em:name>FindBar Tweak</em:name>
+				<em:description>Depuis des réglages simples comme placer la barre dans le coin supérieur, jusqu'au puissant « Rechercher dans tous les onglets », il a tout pour rendre la barre d'outils de recherche puissante et accessible !</em:description>
+				<em:translator>BlackJack</em:translator>
+			</Description>
+		</em:localized>
+		<em:localized>
+			<Description>
 				<em:locale>pt-PT</em:locale>
 				<em:name>Barra de Procura Refinada</em:name>
 				<em:description>Entre pequenas alterações como mover a barra de procura para o canto superior, à "Procura em todos os separadores", tem tudo para tornar a Barra de Procura numa ferramenta de pesquisa poderosa e acessível!</em:description>

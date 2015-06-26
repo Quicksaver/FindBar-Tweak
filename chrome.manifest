@@ -5,6 +5,7 @@ locale    findbartweak-en   en-US         chrome/locale/en-US/
 locale    findbartweak      en-US         chrome/locale/en-US/
 locale    findbartweak      de            chrome/locale/de/
 locale    findbartweak      es            chrome/locale/es/
+locale    findbartweak      fr            chrome/locale/fr/
 locale    findbartweak      pt-PT         chrome/locale/pt-PT/
 locale    findbartweak      zh-CN         chrome/locale/zh-CN/
 

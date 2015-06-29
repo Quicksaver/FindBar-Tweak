@@ -81,12 +81,12 @@
 <!ENTITY OptFAYT.tooltip "Pressez n'importe quelle touche lorsque vous parcourez une page Web, et la barre rapide apparaitra pour trouver ce texte. Le curseur est placé à l'intérieur, alors vous pouvez continuer de taper pour modifier la requête de recherche.">
 <!ENTITY OptFAYTTimeout.beforeLabel "Fermeture automatique après">
 <!ENTITY OptFAYTTimeout.afterLabel "seconde(s)">
-<!ENTITY OptFAYTTimeout.tooltip "La barre rapide se fermera automatiquement après une période d'inactivité. Souvenez-vous qu'elle se fermera également si le focus est sur un autre élement, tel que lors d'un clic dans une page Web.">
+<!ENTITY OptFAYTTimeout.tooltip "La barre rapide se fermera automatiquement après une période d'inactivité. Souvenez-vous qu'elle se fermera également si le focus est sur un autre élément, tel que lors d'un clic dans une page Web.">
 <!ENTITY OptFAYTmode.caption "Mode de la barre">
 <!ENTITY OptFAYTmode.quickFind.label "Utiliser la barre rapide lorsque du texte est saisi (n'importe où sur la page) pour rechercher celui-ci">
 <!ENTITY OptFAYTmode.quickFind.tooltip "Mode par défaut. La barre rapide est utilisée lorsque vous pressez une touche, n'importe où sur une page Web, alors que pour accéder à la barre normale vous devez utiliser le raccourci clavier ou presser le bouton de barre d'outils.">
 <!ENTITY OptFAYTmode.normalFind.label "Toujours utiliser la barre normale">
-<!ENTITY OptFAYTmode.normalFind.tooltip "La barre normale est utilisée même lorsque vous pressez une touche, n'importe où sur une page Web, elle ne se fermera pas automatiquement après un délai ni quand elle perd le focus (à moins que vous n'activiez ce paramètre, au-dessus).">
+<!ENTITY OptFAYTmode.normalFind.tooltip "La barre normale est utilisée même lorsque vous pressez une touche, n'importe où sur une page Web, elle ne se fermera pas automatiquement après un délai ni quand elle perd le focus (à moins que vous n'activiez ce paramètre, ci-dessus).">
 <!ENTITY OptFAYTmode.alwaysQuick.label "Toujours utiliser la barre rapide">
 <!ENTITY OptFAYTmode.alwaysQuick.tooltip "La barre rapide est utilisée même lorsque vous vous servez du raccourci clavier, et se fermera toujours automatiquement après un délai ou lorsqu'elle perd le focus.">
 <!ENTITY OptkeyboardShortcut.label "Raccourci clavier">
@@ -96,7 +96,7 @@
 <!ENTITY OptctrlFprefill.label "Lors de son ouverture, remplir la barre avec le texte sélectionné">
 <!ENTITY OptctrlFprefill.tooltip "Si du texte est sélectionné dans la page Web lors de l'ouverture de la barre, ce texte est automatiquement copié dans cette dernière pour être utilisée en tant que requête de recherche. Si « Tout surligner par défaut » est activé, cela cherchera automatiquement toutes les occurrences du texte sélectionné.">
 <!ENTITY OptctrlFOnFocused.label "Fermer uniquement lorsqu'elle a déjà le focus">
-<!ENTITY OptctrlFOnFocused.tooltip "Le raccourci clavier placera toujours le curseur dans la barre, en copiant tout texte sélectionné dans la page Web si le paramètre au-dessus est activé. Il fermera la barre seulement si le curseur est déjà dedans.">
+<!ENTITY OptctrlFOnFocused.tooltip "Le raccourci clavier placera toujours le curseur dans la barre, en copiant tout texte sélectionné dans la page Web si le paramètre ci-dessus est activé. Il fermera la barre seulement si le curseur est déjà dedans.">
 <!ENTITY OptSelectingText.label "Lors d'une sélection de texte">
 <!ENTITY OptfillSelectedText.label "Remplir la barre avec le texte sélectionné">
 <!ENTITY OptfillSelectedText.tooltip "Chaque fois qu'un mot est sélectionné dans la page Web, il sera automatiquement copié dans la barre pour être utilisé en tant que requête de recherche. Si « Tout surligner par défaut » est activé, sélectionner du texte dans une page Web surlignera automatiquement toutes les occurrences de la sélection.">

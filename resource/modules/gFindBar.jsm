@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.6';
+Modules.VERSION = '1.0.7';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return FITFull || viewSource || window.gFindBarInitialized; });
@@ -42,7 +42,9 @@ this.baseInit = function(bar) {
 			var suffix = (!viewSource && this.browser != gBrowser.mCurrentBrowser) ? 'Background' : '';
 			
 			if(dispatch(this, { type: 'WillOpenFindBar'+suffix, detail: aMode })) {
+				this._didFind = false;
 				var ret = this._open(aMode);
+				
 				Messenger.messageBrowser(this.browser, 'FindBar:State', true);
 				dispatch(this, { type: 'OpenedFindBar'+suffix, cancelable: false, detail: aMode });
 				return ret;
@@ -111,6 +113,11 @@ this.baseInit = function(bar) {
 			// Only search on input if we don't have a last-failed string, or if the current search string doesn't start with it.
 			// https://bugzilla.mozilla.org/show_bug.cgi?id=926033
 			if(!this._findFailedString || !val.startsWith(this._findFailedString)) {
+				// only set this flag if we will actually find something
+				if(val) {
+					this._didFind = true;
+				}
+				
 				this._enableFindButtons(val);
 				
 				this._updateCaseSensitivity(val);
@@ -166,6 +173,14 @@ this.baseInit = function(bar) {
 	Piggyback.add('gFindBar', bar, '_updateMatchesCount', function() {});
 	bar._foundMatches.value = '';
 	bar._foundMatches.hidden = true;
+	
+	// opening the findbar is a somewhat asynchronous process, it needs to fetch the value to prefill from content,
+	// if the user types in the findbar after it's opened, but before the prefill value is fetched, it can lead to some weirdness with the search query
+	// see https://github.com/Quicksaver/FindBar-Tweak/issues/198
+	bar._didFind = false;
+	Piggyback.add('gFindBar', bar, 'onCurrentSelection', function() {
+		return !this._didFind;
+	}, Piggyback.MODE_BEFORE);
 };
 
 this.baseDeinit = function(bar) {
@@ -193,6 +208,9 @@ this.baseDeinit = function(bar) {
 		Piggyback.revert('gFindBar', bar, '_findAgain');
 		Piggyback.revert('gFindBar', bar, 'onFindAgainCommand');
 		Piggyback.revert('gFindBar', bar, '_updateMatchesCount');
+		Piggyback.revert('gFindBar', bar, 'onCurrentSelection');
+		
+		delete bar._didFind;
 	}
 	
 	Messenger.unloadFromBrowser(bar.browser, 'gFindBar');

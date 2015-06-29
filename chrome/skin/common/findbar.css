@@ -9,6 +9,12 @@
 		visibility: collapse;
 	}
 	
+	/* don't animate the findbar when using the global findbar and switching tabs,
+	   so that it seems it's the same findbar and not a new one always opening */
+	findbar[noAnimation] {
+		transition: none;
+	}
+	
 	/* findbar appearance */
 	
 	findbar[noClose] .findbar-closebutton,

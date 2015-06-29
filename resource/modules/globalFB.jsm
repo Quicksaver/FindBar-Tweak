@@ -1,17 +1,19 @@
-Modules.VERSION = '2.0.1';
+Modules.VERSION = '2.0.2';
 
 this.globalFB = {
-	// findBarHiddenState
 	hidden: true,
 	
 	handleEvent: function(e) {
 		switch(e.type) {
 			case 'OpenedFindBar':
-				this.onOpen();
+				// Quick Find shouldn't be global
+				if(gFindBar._findMode != gFindBar.FIND_NORMAL) { return; }
+				
+				this.hidden = false;
 				break;
 			
 			case 'ClosedFindBar':
-				this.onClose();
+				this.hidden = true;
 				break;
 			
 			case 'TabOpen':
@@ -23,11 +25,14 @@ this.globalFB = {
 				break;
 			
 			case 'TabSelectPrevious':
-				// mostly a failsafe, it shouldn't be needed but just in case something fails somewhere, we also check the find bar state when toggling between tabs
+				// we only check the find bar state when toggling between tabs, there's no need to oveload all tabs when opening a single findbar,
+				// it might not even be needed in other tabs if the user closes it afterwards.
 				if(this.hidden && gFindBarInitialized && !gFindBar.hidden) {
+					this.noAnimation(gFindBar);
 					gFindBar.close();
 				}
 				else if(!this.hidden && (!gFindBarInitialized || gFindBar.hidden)) {
+					this.noAnimation(gFindBar);
 					gFindBar.open();
 				}
 				
@@ -47,32 +52,10 @@ this.globalFB = {
 		}
 	},
 	
-	onOpen: function() {
-		// Quick Find shouldn't be global
-		if(gFindBar._findMode != gFindBar.FIND_NORMAL) { return; }
-		
-		this.hidden = false;
-		Timers.cancel('globalFBOnClose');
-		Timers.init('globalFBOnOpen', () => {
-			for(let tab of gBrowser.tabs) {
-				let bar = gBrowser.getFindBar(tab);
-				if(bar == gFindBar && !gFindBar.hidden) { continue; }
-				bar.open();
-			}
-		}, 50);
-	},
-	
-	onClose: function() {
-		this.hidden = true;
-		Timers.cancel('globalFBOnOpen');
-		Timers.init('globalFBOnClose', () => {
-			for(let tab of gBrowser.tabs) {
-				if(gBrowser.isFindBarInitialized(tab)) {
-					let bar = gBrowser.getFindBar(tab);
-					if(gFindBarInitialized && bar == gFindBar && gFindBar.hidden) { continue; }
-					bar.close();
-				}
-			}
+	noAnimation: function(bar) {
+		setAttribute(bar, 'noAnimation', 'true');
+		aSync(function() {
+			removeAttribute(bar, 'noAnimation');
 		}, 50);
 	}
 };
@@ -83,12 +66,7 @@ Modules.LOADMODULE = function() {
 	Listeners.add(window, 'OpenedFindBar', globalFB);
 	Listeners.add(window, 'ClosedFindBar', globalFB);
 	
-	findBarHiddenState = !gFindBarInitialized || gFindBar.hidden;
-	if(!findBarHiddenState) {
-		globalFB.onOpen();
-	} else {
-		globalFB.onClose();
-	}
+	globalFB.hidden = !gFindBarInitialized || gFindBar.hidden || gFindBar._findMode != gFindBar.FIND_NORMAL;
 };
 
 Modules.UNLOADMODULE = function() {
@@ -97,7 +75,7 @@ Modules.UNLOADMODULE = function() {
 	Listeners.remove(window, 'OpenedFindBar', globalFB);
 	Listeners.remove(window, 'ClosedFindBar', globalFB);
 	
-	for(var tab of gBrowser.tabs) {
+	for(let tab of gBrowser.tabs) {
 		if(tab == gBrowser.mCurrentTab) { continue; }
 		
 		if(gBrowser.isFindBarInitialized(tab) && !tab.linkedBrowser.finder.findWord) {

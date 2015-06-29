@@ -85,12 +85,12 @@
 	/* to show the findbar on the right or the left, we just switch the locale direction when it's on the bottom */
 	
 	findbar[movetoright]:-moz-locale-dir(ltr) > hbox.findbar-container,
-	findbar:not([movetoright]):-moz-locale-dir(rtl) > hbox.findbar-container {
+	findbar:not([movetoright]):-moz-locale-dir(rtl) > hbox.findbar-container > *:not([anonid="findbar-textbox-wrapper"]) {
 		direction: rtl;
 	}
 	
-	findbar[movetoright]:-moz-locale-dir(ltr) > hbox.findbar-container > *,
-	findbar:not([movetoright]):-moz-locale-dir(rtl) > hbox.findbar-container > * {
+	findbar[movetoright]:-moz-locale-dir(ltr) > hbox.findbar-container > *:not([anonid="findbar-textbox-wrapper"]),
+	findbar:not([movetoright]):-moz-locale-dir(rtl) > hbox.findbar-container {
 		direction: ltr;
 	}
 	

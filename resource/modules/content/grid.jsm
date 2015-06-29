@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.6';
+Modules.VERSION = '1.1.7';
 
 this.grids = {
 	allHits: new Set(),
@@ -993,7 +993,11 @@ Modules.LOADMODULE = function() {
 };
 
 Modules.UNLOADMODULE = function() {
-	Listeners.remove(Scope, 'resize', grids);
+	// these modules might not have loaded at all
+	try {
+		Listeners.remove(Scope, 'resize', grids);
+	}
+	catch(ex) {}
 	
 	RemoteFinderListener.removeMessage('Grid:Reposition');
 	RemoteFinderListener.removeMessage('Grid:Remove');

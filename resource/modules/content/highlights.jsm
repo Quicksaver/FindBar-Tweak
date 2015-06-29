@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.0';
+Modules.VERSION = '1.1.1';
 
 this.getDocProperty = function(doc, prop, min) {
 	try {
@@ -195,7 +195,12 @@ Modules.LOADMODULE = function() {
 };
 
 Modules.UNLOADMODULE = function() {
-	Timers.cancel('trackPDFMatches');
+	// these modules might not have loaded at all
+	try {
+		Timers.cancel('trackPDFMatches');
+		Listeners.remove(document, 'keyup', highlights);
+	}
+	catch(ex) {}
 	
 	for(let msg of highlights.MESSAGES) {
 		unlisten(msg, highlights);
@@ -204,7 +209,6 @@ Modules.UNLOADMODULE = function() {
 	Finder.removeResultListener(highlights);
 	webProgress.removeProgressListener(highlights);
 	DOMContentLoaded.remove(highlights);
-	Listeners.remove(document, 'keyup', highlights);
 	
 	RemoteFinderListener.removeMessage('Highlights:Clean');
 	

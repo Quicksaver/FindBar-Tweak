@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.3';
+Modules.VERSION = '1.1.4';
 
 this.sights = {
 	allSights: new Set(),
@@ -452,10 +452,14 @@ Modules.LOADMODULE = function() {
 }
 
 Modules.UNLOADMODULE = function() {
-	Timers.cancel('sightsOnPDFState');
-	Timers.cancel('sightsOnHighlightsOnPDFState');
-	
-	Listeners.remove(Scope, 'scroll', sights, true);
+	// these modules might not have loaded at all
+	try {
+		Timers.cancel('sightsOnPDFState');
+		Timers.cancel('sightsOnHighlightsOnPDFState');
+		
+		Listeners.remove(Scope, 'scroll', sights, true);
+	}
+	catch(ex) {}
 	
 	RemoteFinderListener.removeMessage('Sights:Remove');
 	

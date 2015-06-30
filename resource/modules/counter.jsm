@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.2';
+Modules.VERSION = '2.1.3';
 
 this.counter = {
 	heldStatus: null,
@@ -26,7 +26,7 @@ Modules.LOADMODULE = function() {
 	initFindBar('counter',
 		function(bar) {
 			bar.browser.finder.addMessage('Counter:Result', data => {
-				if(data && data == '__heldStatus__') {
+				if(data.heldStatus) {
 					if(counter.heldStatus) {
 						let res = counter.heldStatus.res;
 						let aFindPrevious = counter.heldStatus.aFindPrevious;
@@ -39,7 +39,10 @@ Modules.LOADMODULE = function() {
 					return;
 				}
 				
-				var res = (data || !findQuery || !Finder.searchString) ? Ci.nsITypeAheadFind.FIND_FOUND : Ci.nsITypeAheadFind.FIND_NOTFOUND;
+				// we shouldn't update the status if it's relative to a previous query
+				if(data.searchString != findQuery) { return; }
+				
+				var res = (data.result || !findQuery || !Finder.searchString) ? Ci.nsITypeAheadFind.FIND_FOUND : Ci.nsITypeAheadFind.FIND_NOTFOUND;
 				var aFindPrevious = null;
 				if(counter.heldStatus) {
 					res = counter.heldStatus.res;
@@ -50,8 +53,8 @@ Modules.LOADMODULE = function() {
 				// don't forget that this should bypass our checks to go straight to the actual method
 				bar.__updateStatusUI(res, aFindPrevious);
 				
-				if(data) {
-					bar._findStatusDesc.textContent = data;
+				if(data.result) {
+					bar._findStatusDesc.textContent = data.result;
 					bar._findStatusDesc.hidden = false;
 					bar._findStatusIcon.hidden = false;
 				}

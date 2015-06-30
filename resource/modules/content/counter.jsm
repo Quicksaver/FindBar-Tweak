@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.2';
+Modules.VERSION = '1.0.3';
 
 this.counter = {
 	redoing: false,
@@ -34,6 +34,14 @@ this.counter = {
 		this.current = 0;
 	},
 	
+	result: function(v, held) {
+		message('Counter:Result', {
+			searchString: Finder.searchString,
+			result: v || '',
+			heldStatus: held || false
+		});
+	},
+	
 	fill: function() {
 		// Special routine for PDF.JS
 		if(isPDFJS) {
@@ -41,7 +49,7 @@ this.counter = {
 			
 			// I hope adding this doesn't break anything else.
 			if(document.readyState != 'complete' && document.readyState != 'interactive') {
-				message('Counter:Result');
+				this.result();
 				return;
 			}
 			
@@ -66,12 +74,12 @@ this.counter = {
 				}
 			}
 			
-			message('Counter:Result', str);
+			this.result(str);
 			return;
 		}
 		
 		if(document instanceof Ci.nsIDOMXMLDocument) {
-			message('Counter:Result', '__heldStatus__');
+			this.result(null, true);
 			return;
 		}
 		
@@ -79,7 +87,7 @@ this.counter = {
 		if(Finder._lastFindResult == Ci.nsITypeAheadFind.FIND_NOTFOUND
 		|| !Finder.searchString
 		|| !Finder._highlights) {
-			message('Counter:Result');
+			this.result();
 			return;
 		}
 		
@@ -133,9 +141,9 @@ this.counter = {
 		
 		this.redoing = false;
 		if(hit > 0) {
-			message('Counter:Result', Strings.get('counter', 'counterFormat', [ ["$hit$", hit], ["$total$", length] ], length));
+			this.result(Strings.get('counter', 'counterFormat', [ ["$hit$", hit], ["$total$", length] ], length));
 		} else {
-			message('Counter:Result', Strings.get('counter', 'counterSimple', [ ["$total$", length] ], length));
+			this.result(Strings.get('counter', 'counterSimple', [ ["$total$", length] ], length));
 		}
 	}
 };

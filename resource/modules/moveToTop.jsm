@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.6';
+Modules.VERSION = '2.0.7';
 
 this.__defineGetter__('gBrowserBox', function() { return $('browser'); });
 this.__defineGetter__('gAppContent', function() { return $('appcontent'); });
@@ -445,7 +445,7 @@ Modules.LOADMODULE = function() {
 		function(bar) {
 			bar._mainCloseButton = bar.getElement('find-closebutton');
 			bar._topCloseButton = bar.getElement('findbar-container').appendChild(bar._mainCloseButton.cloneNode(true));
-			setAttribute(bar._topCloseButton, 'oncommand', 'gFindBar.close();');
+			setAttribute(bar._topCloseButton, 'oncommand', 'close();');
 			removeAttribute(bar._mainCloseButton, 'anonid');
 		},
 		function(bar) {

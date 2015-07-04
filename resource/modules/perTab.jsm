@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.1';
+Modules.VERSION = '2.0.2';
 
 this.perTab = {	
 	handleEvent: function(e) {
@@ -6,12 +6,14 @@ this.perTab = {
 			case 'WillOpenFindBar':
 				if(!e.defaultPrevented && gFindBar.hidden && !documentHighlighted && !findQuery) {
 					findQuery = gBrowser._lastFindValue;
+					gFindBar._findField.select();
 				}
 				break;
 			
 			case 'WillFindAgainCommand':
 				if(!e.defaultPrevented && !viewSource && gFindBar.hidden && !documentHighlighted && gBrowser._lastFindValue) {
 					findQuery = gBrowser._lastFindValue;
+					gFindBar._findField.select();
 				}
 				break;
 		}

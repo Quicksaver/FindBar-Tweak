@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.2';
+Modules.VERSION = '2.0.3';
 
 this.globalFB = {
 	hidden: true,
@@ -16,14 +16,6 @@ this.globalFB = {
 				this.hidden = true;
 				break;
 			
-			case 'TabOpen':
-				// No need to do anything if the find bar should be closed
-				if(this.hidden) { return; }
-				
-				var tab = e.target;
-				gBrowser.getFindBar(tab).open();
-				break;
-			
 			case 'TabSelectPrevious':
 				// we only check the find bar state when toggling between tabs, there's no need to oveload all tabs when opening a single findbar,
 				// it might not even be needed in other tabs if the user closes it afterwards.
@@ -39,9 +31,28 @@ this.globalFB = {
 				// Copy the values of the findField from one tab to another
 				if(currentTab && currentTab._findBar) {
 					findQuery = currentTab._findBar._findField.value;
+					gFindBar._findField.selectionStart = currentTab._findBar._findField.selectionStart;
+					gFindBar._findField.selectionEnd = currentTab._findBar._findField.selectionEnd;
 					gFindBar.getElement('highlight').checked = currentTab._findBar.getElement('highlight').checked;
 					gFindBar.getElement('find-case-sensitive').checked = currentTab._findBar.getElement('find-case-sensitive').checked;
 					gFindBar._enableFindButtons(findQuery);
+					
+					// try to mimic the focused status from one findbar to another.
+					// I'm not sure why aSync is needed, but when sync the findbars are never focused when switching tabs
+					var thisBar = gFindBar;
+					if(trueAttribute(currentTab._findBar._findField, 'focused')) {
+						aSync(function() {
+							if(!trueAttribute(thisBar._findField, 'focused')) {
+								thisBar._findField.focus();
+							}
+						});
+					} else {
+						aSync(function() {
+							if(trueAttribute(thisBar._findField, 'focused')) {
+								thisBar.browser.finder.focusContent();
+							}
+						});
+					}
 					
 					// remove highlights from a previous search query
 					if(documentHighlighted && highlightedWord && highlightedWord != findQuery) {
@@ -61,7 +72,6 @@ this.globalFB = {
 };
 
 Modules.LOADMODULE = function() {
-	Listeners.add(gBrowser.tabContainer, "TabOpen", globalFB);
 	Listeners.add(gBrowser.tabContainer, "TabSelectPrevious", globalFB);
 	Listeners.add(window, 'OpenedFindBar', globalFB);
 	Listeners.add(window, 'ClosedFindBar', globalFB);
@@ -70,7 +80,6 @@ Modules.LOADMODULE = function() {
 };
 
 Modules.UNLOADMODULE = function() {
-	Listeners.remove(gBrowser.tabContainer, "TabOpen", globalFB);
 	Listeners.remove(gBrowser.tabContainer, "TabSelectPrevious", globalFB);
 	Listeners.remove(window, 'OpenedFindBar', globalFB);
 	Listeners.remove(window, 'ClosedFindBar', globalFB);

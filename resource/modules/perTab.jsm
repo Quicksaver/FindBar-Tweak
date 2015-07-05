@@ -1,19 +1,21 @@
-Modules.VERSION = '2.0.2';
+Modules.VERSION = '2.0.3';
 
 this.perTab = {	
 	handleEvent: function(e) {
 		switch(e.type) {
 			case 'WillOpenFindBar':
-				if(!e.defaultPrevented && gFindBar.hidden && !documentHighlighted && !findQuery) {
-					findQuery = gBrowser._lastFindValue;
-					gFindBar._findField.select();
+				if(!e.defaultPrevented && gFindBar.hidden) {
+					if(!documentHighlighted && !findQuery) {
+						findQuery = gBrowser._lastFindValue;
+					}
+					gFindBar._findField.selectionStart = 0;
+					gFindBar._findField.selectionEnd = findQuery.length;
 				}
 				break;
 			
 			case 'WillFindAgainCommand':
 				if(!e.defaultPrevented && !viewSource && gFindBar.hidden && !documentHighlighted && gBrowser._lastFindValue) {
 					findQuery = gBrowser._lastFindValue;
-					gFindBar._findField.select();
 				}
 				break;
 		}

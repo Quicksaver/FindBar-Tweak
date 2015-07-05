@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.8';
+Modules.VERSION = '1.0.9';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return FITFull || viewSource || window.gFindBarInitialized; });
@@ -206,7 +206,7 @@ this.baseInit = function(bar) {
 		
 		let key = aFakeEvent.charCode ? String.fromCharCode(aFakeEvent.charCode) : null;
 		let manualstartFAYT = (key == FAYT_LINKS_KEY || key == FAYT_TEXT_KEY);
-		let autostartFAYT = !manualstartFAYT && this._findAsYouType && key && key != " ";
+		let autostartFAYT = !manualstartFAYT && Prefs.FAYTenabled && key && key != " ";
 		if(manualstartFAYT || autostartFAYT) {
 			let mode = (key == FAYT_LINKS_KEY || (autostartFAYT && this._typeAheadLinksOnly)) ? this.FIND_LINKS : this.FIND_TYPEAHEAD;
 			

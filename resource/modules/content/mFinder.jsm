@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.8';
+Modules.VERSION = '1.0.9';
 
 this.__defineGetter__('isPDFJS', function() { return Finder.isPDFJS; });
 
@@ -119,7 +119,7 @@ this.Finder = {
 	set clipboardSearchString(aSearchString) {
 		if(!aSearchString || !Clipboard.supportsFindClipboard()) { return; }
 		
-		ClipboardHelper.copyStringToClipboard(aSearchString, Ci.nsIClipboard.kFindClipboard, this.getWindow.document);
+		ClipboardHelper.copyStringToClipboard(aSearchString, Ci.nsIClipboard.kFindClipboard);
 	},
 	
 	set caseSensitive(aSensitive) {
@@ -1120,6 +1120,10 @@ this.RemoteFinderListener = {
 		
 		this.addMessage("Highlight", (data) => {
 			Finder.highlight(data.highlight, data.word, data.linksOnly);
+		});
+		
+		this.addMessage("EnableSelection", () => {
+			Finder.enableSelection();
 		});
 		
 		this.addMessage("RemoveSelection", () => {

@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.4';
+Modules.VERSION = '1.0.5';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -369,6 +369,16 @@ Modules.LOADMODULE = function() {
 				bar.browser._finder = new RemoteFinder(bar.browser);
 			}
 			
+			// if a search is run or re-run and there are no matches, make sure the findbar is visible so this is perfectly clear
+			Piggyback.add('mFinder', bar, 'onFindResult', function(data) {
+				if(data.result == this.nsITypeAheadFind.FIND_NOTFOUND && data.storeResult && this.hidden) {
+					if(this.open(this.FIND_TYPEAHEAD)) {
+						this._setFindCloseTimeout();
+					}
+					this._updateStatusUI(data.result, data.findBackwards);
+				}
+			}, Piggyback.MODE_AFTER);
+			
 			// this would usually be set when setting bar.browser, but there's no need to do all of that just for registering it with Finder
 			bar.browser.finder.addResultListener(bar);
 			
@@ -388,6 +398,8 @@ Modules.LOADMODULE = function() {
 			}
 			
 			if(bar._destroying) { return; }
+			
+			Piggyback.revert('mFinder', bar, 'onFindResult');
 			
 			// this would usually be set when setting bar.browser, but there's no need to do all of that just for registering it with Finder
 			bar.browser.finder.addResultListener(bar);

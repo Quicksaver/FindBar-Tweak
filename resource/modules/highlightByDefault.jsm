@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.1';
+Modules.VERSION = '2.1.2';
 
 this.highlightByDefault = {
 	apply: function(bar) {
@@ -17,6 +17,12 @@ this.highlightByDefault = {
 			
 			case 'WillFillSelectedText':
 				this.apply(gFindBar);
+				break;
+			
+			case 'WillFindFindBar':
+				if(Prefs.highlightOnFindAgain && gFindBar.hidden && !Prefs.hideWhenFinderHidden) {
+					this.apply(gFindBar);
+				}
 				break;
 		}
 	}
@@ -76,6 +82,10 @@ Modules.LOADMODULE = function() {
 	
 	// Always highlight all by default when selecting text and filling the findbar with it
 	Listeners.add(window, 'WillFillSelectedText', highlightByDefault);
+	
+	// Opening a new tab and hitting F3 to search for the last globally used query would not trigger highlights,
+	// see https://github.com/Quicksaver/FindBar-Tweak/issues/201
+	Listeners.add(window, 'WillFindFindBar', highlightByDefault);
 };
 
 Modules.UNLOADMODULE = function() {
@@ -84,4 +94,5 @@ Modules.UNLOADMODULE = function() {
 	Listeners.remove(window, 'WillOpenFindBar', highlightByDefault);
 	Listeners.remove(window, 'WillOpenFindBarBackground', highlightByDefault);
 	Listeners.remove(window, 'WillFillSelectedText', highlightByDefault);
+	Listeners.remove(window, 'WillFindFindBar', highlightByDefault);
 };

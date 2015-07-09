@@ -1,7 +1,7 @@
 @namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
 
 /* for now since the add-ons have no RTL locales, force LTR direction in the preferences pane,
-   this needs to be changed to a more dynamic approach if/when any RTL localizations are included */
+   this can be easily overriden in defaults.css by importing a stylesheet included in the RTL locale folder */
 page { direction: ltr; }
 
 .header,

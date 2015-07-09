@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.5';
+Modules.VERSION = '1.0.6';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -66,9 +66,12 @@ this.RemoteFinder.prototype = {
 		});
 		
 		this.addMessage("IsValidResult", (data) => {
-			if(this._isValid == data) { return null; }
+			// don't resend the info back to content, as this comes from there anyway
+			this._documentHighlighted = data.documentHighlighted;
 			
-			this._isValid = data;
+			if(this._isValid == data.isValid) { return null; }
+			
+			this._isValid = data.isValid;
 			return { callback: "onIsValid", params: [ this._browser ] };
 		});
 		

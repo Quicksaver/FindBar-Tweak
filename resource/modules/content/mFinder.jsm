@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.9';
+Modules.VERSION = '1.0.10';
 
 this.__defineGetter__('isPDFJS', function() { return Finder.isPDFJS; });
 
@@ -963,9 +963,14 @@ this.Finder = {
 	get isValid() { return viewSource || document instanceof Ci.nsIDOMHTMLDocument || document instanceof Ci.nsIDOMXMLDocument; },
 	
 	isFinderValid: function() {
-		// do aSync so we don't fire more than necessary
+		// do aSync so we don't fire more than necessary.
+		// Also update the highlighted status in the main process, as we might be switching between pages that aren't highlighted,
+		// if we didn't do this, the highlights would always be placed when going back and forth in history or when reloading a page
 		Timers.init('isFinderValid', () => {
-			message('IsValidResult', this.isValid);
+			message('IsValidResult', {
+				isValid: this.isValid,
+				documentHighlighted: this.documentHighlighted
+			});
 		}, 0);
 	},
 	

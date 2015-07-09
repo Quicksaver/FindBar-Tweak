@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.1';
+Modules.VERSION = '1.1.2';
 
 this.getDocProperty = function(doc, prop, min) {
 	try {
@@ -107,7 +107,7 @@ this.highlights = {
 	},
 	
 	delay: function(delay = 500) {
-		Timers.init('delayReHighlight', function() { highlights.apply(); }, delay);
+		Timers.init('delayReHighlight', () => { this.apply(); }, delay);
 	},
 	
 	// Updates our methods when there are new pdf matches (it's an aSync process)

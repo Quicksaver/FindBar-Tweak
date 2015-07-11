@@ -1,4 +1,7 @@
-// VERSION = '1.0.4'
+// VERSION = '1.0.5'
+
+// Prefs - Object to contain and manage all preferences related to the add-on (and others if necessary)
+this.__defineGetter__('Prefs', function() { delete this.Prefs; Modules.load('utils/Prefs'); return Prefs; });
 
 // Strings - use for getting strings out of bundles from .properties locale files
 this.__defineGetter__('Strings', function() { delete this.Strings; Modules.load('utils/Strings'); return Strings; });

@@ -1,4 +1,4 @@
-// VERSION = '1.8.0';
+// VERSION = '1.8.1';
 
 // This looks for file defaults.js in resource folder, expects:
 //	objName - (string) main object name for the add-on, to be added to window element
@@ -253,12 +253,6 @@ function startup(aData, aReason) {
 	Services.scriptloader.loadSubScript("resource://"+objPathString+"/modules/utils/Modules.jsm", this);
 	Services.scriptloader.loadSubScript("resource://"+objPathString+"/modules/utils/sandboxUtilsPreload.jsm", this);
 	Modules.load("utils/sandboxUtils");
-	
-	// set add-on preferences defaults
-	// This should come before startConditions() so we can use it in there
-	if(prefList) {
-		Prefs.setDefaults(prefList);
-	}
 	
 	if(typeof(startConditions) != 'function' || startConditions(aReason)) {
 		continueStartup(aReason);

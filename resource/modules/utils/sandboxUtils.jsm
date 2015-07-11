@@ -1,4 +1,4 @@
-Modules.VERSION = '2.4.0';
+Modules.VERSION = '2.4.1';
 Modules.UTILS = true;
 Modules.CLEAN = false;
 
@@ -7,9 +7,6 @@ this.__defineGetter__('window', function() { return Services.wm.getMostRecentWin
 
 // document - Returns the document object associated with the most recent window object
 this.__defineGetter__('document', function() { return window.document; });
-
-// Prefs - Object to contain and manage all preferences related to the add-on (and others if necessary)
-this.__defineGetter__('Prefs', function() { delete this.Prefs; Modules.load('utils/Prefs'); return Prefs; });
 
 // Styles - handle loading and unloading of stylesheets in a quick and easy way
 this.__defineGetter__('Styles', function() { delete this.Styles; Modules.load('utils/Styles'); return Styles; });

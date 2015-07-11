@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.7';
+Modules.VERSION = '1.1.8';
 
 this.grids = {
 	allHits: new Set(),
@@ -748,7 +748,8 @@ this.grids = {
 		switch(Prefs['scrollbar.side']) {
 			// Here's to hoping this one is actually correct as I have no way to test, I need to wait for some user input on this
 			case 0:
-				var rtlList = ['ar', 'he', 'fa', 'ps', 'ur'];
+				// http://mxr.mozilla.org/l10n-mozilla-release/search?find=%2F&string=direction%3A+rtl
+				var rtlList = [ 'ar', 'fa', 'he' ];
 				var appLocale = Services.locale.getApplicationLocale().getCategory("NSILOCALE_MESSAGES");
 				for(let locale of rtlList) {
 					if(appLocale.startsWith(locale)) {
@@ -980,6 +981,8 @@ this.GridRow.prototype = {
 };
 	
 Modules.LOADMODULE = function() {
+	Prefs.setDefaults({ ['scrollbar.side']: 0 }, 'layout', '');
+	
 	Finder.buildHighlights.add('grid');
 	Finder.addResultListener(grids);
 	

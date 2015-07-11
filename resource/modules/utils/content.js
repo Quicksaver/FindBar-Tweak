@@ -1,4 +1,4 @@
-// VERSION = '1.5.1';
+// VERSION = '1.5.2';
 
 // This script should be loaded by defaultsContent.js, which is in turn loaded directly by the Messenger module.
 // defaultsContent.js should set this object's objName and objPathString properties and call its .init() method.
@@ -32,6 +32,7 @@ this.Cm = Components.manager;
 this.__contentEnvironment = {
 	objName: '',
 	objPathString: '',
+	prefList: null,
 	
 	addonUris: {
 		homepage: '',
@@ -63,7 +64,6 @@ this.__contentEnvironment = {
 	// some local things
 	AddonData: {},
 	Globals: {},
-	Prefs: {},
 	
 	WINNT: false,
 	DARWIN: false,
@@ -78,7 +78,6 @@ this.__contentEnvironment = {
 		'load',
 		'unload',
 		'loadQueued',
-		'pref',
 		'init',
 		'reinit'
 	],
@@ -110,10 +109,6 @@ this.__contentEnvironment = {
 				
 			case 'loadQueued':
 				this.loadQueued();
-				break;
-			
-			case 'pref':
-				this.carriedPref(m.data);
 				break;
 			
 			case 'init':
@@ -156,6 +151,7 @@ this.__contentEnvironment = {
 	finishInit: function(data) {
 		this.AddonData = data.AddonData;
 		this.addonUris = data.addonUris;
+		this.prefList = data.prefList;
 		this.initialized = true;
 	},
 	
@@ -219,13 +215,6 @@ this.__contentEnvironment = {
 			this.Modules.load('content/'+module);
 		}
 		this._queued = new Set();
-	},
-	
-	// we can't access AddonManager (thus FUEL) from content processes, so we simulate it, by syncing this object to the sandbox's Prefs (chrome -> content, one way only)
-	carriedPref: function(prefs) {
-		for(let pref in prefs) {
-			this.Prefs[pref] = prefs[pref];
-		}
 	},
 	
 	// ZC is we add multiple listeners to Scope for DOMContentLoad, no clue why though...

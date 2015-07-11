@@ -1,4 +1,4 @@
-Modules.VERSION = '1.5.1';
+Modules.VERSION = '1.5.2';
 Modules.UTILS = true;
 
 // Messenger - 	Aid object to communicate with browser content scripts (e10s).
@@ -164,17 +164,10 @@ this.Messenger = {
 				oldVersion: AddonData.oldVersion,
 				newVersion: AddonData.newVersion
 			},
-			addonUris: addonUris
+			addonUris: addonUris,
+			prefList: prefList
 		};
 		this.messageBrowser(m.target, 'init', carryData);
-		
-		// carry the preferences current values into content
-		var current = {};
-		for(let pref in prefList) {
-			if(pref.startsWith('NoSync_')) { continue; }
-			current[pref] = Prefs[pref];
-		}
-		this.messageBrowser(m.target, 'pref', current);
 		
 		// load into this browser all the content modules that should be loaded in all content scripts
 		for(let module of this.loadedInAll) {
@@ -192,18 +185,6 @@ this.Messenger = {
 		this.messageBrowser(m.target, 'loadQueued');
 	},
 	
-	observe: function(aSubject, aTopic, aData) {
-		switch(aTopic) {
-			case 'nsPref:changed':
-				if(aSubject.startsWith('NoSync_')) { return; }
-				
-				var carry = {};
-				carry[aSubject] = aData;
-				Messenger.messageAll('pref', carry);
-				break;
-		}
-	},
-	
 	cleanWindow: function(aWindow) {
 		if(aWindow.gBrowser && aWindow.gBrowser.tabContainer && aWindow.gBrowser.tabContainer[objName+'Content']) {
 			aWindow.gBrowser.tabContainer.removeEventListener('TabOpen', aWindow.gBrowser.tabContainer[objName+'Content'], true);
@@ -215,22 +196,10 @@ this.Messenger = {
 Modules.LOADMODULE = function() {
 	Messenger.listenAll('init', Messenger);
 	Messenger.globalMM.loadFrameScript('resource://'+objPathString+'/defaultsContent.js?'+AddonData.initTime, true);
-	
-	for(let pref in prefList) {
-		if(pref.startsWith('NoSync_')) { continue; }
-		
-		Prefs.listen(pref, Messenger);
-	}
 };
 
 Modules.UNLOADMODULE = function() {
 	Messenger.unlistenAll('init', Messenger);
-	
-	for(let pref in prefList) {
-		if(pref.startsWith('NoSync_')) { continue; }
-		
-		Prefs.unlisten(pref, Messenger);
-	}
 	
 	Windows.callOnAll(Messenger.cleanWindow, 'navigator:browser');
 	

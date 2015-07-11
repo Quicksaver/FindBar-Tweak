@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.2';
+Modules.VERSION = '2.1.3';
 
 this.grids = {
 	template: null,
@@ -239,11 +239,7 @@ this.grids = {
 };
 
 Modules.LOADMODULE = function() {
-	var gridDefaults = {};
-	gridDefaults['scrollbar.side'] = 0;
-	Prefs.setDefaults(gridDefaults, 'layout', '');
-	Prefs.listen('scrollbar.side', Messenger);
-	Messenger.observe('scrollbar.side', 'nsPref:changed', Prefs['scrollbar.side']);
+	Prefs.setDefaults({ ['scrollbar.side']: 0 }, 'layout', '');
 	
 	Styles.load('grid', 'grid');
 	Styles.load('frameGrid', 'frameGrid');

@@ -1,4 +1,4 @@
-Modules.VERSION = '2.5.2';
+Modules.VERSION = '2.5.3';
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -34,61 +34,65 @@ this.Prefs = {
 			trunk = 'extensions';
 		}
 		
-		var branchString = ((trunk) ? trunk+'.' : '') +branch+'.';
-		var defaultBranch = Services.prefs.getDefaultBranch(branchString);
-		for(let pref in prefList) {
-			if(pref.startsWith('NoSync_')) { continue; }
+		// we assume that a Prefs module has been initiated in the main process at least once, so none of this is actually necessary
+		if(self.isChrome) {
+			var branchString = ((trunk) ? trunk+'.' : '') +branch+'.';
+			var defaultBranch = Services.prefs.getDefaultBranch(branchString);
+			var syncBranch = Services.prefs.getDefaultBranch('services.sync.prefs.sync.');
 			
-			// When updating from a version with prefs of same name but different type would throw an error and stop.
-			// In this case, we need to clear it before we can set its default value again.
-			var savedPrefType = defaultBranch.getPrefType(pref);
-			var prefType = typeof(prefList[pref]);
-			var compareType = '';
-			switch(savedPrefType) {
-				case defaultBranch.PREF_STRING:
-					compareType = 'string';
-					break;
-				case defaultBranch.PREF_INT:
-					compareType = 'number';
-					break;
-				case defaultBranch.PREF_BOOL:
-					compareType = 'boolean';
-					break;
-				default: break;
-			}
-			if(compareType && prefType != compareType) {
-				defaultBranch.clearUserPref(pref);
-			}
-			
-			switch(prefType) {
-				case 'string':
-					defaultBranch.setCharPref(pref, prefList[pref]);
-					break;
-				case 'boolean':
-					defaultBranch.setBoolPref(pref, prefList[pref]);
-					break;
-				case 'number':
-					defaultBranch.setIntPref(pref, prefList[pref]);
-					break;
-				default:
-					Cu.reportError('Preferece '+pref+' is of unrecognizeable type!');
-					break;
+			for(let pref in prefList) {
+				if(pref.startsWith('NoSync_')) { continue; }
+				
+				// When updating from a version with prefs of same name but different type would throw an error and stop.
+				// In this case, we need to clear it before we can set its default value again.
+				var savedPrefType = defaultBranch.getPrefType(pref);
+				var prefType = typeof(prefList[pref]);
+				var compareType = '';
+				switch(savedPrefType) {
+					case defaultBranch.PREF_STRING:
+						compareType = 'string';
+						break;
+					case defaultBranch.PREF_INT:
+						compareType = 'number';
+						break;
+					case defaultBranch.PREF_BOOL:
+						compareType = 'boolean';
+						break;
+					default: break;
+				}
+				if(compareType && prefType != compareType) {
+					defaultBranch.clearUserPref(pref);
+				}
+				
+				switch(prefType) {
+					case 'string':
+						defaultBranch.setCharPref(pref, prefList[pref]);
+						break;
+					case 'boolean':
+						defaultBranch.setBoolPref(pref, prefList[pref]);
+						break;
+					case 'number':
+						defaultBranch.setIntPref(pref, prefList[pref]);
+						break;
+					default:
+						Cu.reportError('Preferece '+pref+' is of unrecognizeable type!');
+						break;
+				}
+				
+				if(trunk == 'extensions' && branch == objPathString && !prefList['NoSync_'+pref]) {
+					syncBranch.setBoolPref(trunk+'.'+branch+'.'+pref, true);
+				}
 			}
 		}
 		
 		// We do this separate from the process above because we would get errors sometimes:
 		// setting a pref that has the same string name initially (e.g. "something" and "somethingElse"), it would trigger a change event for "something"
 		// when set*Pref()'ing "somethingElse"
-		var syncBranch = Services.prefs.getDefaultBranch('services.sync.prefs.sync.');
 		for(let pref in prefList) {
 			if(pref.startsWith('NoSync_')) { continue; }
 			
 			if(!this._prefObjects[pref]) {
 				this._setPref(pref, branch, trunk);
-			}
-			
-			if(trunk == 'extensions' && branch == objPathString && !prefList['NoSync_'+pref]) {
-				syncBranch.setBoolPref(trunk+'.'+objPathString+'.'+pref, true);
 			}
 		}
 	},
@@ -192,6 +196,12 @@ this.Prefs = {
 		for(let pref in this._prefObjects) {
 			this._prefObjects[pref].branch.removeObserver(pref, this);
 		}
+	}
+};
+
+Modules.LOADMODULE = function() {
+	if(prefList) {
+		Prefs.setDefaults(prefList);
 	}
 };
 

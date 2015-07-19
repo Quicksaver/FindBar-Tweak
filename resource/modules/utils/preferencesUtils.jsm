@@ -1,4 +1,4 @@
-Modules.VERSION = '2.3.1';
+Modules.VERSION = '2.3.2';
 Modules.UTILS = true;
 
 // dependsOn - object that adds a dependson attribute functionality to xul preference elements.
@@ -760,6 +760,9 @@ this.controllers = {
 			this.getJumpNodes();
 			this.nodes.jumpto.value = '';
 			this.jumpto(); // set an initial state
+			
+			// when first opening the preferences tab, set the cursor in there, so the user can start typing right away
+			this.focusJumpto();
 		}
 		
 		this.current = {};
@@ -991,6 +994,13 @@ this.controllers = {
 		node.scrollIntoView();
 		node.classList.add('highlight');
 		this.highlighted = node;
+	},
+	
+	focusJumpto: function() {
+		if(categories.lasthash != 'paneAbout') {
+			this.nodes.jumpto.select();
+			this.nodes.jumpto.focus();
+		}
 	}
 };
 

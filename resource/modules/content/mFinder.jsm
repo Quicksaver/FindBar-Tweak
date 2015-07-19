@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.10';
+Modules.VERSION = '1.0.11';
 
 this.__defineGetter__('isPDFJS', function() { return Finder.isPDFJS; });
 
@@ -960,7 +960,12 @@ this.Finder = {
 	},
 	
 	// should Finder even be used in this browser?
-	get isValid() { return viewSource || document instanceof Ci.nsIDOMHTMLDocument || document instanceof Ci.nsIDOMXMLDocument; },
+	get isValid() {
+		return	viewSource
+			|| document instanceof Ci.nsIDOMHTMLDocument
+			// don't use the findbar in preferences tabs
+			|| (document instanceof Ci.nsIDOMXMLDocument && !document.documentElement.hasAttribute('currentcategory'));
+	},
 	
 	isFinderValid: function() {
 		// do aSync so we don't fire more than necessary.

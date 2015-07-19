@@ -13,6 +13,13 @@
 ]>
 <page	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 		title="&preferences.title;">
+
+	<keyset id="mainKeyset">
+		<key id="key-jumpto"
+			key="F"
+			modifiers="accel"
+			oncommand="objName.controllers.focusJumpto();" />
+	</keyset>
 	
 	<stack flex="1">
 		<hbox flex="1">

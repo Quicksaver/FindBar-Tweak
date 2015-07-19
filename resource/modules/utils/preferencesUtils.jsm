@@ -1,4 +1,4 @@
-Modules.VERSION = '2.3.3';
+Modules.VERSION = '2.3.4';
 Modules.UTILS = true;
 
 // dependsOn - object that adds a dependson attribute functionality to xul preference elements.
@@ -747,7 +747,7 @@ this.controllers = {
 			this.future = [];
 			
 			// get a new 'current' state from the actual current preferences values
-			this.init();
+			this.init(true);
 		}, 50);
 	},
 	

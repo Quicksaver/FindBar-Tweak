@@ -1,4 +1,4 @@
-Modules.VERSION = '2.3.0';
+Modules.VERSION = '2.3.1';
 Modules.UTILS = true;
 
 // dependsOn - object that adds a dependson attribute functionality to xul preference elements.
@@ -383,6 +383,8 @@ this.categories = {
 		// Updating the hash (below) or changing the selected category will re-enter gotoPref.
 		if(this.lastHash == category) { return; }
 		
+		let activeElement = document.activeElement;
+		
 		let item = this.categories.querySelector(".category[value="+category+"]");
 		if(!item) {
 			category = kDefaultCategoryInternalName;
@@ -408,6 +410,14 @@ this.categories = {
 		window.history.replaceState(category, document.title);
 		this.search(category, "data-category");
 		document.querySelector(".main-content").scrollTop = 0;
+		
+		// changing the location hash will cause the focus to shift to the page, and we want it to stay in the jumpto box if it was there before
+		if(category != 'paneAbout'
+		&& activeElement && controllers.nodes.jumpto
+		&& activeElement == controllers.nodes.jumpto.inputField
+		&& activeElement != document.activeElement) {
+			activeElement.focus();
+		}
 	},
 	
 	search: function(aQuery, aAttribute) {
@@ -908,6 +918,7 @@ this.controllers = {
 		switch(node.nodeName) {
 			case 'checkbox':
 			case 'radio':
+			case 'button':
 				return node.getAttribute('label');
 			
 			case 'label':

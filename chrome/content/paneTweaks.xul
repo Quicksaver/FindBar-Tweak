@@ -109,7 +109,7 @@
 					preference="pref-resetNative"/>
 				<button label="&OptResetNativeNow.label;"
 					helptext="&OptResetNativeNow.tooltip;"
-					jump="&OptResetNativeNow.label;"
+					jump="resetNativeNow"
 					oncommand="objName.resetNativePrefs();"/>
 			</vbox>
 		</groupbox>

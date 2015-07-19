@@ -1,6 +1,6 @@
 /* preferences About pane backgound */
 
-.main-content {
+.main-wrapper {
 	background: url("chrome://findbartweak/skin/utils/bg-gradient-grass.png") repeat-x, url("chrome://findbartweak/skin/utils/bg-grainy-grass.png") repeat, #eee;
 }
 

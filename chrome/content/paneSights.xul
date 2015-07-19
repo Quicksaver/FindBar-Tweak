@@ -35,19 +35,26 @@
 		
 		<groupbox align="start" id="paneSights-current" collapsed="true" data-category="paneSights">
 			<caption label="&OptsightsCurrentHit.label;"/>
-			<checkbox label="&OptsightsCurrent.label;" tooltiptext="&OptsightsCurrent.tooltip;" preference="pref-sightsCurrent"/>
+			<checkbox label="&OptsightsCurrent.label;"
+				helpbox="paneSights-current-helptext"
+				jump="sightsCurrent"
+				preference="pref-sightsCurrent"/>
 			<vbox align="center" class="indent">
 				<vbox align="start">
 					<checkbox label="&OptsightsSameColorCurrent.label;"
-						tooltiptext="&OptsightsSameColorCurrent.tooltip;"
+						helpbox="paneSights-current-helptext"
+						jump="sightsSameColor"
 						dependson="pref-sightsCurrent"
 						preference="pref-sightsSameColor"/>
 					<checkbox label="&OptsightsSameColor.label;"
-						tooltiptext="&OptsightsSameColor.tooltip;"
+						helpbox="paneSights-current-helptext"
+						jump="sightsSameColorAll"
 						dependson="pref-sightsCurrent,!pref-sightsSameColor"
 						preference="pref-sightsSameColorAll"/>
 				</vbox>
-				<hbox align="center" tooltiptext="&OptsightsColor.tooltip;">
+				<hbox align="center"
+					helptext="&OptsightsColor.tooltip;"
+					jump="sightsColor">
 					<colorpicker id="sightsColor"
 						dependson="pref-sightsCurrent,!pref-sightsSameColor,!pref-sightsSameColorAll"
 						type="button"
@@ -59,15 +66,27 @@
 						value="&OptcolorReset.label;"/>
 				</hbox>
 			</vbox>
+			<vbox id="paneSights-current-helptext" collapsed="true">
+				<description>&OptsightsCurrent.tooltip;</description>
+				<description style="font-weight:bold; margin-top:1em;">&OptsightsSameColorCurrent.label;</description>
+				<description>&OptsightsSameColorCurrent.tooltip;</description>
+				<description style="font-weight:bold; margin-top:1em;">&OptsightsSameColor.label;</description>
+				<description>&OptsightsSameColor.tooltip;</description>
+			</vbox>
 		</groupbox>
 		
 		<groupbox align="start" id="paneSights-highlights" collapsed="true" data-category="paneSights">
 			<caption label="&OptsightsAllHighlights.label;"/>
 			<description>&OptsightsHighlights.warning;</description>
-			<checkbox label="&OptsightsHighlights.label;" tooltiptext="&OptsightsHighlights.tooltip;" preference="pref-sightsHighlights"/>
+			<checkbox label="&OptsightsHighlights.label;"
+				helpbox="paneSights-highlights-helptext"
+				jump="sightsHighlights"
+				preference="pref-sightsHighlights"/>
 			<vbox align="center" class="indent">
 				<vbox align="start">
-					<hbox align="center" tooltiptext="&OptsightsLimit.tooltip;">
+					<hbox align="center"
+						helpbox="paneSights-highlights-helptext"
+						jump="sightsLimit">
 						<label dependson="pref-sightsHighlights" value="&OptsightsLimit.label;"/>
 						<textbox dependson="pref-sightsHighlights"
 							type="number"
@@ -77,11 +96,14 @@
 							preference="pref-sightsLimit"/>
 					</hbox>
 					<checkbox label="&OptsightsSameColor.label;"
-						tooltiptext="&OptsightsSameColor.tooltip;"
+						helpbox="paneSights-highlights-helptext"
+						jump="sightsAllSameColor"
 						dependson="pref-sightsHighlights"
 						preference="pref-sightsAllSameColor"/>
 				</vbox>
-				<hbox align="center" tooltiptext="&OptsightsColor.tooltip;">
+				<hbox align="center"
+					helptext="&OptsightsColor.tooltip;"
+					jump="sightsAllColor">
 					<colorpicker id="sightsAllColor"
 						dependson="pref-sightsHighlights,!pref-sightsAllSameColor"
 						type="button"
@@ -93,12 +115,19 @@
 						value="&OptcolorReset.label;"/>
 				</hbox>
 			</vbox>
+			<vbox id="paneSights-highlights-helptext" collapsed="true">
+				<description>&OptsightsHighlights.tooltip;</description>
+				<description style="font-weight:bold; margin-top:1em;">&OptsightsLimit.label;</description>
+				<description>&OptsightsLimit.tooltip;</description>
+				<description style="font-weight:bold; margin-top:1em;">&OptsightsSameColor.label;</description>
+				<description>&OptsightsSameColor.tooltip;</description>
+			</vbox>
 		</groupbox>
 		
 		<groupbox align="start" id="paneSights-style" collapsed="true" data-category="paneSights">
 			<caption label="&OptsightsStyle.label;"/>
 			<vbox align="center">
-				<radiogroup preference="pref-sightsStyle">
+				<radiogroup jump="sightsStyle,&OptsightsStyle.label;" preference="pref-sightsStyle">
 					<hbox>
 						<radio label="&OptsightsStyle.focus;"
 							value="focus"
@@ -112,7 +141,7 @@
 							oncommand="objName.previewSights(this, 'circle');"/>
 					</hbox>
 				</radiogroup>
-				<hbox align="center">
+				<hbox align="center" jump="sightsRepeat">
 					<label value="&OptsightsRepeat.label;"/>
 					<textbox type="number"
 						size="1"

@@ -31,3 +31,43 @@ groupbox label.smallindent {
 colorpicker * {
 	-moz-user-select: none;
 }
+
+/* footer controls */
+
+page[currentcategory="paneAbout"] #main-footer {
+	visibility: collapse;
+}
+
+#main-footer {
+	font-size: 1.25em;
+	padding: 15px 40px;
+	box-shadow: inset 0 1px 0 #c1c1c1;
+}
+
+#main-footer button .button-box {
+	padding-top: 5px;
+	padding-bottom: 5px;
+	-moz-padding-start: 13px !important;
+}
+
+#main-footer button .dropmarker-icon {
+	width: 16px;
+	height: 16px;
+	transform: rotate(180deg);
+}
+
+#main-footer textbox[notfound] {
+	background-color: #f66;
+	color: white;
+}
+
+.highlight {
+	background-color: rgb(255,255,0);
+	box-shadow: 0 0 1px 4px rgb(255,255,0);
+	transition: background-color 150ms, box-shadow 150ms;
+}
+
+/* I hope this doesn't break anything... */
+checkbox.highlight {
+	-moz-appearance: none;
+}

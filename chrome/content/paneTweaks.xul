@@ -35,40 +35,68 @@
 		<groupbox align="start" id="paneTweaks-shortcut" collapsed="true" data-category="paneTweaks">
 			<caption label="&OptkeyboardShortcut.label;"/>
 			<checkbox label="&OptctrlFprefill.label;"
-				tooltiptext="&OptctrlFprefill.tooltip;"
+				helpbox="paneTweaks-shortcut-helptext"
+				jump="FAYTprefill"
 				preference="pref-FAYTprefill"/>
 			<checkbox id="ctrlFClosesCheckbox"
 				label="&OptctrlFCloses.win;"
-				tooltiptext="&OptctrlFCloses.tooltip;"
+				helpbox="paneTweaks-shortcut-helptext"
+				jump="ctrlFCloses"
 				preference="pref-ctrlFCloses"/>
 			<checkbox label="&OptctrlFOnFocused.label;"
-				tooltiptext="&OptctrlFOnFocused.tooltip;"
+				helpbox="paneTweaks-shortcut-helptext"
+				jump="ctrlFClosesOnFocused"
 				class="indent"
 				dependson="pref-ctrlFCloses"
 				preference="pref-ctrlFClosesOnFocused"/>
+			<vbox id="paneTweaks-shortcut-helptext" collapsed="true">
+				<description style="font-weight:bold;">&OptctrlFprefill.label;</description>
+				<description>&OptctrlFprefill.tooltip.a;</description>
+				<description>&OptctrlFprefill.tooltip.b;</description>
+				<description id="ctrlFClosesHelptext" style="font-weight:bold; margin-top:1em;">&OptctrlFCloses.win;</description>
+				<description>&OptctrlFCloses.tooltip;</description>
+				<description style="font-weight:bold; margin-top:1em;">&OptctrlFOnFocused.label;</description>
+				<description>&OptctrlFOnFocused.tooltip;</description>
+			</vbox>
 		</groupbox>
 		
 		<groupbox align="start" id="paneTweaks-text" collapsed="true" data-category="paneTweaks">
 			<caption label="&OptSelectingText.label;"/>
 			<checkbox label="&OptfillSelectedText.label;"
-				tooltiptext="&OptfillSelectedText.tooltip;"
+				helpbox="paneTweaks-text-helptext"
+				jump="fillSelectedText"
 				preference="pref-fillSelectedText"/>
 			<checkbox label="&OptemptySelectedText.label;"
-				tooltiptext="&OptemptySelectedText.tooltip;"
+				helpbox="paneTweaks-text-helptext"
+				jump="emptySelectedText"
 				class="indent"
 				dependson="pref-fillSelectedText"
 				preference="pref-emptySelectedText"/>
 			<checkbox label="&OptfillSelectedOpenFindbar.label;"
-				tooltiptext="&OptfillSelectedOpenFindbar.tooltip;"
+				helpbox="paneTweaks-text-helptext"
+				jump="fillTextShowFindBar"
 				class="indent"
 				dependson="pref-fillSelectedText"
 				preference="pref-fillTextShowFindBar"/>
+			<vbox id="paneTweaks-text-helptext" collapsed="true">
+				<description style="font-weight:bold;">&OptfillSelectedText.label;</description>
+				<description>&OptfillSelectedText.tooltip.a;</description>
+				<description>&OptfillSelectedText.tooltip.b;</description>
+				<description id="ctrlFClosesHelptext" style="font-weight:bold; margin-top:1em;">&OptemptySelectedText.label;</description>
+				<description>&OptemptySelectedText.tooltip;</description>
+				<description style="font-weight:bold; margin-top:1em;">&OptfillSelectedOpenFindbar.label;</description>
+				<description>&OptfillSelectedOpenFindbar.tooltip;</description>
+			</vbox>
 		</groupbox>
 		
 		<groupbox align="start" id="paneTweaks-dblClick" collapsed="true" data-category="paneTweaks">
 			<description>&OptglobalBehavior.warning;</description>
-			<checkbox label="&OptdblClickEatSpaces.label;" preference="pref-layoutEatSpaces"/>
-			<checkbox label="&OptdblClickStopAtPunctuation.label;" preference="pref-layoutStopAtPunctuation"/>
+			<checkbox label="&OptdblClickEatSpaces.label;"
+				jump="layoutEatSpaces"
+				preference="pref-layoutEatSpaces"/>
+			<checkbox label="&OptdblClickStopAtPunctuation.label;"
+				jump="layoutStopAtPunctuation"
+				preference="pref-layoutStopAtPunctuation"/>
 		</groupbox>
 		
 		<groupbox align="start" id="paneTweaks-natives" collapsed="true" data-category="paneTweaks">
@@ -76,10 +104,12 @@
 			<description>&OptNativePrefs.description;</description>
 			<vbox align="center">
 				<checkbox label="&OptResetNativeOnDisabled.label;"
-					tooltiptext="&OptResetNativeOnDisabled.tooltip;"
+					helptext="&OptResetNativeOnDisabled.tooltip;"
+					jump="resetNative"
 					preference="pref-resetNative"/>
 				<button label="&OptResetNativeNow.label;"
-					tooltiptext="&OptResetNativeNow.tooltip;"
+					helptext="&OptResetNativeNow.tooltip;"
+					jump="&OptResetNativeNow.label;"
 					oncommand="objName.resetNativePrefs();"/>
 			</vbox>
 		</groupbox>

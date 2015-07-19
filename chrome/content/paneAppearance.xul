@@ -34,31 +34,72 @@
 		
 		<groupbox align="start" id="paneAppearance-position" collapsed="true" data-category="paneAppearance">
 			<caption label="&Optdisplay.label;"/>
-			<checkbox label="&OptmovetoTop.label;" tooltiptext="&OptmovetoTop.tooltip;" preference="pref-movetoTop"/>
-			<checkbox label="&OptmovetoRight.label;" tooltiptext="&OptmovetoRight.tooltip;" preference="pref-movetoRight"/>
+			<checkbox label="&OptmovetoTop.label;"
+				helpbox="paneAppearance-position-helptext"
+				jump="movetoTop"
+				preference="pref-movetoTop"/>
+			<checkbox label="&OptmovetoRight.label;"
+				helpbox="paneAppearance-position-helptext"
+				jump="movetoRight"
+				preference="pref-movetoRight"/>
+			<vbox id="paneAppearance-position-helptext" collapsed="true">
+				<description style="font-weight:bold;">&OptmovetoTop.label;</description>
+				<description>&OptmovetoTop.tooltip;</description>
+				<description style="font-weight:bold; margin-top:1em;">&OptmovetoRight.label;</description>
+				<description>&OptmovetoRight.tooltip;</description>
+			</vbox>
 		</groupbox>
 		
 		<groupbox align="start" id="paneAppearance-elements" collapsed="true" data-category="paneAppearance">
 			<caption label="&OptButtonAndLabels.label;"/>
-			<checkbox label="&OptuseCounter.label;" tooltiptext="&OptuseCounter.tooltip;" preference="pref-useCounter"/>
-			<checkbox label="&OpthideClose.label;" tooltiptext="&OpthideClose.tooltip;" preference="pref-hideClose"/>
-			<checkbox label="&OpthideLabels.label;" tooltiptext="&OpthideLabels.tooltip;" preference="pref-hideLabels"/>
+			<checkbox label="&OptuseCounter.label;"
+				helpbox="paneAppearance-elements-helptext"
+				jump="useCounter"
+				preference="pref-useCounter"/>
+			<checkbox label="&OpthideClose.label;"
+				helpbox="paneAppearance-elements-helptext"
+				jump="hideClose"
+				preference="pref-hideClose"/>
+			<checkbox label="&OpthideLabels.label;"
+				helpbox="paneAppearance-elements-helptext"
+				jump="hideLabels"
+				preference="pref-hideLabels"/>
+			<vbox id="paneAppearance-elements-helptext" collapsed="true">
+				<description style="font-weight:bold;">&OptuseCounter.label;</description>
+				<description>&OptuseCounter.tooltip;</description>
+				<description style="font-weight:bold; margin-top:1em;">&OpthideClose.label;</description>
+				<description>&OpthideClose.tooltip;</description>
+				<description style="font-weight:bold; margin-top:1em;">&OpthideLabels.label;</description>
+				<description>&OpthideLabels.tooltip;</description>
+			</vbox>
 		</groupbox>
 		
 		<groupbox align="start" id="paneAppearance-currentcolor" collapsed="true" data-category="paneAppearance">
 			<caption label="&OptselectColor.label;"/>
 			<hbox align="start">
 				<vbox align="center">
-					<hbox align="center" tooltiptext="&OptselectColor.tooltip;">
+					<hbox align="center"
+						helpbox="paneAppearance-currentcolor-helptext"
+						jump="selectColor,&OptselectColor.label;">
 						<colorpicker id="selectColor" type="button" preference="pref-selectColor"/>
 						<label class="text-link"
 						href="#"
 						onclick="document.getElementById('pref-selectColor').reset(); return false;"
 						value="&OptcolorReset.label;"/>
 					</hbox>
-					<checkbox label="&OptcolorKeepOSdefault.label;" tooltiptext="&OptcolorKeepOSdefault.tooltip;" preference="pref-keepSelectContrast"/>
+					<checkbox label="&OptcolorKeepOSdefault.label;"
+						helpbox="paneAppearance-currentcolor-helptext"
+						jump="keepSelectContrast"
+						preference="pref-keepSelectContrast"/>
 				</vbox>
 			</hbox>
+			<vbox id="paneAppearance-currentcolor-helptext" collapsed="true">
+				<description>&OptselectColor.tooltip;</description>
+				<description style="font-weight:bold; margin-top:1em;">&OptcolorKeepOSdefault.label;</description>
+				<description>&OptcolorKeepOSdefault.tooltip.a;</description>
+				<description>&OptcolorKeepOSdefault.tooltip.b;</description>
+				<description>&OptcolorKeepOSdefault.tooltip.c;</description>
+			</vbox>
 		</groupbox>
 	</prefpane>
 	

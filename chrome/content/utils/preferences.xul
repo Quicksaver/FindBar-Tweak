@@ -5,7 +5,12 @@
 <?xml-stylesheet href="chrome://browser/skin/preferences/in-content/preferences.css"?>
 <?xml-stylesheet href="chrome://findbartweak/skin/utils/preferences.css"?>
 <?xml-stylesheet href="chrome://findbartweak/skin/defaults.css"?>
-<!DOCTYPE overlay SYSTEM "chrome://findbartweak/locale/defaults.dtd">
+<!DOCTYPE prefs [
+  <!ENTITY % defaults SYSTEM "chrome://findbartweak/locale/defaults.dtd" >
+  %defaults;
+  <!ENTITY % preferences SYSTEM "chrome://findbartweak/locale/utils/preferences.dtd" >
+  %preferences;
+]>
 <page	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 		title="&preferences.title;">
 	
@@ -13,8 +18,40 @@
 		<hbox flex="1">
 			<richlistbox id="categories"/>
 			
-			<vbox class="main-content" flex="1">
-				<prefpane id="mainPrefPane"/>
+			<vbox class="main-wrapper" flex="1">
+				<vbox class="main-content" flex="1">
+					<prefpane id="mainPrefPane"/>
+				</vbox>
+				
+				<vbox id="main-footer" align="start">
+					<hbox helpbox="main-footer-helptext">
+						<button label="&preferences.button;" type="menu">
+							<menupopup>
+								<menuitem id="undoButton" label="&preferences.undo.label;"/>
+								<menuitem id="redoButton" label="&preferences.redo.label;"/>
+								<menuseparator/>
+								<menuitem id="importButton" label="&preferences.import.label;"/>
+								<menuitem id="exportButton" label="&preferences.export.label;"/>
+								<menuseparator/>
+								<menuitem id="resetButton" label="&preferences.reset.label;"/>
+							</menupopup>
+						</button>
+						<textbox id="jumpto" placeholder="&preferences.jumpto.label;" size="50" />
+					</hbox>
+				</vbox>
+				<vbox id="main-footer-helptext" collapsed="true">
+					<description style="font-weight:bold;">&preferences.undo.label; / &preferences.redo.label;</description>
+					<description>&preferences.undoredo.tooltip;</description>
+					<description style="font-weight:bold; margin-top:1em;">&preferences.import.label;</description>
+					<description>&preferences.import.tooltip;</description>
+					<description style="font-weight:bold; margin-top:1em;">&preferences.export.label;</description>
+					<description>&preferences.export.tooltip;</description>
+					<description style="font-weight:bold; margin-top:1em;">&preferences.reset.label;</description>
+					<description>&preferences.reset.tooltip.a;</description>
+					<description>&preferences.reset.tooltip.b;</description>
+					<description style="font-weight:bold; margin-top:1em;">&preferences.jumpto.label;</description>
+					<description>&preferences.jumpto.tooltip;</description>
+				</vbox>
 			</vbox>
 		</hbox>
 	</stack>

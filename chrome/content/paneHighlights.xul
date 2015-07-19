@@ -34,10 +34,21 @@
 		
 		<groupbox align="start" id="paneHighlights-main" collapsed="true" data-category="paneHighlights">
 			<caption label="&OptHighlights.label;"/>
-			<checkbox label="&OpthighlightByDefault.label;" tooltiptext="&OpthighlightByDefault.tooltip;" preference="pref-highlightByDefault"/>
-			<checkbox label="&OpthighlightOnFindAgain.label;" tooltiptext="&OpthighlightOnFindAgain.tooltip;" preference="pref-highlightOnFindAgain"/>
-			<checkbox label="&OpthideWhenFinderHidden.label;" tooltiptext="&OpthideWhenFinderHidden.tooltip;" preference="pref-hideWhenFinderHidden"/>
-			<hbox align="center" tooltiptext="&OptminNoDelay.tooltip;">
+			<checkbox label="&OpthighlightByDefault.label;"
+				helptext="&OpthighlightByDefault.tooltip;"
+				jump="highlightByDefault"
+				preference="pref-highlightByDefault"/>
+			<checkbox label="&OpthighlightOnFindAgain.label;"
+				helptext="&OpthighlightOnFindAgain.tooltip;"
+				jump="highlightOnFindAgain"
+				preference="pref-highlightOnFindAgain"/>
+			<checkbox label="&OpthideWhenFinderHidden.label;"
+				helptext="&OpthideWhenFinderHidden.tooltip;"
+				jump="hideWhenFinderHidden"
+				preference="pref-hideWhenFinderHidden"/>
+			<hbox align="center"
+				helptext="&OptminNoDelay.tooltip;"
+				jump="minNoDelay">
 				<label value="&OptminNoDelay.labela;"/>
 				<textbox type="number"
 					size="1"
@@ -51,8 +62,13 @@
 		
 		<groupbox align="start" id="paneHighlights-grid" collapsed="true" data-category="paneHighlights">
 			<caption label="&Optgrid.label;"/>
-			<checkbox label="&OptgridInScrollbar.label;" tooltiptext="&OptgridInScrollbar.tooltip;" preference="pref-useGrid"/>
-			<hbox align="center" tooltiptext="&OptgridLimit.tooltip;">
+			<checkbox label="&OptgridInScrollbar.label;"
+				helptext="&OptgridInScrollbar.tooltip;"
+				jump="useGrid"
+				preference="pref-useGrid"/>
+			<hbox align="center"
+				helptext="&OptgridLimit.tooltip;"
+				jump="gridLimit">
 				<label dependson="pref-useGrid" value="&OptgridLimit.labela;"/>
 				<textbox dependson="pref-useGrid"
 					type="number"
@@ -62,7 +78,9 @@
 					preference="pref-gridLimit"/>
 				<label dependson="pref-useGrid" value="&OptgridLimit.labelb;"/>
 			</hbox>
-			<hbox align="center" tooltiptext="&OptadjustGridPadding.tooltip;">
+			<hbox align="center"
+				helptext="&OptadjustGridPadding.tooltip;"
+				jump="gridAdjustPadding">
 				<label dependson="pref-useGrid" value="&OptadjustGridPadding.labela;"/>
 				<textbox dependson="pref-useGrid"
 					type="number"
@@ -72,7 +90,9 @@
 					preference="pref-gridAdjustPadding"/>
 				<label dependson="pref-useGrid" value="&OptadjustGridPadding.labelb;"/>
 			</hbox>
-			<hbox align="center" tooltiptext="&OptadjustGridWidth.tooltip;">
+			<hbox align="center"
+				helptext="&OptadjustGridWidth.tooltip;"
+				jump="gridAdjustWidth">
 				<label dependson="pref-useGrid" value="&OptadjustGridWidth.labela;"/>
 				<textbox dependson="pref-useGrid"
 					type="number"
@@ -85,7 +105,9 @@
 		</groupbox>
 		
 		<groupbox align="start" id="paneHighlights-color" collapsed="true" data-category="paneHighlights">
-			<caption align="center" tooltiptext="&Optcolor.tooltip;">
+			<caption align="center"
+				helptext="&Optcolor.tooltip;"
+				jump="highlightColor">
 				<label value="&Optcolor.label;"/>
 				<colorpicker id="highlightsColor" type="button" preference="pref-highlightColor"/>
 				<label class="text-link"

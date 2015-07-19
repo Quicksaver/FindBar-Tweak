@@ -35,19 +35,34 @@
 		
 		<groupbox align="start" id="paneGeneral-main" collapsed="true" data-category="paneGeneral">
 			<caption label="&Optgen.label;"/>
-			<checkbox label="&OptglobalFB.label;" tooltiptext="&OptglobalFB.tooltip;" preference="pref-globalFB"/>
-			<checkbox dependson="!pref-globalFB" label="&OptblurCloses.label;" tooltiptext="&OptblurCloses.tooltip;" preference="pref-blurCloses"/>
-			<checkbox dependson="pref-globalFB" label="&OptonStartup.label;" tooltiptext="&OptonStartup.tooltip;" preference="pref-onStartup"/>
+			<checkbox label="&OptglobalFB.label;"
+				helptext="&OptglobalFB.tooltip;"
+				jump="globalFB"
+				preference="pref-globalFB"/>
+			<checkbox label="&OptblurCloses.label;"
+				dependson="!pref-globalFB"
+				helptext="&OptblurCloses.tooltip;"
+				jump="blurCloses"
+				preference="pref-blurCloses"/>
+			<checkbox label="&OptonStartup.label;"
+				dependson="pref-globalFB"
+				helptext="&OptonStartup.tooltip;"
+				jump="onStartup"
+				preference="pref-onStartup"/>
 		</groupbox>
 		
 		<groupbox align="start" id="paneGeneral-fayt" collapsed="true" data-category="paneGeneral">
 			<caption label="&OptquickFindOptions.label;"/>
-			<checkbox label="&OptFAYT.label;" tooltiptext="&OptFAYT.tooltip;" preference="pref-typeaheadfind"/>
+			<checkbox label="&OptFAYT.label;"
+				helptext="&OptFAYT.tooltip;"
+				jump="typeaheadfind"
+				preference="pref-typeaheadfind"/>
 			<checkbox label="&OptkeepButtons.label;"
-				tooltiptext="&OptkeepButtons.tooltip;"
+				helptext="&OptkeepButtons.tooltip;"
+				jump="keepButtons"
 				preference="pref-keepButtons"
 				dependson="pref-FAYTmode:alwaysquick;!pref-FAYTmode:normal,pref-typeaheadfind"/>
-			<hbox align="center" tooltiptext="&OptFAYTTimeout.tooltip;">
+			<hbox align="center" helptext="&OptFAYTTimeout.tooltip;" jump="timeout">
 				<label dependson="pref-FAYTmode:alwaysquick;!pref-FAYTmode:normal,pref-typeaheadfind" value="&OptFAYTTimeout.beforeLabel;"/>
 				<textbox id="timeoutTextbox"
 					dependson="pref-FAYTmode:alwaysquick;!pref-FAYTmode:normal,pref-typeaheadfind" 
@@ -64,16 +79,42 @@
         
 		<groupbox align="start" id="paneGeneral-mode" collapsed="true" data-category="paneGeneral">
 			<caption label="&OptFAYTmode.caption;"/>
-			<radiogroup align="start" preference="pref-FAYTmode">
-				<radio dependson="pref-typeaheadfind" label="&OptFAYTmode.quickFind.label;" tooltiptext="&OptFAYTmode.quickFind.tooltip;" value="quick"/>
-				<radio label="&OptFAYTmode.alwaysQuick.label;" tooltiptext="&OptFAYTmode.alwaysQuick.tooltip;" value="alwaysquick"/>
-				<radio label="&OptFAYTmode.normalFind.label;" tooltiptext="&OptFAYTmode.normalFind.tooltip;" value="normal"/>
+			<radiogroup align="start"
+				helpbox="paneGeneral-mode-helptext"
+				jump="FAYTmode"
+				preference="pref-FAYTmode">
+				<radio dependson="pref-typeaheadfind" label="&OptFAYTmode.quickFind.label;" value="quick"/>
+				<radio label="&OptFAYTmode.alwaysQuick.label;" value="alwaysquick"/>
+				<radio label="&OptFAYTmode.normalFind.label;" value="normal"/>
 			</radiogroup>
+			<vbox id="paneGeneral-mode-helptext" collapsed="true">
+				<description style="font-weight:bold;">&OptFAYTmode.quickFind.label;</description>
+				<description>&OptFAYTmode.quickFind.tooltip;</description>
+				<description style="font-weight:bold; margin-top:1em;">&OptFAYTmode.alwaysQuick.label;</description>
+				<description>&OptFAYTmode.alwaysQuick.tooltip;</description>
+				<description style="font-weight:bold; margin-top:1em;">&OptFAYTmode.normalFind.label;</description>
+				<description>&OptFAYTmode.normalFind.tooltip;</description>
+			</vbox>
         </groupbox>
         
 		<groupbox align="start" id="paneGeneral-FIT" collapsed="true" data-category="paneGeneral">
-			<caption><checkbox label="&OptfindInTabs.label;" tooltiptext="&OptfindInTabs.tooltip;" preference="pref-findInTabs"/></caption>
-			<checkbox class="indent" label="&OptmultipleFITFull.label;" tooltiptext="&OptmultipleFITFull.tooltip;" dependson="pref-findInTabs" preference="pref-multipleFITFull"/>
+			<caption>
+				<checkbox label="&OptfindInTabs.label;"
+					helpbox="paneGeneral-FIT-helptext"
+					jump="findInTabs"
+					preference="pref-findInTabs"/>
+			</caption>
+			<checkbox class="indent"
+				label="&OptmultipleFITFull.label;"
+				helpbox="paneGeneral-FIT-helptext"
+				jump="multipleFITFull"
+				dependson="pref-findInTabs"
+				preference="pref-multipleFITFull"/>
+			<vbox id="paneGeneral-FIT-helptext" collapsed="true">
+				<description>&OptfindInTabs.tooltip;</description>
+				<description style="font-weight:bold; margin-top:1em;">&OptmultipleFITFull.label;</description>
+				<description>&OptmultipleFITFull.tooltip;</description>
+			</vbox>
 		</groupbox>
 	</prefpane>
 	

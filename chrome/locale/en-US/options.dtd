@@ -28,7 +28,9 @@
 <!ENTITY OptselectColor.tooltip "When you first run a Find operation, or when you hit F3 or the previous/next buttons to run through the matches, the current match should be shown in a different color from the other highlights to distinguish it.">
 <!ENTITY OptcolorReset.label "(reset)">
 <!ENTITY OptcolorKeepOSdefault.label "Keep default contrast color (recommended)">
-<!ENTITY OptcolorKeepOSdefault.tooltip "The contrast color is, depending on the webpage background, either the color of the text when the current hit color is used as its background, or vice versa. It is either white or black, depending on the color chosen above. While the above color setting affects only the current hit in Find operations, its contrast color can't be changed without also changing the contrast of all text selections. Disable this with caution, to not make text selections unreadable!">
+<!ENTITY OptcolorKeepOSdefault.tooltip.a "The contrast color is, depending on the webpage background, either the color of the text when the current hit color is used as its background, or vice versa. It is either white or black, depending on the color chosen above.">
+<!ENTITY OptcolorKeepOSdefault.tooltip.b "While the above color setting affects only the current hit in Find operations, its contrast color can't be changed without also changing the contrast of all text selections. Disable this with caution, to not make text selections unreadable!">
+<!ENTITY OptcolorKeepOSdefault.tooltip.c "Disable this with caution, to not make text selections unreadable!">
 
 <!ENTITY OpthighlightOnFindAgain.label "Also highlight on 'Find Again' (F3)">
 <!ENTITY OpthighlightOnFindAgain.tooltip "If the Highlight All button is checked, running through the matches by pressing F3 or hitting the previous/next buttons will also highlight all the matches, if they aren't already.">
@@ -102,12 +104,14 @@
 <!ENTITY OptctrlFCloses.mac "Command+F also closes the Findbar">
 <!ENTITY OptctrlFCloses.tooltip "You can open the Findbar and then close it when you no longer need it through the same keyboard shortcut.">
 <!ENTITY OptctrlFprefill.label "Fill the Findbar with the selected text when opening it">
-<!ENTITY OptctrlFprefill.tooltip "If there is any text selected in the webpage when the Findbar is opened, this text is automatically copied to the Findbar to be used as a find query. If 'Highlight All by Default' is enabled, it will find all occurences of the selected text immediately.">
+<!ENTITY OptctrlFprefill.tooltip.a "If there is any text selected in the webpage when the Findbar is opened, this text is automatically copied to the Findbar to be used as a find query.">
+<!ENTITY OptctrlFprefill.tooltip.b "If 'Highlight All by Default' is enabled, it will find all occurences of the selected text immediately.">
 <!ENTITY OptctrlFOnFocused.label "Only close when it is already focused">
 <!ENTITY OptctrlFOnFocused.tooltip "The keyboard shortcut will always first place the cursor in the Findbar, copying any selected text in the webpage into it if the above preference is enabled. It will only close the Findbar when the cursor is already in it.">
 <!ENTITY OptSelectingText.label "When Selecting Text">
 <!ENTITY OptfillSelectedText.label "Fill the Findbar with the selected text">
-<!ENTITY OptfillSelectedText.tooltip "Every time any word is selected in the webpage, it will be automatically copied to the Findbar to be used as a find query. If 'Highlight All by Default' is enabled, selecting text in a webpage will immediately highlight all occurences of the selection.">
+<!ENTITY OptfillSelectedText.tooltip.a "Every time any word is selected in the webpage, it will be automatically copied to the Findbar to be used as a find query. ">
+<!ENTITY OptfillSelectedText.tooltip.b "If 'Highlight All by Default' is enabled, selecting text in a webpage will immediately highlight all occurences of the selection.">
 <!ENTITY OptemptySelectedText.label "Empty the Findbar when no text is selected">
 <!ENTITY OptemptySelectedText.tooltip "Likewise from above, if you click anywhere in the webpage to unselect text, the Findbar will be cleared and all the highlights will be removed as well.">
 <!ENTITY OptfillSelectedOpenFindbar.label "Show the Quick Findbar when selected text is used">

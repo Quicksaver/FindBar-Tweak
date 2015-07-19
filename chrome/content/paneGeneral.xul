@@ -81,11 +81,17 @@
 			<caption label="&OptFAYTmode.caption;"/>
 			<radiogroup align="start"
 				helpbox="paneGeneral-mode-helptext"
-				jump="FAYTmode"
 				preference="pref-FAYTmode">
-				<radio dependson="pref-typeaheadfind" label="&OptFAYTmode.quickFind.label;" value="quick"/>
-				<radio label="&OptFAYTmode.alwaysQuick.label;" value="alwaysquick"/>
-				<radio label="&OptFAYTmode.normalFind.label;" value="normal"/>
+				<radio dependson="pref-typeaheadfind"
+					label="&OptFAYTmode.quickFind.label;"
+					jump="FAYTmode"
+					value="quick"/>
+				<radio label="&OptFAYTmode.alwaysQuick.label;"
+					jump="FAYTmode"
+					value="alwaysquick"/>
+				<radio label="&OptFAYTmode.normalFind.label;"
+					jump="FAYTmode"
+					value="normal"/>
 			</radiogroup>
 			<vbox id="paneGeneral-mode-helptext" collapsed="true">
 				<description style="font-weight:bold;">&OptFAYTmode.quickFind.label;</description>

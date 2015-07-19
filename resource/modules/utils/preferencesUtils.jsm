@@ -1,4 +1,4 @@
-Modules.VERSION = '2.3.2';
+Modules.VERSION = '2.3.3';
 Modules.UTILS = true;
 
 // dependsOn - object that adds a dependson attribute functionality to xul preference elements.
@@ -461,95 +461,10 @@ this.helptext = {
 	prefPane: null,
 	
 	handleEvent: function(e) {
-		if(e.target != this.panel) {
-			var target = e.target;
-			
-			// special case for radiogroup
-			if(target._helpactive && target.selectedItem) {
-				target = target.selectedItem;
-			}
-			
-			while(!target._helptext && !target._helpbox) {
-				target = target.parentNode;
-				if(!target) { return; }
-			}
-			
-			if(target.disabled) { return; }
-		}
-		
 		switch(e.type) {
 			case 'focus':
 			case 'mouseover':
-				// duh
-				Timers.cancel('closeHelpText');
-				
-				// immediately hide the panel if the mouse touches it, the user might be trying to reach something behind
-				if(e.target == this.panel) {
-					this.panel.hidePopup();
-					return;
-				}
-				
-				// no point in reshowing if the box is already showing what it's supposed to
-				if(this.panel.state == 'open' && this.panel._activeItem == target) { return; }
-				
-				// append the current helptext relative to the hovered item
-				var text = target._helpbox;
-				if(text) {
-					text = $(text);
-					if(text) {
-						text = this.panel.ownerDocument.importNode(text, true);
-						text.collapsed = false;
-					}
-				}
-				if(!text) {
-					text = target._helptext;
-					if(!text) { return; }
-					
-					let description = this.panel.ownerDocument.createElement('description');
-					description.textContent = text;
-					text = description;
-				}
-				
-				// remove any previous helptext
-				while(this.contents.firstChild) {
-					this.contents.firstChild.remove();
-				}
-				
-				this.contents.appendChild(text);
-				this.panel._activeItem = target;
-				
-				let position = 'rightcenter bottomleft';
-				let x = 0;
-				let free = 0;
-				
-				if(LTR) {
-					// try to open the helptext at the end of the prefPane element (about where the header underline ends)
-					x = (this.prefPane.boxObject.x +this.prefPane.boxObject.width) - (target.boxObject.x +target.boxObject.width);
-					
-					// but whenever possible don't show the helptext outside of the tab's boundaries, in case the window isn't wide enough
-					free = (this.main.boxObject.x +this.main.boxObject.width) - (this.prefPane.boxObject.x +this.prefPane.boxObject.width);
-				}
-				else {
-					// same thing except reversed on the left for RTL layouts
-					x = target.boxObject.x -this.prefPane.boxObject.x;
-					
-					free = this.prefPane.boxObject.x -this.main.boxObject.x;
-				}
-				
-				if(free < this.kPanelWidth) {
-					x -= this.kPanelWidth -free;
-				}
-				
-				// negative values for this would be silly, the helptext would appear over the item it's supposed to help with,
-				// so show it right next to the item if this happens for some reason
-				x = Math.max(x, 0);
-				
-				if(this.panel.state == 'open') {
-					this.panel.moveToAnchor(target, position, x);
-				} else {
-					this.panel.openPopup(target, position, x);
-				}
-				
+				this.show(e.target);
 				break;
 			
 			case 'blur':
@@ -566,13 +481,10 @@ this.helptext = {
 					let hovered = checkers.length > 0 && $$(checkers.join(','))[0];
 					if(hovered) { return; }
 				}
+				// no break;
 				
 			case 'mouseout':
-				Timers.init('closeHelpText', () => {
-					if(this.panel.state == 'closed') { return; }
-					
-					this.panel.hidePopup();
-				}, 250);
+				this.hide();
 				break;
 			
 			case 'popuphidden':
@@ -581,6 +493,108 @@ this.helptext = {
 				}
 				break;
 		}
+	},
+	
+	show: function(target) {
+		// duh
+		Timers.cancel('closeHelpText');
+		
+		// immediately hide the panel if the mouse touches it, the user might be trying to reach something behind
+		if(target == this.panel) {
+			this.panel.hidePopup();
+			return;
+		}
+		else {
+			// special case for radiogroup
+			if(target._helpactive && target.selectedItem) {
+				target = target.selectedItem;
+			}
+			
+			if(!target || target.disabled) {
+				this.hide();
+				return;
+			}
+			
+			while(!target._helptext && !target._helpbox) {
+				target = target.parentNode;
+				if(!target || target.disabled) {
+					this.hide();
+					return;
+				}
+			}
+		}
+		
+		// no point in reshowing if the box is already showing what it's supposed to
+		if(this.panel.state == 'open' && this.panel._activeItem == target) { return; }
+		
+		// append the current helptext relative to the hovered item
+		var text = target._helpbox;
+		if(text) {
+			text = $(text);
+			if(text) {
+				text = this.panel.ownerDocument.importNode(text, true);
+				text.collapsed = false;
+			}
+		}
+		if(!text) {
+			text = target._helptext;
+			if(!text) {
+				this.hide();
+				return;
+			}
+			
+			let description = this.panel.ownerDocument.createElement('description');
+			description.textContent = text;
+			text = description;
+		}
+		
+		// remove any previous helptext
+		while(this.contents.firstChild) {
+			this.contents.firstChild.remove();
+		}
+		
+		this.contents.appendChild(text);
+		this.panel._activeItem = target;
+		
+		let position = 'rightcenter bottomleft';
+		let x = 0;
+		let free = 0;
+		
+		if(LTR) {
+			// try to open the helptext at the end of the prefPane element (about where the header underline ends)
+			x = (this.prefPane.boxObject.x +this.prefPane.boxObject.width) - (target.boxObject.x +target.boxObject.width);
+			
+			// but whenever possible don't show the helptext outside of the tab's boundaries, in case the window isn't wide enough
+			free = (this.main.boxObject.x +this.main.boxObject.width) - (this.prefPane.boxObject.x +this.prefPane.boxObject.width);
+		}
+		else {
+			// same thing except reversed on the left for RTL layouts
+			x = target.boxObject.x -this.prefPane.boxObject.x;
+			
+			free = this.prefPane.boxObject.x -this.main.boxObject.x;
+		}
+		
+		if(free < this.kPanelWidth) {
+			x -= this.kPanelWidth -free;
+		}
+		
+		// negative values for this would be silly, the helptext would appear over the item it's supposed to help with,
+		// so show it right next to the item if this happens for some reason
+		x = Math.max(x, 0);
+		
+		if(this.panel.state == 'open') {
+			this.panel.moveToAnchor(target, position, x);
+		} else {
+			this.panel.openPopup(target, position, x);
+		}
+	},
+	
+	hide: function() {
+		Timers.init('closeHelpText', () => {
+			if(this.panel.state == 'closed') { return; }
+			
+			this.panel.hidePopup();
+		}, 250);
 	},
 	
 	onLoad: function() {
@@ -783,6 +797,8 @@ this.controllers = {
 		Timers.cancel('delaySaveState'); // this shouldn't be needed to be called but better make sure
 		
 		if(!prefsOnly) {
+			Timers.cancel('showHelptextOnHighlight');
+			
 			Listeners.remove(this.nodes.undo, 'command', this);
 			Listeners.remove(this.nodes.redo, 'command', this);
 			Listeners.remove(this.nodes.import, 'command', this);
@@ -943,6 +959,7 @@ this.controllers = {
 		let val = this.nodes.jumpto.value;
 		if(!val) {
 			this.clearHighlighted(false);
+			helptext.hide();
 			return;
 		}
 		val = val.toLowerCase();
@@ -965,9 +982,12 @@ this.controllers = {
 		
 		// couldn't find the word, so tell that to the user
 		this.clearHighlighted(true);
+		helptext.hide();
 	},
 	
 	clearHighlighted: function(notfound) {
+		Timers.cancel('showHelptextOnHighlight');
+		
 		if(this.highlighted) {
 			this.highlighted.classList.remove('highlight');
 			this.highlighted = null;
@@ -994,6 +1014,11 @@ this.controllers = {
 		node.scrollIntoView();
 		node.classList.add('highlight');
 		this.highlighted = node;
+		
+		// show the helptext in the found item if it can; aSync works best, with all the possible scrolling and all
+		Timers.init('showHelptextOnHighlight', function() {
+			helptext.show(node);
+		}, 100);
 	},
 	
 	focusJumpto: function() {

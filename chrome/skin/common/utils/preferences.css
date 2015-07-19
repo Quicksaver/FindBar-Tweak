@@ -68,6 +68,7 @@ page[currentcategory="paneAbout"] #main-footer {
 }
 
 /* I hope this doesn't break anything... */
-checkbox.highlight {
+checkbox.highlight,
+radio.highlight {
 	-moz-appearance: none;
 }

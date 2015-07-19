@@ -1,4 +1,4 @@
-Modules.VERSION = '2.3.4';
+Modules.VERSION = '2.3.5';
 Modules.UTILS = true;
 
 // dependsOn - object that adds a dependson attribute functionality to xul preference elements.
@@ -121,13 +121,14 @@ this.dependsOn = {
 };
 
 
-// scales -	every <scale> node should be properly initialized with a "prefScale" attribute instead of a "preference" attribute.
+// scales -	every <scale> and <textbox type="number"> node should be properly initialized with a "prefScale" attribute instead of a "preference" attribute.
 //		Setting a "preference" attribute would make the scale very sluggish to move. Instead, we use a more aSynchronous process, so the UI doesn't stutter.
 this.scales = {
 	init: function() {
-		var scales = $$('scale[prefScale]');
+		var scales = $$('scale[prefScale],textbox[type="number"][prefScale]');
 		for(let scale of scales) {
 			scale._pref = pref = $(scale.getAttribute('prefScale'));
+			scale._pref.setElementValue(scale);
 			
 			scale.handleEvent = function(e) {
 				if(this._timer) {
@@ -135,17 +136,23 @@ this.scales = {
 					delete this._timer;
 				}
 				
+				if(this._handling) { return; }
+				
 				switch(e.target) {
 					case this:
 						this._timer = aSync(() => {
-							this._pref.value = this.value;
+							this._handling = true;
+							this._pref.value = this._pref.getElementValue(this);
+							this._handling = false;
 							delete this._timer;
 						}, 250);
 						break;
 					
 					case this._pref:
 						this._timer = aSync(() => {
-							this.value = this._pref.value;
+							this._handling = true;
+							this._pref.setElementValue(this);
+							this._handling = false;
 							delete this._timer;
 						}, 250);
 						break;
@@ -154,13 +161,11 @@ this.scales = {
 			
 			Listeners.add(scale, 'change', scale);
 			Listeners.add(scale._pref, 'change', scale);
-			
-			scale.value = scale._pref.value;
 		}
 	},
 	
 	uninit: function() {
-		var scales = $$('scale[prefScale]');
+		var scales = $$('scale[prefScale],textbox[type="number"][prefScale]');
 		for(let scale of scales) {
 			Listeners.remove(scale, 'change', scale);
 			Listeners.remove(scale._pref, 'change', scale);

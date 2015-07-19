@@ -55,7 +55,7 @@
 					min="1"
 					max="50"
 					style="text-align: center;"
-					preference="pref-minNoDelay"/>
+					prefScale="pref-minNoDelay"/>
 				<label value="&OptminNoDelay.labelb;"/>
 			</hbox>
 		</groupbox>
@@ -75,7 +75,7 @@
 					size="3"
 					min="1"
 					max="10000"
-					preference="pref-gridLimit"/>
+					prefScale="pref-gridLimit"/>
 				<label dependson="pref-useGrid" value="&OptgridLimit.labelb;"/>
 			</hbox>
 			<hbox align="center"
@@ -87,7 +87,7 @@
 					size="2"
 					min="-50"
 					max="50"
-					preference="pref-gridAdjustPadding"/>
+					prefScale="pref-gridAdjustPadding"/>
 				<label dependson="pref-useGrid" value="&OptadjustGridPadding.labelb;"/>
 			</hbox>
 			<hbox align="center"
@@ -99,7 +99,7 @@
 					size="2"
 					min="-50"
 					max="50"
-					preference="pref-gridAdjustWidth"/>
+					prefScale="pref-gridAdjustWidth"/>
 				<label dependson="pref-useGrid" value="&OptadjustGridWidth.labelb;"/>
 			</hbox>
 		</groupbox>

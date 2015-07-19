@@ -93,7 +93,7 @@
 							size="2"
 							min="1"
 							max="100"
-							preference="pref-sightsLimit"/>
+							prefScale="pref-sightsLimit"/>
 					</hbox>
 					<checkbox label="&OptsightsSameColor.label;"
 						helpbox="paneSights-highlights-helptext"
@@ -147,7 +147,7 @@
 						size="1"
 						min="1"
 						max="9"
-						preference="pref-sightsRepeat"/>
+						prefScale="pref-sightsRepeat"/>
 				</hbox>
 			</vbox>
 		</groupbox>

@@ -70,7 +70,7 @@
 					size="3"
 					min="1"
 					max="999"
-					preference="pref-timeout"
+					prefScale="pref-timeout"
 					onsyncfrompreference="return document.getElementById('pref-timeout').value / 1000;" 
 					onsynctopreference="return parseInt(document.getElementById('timeoutTextbox').value || 0) * 1000;"/>
 	            <label dependson="pref-FAYTmode:alwaysquick;!pref-FAYTmode:normal,pref-typeaheadfind" value="&OptFAYTTimeout.afterLabel;"/>

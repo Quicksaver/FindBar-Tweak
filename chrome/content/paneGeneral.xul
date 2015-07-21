@@ -38,17 +38,17 @@
 			<checkbox label="&OptglobalFB.label;"
 				helptext="&OptglobalFB.tooltip;"
 				jump="globalFB"
-				preference="pref-globalFB"/>
+				delayPreference="pref-globalFB"/>
 			<checkbox label="&OptblurCloses.label;"
 				dependson="!pref-globalFB"
 				helptext="&OptblurCloses.tooltip;"
 				jump="blurCloses"
-				preference="pref-blurCloses"/>
+				delayPreference="pref-blurCloses"/>
 			<checkbox label="&OptonStartup.label;"
 				dependson="pref-globalFB"
 				helptext="&OptonStartup.tooltip;"
 				jump="onStartup"
-				preference="pref-onStartup"/>
+				delayPreference="pref-onStartup"/>
 		</groupbox>
 		
 		<groupbox align="start" id="paneGeneral-fayt" collapsed="true" data-category="paneGeneral">
@@ -56,11 +56,11 @@
 			<checkbox label="&OptFAYT.label;"
 				helptext="&OptFAYT.tooltip;"
 				jump="typeaheadfind"
-				preference="pref-typeaheadfind"/>
+				delayPreference="pref-typeaheadfind"/>
 			<checkbox label="&OptkeepButtons.label;"
 				helptext="&OptkeepButtons.tooltip;"
 				jump="keepButtons"
-				preference="pref-keepButtons"
+				delayPreference="pref-keepButtons"
 				dependson="pref-FAYTmode:alwaysquick;!pref-FAYTmode:normal,pref-typeaheadfind"/>
 			<hbox align="center" helptext="&OptFAYTTimeout.tooltip;" jump="timeout">
 				<label dependson="pref-FAYTmode:alwaysquick;!pref-FAYTmode:normal,pref-typeaheadfind" value="&OptFAYTTimeout.beforeLabel;"/>
@@ -70,7 +70,7 @@
 					size="3"
 					min="1"
 					max="999"
-					prefScale="pref-timeout"
+					delayPreference="pref-timeout"
 					onsyncfrompreference="return document.getElementById('pref-timeout').value / 1000;" 
 					onsynctopreference="return parseInt(document.getElementById('timeoutTextbox').value || 0) * 1000;"/>
 	            <label dependson="pref-FAYTmode:alwaysquick;!pref-FAYTmode:normal,pref-typeaheadfind" value="&OptFAYTTimeout.afterLabel;"/>
@@ -81,7 +81,7 @@
 			<caption label="&OptFAYTmode.caption;"/>
 			<radiogroup align="start"
 				helpbox="paneGeneral-mode-helptext"
-				preference="pref-FAYTmode">
+				delayPreference="pref-FAYTmode">
 				<radio dependson="pref-typeaheadfind"
 					label="&OptFAYTmode.quickFind.label;"
 					jump="FAYTmode"
@@ -108,14 +108,14 @@
 				<checkbox label="&OptfindInTabs.label;"
 					helpbox="paneGeneral-FIT-helptext"
 					jump="findInTabs"
-					preference="pref-findInTabs"/>
+					delayPreference="pref-findInTabs"/>
 			</caption>
 			<checkbox class="indent"
 				label="&OptmultipleFITFull.label;"
 				helpbox="paneGeneral-FIT-helptext"
 				jump="multipleFITFull"
 				dependson="pref-findInTabs"
-				preference="pref-multipleFITFull"/>
+				delayPreference="pref-multipleFITFull"/>
 			<vbox id="paneGeneral-FIT-helptext" collapsed="true">
 				<description>&OptfindInTabs.tooltip;</description>
 				<description style="font-weight:bold; margin-top:1em;">&OptmultipleFITFull.label;</description>

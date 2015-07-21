@@ -1,10 +1,10 @@
-Modules.VERSION = '2.3.5';
+Modules.VERSION = '2.4.0';
 Modules.UTILS = true;
 
 // dependsOn - object that adds a dependson attribute functionality to xul preference elements.
 // Just add the attribute to the desired xul element and let the script do its thing. dependson accepts comma-separated or semicolon-separated strings in the following format:
 //	[!]element[:value] where:
-//		element - id of an element associated with a preference or the id of the preference element
+//		element - id of the preference element
 //		(optional) ! - before element, checks for the opposite condition
 //		(optional) :value - value is some specific value that element must have in order for the condition to return true
 //	To condition for several dependencies: ',' is equivalent to AND and ';' to OR
@@ -24,7 +24,7 @@ this.dependsOn = {
 	handleEvent: function(e) {
 		if(e.target.localName != 'preference' || !e.target.id) { return; }
 		
-		var fields = $$("[preference='"+e.target.id+"']");
+		var fields = $$("[delayPreference='"+e.target.id+"'],[preference='"+e.target.id+"']");
 		var elements = this.getAll();
 		var alreadyChanged = new Set();
 		
@@ -51,14 +51,24 @@ this.dependsOn = {
 		}
 	},
 	
-	updateAll: function() {
+	init: function() {
+		this.updateAll();
+		
+		Listeners.add(window, "change", this);
+	},
+	
+	uninit: function() {
+		Listeners.remove(window, "change", this);
+	},
+	
+	updateAll: function(override) {
 		let elements = this.getAll();
 		for(let node of elements) {
-			this.updateElement(node);
+			this.updateElement(node, override);
 		}
 	},
 	
-	updateElement: function(el) {
+	updateElement: function(el, override) {
 		let attr = el.getAttribute('dependson');
 		if(!attr) { return; }
 		
@@ -87,9 +97,6 @@ this.dependsOn = {
 					return;
 				}
 				
-				if(pref.localName != 'preference') {
-					pref = $(pref.getAttribute('preference'));
-				}
 				switch(pref.type) {
 					case 'int':
 						var value = (dependency.length == 2) ? parseInt(dependency[1]) : 0;
@@ -103,8 +110,10 @@ this.dependsOn = {
 						break;
 				}
 				
+				let prefValue = (override && override.id == pref.id) ? override.value : pref.value;
+				
 				a++;
-				if( (!inverse && pref.value !== value) || (inverse && pref.value === value) ) {
+				if( (!inverse && prefValue !== value) || (inverse && prefValue === value) ) {
 					if(a < alternates.length) { continue; }
 					
 					el.setAttribute('disabled', 'true');
@@ -121,73 +130,144 @@ this.dependsOn = {
 };
 
 
-// scales -	every <scale> and <textbox type="number"> node should be properly initialized with a "prefScale" attribute instead of a "preference" attribute.
-//		Setting a "preference" attribute would make the scale very sluggish to move. Instead, we use a more aSynchronous process, so the UI doesn't stutter.
-this.scales = {
-	init: function() {
-		var scales = $$('scale[prefScale],textbox[type="number"][prefScale]');
-		for(let scale of scales) {
-			scale._pref = pref = $(scale.getAttribute('prefScale'));
-			scale._pref.setElementValue(scale);
+// delayPreferences -	every node pointing to a preference should be properly initialized with a "delayPreference" attribute instead of a "preference" attribute.
+//			The native handler is very jumpy, for example a scale is very sluggish to move. Instead, we use a more aSynchronous process, so the UI doesn't stutter.
+//			This is similar to the dealyPreference attribute in the native handler, the biggest is the delay is different, and that is only present in FF41+;
+//			see http://mxr.mozilla.org/mozilla-central/source/toolkit/content/widgets/preferences.xml or https://bugzilla.mozilla.org/show_bug.cgi?id=1008169
+this.delayPreferences = {
+	handleEvent: function(e) {
+		switch(e.type) {
+			case 'command':
+				if(e.sourceEvent) {
+					e = e.sourceEvent;
+				}
+				this.updateElement(e.target);
+				break;
 			
-			scale.handleEvent = function(e) {
+			case 'select':
+				if(e.target.localName != 'colorpicker') { break; }
+				// no break;
+				
+			case 'change':
+				if(e.target.localName == 'preference') {
+					if(e.target._updateItems) {
+						for(let item of e.target._updateItems) {
+							item._updateFromPref();
+						}
+					}
+					break;
+				}
+				// no break;
+				
+			case 'input':
+				this.updateElement(e.target);
+				break;
+		}
+	},
+	
+	updateElement: function(aElement) {
+		var element = aElement;
+		while(element && element.nodeType == window.Node.ELEMENT_NODE && !element.hasAttribute("delayPreference")) {
+			element = element.parentNode;
+		}
+		if(element.nodeType != window.Node.ELEMENT_NODE) {
+			element = aElement;
+		}
+		
+		if(element._persistToPref) {
+			element._persistToPref();
+		}
+	},
+	
+	init: function() {
+		// listen to changes made in the window
+		Listeners.add(window, 'change', this);
+		Listeners.add(window, 'input', this);
+		Listeners.add(window, 'select', this);
+		Listeners.add(window, 'command', this);
+		
+		var nodes = $$('[delayPreference]');
+		for(let node of nodes) {
+			node._pref = $(node.getAttribute('delayPreference'));
+			node._pref.setElementValue(node);
+			
+			// add this item (node) to the list of nodes to be updated when the preference changes, so it doesn't have to look up through the DOM every time
+			if(!node._pref._updateItems) {
+				node._pref._updateItems = [];
+				
+				Listeners.add(node._pref, 'change', this);
+			}
+			node._pref._updateItems.push(node);
+			
+			node._checkHandling = function() {
 				if(this._timer) {
 					this._timer.cancel();
 					delete this._timer;
 				}
-				
-				if(this._handling) { return; }
-				
-				switch(e.target) {
-					case this:
-						this._timer = aSync(() => {
-							this._handling = true;
-							this._pref.value = this._pref.getElementValue(this);
-							this._handling = false;
-							delete this._timer;
-						}, 250);
-						break;
-					
-					case this._pref:
-						this._timer = aSync(() => {
-							this._handling = true;
-							this._pref.setElementValue(this);
-							this._handling = false;
-							delete this._timer;
-						}, 250);
-						break;
-				}
+				return !this._handling;
 			};
 			
-			Listeners.add(scale, 'change', scale);
-			Listeners.add(scale._pref, 'change', scale);
+			// will be called when a user changes any preference in the pane
+			node._persistToPref = function() {
+				if(!this._checkHandling()) { return; }
+				
+				// our delayed system of persisting prefs shouldn't interfere with the changes in the UI being immediate
+				dependsOn.updateAll({
+					id: this._pref.id,
+					value: this._pref.getElementValue(this)
+				});
+				
+				this._timer = aSync(() => {
+					this._handling = true;
+					this._pref.value = this._pref.getElementValue(this);
+					this._handling = false;
+					delete this._timer;
+				}, 250);
+			};
+			
+			// this updates the value on the item node from the preference
+			node._updateFromPref = function() {
+				if(!this._checkHandling()) { return; }
+				
+				this._handling = true;
+				this._pref.setElementValue(this);
+				this._handling = false;
+			};
 		}
 	},
 	
 	uninit: function() {
-		var scales = $$('scale[prefScale],textbox[type="number"][prefScale]');
-		for(let scale of scales) {
-			Listeners.remove(scale, 'change', scale);
-			Listeners.remove(scale._pref, 'change', scale);
+		Listeners.remove(window, 'change', this);
+		Listeners.remove(window, 'input', this);
+		Listeners.remove(window, 'select', this);
+		Listeners.remove(window, 'command', this);
+		
+		var nodes = $$('[delayPreference]');
+		for(let node of nodes) {
+			Listeners.remove(node._pref, 'change', this);
 			
 			// make sure we don't lose any changes, for those fast as lightning users out there
-			if(scale._timer) {
-				scale._timer.cancel();
-				scale._timer.handler();
-				delete scale._timer;
+			if(node._timer) {
+				node._timer.cancel();
+				node._timer.handler();
+				delete node._timer;
 			}
 			
-			delete scale._pref;
+			delete node._pref._updateItems;
+			delete node._pref;
+			delete node._checkHandling;
+			delete node._persistToPref;
+			delete node._updateFromPref;
 		}
 	}
 };
 
 // keys - should automatically take care of all the labels, entries and actions of any keysets to be registered through the Keysets object.
 // It looks for and expects each keyset to be layouted (is this even a word?) in the XUL options page as such:
-// 	<checkbox keysetAccel="keyName" preference="pref-to-accel"/>
-//	<checkbox keysetAlt="keyName" preference="pref-to-alt"/>
-//	<checkbox keysetShift="keyName" preference="pref-to-shift"/>
-//	<menulist keyset="keyName" preference="pref-to-keycode"/>
+// 	<checkbox keysetAccel="keyName" delayPreference="pref-to-accel"/>
+//	<checkbox keysetAlt="keyName" delayPreference="pref-to-alt"/>
+//	<checkbox keysetShift="keyName" delayPreference="pref-to-shift"/>
+//	<menulist keyset="keyName" delayPreference="pref-to-keycode"/>
 this.keys = {
 	all: [],
 	
@@ -255,7 +335,7 @@ this.keys = {
 			}
 			if(key.keycode == 'none') {
 				key.menu.parentNode.selectedItem = key.menu.firstChild;
-				$(key.menu.parentNode.getAttribute('preference')).value = 'none';
+				$(key.menu.parentNode.getAttribute('delayPreference')).value = 'none';
 			}
 			
 			for(let item of key.menu.childNodes) {
@@ -1040,10 +1120,8 @@ Modules.LOADMODULE = function() {
 	});
 	
 	callOnLoad(window, function() {
-		dependsOn.updateAll();
-		Listeners.add(window, "change", dependsOn);
-		
-		scales.init();
+		delayPreferences.init();
+		dependsOn.init();
 		keys.init();
 		categories.init();
 		controllers.init();
@@ -1063,8 +1141,8 @@ Modules.LOADMODULE = function() {
 };
 
 Modules.UNLOADMODULE = function() {
-	Listeners.remove(window, "change", dependsOn);
-	scales.uninit();
+	dependsOn.uninit();
+	delayPreferences.uninit();
 	keys.uninit();
 	categories.uninit();
 	controllers.uninit();

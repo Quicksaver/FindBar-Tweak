@@ -38,19 +38,19 @@
 			<checkbox label="&OptsightsCurrent.label;"
 				helpbox="paneSights-current-helptext"
 				jump="sightsCurrent"
-				preference="pref-sightsCurrent"/>
+				delayPreference="pref-sightsCurrent"/>
 			<vbox align="center" class="indent">
 				<vbox align="start">
 					<checkbox label="&OptsightsSameColorCurrent.label;"
 						helpbox="paneSights-current-helptext"
 						jump="sightsSameColor"
 						dependson="pref-sightsCurrent"
-						preference="pref-sightsSameColor"/>
+						delayPreference="pref-sightsSameColor"/>
 					<checkbox label="&OptsightsSameColor.label;"
 						helpbox="paneSights-current-helptext"
 						jump="sightsSameColorAll"
 						dependson="pref-sightsCurrent,!pref-sightsSameColor"
-						preference="pref-sightsSameColorAll"/>
+						delayPreference="pref-sightsSameColorAll"/>
 				</vbox>
 				<hbox align="center"
 					helptext="&OptsightsColor.tooltip;"
@@ -58,7 +58,7 @@
 					<colorpicker id="sightsColor"
 						dependson="pref-sightsCurrent,!pref-sightsSameColor,!pref-sightsSameColorAll"
 						type="button"
-						preference="pref-sightsColor"/>
+						delayPreference="pref-sightsColor"/>
 					<label class="text-link"
 						href="#"
 						dependson="pref-sightsCurrent,!pref-sightsSameColor,!pref-sightsSameColorAll"
@@ -81,7 +81,7 @@
 			<checkbox label="&OptsightsHighlights.label;"
 				helpbox="paneSights-highlights-helptext"
 				jump="sightsHighlights"
-				preference="pref-sightsHighlights"/>
+				delayPreference="pref-sightsHighlights"/>
 			<vbox align="center" class="indent">
 				<vbox align="start">
 					<hbox align="center"
@@ -93,13 +93,13 @@
 							size="2"
 							min="1"
 							max="100"
-							prefScale="pref-sightsLimit"/>
+							delayPreference="pref-sightsLimit"/>
 					</hbox>
 					<checkbox label="&OptsightsSameColor.label;"
 						helpbox="paneSights-highlights-helptext"
 						jump="sightsAllSameColor"
 						dependson="pref-sightsHighlights"
-						preference="pref-sightsAllSameColor"/>
+						delayPreference="pref-sightsAllSameColor"/>
 				</vbox>
 				<hbox align="center"
 					helptext="&OptsightsColor.tooltip;"
@@ -107,7 +107,7 @@
 					<colorpicker id="sightsAllColor"
 						dependson="pref-sightsHighlights,!pref-sightsAllSameColor"
 						type="button"
-						preference="pref-sightsAllColor"/>
+						delayPreference="pref-sightsAllColor"/>
 					<label class="text-link"
 						href="#"
 						dependson="pref-sightsHighlights,!pref-sightsAllSameColor"
@@ -127,7 +127,7 @@
 		<groupbox align="start" id="paneSights-style" collapsed="true" data-category="paneSights">
 			<caption label="&OptsightsStyle.label;"/>
 			<vbox align="center">
-				<radiogroup jump="sightsStyle,&OptsightsStyle.label;" preference="pref-sightsStyle">
+				<radiogroup jump="sightsStyle,&OptsightsStyle.label;" delayPreference="pref-sightsStyle">
 					<hbox>
 						<radio label="&OptsightsStyle.focus;"
 							value="focus"
@@ -147,7 +147,7 @@
 						size="1"
 						min="1"
 						max="9"
-						prefScale="pref-sightsRepeat"/>
+						delayPreference="pref-sightsRepeat"/>
 				</hbox>
 			</vbox>
 		</groupbox>

@@ -37,18 +37,18 @@
 			<checkbox label="&OptctrlFprefill.label;"
 				helpbox="paneTweaks-shortcut-helptext"
 				jump="FAYTprefill"
-				preference="pref-FAYTprefill"/>
+				delayPreference="pref-FAYTprefill"/>
 			<checkbox id="ctrlFClosesCheckbox"
 				label="&OptctrlFCloses.win;"
 				helpbox="paneTweaks-shortcut-helptext"
 				jump="ctrlFCloses"
-				preference="pref-ctrlFCloses"/>
+				delayPreference="pref-ctrlFCloses"/>
 			<checkbox label="&OptctrlFOnFocused.label;"
 				helpbox="paneTweaks-shortcut-helptext"
 				jump="ctrlFClosesOnFocused"
 				class="indent"
 				dependson="pref-ctrlFCloses"
-				preference="pref-ctrlFClosesOnFocused"/>
+				delayPreference="pref-ctrlFClosesOnFocused"/>
 			<vbox id="paneTweaks-shortcut-helptext" collapsed="true">
 				<description style="font-weight:bold;">&OptctrlFprefill.label;</description>
 				<description>&OptctrlFprefill.tooltip.a;</description>
@@ -65,19 +65,19 @@
 			<checkbox label="&OptfillSelectedText.label;"
 				helpbox="paneTweaks-text-helptext"
 				jump="fillSelectedText"
-				preference="pref-fillSelectedText"/>
+				delayPreference="pref-fillSelectedText"/>
 			<checkbox label="&OptemptySelectedText.label;"
 				helpbox="paneTweaks-text-helptext"
 				jump="emptySelectedText"
 				class="indent"
 				dependson="pref-fillSelectedText"
-				preference="pref-emptySelectedText"/>
+				delayPreference="pref-emptySelectedText"/>
 			<checkbox label="&OptfillSelectedOpenFindbar.label;"
 				helpbox="paneTweaks-text-helptext"
 				jump="fillTextShowFindBar"
 				class="indent"
 				dependson="pref-fillSelectedText"
-				preference="pref-fillTextShowFindBar"/>
+				delayPreference="pref-fillTextShowFindBar"/>
 			<vbox id="paneTweaks-text-helptext" collapsed="true">
 				<description style="font-weight:bold;">&OptfillSelectedText.label;</description>
 				<description>&OptfillSelectedText.tooltip.a;</description>
@@ -93,10 +93,10 @@
 			<description>&OptglobalBehavior.warning;</description>
 			<checkbox label="&OptdblClickEatSpaces.label;"
 				jump="layoutEatSpaces"
-				preference="pref-layoutEatSpaces"/>
+				delayPreference="pref-layoutEatSpaces"/>
 			<checkbox label="&OptdblClickStopAtPunctuation.label;"
 				jump="layoutStopAtPunctuation"
-				preference="pref-layoutStopAtPunctuation"/>
+				delayPreference="pref-layoutStopAtPunctuation"/>
 		</groupbox>
 		
 		<groupbox align="start" id="paneTweaks-natives" collapsed="true" data-category="paneTweaks">
@@ -106,7 +106,7 @@
 				<checkbox label="&OptResetNativeOnDisabled.label;"
 					helptext="&OptResetNativeOnDisabled.tooltip;"
 					jump="resetNative"
-					preference="pref-resetNative"/>
+					delayPreference="pref-resetNative"/>
 				<button label="&OptResetNativeNow.label;"
 					helptext="&OptResetNativeNow.tooltip;"
 					jump="resetNativeNow"

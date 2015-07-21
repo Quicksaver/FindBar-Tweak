@@ -48,7 +48,7 @@
 		<vbox id="paneAbout-wrapper" flex="1" collapsed="true" data-category="paneAbout">
 			<html:div class="row">
 				<html:div id="general" class="main-column">
-					<checkbox label="&about.notifyOnUpdates;" preference="pref-showTabOnUpdates"/>
+					<checkbox label="&about.notifyOnUpdates;" delayPreference="pref-showTabOnUpdates"/>
 					<html:p>&about.description;</html:p>
 					<html:p>&about.descriptionB;</html:p>
 					<html:p class="signature">&about.signature;</html:p>

@@ -37,15 +37,15 @@
 			<checkbox label="&OpthighlightByDefault.label;"
 				helptext="&OpthighlightByDefault.tooltip;"
 				jump="highlightByDefault"
-				preference="pref-highlightByDefault"/>
+				delayPreference="pref-highlightByDefault"/>
 			<checkbox label="&OpthighlightOnFindAgain.label;"
 				helptext="&OpthighlightOnFindAgain.tooltip;"
 				jump="highlightOnFindAgain"
-				preference="pref-highlightOnFindAgain"/>
+				delayPreference="pref-highlightOnFindAgain"/>
 			<checkbox label="&OpthideWhenFinderHidden.label;"
 				helptext="&OpthideWhenFinderHidden.tooltip;"
 				jump="hideWhenFinderHidden"
-				preference="pref-hideWhenFinderHidden"/>
+				delayPreference="pref-hideWhenFinderHidden"/>
 			<hbox align="center"
 				helptext="&OptminNoDelay.tooltip;"
 				jump="minNoDelay">
@@ -55,7 +55,7 @@
 					min="1"
 					max="50"
 					style="text-align: center;"
-					prefScale="pref-minNoDelay"/>
+					delayPreference="pref-minNoDelay"/>
 				<label value="&OptminNoDelay.labelb;"/>
 			</hbox>
 		</groupbox>
@@ -65,7 +65,7 @@
 			<checkbox label="&OptgridInScrollbar.label;"
 				helptext="&OptgridInScrollbar.tooltip;"
 				jump="useGrid"
-				preference="pref-useGrid"/>
+				delayPreference="pref-useGrid"/>
 			<hbox align="center"
 				helptext="&OptgridLimit.tooltip;"
 				jump="gridLimit">
@@ -75,7 +75,7 @@
 					size="3"
 					min="1"
 					max="10000"
-					prefScale="pref-gridLimit"/>
+					delayPreference="pref-gridLimit"/>
 				<label dependson="pref-useGrid" value="&OptgridLimit.labelb;"/>
 			</hbox>
 			<hbox align="center"
@@ -87,7 +87,7 @@
 					size="2"
 					min="-50"
 					max="50"
-					prefScale="pref-gridAdjustPadding"/>
+					delayPreference="pref-gridAdjustPadding"/>
 				<label dependson="pref-useGrid" value="&OptadjustGridPadding.labelb;"/>
 			</hbox>
 			<hbox align="center"
@@ -99,7 +99,7 @@
 					size="2"
 					min="-50"
 					max="50"
-					prefScale="pref-gridAdjustWidth"/>
+					delayPreference="pref-gridAdjustWidth"/>
 				<label dependson="pref-useGrid" value="&OptadjustGridWidth.labelb;"/>
 			</hbox>
 		</groupbox>
@@ -109,7 +109,7 @@
 				helptext="&Optcolor.tooltip;"
 				jump="highlightColor">
 				<label value="&Optcolor.label;"/>
-				<colorpicker id="highlightsColor" type="button" preference="pref-highlightColor"/>
+				<colorpicker id="highlightsColor" type="button" delayPreference="pref-highlightColor"/>
 				<label class="text-link"
 					href="#"
 					onclick="document.getElementById('pref-highlightColor').reset(); return false;"

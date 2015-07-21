@@ -37,11 +37,11 @@
 			<checkbox label="&OptmovetoTop.label;"
 				helpbox="paneAppearance-position-helptext"
 				jump="movetoTop"
-				preference="pref-movetoTop"/>
+				delayPreference="pref-movetoTop"/>
 			<checkbox label="&OptmovetoRight.label;"
 				helpbox="paneAppearance-position-helptext"
 				jump="movetoRight"
-				preference="pref-movetoRight"/>
+				delayPreference="pref-movetoRight"/>
 			<vbox id="paneAppearance-position-helptext" collapsed="true">
 				<description style="font-weight:bold;">&OptmovetoTop.label;</description>
 				<description>&OptmovetoTop.tooltip;</description>
@@ -55,15 +55,15 @@
 			<checkbox label="&OptuseCounter.label;"
 				helpbox="paneAppearance-elements-helptext"
 				jump="useCounter"
-				preference="pref-useCounter"/>
+				delayPreference="pref-useCounter"/>
 			<checkbox label="&OpthideClose.label;"
 				helpbox="paneAppearance-elements-helptext"
 				jump="hideClose"
-				preference="pref-hideClose"/>
+				delayPreference="pref-hideClose"/>
 			<checkbox label="&OpthideLabels.label;"
 				helpbox="paneAppearance-elements-helptext"
 				jump="hideLabels"
-				preference="pref-hideLabels"/>
+				delayPreference="pref-hideLabels"/>
 			<vbox id="paneAppearance-elements-helptext" collapsed="true">
 				<description style="font-weight:bold;">&OptuseCounter.label;</description>
 				<description>&OptuseCounter.tooltip;</description>
@@ -81,7 +81,7 @@
 					<hbox align="center"
 						helpbox="paneAppearance-currentcolor-helptext"
 						jump="selectColor,&OptselectColor.label;">
-						<colorpicker id="selectColor" type="button" preference="pref-selectColor"/>
+						<colorpicker id="selectColor" type="button" delayPreference="pref-selectColor"/>
 						<label class="text-link"
 						href="#"
 						onclick="document.getElementById('pref-selectColor').reset(); return false;"
@@ -90,7 +90,7 @@
 					<checkbox label="&OptcolorKeepOSdefault.label;"
 						helpbox="paneAppearance-currentcolor-helptext"
 						jump="keepSelectContrast"
-						preference="pref-keepSelectContrast"/>
+						delayPreference="pref-keepSelectContrast"/>
 				</vbox>
 			</hbox>
 			<vbox id="paneAppearance-currentcolor-helptext" collapsed="true">

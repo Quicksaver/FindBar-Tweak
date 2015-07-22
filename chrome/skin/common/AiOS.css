@@ -1,0 +1,10 @@
+@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
+@-moz-document url("chrome://browser/content/browser.xul") {
+	
+	/* AiOS's stylesheet uses the direction property to set the side of the sidebar,
+	   that can interfere with the layout of other elements, like the findbar's rounded corner being on the wrong side */
+	window[aiosOrient="right"][aiosMode="ltr"] #browser findbar:-moz-locale-dir(rtl),
+	window[aiosOrient="right"][aiosMode="ltr"] #browser findbar *:-moz-locale-dir(rtl) {
+		direction: rtl;
+	}
+}

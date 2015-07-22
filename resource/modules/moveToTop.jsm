@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.7';
+Modules.VERSION = '2.0.8';
 
 this.__defineGetter__('gBrowserBox', function() { return $('browser'); });
 this.__defineGetter__('gAppContent', function() { return $('appcontent'); });
@@ -416,6 +416,7 @@ Modules.LOADMODULE = function() {
 	Listeners.add(window, 'OpenedFindBar', moveTop);
 	Listeners.add(window, "UpdatedStatusFindBar", moveTopAsNeeded);
 	Listeners.add(window, 'FindBarUIChanged', moveTopAsNeeded);
+	Listeners.add(window, 'TabSelect', moveTopAsNeeded);
 	
 	// Reposition the findbar when the window resizes
 	Listeners.add(window, "resize", delayMoveTop);
@@ -494,6 +495,7 @@ Modules.UNLOADMODULE = function() {
 	Listeners.remove(window, 'WillOpenFindBar', setOnTop);
 	Listeners.remove(window, 'OpenedFindBar', moveTop);
 	Listeners.remove(window, "UpdatedStatusFindBar", moveTopAsNeeded);
+	Listeners.remove(window, 'TabSelect', moveTopAsNeeded);
 	
 	deinitFindBar('movetotop');
 	deinitFindBar('fixCloseButtonTop');

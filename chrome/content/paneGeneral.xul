@@ -62,7 +62,10 @@
 				jump="keepButtons"
 				delayPreference="pref-keepButtons"
 				dependson="pref-FAYTmode:alwaysquick;!pref-FAYTmode:normal,pref-typeaheadfind"/>
-			<hbox align="center" helptext="&OptFAYTTimeout.tooltip;" jump="timeout">
+			<hbox align="center"
+				dependson="pref-FAYTmode:alwaysquick;!pref-FAYTmode:normal,pref-typeaheadfind" 
+				helptext="&OptFAYTTimeout.tooltip;"
+				jump="timeout">
 				<label dependson="pref-FAYTmode:alwaysquick;!pref-FAYTmode:normal,pref-typeaheadfind" value="&OptFAYTTimeout.beforeLabel;"/>
 				<textbox id="timeoutTextbox"
 					dependson="pref-FAYTmode:alwaysquick;!pref-FAYTmode:normal,pref-typeaheadfind" 
@@ -80,16 +83,18 @@
 		<groupbox align="start" id="paneGeneral-mode" collapsed="true" data-category="paneGeneral">
 			<caption label="&OptFAYTmode.caption;"/>
 			<radiogroup align="start"
-				helpbox="paneGeneral-mode-helptext"
 				delayPreference="pref-FAYTmode">
 				<radio dependson="pref-typeaheadfind"
 					label="&OptFAYTmode.quickFind.label;"
+					helpbox="paneGeneral-mode-helptext"
 					jump="FAYTmode"
 					value="quick"/>
 				<radio label="&OptFAYTmode.alwaysQuick.label;"
+					helpbox="paneGeneral-mode-helptext"
 					jump="FAYTmode"
 					value="alwaysquick"/>
 				<radio label="&OptFAYTmode.normalFind.label;"
+					helpbox="paneGeneral-mode-helptext"
 					jump="FAYTmode"
 					value="normal"/>
 			</radiogroup>

@@ -53,6 +53,7 @@
 						delayPreference="pref-sightsSameColorAll"/>
 				</vbox>
 				<hbox align="center"
+					dependson="pref-sightsCurrent,!pref-sightsSameColor,!pref-sightsSameColorAll"
 					helptext="&OptsightsColor.tooltip;"
 					jump="sightsColor">
 					<colorpicker id="sightsColor"
@@ -102,6 +103,7 @@
 						delayPreference="pref-sightsAllSameColor"/>
 				</vbox>
 				<hbox align="center"
+					dependson="pref-sightsHighlights,!pref-sightsAllSameColor"
 					helptext="&OptsightsColor.tooltip;"
 					jump="sightsAllColor">
 					<colorpicker id="sightsAllColor"

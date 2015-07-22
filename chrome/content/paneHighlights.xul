@@ -67,6 +67,7 @@
 				jump="useGrid"
 				delayPreference="pref-useGrid"/>
 			<hbox align="center"
+				dependson="pref-useGrid"
 				helptext="&OptgridLimit.tooltip;"
 				jump="gridLimit">
 				<label dependson="pref-useGrid" value="&OptgridLimit.labela;"/>
@@ -79,6 +80,7 @@
 				<label dependson="pref-useGrid" value="&OptgridLimit.labelb;"/>
 			</hbox>
 			<hbox align="center"
+				dependson="pref-useGrid"
 				helptext="&OptadjustGridPadding.tooltip;"
 				jump="gridAdjustPadding">
 				<label dependson="pref-useGrid" value="&OptadjustGridPadding.labela;"/>
@@ -91,6 +93,7 @@
 				<label dependson="pref-useGrid" value="&OptadjustGridPadding.labelb;"/>
 			</hbox>
 			<hbox align="center"
+				dependson="pref-useGrid"
 				helptext="&OptadjustGridWidth.tooltip;"
 				jump="gridAdjustWidth">
 				<label dependson="pref-useGrid" value="&OptadjustGridWidth.labela;"/>

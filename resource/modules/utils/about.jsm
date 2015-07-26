@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.0';
+Modules.VERSION = '1.0.1';
 
 this.about = {
 	kNS: 'http://www.w3.org/1999/xhtml',
@@ -12,6 +12,10 @@ this.about = {
 		if(e.target == document.activeElement) {
 			document.activeElement.blur();
 		}
+	},
+	
+	paneShown: function() {
+		this.api();
 	},
 	
 	init: function() {
@@ -43,8 +47,8 @@ this.about = {
 		// init AddToAny stuff (share buttons)
 		this.A2A();
 		
-		// fetch the development hours data and show it
-		this.api();
+		// schedule the API check for only when the About pane is actually shown
+		categories.watchPane('paneAbout', this);
 		
 		// these are so we can click html links in a xul window without their outline becoming permanent (until clicking another link)
 		Listeners.add(window, 'mouseup', this);
@@ -54,6 +58,8 @@ this.about = {
 	uninit: function() {
 		Listeners.remove(window, 'mouseup', this);
 		Listeners.remove(window, 'mouseover', this, true);
+		
+		categories.unwatchPane('paneAbout', this);
 	},
 	
 	checkUpdates: function() {
@@ -185,6 +191,7 @@ this.about = {
 		}
 	},
 	
+	// fetch the development hours data and show it; this will only happen when the about pane is actually shown
 	api: function() {
 		if(!addonUris.api) { return; }
 		

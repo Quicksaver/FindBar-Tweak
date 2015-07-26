@@ -26,6 +26,9 @@ page[currentcategory="paneAbout"] #header-about {
 	-moz-margin-end: 24px;
 }
 
+/* nodes that aren't visible but should still occupy their space in the layout */
+[invisible="true"] { visibility: hidden; }
+
 /* top area, general information */
 
 #general {

@@ -1,4 +1,4 @@
-Modules.VERSION = '2.4.0';
+Modules.VERSION = '2.4.1';
 Modules.UTILS = true;
 
 // dependsOn - object that adds a dependson attribute functionality to xul preference elements.
@@ -370,6 +370,8 @@ this.categories = {
 	get categories () { return $('categories'); },
 	get prefPane () { return $('mainPrefPane'); },
 	
+	watchers: new Map(),
+	
 	handleEvent: function(e) {
 		switch(e.type) {
 			case 'select':
@@ -442,6 +444,55 @@ this.categories = {
 		Listeners.remove(window, "hashchange", this);
 	},
 	
+	// some actions are only necessary when their corresponding category (pane) has been shown,
+	// this method makes this task easy:
+	//	category - (string) the name of the category to wait for; e.g. "paneAbout"
+	//	callback - (method) or (object) with .paneShown method that will be called when the pane is shown
+	//	onlyFirst -	if (bool) true, callback will be called only the first time the category is shown,
+	//			if (bool) false it will be called every time the category is shown; defaults to true.
+	watchPane: function(category, callback, onlyFirst = true) {
+		if(!this.watchers.has(category)) {
+			this.watchers.set(category, new Map());
+		}
+		let pane = this.watchers.get(category);
+		if(!pane.has(callback)) {
+			pane.set(callback, {
+				onlyFirst: onlyFirst,
+				called: false
+			});
+			
+			if(this.lastHash == category) {
+				this.runWatcher(callback, pane.get(callback));
+			}
+		}
+	},
+	
+	unwatchPane: function(category, callback) {
+		if(this.watchers.has(category)) {
+			let pane = this.watchers.get(category);
+			if(pane.has(callback)) {
+				pane.delete(callback);
+				if(pane.size == 0) {
+					this.watchers.delete(category);
+				}
+			}
+		}
+	},
+	
+	runWatcher: function(callback, props) {
+		if(!props.called || !props.onlyFirst) {
+			props.called = true;
+			try {
+				if(typeof(callback) != 'function') {
+					callback.paneShown();
+				} else {
+					callback();
+				}
+			}
+			catch(ex) { Cu.reportError(ex); }
+		}
+	},
+	
 	// Make the space above the categories list shrink on low window heights
 	dynamicPadding: function() {
 		let catPadding = parseInt(getComputedStyle(this.categories).paddingTop);
@@ -502,6 +553,14 @@ this.categories = {
 		&& activeElement == controllers.nodes.jumpto.inputField
 		&& activeElement != document.activeElement) {
 			activeElement.focus();
+		}
+		
+		// run tasks that are scheduled to be called when the current category is shown
+		if(this.watchers.has(category)) {
+			let pane = this.watchers.get(category);
+			for(let [callback, props] of pane) {
+				this.runWatcher(callback, props);
+			}
 		}
 	},
 	

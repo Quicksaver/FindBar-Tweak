@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.4';
+Modules.VERSION = '1.1.5';
 
 this.sights = {
 	allSights: new Set(),
@@ -221,6 +221,13 @@ this.sights = {
 		
 		this.scheduled = aSync(() => {
 			this.scheduled = null;
+			
+			// we don't want to show sights when selecting text in the page and using it as a find query,
+			// it's unnecessary, and a little weird
+			if(self.selectedText && selectedText.noSights) {
+				selectedText.noSights = false;
+				return;
+			}
 			
 			// For pdf in PDF.JS
 			if(isPDFJS) {

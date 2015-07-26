@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.2';
+Modules.VERSION = '2.0.3';
 
 this.fillSelectedText = function(m) {
 	var selText = m.data;
@@ -29,6 +29,9 @@ this.fillSelectedText = function(m) {
 				if(aSelf._findMode != aSelf.FIND_NORMAL) aSelf.close();
 			}, gFindBar._quickFindTimeoutLength, gFindBar);
 		}
+	}
+	else {
+		Messenger.messageBrowser(m.target, 'FillSelectedTextFinished');
 	}
 };
 

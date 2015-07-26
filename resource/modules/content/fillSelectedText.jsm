@@ -1,6 +1,8 @@
-Modules.VERSION = '2.0.1';
+Modules.VERSION = '2.0.2';
 
 this.selectedText = {
+	noSights: false,
+	
 	handleEvent: function(e) {
 		switch(e.type) {
 			case 'mouseup':
@@ -28,6 +30,17 @@ this.selectedText = {
 		}
 	},
 	
+	receiveMessage: function(m) {
+		// +1 is for the ':' after objName
+		let name = m.name.substr(objName.length +1);
+		
+		switch(name) {
+			case 'FillSelectedTextFinished':
+				this.noSights = false;
+				break;
+		}
+	},
+	
 	fill: function() {
 		// we need this even if the findbar hasn't been created in this tab yet; the tab and forth afterwards will initialize everything properly
 		if(typeof(Finder) == 'undefined') {
@@ -36,6 +49,7 @@ this.selectedText = {
 		}
 		
 		if(!Finder.isValid) { return; }
+		this.noSights = true;
 		
 		var selText = Finder.getActiveSelectionText();
 		message('FillSelectedText', selText);
@@ -45,9 +59,13 @@ this.selectedText = {
 Modules.LOADMODULE = function() {
 	Listeners.add(Scope, 'mouseup', selectedText);
 	Listeners.add(Scope, 'keyup', selectedText);
+	
+	listen('FillSelectedTextFinished', selectedText);
 };
 
 Modules.UNLOADMODULE = function() {
 	Listeners.remove(Scope, 'mouseup', selectedText);
 	Listeners.remove(Scope, 'keyup', selectedText);
+	
+	unlisten('FillSelectedTextFinished', selectedText);
 };

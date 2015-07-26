@@ -1,11 +1,13 @@
-Modules.VERSION = '1.0.5';
+Modules.VERSION = '1.0.6';
 Modules.UTILS = true;
 
 // PrefPanes - handles the preferences tab and all its contents for the add-on
-// register(aPane, aModule) - registers a new preferences pane to be appended to the preferences tab
-//	aPane - (str) name of the pane, in the form of a aPane.xul overlay to be found in content/
-//	(optional) aModule -	(str) name of a module to be loaded alongside the overlay, in the form of a aModule.jsm to be found in resource/modules/;
-//				if (bool) true, default to aPane
+// register(aPane, aModules) - registers a new preferences pane to be appended to the preferences tab
+//	aPane - (str) name of the pane, in the form of a aPane.xul overlay to be found in content
+//	(optional) aModules -	(object) containing a list of modules to be loaded when the corresponding categories are shown, in the form { category: module [, ...] }, where:
+//		category - (str) name of the pane as defined in the overlay
+//		module - (str) name of the module to be loaded
+//				or if (bool) true, the object takes the form { aPane: aPane } (only a single property where both category and module take the value of aPane)
 // unregister(aPane) - unregisters a preferences pane from the preferences tab
 //	see register()
 // setList(list) - register a set of panes at once
@@ -27,11 +29,13 @@ this.PrefPanes = {
 		this.initWindow(aSubject);
 	},
 	
-	register: function(aPane, aModule) {
+	register: function(aPane, aModules) {
 		if(!this.panes.has(aPane)) {
-			this.panes.set(aPane, {
-				module: (aModule === true) ? aPane : aModule
-			});
+			if(aModules === true) {
+				aModules = { [aPane]: aPane };
+			}
+			
+			this.panes.set(aPane, aModules);
 		}
 	},
 	
@@ -52,7 +56,7 @@ this.PrefPanes = {
 		Messenger.loadInAll('utils/api');
 		
 		// always add the about pane to the preferences dialog, it should be the last category in the list
-		this.register('utils/about', true);
+		this.register('utils/about', { paneAbout: 'utils/about' });
 		
 		Browsers.callOnAll(aWindow => { this.initWindow(aWindow); }, this.chromeUri);
 		Browsers.register(this, 'pageshow', this.chromeUri);
@@ -241,10 +245,13 @@ this.PrefPanes = {
 		Promise.all(promises).then(() => {
 			aWindow[objName].Modules.load("utils/preferencesUtils");
 			
-			// if any of the panes require their own module, load it now
-			for(let pane of this.panes.values()) {
-				if(pane.module) {
-					aWindow[objName].Modules.load(pane.module);
+			// if any of the panes require their own module, make sure they are registered with the tab's categories object,
+			// so that they are loaded when the corresponding categories are shown
+			for(let modules of this.panes.values()) {
+				if(modules) {
+					for(let category in modules) {
+						aWindow[objName].categories.addModule(category, modules[category]);
+					}
 				}
 			}
 		});

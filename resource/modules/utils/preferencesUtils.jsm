@@ -1,4 +1,4 @@
-Modules.VERSION = '2.4.1';
+Modules.VERSION = '2.4.2';
 Modules.UTILS = true;
 
 // dependsOn - object that adds a dependson attribute functionality to xul preference elements.
@@ -370,7 +370,7 @@ this.categories = {
 	get categories () { return $('categories'); },
 	get prefPane () { return $('mainPrefPane'); },
 	
-	watchers: new Map(),
+	modules: new Map(),
 	
 	handleEvent: function(e) {
 		switch(e.type) {
@@ -442,54 +442,19 @@ this.categories = {
 		Listeners.remove(document.documentElement, "keydown", this);
 		Listeners.remove(this.categories, "mousedown", this);
 		Listeners.remove(window, "hashchange", this);
-	},
-	
-	// some actions are only necessary when their corresponding category (pane) has been shown,
-	// this method makes this task easy:
-	//	category - (string) the name of the category to wait for; e.g. "paneAbout"
-	//	callback - (method) or (object) with .paneShown method that will be called when the pane is shown
-	//	onlyFirst -	if (bool) true, callback will be called only the first time the category is shown,
-	//			if (bool) false it will be called every time the category is shown; defaults to true.
-	watchPane: function(category, callback, onlyFirst = true) {
-		if(!this.watchers.has(category)) {
-			this.watchers.set(category, new Map());
-		}
-		let pane = this.watchers.get(category);
-		if(!pane.has(callback)) {
-			pane.set(callback, {
-				onlyFirst: onlyFirst,
-				called: false
-			});
-			
-			if(this.lastHash == category) {
-				this.runWatcher(callback, pane.get(callback));
-			}
+		
+		for(let module of this.modules.values()) {
+			Modules.unload(module);
 		}
 	},
 	
-	unwatchPane: function(category, callback) {
-		if(this.watchers.has(category)) {
-			let pane = this.watchers.get(category);
-			if(pane.has(callback)) {
-				pane.delete(callback);
-				if(pane.size == 0) {
-					this.watchers.delete(category);
-				}
-			}
+	addModule: function(category, module) {
+		if(!this.modules.has(category)) {
+			this.modules.set(category, module);
 		}
-	},
-	
-	runWatcher: function(callback, props) {
-		if(!props.called || !props.onlyFirst) {
-			props.called = true;
-			try {
-				if(typeof(callback) != 'function') {
-					callback.paneShown();
-				} else {
-					callback();
-				}
-			}
-			catch(ex) { Cu.reportError(ex); }
+		
+		if(this.lastHash == category) {
+			Modules.load(module);
 		}
 	},
 	
@@ -547,20 +512,19 @@ this.categories = {
 		this.search(category, "data-category");
 		document.querySelector(".main-content").scrollTop = 0;
 		
+		// if the current pane requires its own module, load it now that the pane is visible;
+		// this speeds up showing the preferences, by only loading what's needed when it's needed,
+		// which for instance prevents fetching remote data (latest add-on version, development status) when it's not needed
+		if(this.modules.has(category)) {
+			Modules.load(this.modules.get(category));
+		}
+		
 		// changing the location hash will cause the focus to shift to the page, and we want it to stay in the jumpto box if it was there before
 		if(category != 'paneAbout'
 		&& activeElement && controllers.nodes.jumpto
 		&& activeElement == controllers.nodes.jumpto.inputField
 		&& activeElement != document.activeElement) {
 			activeElement.focus();
-		}
-		
-		// run tasks that are scheduled to be called when the current category is shown
-		if(this.watchers.has(category)) {
-			let pane = this.watchers.get(category);
-			for(let [callback, props] of pane) {
-				this.runWatcher(callback, props);
-			}
 		}
 	},
 	

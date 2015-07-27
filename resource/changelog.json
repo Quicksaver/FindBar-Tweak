@@ -1,9 +1,32 @@
 {
-	"current":"2",
-	"knownissues":[
-		["There may be some issues when typing while the Findbar is still opening, especially on slower computers loading large tabs. This does not affect the functionality of the add-on, although it can definitely be bothersome when you don't expect it. I am already trying to improve the responsiveness of the Findbar in order to avoid this (<a target=\"blank\" href=\"https://github.com/Quicksaver/FindBar-Tweak/issues/198\">issue #198</a>)"]
-	],
+	"current":"2.0.1",
 	"releases": {
+		"2.0.1":{
+			"date":"July 27, 2015",
+			"notes":[
+				["new","fr and zh-TW locales"],
+				["new","Undo/Redo/Import/Export/Restore-defaults/Jump-to functions in the preferences"],
+				["updated","zh-CN locale"],
+				["changed","Re-styled and optimized the help tooltips in the preferences"],
+				["changed","Only request the Development Status information when the About pane in the preferences is accessed"],
+				["changed","Show the quick findbar if findbar is hidden when finding (or finding again) and there are no results (<a target=\"blank\" href=\"https://github.com/Quicksaver/FindBar-Tweak/issues/201\">issue #201</a>)"],
+				["bugfix","Minor fixes when deinitializing the add-on"],
+				["bugfix","Improve performance/responsiveness when using the global findbar (<a target=\"blank\" href=\"https://github.com/Quicksaver/FindBar-Tweak/issues/198\">issue #198</a>)"],
+				["bugfix","In RTL layout, the findbar on the bottom would always be on the right, regardless of the preference"],
+				["bugfix","Typing quickly enough before the findbar was actually shown could lead to jumbled up find queries (<a target=\"blank\" href=\"https://github.com/Quicksaver/FindBar-Tweak/issues/198\">issue #198</a>)"],
+				["bugfix","Wrong \"Phrase not found\" status for a moment when opening the findbar sometimes (<a target=\"blank\" href=\"https://github.com/Quicksaver/FindBar-Tweak/issues/198\">issue #198</a>)"],
+				["bugfix","In view source windows, the findbar's close button wouldn't work with the findbar at the top"],
+				["bugfix","Highlight on Find Again would not work at first in new tabs (<a target=\"blank\" href=\"https://github.com/Quicksaver/FindBar-Tweak/issues/201\">issue #201</a>)"],
+				["bugfix","Force LTR layout for the preferences tab options, at least until any RTL locales are included"],
+				["bugfix","Highlights were always placed when navigating to another page, as long as there was text in the findbar, causing slower page loads"],
+				["bugfix","Minor startup improvements"],
+				["bugfix","The preferences, especially the number textboxes, were very sluggish to change, all should be much smoother now"],
+				["bugfix","Sometimes the Place on the Right preference wouldn't be (un)applied immeditately when the findbar was at the top"],
+				["bugfix","Compatibility with <a target=\"blank\" href=\"https://addons.mozilla.org/firefox/addon/all-in-one-sidebar/\">All-in-One Sidebar</a>: moving the sidebar to the right could cause the findbar's corners to be on the wrong sides"],
+				["bugfix","It shouldn't show sights on the text selection when selecting text to be used in the findbar (<a target=\"blank\" href=\"https://github.com/Quicksaver/FindBar-Tweak/issues/205\">issue #205</a>)"],
+				["","Other minor fixes"]
+			]
+		},
 		"2":{
 			"date":"June 25, 2015",
 			"notes":[

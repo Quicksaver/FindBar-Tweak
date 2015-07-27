@@ -1,0 +1,23 @@
+<!ENTITY about.paneTitle "關於">
+<!ENTITY about.version "{v}版本">
+<!ENTITY about.versionDivider " - ">
+<!ENTITY about.uptodate "已為最新版本，恭喜。">
+<!ENTITY about.needsupdate "有更新可用！">
+<!ENTITY about.description "檢查下列本版本之「更新日誌」及「已知問題」。講我知道你找到的任何問題，又或對未來版本的的建議。">
+<!ENTITY about.descriptionB "此為免費附加元件，但修復問題，增加功能及保證其於Firefox更新後的可用性的工作十分繁復，有時更是非常困難。如果你喜歡此附加元件，請支持其持續發展。就如連結所說，「你也可以幫助」！">
+<!ENTITY about.allVersions "顯示所有以前版本的日誌">
+<!ENTITY about.notifyOnUpdates "於下次更新顯示此頁">
+<!ENTITY about.development "發展狀態">
+<!ENTITY about.helpdevelopment "你也可以幫助">
+<!ENTITY about.information "更多資訊">
+<!ENTITY about.home "附加元件首頁">
+<!ENTITY about.fullchangelog "全部更新日誌">
+<!ENTITY about.problems "有問題？">
+<!ENTITY about.tech "於支援頁面描述你的問題">
+<!ENTITY about.email "又或向我寄一封電子郵件">
+<!ENTITY about.author "關於作者">
+<!ENTITY about.trymore "嘗試我所創作的其他附加元件以享有更佳的Firefox體驗！">
+<!ENTITY about.profile "於我的頁面中尋找">
+<!ENTITY about.share "分享！">
+<!ENTITY about.friends "別讓自己一個享有優良瀏覽器，分享予你的好友！">
+<!ENTITY about.moreshare "其他服務…">

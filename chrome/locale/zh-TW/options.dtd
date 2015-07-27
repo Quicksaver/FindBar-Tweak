@@ -1,0 +1,119 @@
+<!ENTITY OptHighlights.label "強調標示">
+<!ENTITY OptSightsTab.label "聚焦">
+<!ENTITY OptGeneral.label "一般">
+<!ENTITY OptAppearance.label "外觀">
+<!ENTITY Opttweaks.label "調整">
+<!ENTITY Optgen.label "搜尋欄選項">
+<!ENTITY Optdisplay.label "搜尋欄位置">
+<!ENTITY OptButtonAndLabels.label "按鍵及說明">
+<!ENTITY Optgrid.label "強調網格">
+<!ENTITY OpthighlightByDefault.label "預設強調所有相配項">
+<!ENTITY OpthighlightByDefault.tooltip "開啟搜尋欄時，將預設強調所有相配項，故當你搜尋時其將提供由頭開始所有搜尋結果。">
+<!ENTITY OpthideWhenFinderHidden.label "關閉搜尋欄時取消強調">
+<!ENTITY OpthideWhenFinderHidden.tooltip "簡單而言，不開始搜尋欄就不強調任何結果，此包括快速搜尋欄。當搜尋欄關閉之時，所有相配項將會移除。">
+<!ENTITY OptgridInScrollbar.label "於捲軸上顯示強調網格">
+<!ENTITY OptgridInScrollbar.tooltip "所以已強調之結果的相對位置將會顯示於捲軸上。">
+<!ENTITY OptuseCounter.label "於搜尋欄顯示相配數字">
+<!ENTITY OptuseCounter.tooltip "每次搜尋後，相配項的數量將顯示於搜尋欄最尾。">
+<!ENTITY OptfindInTabs.label "啟用「「查找所有分頁」">
+<!ENTITY OptfindInTabs.tooltip "於搜尋欄放置一個按鈕以開啟「搜尋所有分頁」功能，以便快速搜尋所有分頁的結果。">
+<!ENTITY OptmultipleFITFull.label "容許出現多個「查找所有分頁」視窗">
+<!ENTITY OptmultipleFITFull.tooltip "關閉時，「搜尋所有分頁」按鈕將延用已開啟的對話框而非另開新對話框。">
+<!ENTITY Optcolor.label "強調標示顏色">
+<!ENTITY Optcolor.tooltip "更改用於強調結果的顏色。">
+<!ENTITY OptselectColor.label "目前相配顏色">
+<!ENTITY OptselectColor.tooltip "當你首次搜尋，又或使用F3或按鈕前往上一/下一結果時，目前所顯示之相配項應顯示男另一顏色以作識別。">
+<!ENTITY OptcolorReset.label "（重設）">
+<!ENTITY OptcolorKeepOSdefault.label "使用預設對比顏色（推薦）">
+<!ENTITY OptcolorKeepOSdefault.tooltip.a "The contrast color is, depending on the webpage background, either the color of the text when the current hit color is used as its background, or vice versa. It is either white or black, depending on the color chosen above.">
+<!ENTITY OptcolorKeepOSdefault.tooltip.b "While the above color setting affects only the current hit in Find operations, its contrast color can't be changed without also changing the contrast of all text selections. Disable this with caution, to not make text selections unreadable!">
+<!ENTITY OptcolorKeepOSdefault.tooltip.c "Disable this with caution, to not make text selections unreadable!">
+<!ENTITY OpthighlightOnFindAgain.label "「搜尋下一筆」（F3）時亦強調顯示">
+<!ENTITY OpthighlightOnFindAgain.tooltip "If the Highlight All button is checked, running through the matches by pressing F3 or hitting the previous/next buttons will also highlight all the matches, if they aren't already.">
+<!ENTITY OptgridLimit.labela "超過">
+<!ENTITY OptgridLimit.labelb "項時不使用網格強調">
+<!ENTITY OptgridLimit.tooltip "This is only for the highlights grid in the scrollbar! If there are too many results, which could slow down the process and lag the browser because of it, the highlights grid in the scrollbar will not be used.">
+<!ENTITY OptminNoDelay.labela "如果搜尋項少於">
+<!ENTITY OptminNoDelay.labelb "個字符則延遲強調">
+<!ENTITY OptminNoDelay.tooltip "When you first start typing in the Findbar, it's unlikely you're looking for just those one or two first characters. This delays the Find operation for short words for 1.5 seconds, to give you time to type the rest of your query. Note that it will still find matches for short words if you let that time pass without entering any more characters.">
+<!ENTITY OptadjustGridPadding.labela "調整網格與邊框之距離：">
+<!ENTITY OptadjustGridPadding.labelb "像素">
+<!ENTITY OptadjustGridPadding.tooltip "Adjust the relative position of the highlights grid if needed, to better fit themes that change the appearance of the scrollbar.">
+<!ENTITY OptadjustGridWidth.labela "調整網格寬度：">
+<!ENTITY OptadjustGridWidth.labelb "像素">
+<!ENTITY OptadjustGridWidth.tooltip "Adjust the width of the marks in the highlights grid if needed, to better fit themes that change the appearance of the scrollbar.">
+<!ENTITY Optsights.label "聚焦">
+<!ENTITY OptsightsCurrentHit.label "目前相配">
+<!ENTITY OptsightsAllHighlights.label "全部強調">
+<!ENTITY OptsightsCurrent.label "於目前搜尋項顯示聚焦">
+<!ENTITY OptsightsCurrent.tooltip "When you Find a word, or when you run through the matches by hitting F3 or hitting the previous/next buttons, a target will be shown on your screen around the current hit, so that you can see it easily without having to actually look for it.">
+<!ENTITY OptsightsHighlights.label "於所有搜尋項顯示聚焦">
+<!ENTITY OptsightsHighlights.tooltip "Place a target around every highlight visible on the webpage. When you scroll the page, more targets will be placed as other highlights are scrolled into view.">
+<!ENTITY OptsightsHighlights.warning "警告：此功能較費時，可能使排版及滾動頁面變慢！">
+<!ENTITY OptsightsStyle.label "聚焦樣式（點擊預覽）">
+<!ENTITY OptsightsStyle.focus "位置聚焦">
+<!ENTITY OptsightsStyle.circle "位置畫圓">
+<!ENTITY OptsightsRepeat.label "動畫重要次數:">
+<!ENTITY OptsightsColor.tooltip "Configure the color used for these sights.">
+<!ENTITY OptsightsSameColor.label "使用與強調相同之顏色">
+<!ENTITY OptsightsSameColor.tooltip "The color used for these sights will be the same as the color used to highlight all matches in the webpage (Highlights pane).">
+<!ENTITY OptsightsSameColorCurrent.label "與目前相配使用相同顏色">
+<!ENTITY OptsightsSameColorCurrent.tooltip "The color used for these sights will be the same as the color used to distinguish the current match (Appearance pane).">
+<!ENTITY OptsightsLimit.label "屏幕上聚焦的最大數量:">
+<!ENTITY OptsightsLimit.tooltip "This feature can be very resource intensive. It is better to limit the maximum number of visible sights to an amount that doesn't lag the browser when rendering them.">
+<!ENTITY OpthideLabels.label "顯示按鍵圖示而非文字">
+<!ENTITY OpthideLabels.tooltip "By default the toolbar buttons have a text label. This changes them to images, making them more visibly distinguishable and also more compact.">
+<!ENTITY OpthideClose.label "隱藏搜尋欄關閉按鍵">
+<!ENTITY OpthideClose.tooltip "The Findbar's close button will not be available to close it.">
+<!ENTITY OptmovetoTop.label "移至瀏覽器頂部">
+<!ENTITY OptmovetoTop.tooltip "A slimmer Findbar will be placed at the top of the webpage, in a corner above it.">
+<!ENTITY OptmovetoRight.label "移至網頁右方">
+<!ENTITY OptmovetoRight.tooltip "The Findbar's input field and buttons will be reversed and aligned on the right. If the Findbar is moved to the top, the whole Findbar appears on the top right corner instead of on the left.">
+<!ENTITY OptblurCloses.label "失去焦点時關閉搜尋欄">
+<!ENTITY OptblurCloses.tooltip "As soon as you click anywhere on the webpage, or move the cursor to another place like the location bar, the Findbar will close automatically.">
+<!ENTITY OptglobalFB.label "Use a single global Findbar for all tabs">
+<!ENTITY OptglobalFB.tooltip "When you open the Findbar in one tab, then switch to another tab, you should see the Findbar still open in the new tab.">
+<!ENTITY OptonStartup.label "啟動時恢復上次的打開狀態">
+<!ENTITY OptonStartup.tooltip "If you close the browser with the Findbar still open, the next time you start the browser it will be already opened.">
+<!ENTITY OptopenFindbar.label "開啟搜尋欄時">
+<!ENTITY OptquickFindOptions.label "快速搜尋欄">
+<!ENTITY OptkeepButtons.label "在快速搜尋欄上顯示按鍵">
+<!ENTITY OptkeepButtons.tooltip "By default, the Quick Findbar doesn't have any buttons, it is just the input box for quick find operations. With this you can still access the Highlight All and Match Case functions when using it.">
+<!ENTITY OptFAYT.label "開始輸入時即時尋找文字">
+<!ENTITY OptFAYT.tooltip "Hit any key while browsing a webpage, and the Quick Findbar will pop out to find that text. The cursor is placed in it, so you can keep typing to change the find query.">
+<!ENTITY OptFAYTTimeout.beforeLabel "自動於">
+<!ENTITY OptFAYTTimeout.afterLabel "秒後關閉">
+<!ENTITY OptFAYTTimeout.tooltip "The Quick Findbar will automatically close after a period of inactivity. Remember that it will also close if you focus anything else, such as when clicking on the webpage.">
+<!ENTITY OptFAYTmode.caption "搜尋欄模式">
+<!ENTITY OptFAYTmode.quickFind.label "於我開始輸入時使用快速搜尋欄搜尋文字">
+<!ENTITY OptFAYTmode.quickFind.tooltip "Default mode. The Quick Findbar is used when you type anywhere on the webpage, while to access the normal Findbar you need to use the keyboard shortcut or toggle its toolbar button.">
+<!ENTITY OptFAYTmode.normalFind.label "永遠使用標準搜尋欄">
+<!ENTITY OptFAYTmode.normalFind.tooltip "The normal Findbar is used even when you type anywhere on the webpage, it will not close automatically on a delay or when it loses focus (unless you enable that preference above).">
+<!ENTITY OptFAYTmode.alwaysQuick.label "永遠使用快速搜尋欄">
+<!ENTITY OptFAYTmode.alwaysQuick.tooltip "The Quick Findbar is used even when you use the keyboard shortcut, it will always automatically close after a delay or when it loses focus.">
+<!ENTITY OptkeyboardShortcut.label "快捷鍵">
+<!ENTITY OptctrlFCloses.win "Ctrl+F亦可關閉搜尋欄">
+<!ENTITY OptctrlFCloses.mac "Command+F亦可關閉搜尋欄">
+<!ENTITY OptctrlFCloses.tooltip "You can open the Findbar and then close it when you no longer need it through the same keyboard shortcut.">
+<!ENTITY OptctrlFprefill.label "開啟時將已選中文字填入搜尋欄">
+<!ENTITY OptctrlFprefill.tooltip.a "If there is any text selected in the webpage when the Findbar is opened, this text is automatically copied to the Findbar to be used as a find query.">
+<!ENTITY OptctrlFprefill.tooltip.b "If 'Highlight All by Default' is enabled, it will find all occurences of the selected text immediately.">
+<!ENTITY OptctrlFOnFocused.label "Only close when it is already focused">
+<!ENTITY OptctrlFOnFocused.tooltip "The keyboard shortcut will always first place the cursor in the Findbar, copying any selected text in the webpage into it if the above preference is enabled. It will only close the Findbar when the cursor is already in it.">
+<!ENTITY OptSelectingText.label "選擇文字時">
+<!ENTITY OptfillSelectedText.label "選擇文字時開啟並填入搜尋欄">
+<!ENTITY OptfillSelectedText.tooltip.a "Every time any word is selected in the webpage, it will be automatically copied to the Findbar to be used as a find query. ">
+<!ENTITY OptfillSelectedText.tooltip.b "If 'Highlight All by Default' is enabled, selecting text in a webpage will immediately highlight all occurences of the selection.">
+<!ENTITY OptemptySelectedText.label "Empty the Findbar when no text is selected">
+<!ENTITY OptemptySelectedText.tooltip "Likewise from above, if you click anywhere in the webpage to unselect text, the Findbar will be cleared and all the highlights will be removed as well.">
+<!ENTITY OptfillSelectedOpenFindbar.label "選擇文字時開啟並填入快速搜尋欄">
+<!ENTITY OptfillSelectedOpenFindbar.tooltip "When the Findbar is filled with the selected text, it will briefly appear to show that this happened.">
+<!ENTITY OptglobalBehavior.warning "警告：下列選項並不單屬搜尋欄，而會影響整個瀏覽器，如網頁中、位置欄，以及可選擇文字的地方。使用時請額外小心。">
+<!ENTITY OptdblClickEatSpaces.label "連點已選擇文字時包含尾部空格">
+<!ENTITY OptdblClickStopAtPunctuation.label "連點已選擇文字時於標點符號處為止">
+<!ENTITY OptNativePrefs.label "Firefox原始選項">
+<!ENTITY OptNativePrefs.description "某些選項，如強調用顏色或快速搜尋欄內建於Firefox內。這些選項只因更易存取及更改而放於此處。此附加元件將自動處理，故只於有需要時啟用。">
+<!ENTITY OptResetNativeOnDisabled.label "禁用本附加元件時重設所有原始選項至到預設狀態">
+<!ENTITY OptResetNativeOnDisabled.tooltip "如若有改變尚未還原，如強調用顏色未回復原狀，停用止附加元件前請啟用止項以確保所有功能將重設至其預設狀態。">
+<!ENTITY OptResetNativeNow.label "重置所有原始選項至預設狀態">
+<!ENTITY OptResetNativeNow.tooltip "現即重設至其預設狀態。">

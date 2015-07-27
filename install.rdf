@@ -71,6 +71,14 @@
 				<em:translator>http://t.qq.com/HeartBlade, YFdyh000</em:translator>
 			</Description>
 		</em:localized>
+		<em:localized>
+			<Description>
+				<em:locale>zh-TW</em:locale>
+				<em:name>FindBar Tweak</em:name>
+				<em:description>由簡單的更改搜尋欄位置，到強勁的「搜尋所有頁面」工具，它擁有所有改變搜尋方式的工具！</em:description>
+				<em:translator>Justincheng12345 aka JC1</em:translator>
+			</Description>
+		</em:localized>
 		
 	</Description>
 </RDF>

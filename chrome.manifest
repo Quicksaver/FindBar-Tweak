@@ -8,6 +8,7 @@ locale    findbartweak      es            chrome/locale/es/
 locale    findbartweak      fr            chrome/locale/fr/
 locale    findbartweak      pt-PT         chrome/locale/pt-PT/
 locale    findbartweak      zh-CN         chrome/locale/zh-CN/
+locale    findbartweak      zh-TW         chrome/locale/zh-TW/
 
 skin      findbartweak      classic/1.0   chrome/skin/common/
 skin      findbartweak-os   classic/1.0   chrome/skin/linux/

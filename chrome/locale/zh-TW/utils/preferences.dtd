@@ -1,0 +1,13 @@
+<!ENTITY preferences.button "設定">
+<!ENTITY preferences.undo.label "復原">
+<!ENTITY preferences.redo.label "取消復原">
+<!ENTITY preferences.undoredo.tooltip "快速改回所有對本附加元件設定所作的改變，包括載入檔案或重置設定。">
+<!ENTITY preferences.import.label "載入檔案…">
+<!ENTITY preferences.import.tooltip "從一個之前輸出的檔案載入設定。">
+<!ENTITY preferences.export.label "輸出至檔案…">
+<!ENTITY preferences.export.tooltip "儲存你的附加元件設定至一個額外檔案以作保存。">
+<!ENTITY preferences.reset.label "重設">
+<!ENTITY preferences.reset.tooltip.a "重設所有設定至其原始狀態，就如其首次安裝一樣。">
+<!ENTITY preferences.reset.tooltip.b "工具列中的按鈕不受影響，你需要於「自訂」介面中重設。">
+<!ENTITY preferences.jumpto.label "跳至設定…">
+<!ENTITY preferences.jumpto.tooltip "輸入文字並跳至第一個擁有該段文字的設定。">

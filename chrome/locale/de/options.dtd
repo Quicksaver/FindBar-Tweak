@@ -25,7 +25,9 @@
 <!ENTITY OptselectColor.tooltip "Wenn Sie zum ersten Mal eine Suchaktion ausführen oder F3 bzw. die Schaltflächen „vor/weiter“ verwenden, um die Treffer durchzugehen, sollte der aktuelle Treffer zur Unterscheidung in einer anderen Farbe als die übrigen angezeigt werden.">
 <!ENTITY OptcolorReset.label "(zurücksetzen)">
 <!ENTITY OptcolorKeepOSdefault.label "Standardkontrastfarbe beibehalten (empfohlen)">
-<!ENTITY OptcolorKeepOSdefault.tooltip "Die Kontrastfarbe ist, abhängig von der Webseite, entweder die Farbe des Textes wenn die Farbe für den aktuellen Treffer als Hintergrund verwendet wird, oder umgekehrt. Sie ist entweder weiß oder schwarz, abhängig von der oben gewählten Farbe. Die obige Farbeinstellung betrifft zwar nur den aktuellen Treffer einer Suchaktion, seine Kontrastfarbe kann aber nicht geändert werden, ohne dass auch der Kontrast der gesamten Textauswahl geändert wird. Deaktivieren Sie diese Funktion nur mit Bedacht, damit ausgewählter Text nicht unlesbar wird!">
+<!ENTITY OptcolorKeepOSdefault.tooltip.a "Die Kontrastfarbe ist, abhängig von der Webseite, entweder die Farbe des Textes wenn die Farbe für den aktuellen Treffer als Hintergrund verwendet wird, oder umgekehrt. Sie ist entweder weiß oder schwarz, abhängig von der oben gewählten Farbe.">
+<!ENTITY OptcolorKeepOSdefault.tooltip.b "Die obige Farbeinstellung betrifft zwar nur den aktuellen Treffer einer Suchaktion, seine Kontrastfarbe kann aber nicht geändert werden, ohne dass auch der Kontrast der gesamten Textauswahl geändert wird.">
+<!ENTITY OptcolorKeepOSdefault.tooltip.c "Deaktivieren Sie diese Funktion nur mit Bedacht, damit ausgewählter Text nicht unlesbar wird!">
 <!ENTITY OpthighlightOnFindAgain.label "Auch beim „Erneuten Suchen“ (F3) hervorheben">
 <!ENTITY OpthighlightOnFindAgain.tooltip "Wenn die Schaltfläche „Alles hervorheben“ aktiviert ist, werden beim Durchgehen der Treffer Drücken von F3 oder der Schaltflächen „vor/weiter“ auch alle Treffer hervorgehoben, falls dies noch nicht geschehen ist.">
 <!ENTITY OptgridLimit.labela "Den Hervorhebungsbalken bei mehr als">
@@ -94,12 +96,14 @@
 <!ENTITY OptctrlFCloses.mac "Befehlstaste+F um die Suchleiste zu schließen">
 <!ENTITY OptctrlFCloses.tooltip "Sie können die Suchleiste mit dem selben Tastaturkürzel öffnen und schließen, wenn Sie sie nicht mehr benötigen.">
 <!ENTITY OptctrlFprefill.label "Suchleiste beim Öffnen mit ausgewähltem Text füllen">
-<!ENTITY OptctrlFprefill.tooltip "Wenn Text auf der Webseite ausgewählt und die Suchleiste geöffnet ist, wird der Text automatisch als Suchbegriff in die Suchleiste kopiert. Wenn „Standardmäßig alles hervorheben“ aktiviert ist, werden sofort alle Treffer für den ausgewählten Text gesucht.">
+<!ENTITY OptctrlFprefill.tooltip.a "Wenn Text auf der Webseite ausgewählt und die Suchleiste geöffnet ist, wird der Text automatisch als Suchbegriff in die Suchleiste kopiert.">
+<!ENTITY OptctrlFprefill.tooltip.b "Wenn „Standardmäßig alles hervorheben“ aktiviert ist, werden sofort alle Treffer für den ausgewählten Text gesucht.">
 <!ENTITY OptctrlFOnFocused.label "Nur schließen, wenn bereits fokussiert">
 <!ENTITY OptctrlFOnFocused.tooltip "Das Tastaturkürzel platziert zunächst die Schreibmarke in der Suchleiste, ausgewählter Text auf der Seite wird in die Suchleiste kopiert, wenn die obige Einstellung aktiviert ist. Die Suchleiste wird nur dann geschlossen, wenn die Schreibmarke sich bereits darin befindet.">
 <!ENTITY OptSelectingText.label "Beim Auswählen von Text">
 <!ENTITY OptfillSelectedText.label "Die Suchleiste mit dem ausgewählten Text füllen">
-<!ENTITY OptfillSelectedText.tooltip "Jedes Mal, wenn Text auf der Webseite ausgewählt wird, wird er automatisch als Suchbegriff in die Suchleiste kopiert. Wenn „Standardmäßig alles hervorheben“ aktiviert ist, werden bei Auswahl von Text auf einer Webseite sofort alle Treffer für den ausgewählten Text hervorgehoben.">
+<!ENTITY OptfillSelectedText.tooltip.a "Jedes Mal, wenn Text auf der Webseite ausgewählt wird, wird er automatisch als Suchbegriff in die Suchleiste kopiert.">
+<!ENTITY OptfillSelectedText.tooltip.b "Wenn „Standardmäßig alles hervorheben“ aktiviert ist, werden bei Auswahl von Text auf einer Webseite sofort alle Treffer für den ausgewählten Text hervorgehoben.">
 <!ENTITY OptemptySelectedText.label "Die Suchleiste leeren, wenn kein Text ausgewählt wird">
 <!ENTITY OptemptySelectedText.tooltip "Wie oben, wenn Sie auf der Webseite irgendwo hinklicken, um die Auswahl von Text aufzuheben, wird die Suchleiste geleert und die Hervorhebungen werden ebenfalls entfernt.">
 <!ENTITY OptfillSelectedOpenFindbar.label "Die Schnellsuchleiste anzeigen, wenn ausgewählter Text verwendet wird">

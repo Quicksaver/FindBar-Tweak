@@ -1,0 +1,13 @@
+<!ENTITY preferences.button "Einstellungen">
+<!ENTITY preferences.undo.label "Rückgängig">
+<!ENTITY preferences.redo.label "Wiederholen">
+<!ENTITY preferences.undoredo.tooltip "Setzen Sie schnell eine Änderung an den Add-on-Einstellungen zurück. Sie können sie auch aus einer Datei importieren und die Standardeinstellungen wiederherstellen.">
+<!ENTITY preferences.import.label "Aus Datei importieren…">
+<!ENTITY preferences.import.tooltip "Laden Sie Add-on-Einstellungen aus einer zuvor exportierten Daten auf Ihrem Computer.">
+<!ENTITY preferences.export.label "In Datei exportieren…">
+<!ENTITY preferences.export.tooltip "Speichern Sie Ihre Add-on-Einstellungen zu Sicherungszwecken in eine externe Datei.">
+<!ENTITY preferences.reset.label "Standardeinstellungen wiederherstellen">
+<!ENTITY preferences.reset.tooltip.a "Alle Einstellungen werden auf ihre Standardwerte zurückgesetzt, wie bei einer Neuinstallation des Add-ons.">
+<!ENTITY preferences.reset.tooltip.b "Die Platzierung der Schaltflächen in den Symbolleisten ist davon nicht betroffen, um diese zurückzusetzen verwenden Sie die Schaltfläche &quot;Standard wiederherstellen&quot; im Anpassen-Fenster.">
+<!ENTITY preferences.jumpto.label "Zu Einstellung springen…">
+<!ENTITY preferences.jumpto.tooltip "Geben Sie ein Wort ein und springen Sie zur ersten Einstellung, die es enthält.">

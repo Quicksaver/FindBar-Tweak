@@ -25,7 +25,9 @@
 <!ENTITY OptselectColor.tooltip "Quando procuras inicialmente, ou quando primes F3 ou um dos botões anterior/próximo para saltar entre os resultados, o resultado atual deve ser mostrado numa cor diferente dos restantes, para que possa ser distinguível.">
 <!ENTITY OptcolorReset.label "(reset)">
 <!ENTITY OptcolorKeepOSdefault.label "Manter a cor de contraste do sistema (recomendado)">
-<!ENTITY OptcolorKeepOSdefault.tooltip "A cor de contraste pode ser, dependendo do fundo da página, ou a cor do texto quando a cor do resultado atual é usado como o seu fundo, ou vice versa. Ou é preto ou branco, dependendo da cor escolhida acima. Embora a definição da cor acima afecta apenas o resultado atual em operações de procura, a sua cor de contraste não pode ser alterada sem alterar também a cor de contraste de todas as seleções de text. Desativa esta opção com precaução, para não tornares seleções de texto ilegíveis!">
+<!ENTITY OptcolorKeepOSdefault.tooltip.a "A cor de contraste pode ser, dependendo do fundo da página, ou a cor do texto quando a cor do resultado atual é usado como o seu fundo, ou vice versa. Ou é preto ou branco, dependendo da cor escolhida acima.">
+<!ENTITY OptcolorKeepOSdefault.tooltip.b "Embora a definição da cor acima afecta apenas o resultado atual em operações de procura, a sua cor de contraste não pode ser alterada sem alterar também a cor de contraste de todas as seleções de text.">
+<!ENTITY OptcolorKeepOSdefault.tooltip.c "Desativa esta opção com precaução, para não tornares seleções de texto ilegíveis!">
 <!ENTITY OpthighlightOnFindAgain.label "Também marcar todas as ocorrências ao &quot;Procurar outra vez&quot; (F3)">
 <!ENTITY OpthighlightOnFindAgain.tooltip "Se o botão de Realçar Todos estive ativo, ao correr entre os resultados premindo F3 ou um dos botões anterior/próximo irá realçar todos os resultados, se já não estiverem.">
 <!ENTITY OptgridLimit.labela "Não usar a grelha se exceder os">
@@ -94,12 +96,14 @@
 <!ENTITY OptctrlFCloses.mac "Comando+F para também fechar a barra de procura">
 <!ENTITY OptctrlFCloses.tooltip "Podes abrir a barra de procurar e depois fechá-la quando já não precisares, através do mesmo atalho de teclado.">
 <!ENTITY OptctrlFprefill.label "Usar o texto selecionado na barra de procura ao ser aberta">
-<!ENTITY OptctrlFprefill.tooltip "Se estiver algum texto selecionado na página quando a barra de procura é aberta, esse texto é copiado para a barra de procura para ser usado como termo de pesquisa. Se 'Realçar Todos por Defeito' estiver ativo, todas as ocorrências do texto selecionado são imediatamente realçadas.">
+<!ENTITY OptctrlFprefill.tooltip.a "Se estiver algum texto selecionado na página quando a barra de procura é aberta, esse texto é copiado para a barra de procura para ser usado como termo de pesquisa.">
+<!ENTITY OptctrlFprefill.tooltip.b "Se 'Realçar Todos por Defeito' estiver ativo, todas as ocorrências do texto selecionado são imediatamente realçadas.">
 <!ENTITY OptctrlFOnFocused.label "Só fechar quando já estiver focada">
 <!ENTITY OptctrlFOnFocused.tooltip "O atalho de teclado coloca primeiro o cursor na barra de procura, copiando qualquer texto selecionado na página se a opção acima estiver ativa. Só fecha a barra de procura quando o cursor já está nela.">
 <!ENTITY OptSelectingText.label "Ao Selecionar Texto">
 <!ENTITY OptfillSelectedText.label "Copiar o texto para a barra de procura">
-<!ENTITY OptfillSelectedText.tooltip "Sempre que uma palavvra é selecionada na página, será automaticamente copiada para a barra de procura para ser usada como termo de pesquisa. Se 'Realçar todos por defeito' estiver ativo, selecionar texto na página realça imediatamente todas as ocorrências da seleção.">
+<!ENTITY OptfillSelectedText.tooltip.a "Sempre que uma palavvra é selecionada na página, será automaticamente copiada para a barra de procura para ser usada como termo de pesquisa.">
+<!ENTITY OptfillSelectedText.tooltip.b "Se 'Realçar todos por defeito' estiver ativo, selecionar texto na página realça imediatamente todas as ocorrências da seleção.">
 <!ENTITY OptemptySelectedText.label "Limpar a barra de procura quando não há texto selecionado">
 <!ENTITY OptemptySelectedText.tooltip "Semelhante à acima, ao clicar na página para remover a seleção de texto, o termo de pesquisa na barra de procura é limpo e todos os realces também são removidos.">
 <!ENTITY OptfillSelectedOpenFindbar.label "Mostrar a barra de procura rápida quando o texto selecionado é usado">

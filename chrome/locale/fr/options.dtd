@@ -25,7 +25,9 @@
 <!ENTITY OptselectColor.tooltip "Lorsque vous démarrez une opération de recherche pour la première fois, ou si vous pressez F3 ou les boutons précédente/suivante pour circuler à travers les occurrences, l'occurrence actuelle devrait utiliser une couleur de surlignage différente des autres occurrences afin de la distinguer.">
 <!ENTITY OptcolorReset.label "(réinitialiser)">
 <!ENTITY OptcolorKeepOSdefault.label "Conserver la couleur de contraste par défaut (recommandé)">
-<!ENTITY OptcolorKeepOSdefault.tooltip "La couleur de contraste est, en fonction de l'arrière-plan de la page Web, soit la couleur du texte lorsque la couleur de l'occurrence actuelle est utilisée comme son arrière-plan, ou vice versa. C'est soit blanc soit noir, en fonction de la couleur choisie ci-dessus. Alors que le paramètre de couleur ci-dessus affecte seulement l'occurrence actuelle lors d'une opération de recherche, sa couleur de contraste ne peut pas être modifiée sans modifier également le contraste de toutes les sélections de texte. Désactivez donc ceci avec précaution, afin de ne pas rendre les sélections de texte illisibles !">
+<!ENTITY OptcolorKeepOSdefault.tooltip.a "La couleur de contraste est, en fonction de l'arrière-plan de la page Web, soit la couleur du texte lorsque la couleur de l'occurrence actuelle est utilisée comme son arrière-plan, ou vice versa. C'est soit blanc soit noir, en fonction de la couleur choisie ci-dessus.">
+<!ENTITY OptcolorKeepOSdefault.tooltip.b "Alors que le paramètre de couleur ci-dessus affecte seulement l'occurrence actuelle lors d'une opération de recherche, sa couleur de contraste ne peut pas être modifiée sans modifier également le contraste de toutes les sélections de texte.">
+<!ENTITY OptcolorKeepOSdefault.tooltip.c "Désactivez donc ceci avec précaution, afin de ne pas rendre les sélections de texte illisibles !">
 <!ENTITY OpthighlightOnFindAgain.label "Surligner également pour « Rechercher à nouveau » (F3)">
 <!ENTITY OpthighlightOnFindAgain.tooltip "Si le bouton « Tout surligner » est activé, circuler entre les occurrences en pressant F3 ou en utilisant les boutons précédente/prochaine surlignera également toutes les occurrences, si elles ne le sont pas déjà.">
 <!ENTITY OptgridLimit.labela "Ne pas utiliser de repères s'il y a plus de">
@@ -94,12 +96,14 @@
 <!ENTITY OptctrlFCloses.mac "Commande+F ferme également la barre">
 <!ENTITY OptctrlFCloses.tooltip "Vous pouvez ouvrir la barre et puis la fermer quand vous n'en avez plus besoin grâce au même raccourci clavier.">
 <!ENTITY OptctrlFprefill.label "Lors de son ouverture, remplir la barre avec le texte sélectionné">
-<!ENTITY OptctrlFprefill.tooltip "Si du texte est sélectionné dans la page Web lors de l'ouverture de la barre, ce texte est automatiquement copié dans cette dernière pour être utilisée en tant que requête de recherche. Si « Tout surligner par défaut » est activé, cela cherchera automatiquement toutes les occurrences du texte sélectionné.">
+<!ENTITY OptctrlFprefill.tooltip.a "Si du texte est sélectionné dans la page Web lors de l'ouverture de la barre, ce texte est automatiquement copié dans cette dernière pour être utilisée en tant que requête de recherche.">
+<!ENTITY OptctrlFprefill.tooltip.b "Si « Tout surligner par défaut » est activé, cela cherchera automatiquement toutes les occurrences du texte sélectionné.">
 <!ENTITY OptctrlFOnFocused.label "Fermer uniquement lorsqu'elle a déjà le focus">
 <!ENTITY OptctrlFOnFocused.tooltip "Le raccourci clavier placera toujours le curseur dans la barre, en copiant tout texte sélectionné dans la page Web si le paramètre ci-dessus est activé. Il fermera la barre seulement si le curseur est déjà dedans.">
 <!ENTITY OptSelectingText.label "Lors d'une sélection de texte">
 <!ENTITY OptfillSelectedText.label "Remplir la barre avec le texte sélectionné">
-<!ENTITY OptfillSelectedText.tooltip "Chaque fois qu'un mot est sélectionné dans la page Web, il sera automatiquement copié dans la barre pour être utilisé en tant que requête de recherche. Si « Tout surligner par défaut » est activé, sélectionner du texte dans une page Web surlignera automatiquement toutes les occurrences de la sélection.">
+<!ENTITY OptfillSelectedText.tooltip.a "Chaque fois qu'un mot est sélectionné dans la page Web, il sera automatiquement copié dans la barre pour être utilisé en tant que requête de recherche.">
+<!ENTITY OptfillSelectedText.tooltip.b "Si « Tout surligner par défaut » est activé, sélectionner du texte dans une page Web surlignera automatiquement toutes les occurrences de la sélection.">
 <!ENTITY OptemptySelectedText.label "Vider la barre lorsqu'aucun texte n'est sélectionné">
 <!ENTITY OptemptySelectedText.tooltip "De même que ci-dessus, si vous cliquez n'importe où dans la page Web afin de supprimer une sélection de texte, la barre sera vidée et le surlignage sera retiré de toutes les occurrences.">
 <!ENTITY OptfillSelectedOpenFindbar.label "Afficher la barre rapide lorsque le texte sélectionné est utilisé">

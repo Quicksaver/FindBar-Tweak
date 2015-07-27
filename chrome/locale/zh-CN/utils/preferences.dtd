@@ -1,0 +1,13 @@
+<!ENTITY preferences.button "首选项">
+<!ENTITY preferences.undo.label "撤销">
+<!ENTITY preferences.redo.label "重做">
+<!ENTITY preferences.undoredo.tooltip "快速恢复对附加组件首选项所做的任何更改，包括从一个文件导入，或者恢复默认值。">
+<!ENTITY preferences.import.label "从文件导入...">
+<!ENTITY preferences.import.tooltip "从一个此前导出并放在您的计算机上的文件载入附加组件首选项。">
+<!ENTITY preferences.export.label "导出到文件...">
+<!ENTITY preferences.export.tooltip "保存您的附加组件首选项到一个外部文件以备日后使用。">
+<!ENTITY preferences.reset.label "恢复默认设置">
+<!ENTITY preferences.reset.tooltip.a "将所有首选项回滚到其默认值，就像回到附加组件初次安装的场景。">
+<!ENTITY preferences.reset.tooltip.b "放置在工具栏中的按钮不会受到影响，如需请使用“定制”模式下的“恢复默认设置”按钮。">
+<!ENTITY preferences.jumpto.label "跳转到首选项...">
+<!ENTITY preferences.jumpto.tooltip "请输入一个单词，您会被跳转到包含它的第一个首选项的位置。">

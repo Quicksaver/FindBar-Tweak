@@ -2,7 +2,7 @@
 	"current":"2.0.1",
 	"releases": {
 		"2.0.1":{
-			"date":"July 27, 2015",
+			"date":"July 28, 2015",
 			"notes":[
 				["new","fr and zh-TW locales"],
 				["new","Undo/Redo/Import/Export/Restore-defaults/Jump-to functions in the preferences"],

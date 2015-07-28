@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.6';
+Modules.VERSION = '2.1.7';
 
 this.FIT = {
 	get box() { return $(objName+'-findInTabs-box'); },
@@ -255,9 +255,7 @@ this.FIT = {
 		
 		// If tab is already loading, don't bother reloading, multiple clicks on the same item shouldn't re-trigger tab load
 		if(item.linkedHits.currentItem.loadingTab) {
-			item.linkedHits.onselect = null;
 			item.linkedHits.selectedIndex = -1;
-			item.linkedHits.onselect = () => { this.selectHit(); };
 			return;
 		}
 		
@@ -283,9 +281,7 @@ this.FIT = {
 			
 			setAttribute(hits.currentItem.childNodes[0], 'value', Strings.get('findInTabs', 'loadingTab'));
 			removeAttribute(item.linkedTitle, 'unloaded');
-			hits.onselect = null;
 			hits.selectedIndex = -1;
-			hits.onselect = () => { this.selectHit(); };
 			return;
 		}
 		
@@ -305,12 +301,6 @@ this.FIT = {
 			query: findQuery,
 			caseSensitive: gFindBar.getElement("find-case-sensitive").checked,
 			findPrevious: aFindPrevious
-		});
-		
-		// onmousedown is called after onselect, but there's no need to run selectHit() twice
-		hits.onmousedown = null;
-		aSync(() => {
-			hits.onmousedown = (e) => { if(e.target != hits) { this.selectHit(); } }
 		});
 	},
 	
@@ -687,8 +677,39 @@ this.FIT = {
 		
 		var newHits = document.createElement('richlistbox');
 		newHits.setAttribute('flex', '1');
-		newHits.onselect = () => { this.selectHit(); };
-		newHits.onmousedown = (e) => { if(e.target != newHits) { this.selectHit(); } };
+		
+		// Don't use the Listeners object for the following, as there's no need to keep references to these nodes once they're gone, and they're gone a lot
+		newHits.handleEvent = (e) => {
+			switch(e.type) {
+				// double clicks on an entry should send the user to the selected hit
+				case 'dblclick':
+					if(e.target != newHits) {
+						this.selectHit();
+					}
+					break;
+				
+				// enter key should immediately send the user to the selected hit
+				case 'keypress':
+					switch(e.keyCode) {
+						case e.DOM_VK_RETURN:
+							this.selectHit();
+							break;
+					}
+					break;
+				
+				// some entries only require a single click, such as the "Load this tab..." entry for unloaded tabs
+				case 'click':
+					if(e.target != newHits && newHits.currentItem.isUnloadedTab) {
+						this.selectHit();
+					}
+					break;
+			}
+		};
+		
+		newHits.addEventListener('dblclick', newHits);
+		newHits.addEventListener('keypress', newHits);
+		newHits.addEventListener('click', newHits);
+		
 		newHits.hidden = (item != this.tabsList.currentItem); // Keep the hits list visible
 		newHits._currentLabel = null;
 		newHits._lastSelected = -1;
@@ -918,9 +939,22 @@ this.FIT = {
 			
 			if(str.highlight !== null) {
 				setAttribute(label, 'highlight', 'true');
-				setAttribute(label, 'onmouseover', objName+'.FIT.onHoverHit(this);');
-				setAttribute(label, 'onclick', objName+'.FIT.selectHit();');
 				label.hitIdx = str.highlight;
+				
+				label.handleEvent = function(e) {
+					switch(e.type) {
+						case 'mouseover':
+							FIT.onHoverHit(this);
+							break;
+						
+						case 'click':
+							FIT.selectHit();
+							break;
+					}
+				};
+				
+				label.addEventListener('mouseover', label);
+				label.addEventListener('click', label);
 				
 				item.linkedHits.hits.set(str.highlight, {
 					item: hitItem,

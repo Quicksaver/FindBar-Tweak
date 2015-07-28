@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.4';
+Modules.VERSION = '2.1.5';
 
 this.FITMini = {
 	get broadcaster() { return $(objName+'-findInTabs-broadcaster'); },
@@ -73,7 +73,7 @@ this.FITMini = {
 		}, 10);
 	},
 	
-	commmand: function() {
+	command: function() {
 		if(!FITFull) {
 			this.toggle();
 			return;

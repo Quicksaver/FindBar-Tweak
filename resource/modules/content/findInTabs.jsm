@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.3';
+Modules.VERSION = '1.1.4';
 
 this.FIT = {
 	// this keeps a list of all hits in a page, mapped to an id that can be used to keep things sync'ed up with the chrome process
@@ -151,6 +151,9 @@ this.FIT = {
 			|| PDFJS.findController.state.caseSensitive != data.caseSensitive) {
 				this._holdingHit = hit;
 				
+				// selecting a hit from the FIT lists should highlight all the matches
+				documentHighlighted = true;
+				
 				// Since we have to redo the search, might as well do it from the top
 				message('FIT:Find', data);
 			}
@@ -185,6 +188,9 @@ this.FIT = {
 		
 		if(Finder.searchString != data.query
 		|| Finder._fastFind.caseSensitive != data.caseSensitive) {
+			// selecting a hit from the FIT lists should highlight all the matches
+			documentHighlighted = true;
+			
 			// Since we have to redo the search, might as well do it from the top
 			message('FIT:Find', data);
 		}
@@ -263,6 +269,7 @@ this.FIT = {
 			let selRange = sel.getRangeAt(0);
 			let win = Finder._fastFind.currentWindow;
 			let hits = (win) ? this.hits.wins.get(win) : this.hits.all;
+			if(!hits) { return; }
 			
 			for(let [ idx, hit ] of hits) {
 				if(Finder.compareRanges(selRange, hit)) {

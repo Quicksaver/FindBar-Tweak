@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.5';
+Modules.VERSION = '2.1.6';
 
 this.FITMini = {
 	get broadcaster() { return $(objName+'-findInTabs-broadcaster'); },
@@ -12,6 +12,8 @@ this.FITMini = {
 		bar._findField.value = m.data.query;
 		bar._setCaseSensitivity(m.data.caseSensitive ? 1 : 0); // implies bar._find()
 		bar.browser.finder.workAroundFind = false;
+		
+		dispatch(bar, { type: 'SelectedFITHit', cancelable: false });
 	},
 	
 	handleEvent: function(e) {

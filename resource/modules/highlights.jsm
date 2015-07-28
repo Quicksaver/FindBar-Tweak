@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.5';
+Modules.VERSION = '2.1.6';
 
 this.highlights = {
 	observe: function(aSubject, aTopic) {
@@ -94,6 +94,11 @@ this.highlights = {
 						}
 					}
 				}, 0);
+				break;
+			
+			// selecting a hit from the FIT lists should highlight all the matches
+			case 'SelectedFITHit':
+				documentHighlighted = gFindBar.getElement("highlight").checked;
 				break;
 		}
 	},
@@ -288,8 +293,8 @@ Modules.LOADMODULE = function() {
 				
 				Timers.init('delayHighlight', () => {
 					// We don't want to highlight pages that aren't supposed to be highlighted (happens when switching tabs when delaying highlights)
-					if(gFindBarInitialized && gFindBar == bar) {
-						highlights.apply(gFindBar.getElement("highlight").checked);
+					if(gFindBarInitialized && gFindBar == this) {
+						highlights.apply(this.getElement("highlight").checked);
 					}
 				}, delay);
 			});
@@ -357,6 +362,7 @@ Modules.LOADMODULE = function() {
 	Listeners.add(window, 'WillFindAgain', highlights);
 	Listeners.add(window, 'FoundAgain', highlights);
 	Listeners.add(window, 'FindModeChange', highlights);
+	Listeners.add(window, 'SelectedFITHit', highlights);
 	Observers.add(highlights, 'ReHighlightAll');
 	
 	if(!viewSource) {
@@ -407,6 +413,7 @@ Modules.UNLOADMODULE = function() {
 	Listeners.remove(window, 'WillFindAgain', highlights);
 	Listeners.remove(window, 'FoundAgain', highlights);
 	Listeners.remove(window, 'FindModeChange', highlights);
+	Listeners.remove(window, 'SelectedFITHit', highlights);
 	
 	deinitFindBar('highlights');
 };

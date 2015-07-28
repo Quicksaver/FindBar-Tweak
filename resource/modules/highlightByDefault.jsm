@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.2';
+Modules.VERSION = '2.1.3';
 
 this.highlightByDefault = {
 	apply: function(bar) {
@@ -20,7 +20,7 @@ this.highlightByDefault = {
 				break;
 			
 			case 'WillFindFindBar':
-				if(Prefs.highlightOnFindAgain && gFindBar.hidden && !Prefs.hideWhenFinderHidden) {
+				if((Prefs.highlightOnFindAgain || Finder.workAroundFind) && gFindBar.hidden && !Prefs.hideWhenFinderHidden) {
 					this.apply(gFindBar);
 				}
 				break;

@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.3';
+Modules.VERSION = '2.0.4';
 
 this.fillSelectedText = function(m) {
 	var selText = m.data;
@@ -20,14 +20,20 @@ this.fillSelectedText = function(m) {
 		
 		if(selText && Prefs.fillTextShowFindBar && gFindBar.hidden) {
 			gFindBar.open(gFindBar.FIND_TYPEAHEAD);
+			gFindBar._setFindCloseTimeout();
 			
-			if(gFindBar._quickFindTimeout) {
-				window.clearTimeout(gFindBar._quickFindTimeout);
+			if(gFindBar._findMode == gFindBar.FIND_TYPEAHEAD) {
+				if(gFindBar._keepOpen) {
+					gFindBar._keepOpen.cancel();
+				}
+				
+				(function() {
+					var bar = gFindBar;
+					bar._keepOpen = aSync(function() {
+						delete bar._keepOpen;
+					});
+				})();
 			}
-			
-			gFindBar._quickFindTimeout = window.setTimeout(function(aSelf) {
-				if(aSelf._findMode != aSelf.FIND_NORMAL) aSelf.close();
-			}, gFindBar._quickFindTimeoutLength, gFindBar);
 		}
 	}
 	else {

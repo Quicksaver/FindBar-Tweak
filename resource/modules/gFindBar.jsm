@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.10';
+Modules.VERSION = '1.0.11';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return FITFull || viewSource || window.gFindBarInitialized; });
@@ -71,6 +71,27 @@ this.baseInit = function(bar) {
 				dispatch(this, { type: 'UpdatedStatusFindBar'+suffix, cancelable: false, detail: { res: res, aFindPrevious: aFindPrevious } });
 			}
 		});
+		
+		// this was introduced in FF40 by bug 1133981; replaces handleEvent method
+		if(bar.receiveMessage) {
+			Piggyback.add('gFindBar', bar, 'receiveMessage', function(aMessage) {
+				if(aMessage.target != this._browser) { return; }
+				
+				switch(aMessage.name) {
+					case "Findbar:Mouseup":
+						if(!this.hidden && this._findMode != this.FIND_NORMAL
+						// this receiver would prevent fillSelectedText from showing the quick findbar, because it would close it
+						// right after it opened. We obviously don't want the Mouseup from going through if it's meant as a text selection action
+						&& !this._keepOpen) {
+							this.close();
+						}
+						break;
+					
+					case "Findbar:Keypress":
+						return this._onBrowserKeypress(aMessage.data);
+				}
+			});
+		}
 	}
 	
 	Piggyback.add('gFindBar', bar, 'close', function() {
@@ -256,6 +277,7 @@ this.baseDeinit = function(bar) {
 			Piggyback.revert('gFindBar', bar, 'close');
 			Piggyback.revert('gFindBar', bar, '_updateFindUI');
 			Piggyback.revert('gFindBar', bar, '_updateStatusUI');
+			Piggyback.revert('gFindBar', bar, 'receiveMessage');
 			
 			bar._findStatusDesc.hidden = false;
 			bar._findStatusIcon.hidden = false;

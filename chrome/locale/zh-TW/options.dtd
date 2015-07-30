@@ -97,17 +97,17 @@
 <!ENTITY OptctrlFCloses.tooltip "You can open the Findbar and then close it when you no longer need it through the same keyboard shortcut.">
 <!ENTITY OptctrlFprefill.label "開啟時將已選中文字填入搜尋欄">
 <!ENTITY OptctrlFprefill.tooltip.a "If there is any text selected in the webpage when the Findbar is opened, this text is automatically copied to the Findbar to be used as a find query.">
-<!ENTITY OptctrlFprefill.tooltip.b "If 'Highlight All by Default' is enabled, it will find all occurences of the selected text immediately.">
-<!ENTITY OptctrlFOnFocused.label "Only close when it is already focused">
-<!ENTITY OptctrlFOnFocused.tooltip "The keyboard shortcut will always first place the cursor in the Findbar, copying any selected text in the webpage into it if the above preference is enabled. It will only close the Findbar when the cursor is already in it.">
+<!ENTITY OptctrlFprefill.tooltip.b "若「預設強調全部」已啟用，將會立刻強調所有結果。">
+<!ENTITY OptctrlFOnFocused.label "只於遊標置於搜尋欄時關閉">
+<!ENTITY OptctrlFOnFocused.tooltip "若已啟用此設定，鍵盤快捷鍵將遊標置於搜尋欄，複製所有已選擇文字至搜尋欄中。若遊標本已置於搜尋欄，搜尋欄將會關閉。">
 <!ENTITY OptSelectingText.label "選擇文字時">
 <!ENTITY OptfillSelectedText.label "選擇文字時開啟並填入搜尋欄">
-<!ENTITY OptfillSelectedText.tooltip.a "Every time any word is selected in the webpage, it will be automatically copied to the Findbar to be used as a find query. ">
-<!ENTITY OptfillSelectedText.tooltip.b "If 'Highlight All by Default' is enabled, selecting text in a webpage will immediately highlight all occurences of the selection.">
-<!ENTITY OptemptySelectedText.label "Empty the Findbar when no text is selected">
-<!ENTITY OptemptySelectedText.tooltip "Likewise from above, if you click anywhere in the webpage to unselect text, the Findbar will be cleared and all the highlights will be removed as well.">
+<!ENTITY OptfillSelectedText.tooltip.a "每次於網頁中選擇一段文字時，其將自動複製去搜尋欄。">
+<!ENTITY OptfillSelectedText.tooltip.b "若「預設強調全部」已啟用，將會立刻強調已選文字於網頁上的所有結果。">
+<!ENTITY OptemptySelectedText.label "沒有選擇文字時清空搜尋欄">
+<!ENTITY OptemptySelectedText.tooltip "類似前項，當你點擊網頁以取消選擇文字時，搜尋欄將清空並取消所有強調效果。">
 <!ENTITY OptfillSelectedOpenFindbar.label "選擇文字時開啟並填入快速搜尋欄">
-<!ENTITY OptfillSelectedOpenFindbar.tooltip "When the Findbar is filled with the selected text, it will briefly appear to show that this happened.">
+<!ENTITY OptfillSelectedOpenFindbar.tooltip "當搜尋欄填入已選文字時，其將短暫開啟以顯示文字已填入。">
 <!ENTITY OptglobalBehavior.warning "警告：下列選項並不單屬搜尋欄，而會影響整個瀏覽器，如網頁中、位置欄，以及可選擇文字的地方。使用時請額外小心。">
 <!ENTITY OptdblClickEatSpaces.label "連點已選擇文字時包含尾部空格">
 <!ENTITY OptdblClickStopAtPunctuation.label "連點已選擇文字時於標點符號處為止">

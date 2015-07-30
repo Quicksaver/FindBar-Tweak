@@ -1,13 +1,13 @@
-<!ENTITY preferences.button "Preferences">
-<!ENTITY preferences.undo.label "Undo">
-<!ENTITY preferences.redo.label "Redo">
-<!ENTITY preferences.undoredo.tooltip "Quickly revert any change made to the add-on's preferences, including importing from a file and restoring defaults.">
-<!ENTITY preferences.import.label "Import from file...">
-<!ENTITY preferences.import.tooltip "Load add-on preferences from a previously exported file on your computer.">
-<!ENTITY preferences.export.label "Export to file...">
-<!ENTITY preferences.export.tooltip "Save your add-on preferences into an external file for safekeeping.">
-<!ENTITY preferences.reset.label "Restore defaults">
-<!ENTITY preferences.reset.tooltip.a "All preferences are rolled back to their default values, as if the add-on was fresh installed.">
-<!ENTITY preferences.reset.tooltip.b "Button placements in toolbars are unaffected, to revert those use the Restore Defaults button in Customize view instead.">
-<!ENTITY preferences.jumpto.label "Jump to preference...">
-<!ENTITY preferences.jumpto.tooltip "Type in a word and you'll be taken to the first preference that contains it.">
+<!ENTITY preferences.button "Paramètres">
+<!ENTITY preferences.undo.label "Annuler">
+<!ENTITY preferences.redo.label "Rétablir">
+<!ENTITY preferences.undoredo.tooltip "Annulez rapidement toute modification appliquée aux paramètres du module, en incluant l'importation depuis un fichier ainsi que la restauration des valeurs par défaut.">
+<!ENTITY preferences.import.label "Importer depuis un fichier...">
+<!ENTITY preferences.import.tooltip "Charge les paramètres depuis un fichier précédemment exporté sur votre ordinateur.">
+<!ENTITY preferences.export.label "Exporter dans un fichier...">
+<!ENTITY preferences.export.tooltip "Enregistre les paramètres de votre module dans un fichier externe de secours.">
+<!ENTITY preferences.reset.label "Restaurer les paramètres par défaut">
+<!ENTITY preferences.reset.tooltip.a "Tous les paramètres sont restaurés à leurs valeurs par défaut, comme si le module venait tout juste d'être installé.">
+<!ENTITY preferences.reset.tooltip.b "Les positions des boutons sur les barres d'outils ne sont pas affectées, pour restaurer celles-ci utilisez plutôt le bouton « Configuration par défaut » du mode de personnalisation de Firefox.">
+<!ENTITY preferences.jumpto.label "Aller au paramètre...">
+<!ENTITY preferences.jumpto.tooltip "Saisissez un mot et vous irez au premier paramètre qui le contient.">

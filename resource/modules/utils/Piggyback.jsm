@@ -1,4 +1,4 @@
-Modules.VERSION = '1.2.1';
+Modules.VERSION = '1.2.2';
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -71,10 +71,9 @@ this.Piggyback = {
 				// it's not like I can use a not-live reference to this, and I also can't use an array directly or it'll leave a ZC
 				var ex = aObj.__PiggybackIds.split(' ');
 				
-				for(var id of ex) {
-					var bId = '_Piggyback_'+id;
-					for(var bName of aObj[bId].values()) {
-						var bMethod = bName.get(aMethod);
+				for(let id of ex) {
+					for(let bName of aObj['_Piggyback_'+id].values()) {
+						let bMethod = bName.get(aMethod);
 						if(bMethod && bMethod.mode == Piggyback.MODE_BEFORE) {
 							if(!bMethod.method.apply(aObj, arguments)) { return; }
 						}
@@ -83,9 +82,9 @@ this.Piggyback = {
 				
 				aObj['_'+aMethod].apply(aObj, arguments);
 				
-				for(var id of ex) {
-					for(var bName of aObj[bId].values()) {
-						var bMethod = bName.get(aMethod);
+				for(let id of ex) {
+					for(let bName of aObj['_Piggyback_'+id].values()) {
+						let bMethod = bName.get(aMethod);
 						if(bMethod && bMethod.mode == Piggyback.MODE_AFTER) {
 							bMethod.method.apply(aObj, arguments);
 						}
@@ -94,8 +93,10 @@ this.Piggyback = {
 			};
 		}
 		
-		for(var id of ids) {
-			for(var bName of aObj['_Piggyback_'+id].values()) {
+		// if another add-on already piggybacked this method, we don't re-piggyback it; the custom method is already added to the maps above,
+		// so it will still be called by that add-on's commander method (if MODE_BEFORE or MODE_AFTER is used)
+		for(let id of ids) {
+			for(let bName of aObj['_Piggyback_'+id].values()) {
 				if(bName.has(aMethod) && bName.get(aMethod).active) { return false; }
 			}
 		}
@@ -112,24 +113,9 @@ this.Piggyback = {
 		
 		if(!aObj[aId] || !aObj[aId].has(aName) || !aObj[aId].get(aName).has(aMethod)) { return false; }
 		
-		if(aObj[aId].get(aName).get(aMethod).active) {
-			aObj[aMethod] = aObj['_'+aMethod];
-			delete aObj['_'+aMethod];
-			
-			// if another add-on wants to modify the same method, let it now
-			for(var id of ids) {
-				var bId = '_Piggyback_'+id;
-				for(var bName of aObj[bId].values()) {
-					var bMethod = bName.get(aMethod);
-					if(bMethod && !bMethod.active) {
-						aObj['_'+aMethod] = aObj[aMethod];
-						aObj[aMethod] = (bMethod.mode == this.MODE_REPLACE) ? bMethod.method : bMethod.Piggybacker;
-						bMethod.active = true;
-						break;
-					}
-				}
-			}
-		}
+		// is this method the one that had the active commander?
+		// If it is, we'll need to remember this to remove the commander and re-apply another commander later if necessary
+		var active = aObj[aId].get(aName).get(aMethod).active;
 		
 		aObj[aId].get(aName).delete(aMethod);
 		
@@ -144,6 +130,24 @@ this.Piggyback = {
 					aObj.__PiggybackIds = ids.join(' ');
 				} else {
 					delete aObj.__Piggybackids;
+				}
+			}
+		}
+		
+		if(active) {
+			aObj[aMethod] = aObj['_'+aMethod];
+			delete aObj['_'+aMethod];
+			
+			// if another add-on or module wants to modify the same method, let it now
+			id_loop: for(let id of ids) {
+				for(let bName of aObj['_Piggyback_'+id].values()) {
+					let bMethod = bName.get(aMethod);
+					if(bMethod && !bMethod.active) {
+						aObj['_'+aMethod] = aObj[aMethod];
+						aObj[aMethod] = (bMethod.mode == this.MODE_REPLACE) ? bMethod.method : bMethod.Piggybacker;
+						bMethod.active = true;
+						break id_loop;
+					}
 				}
 			}
 		}

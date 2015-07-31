@@ -171,6 +171,48 @@
 		color: rgb(216,216,216);
 	}
 	
+	/* tweaks for the Developer Edition theme */
+	
+	#main-window[devtoolstheme="dark"] findbar[movetotop][DevEdition]:not([inPDFJS]) {
+		background-color: #39424D;
+		-moz-border-bottom-colors: rgba(0,0,0,.2);
+		-moz-border-right-colors: rgba(0,0,0,.2);
+		-moz-border-left-colors: rgba(0,0,0,.2);
+	}
+	
+	#main-window[devtoolstheme="dark"] findbar[movetotop][DevEdition]:not([inPDFJS]):-moz-locale-dir(ltr):before,
+	#main-window[devtoolstheme="dark"] findbar[movetotop][DevEdition]:not([inPDFJS]):-moz-locale-dir(rtl):after {
+		box-shadow: 	2px -2px 0 -2px rgba(0,0,0,.2),
+		                7px -4px 0px -4px #39424D,
+		                6px -4px 0px -4px #39424D;
+	}
+	#main-window[devtoolstheme="dark"] findbar[movetotop][DevEdition]:not([inPDFJS]):-moz-locale-dir(ltr):after,
+	#main-window[devtoolstheme="dark"] findbar[movetotop][DevEdition]:not([inPDFJS]):-moz-locale-dir(rtl):before {
+		box-shadow: 	-2px -2px 0 -2px rgba(0,0,0,.2),
+		                -7px -4px 0px -4px #39424D,
+		                -6px -4px 0px -4px #39424D;
+	}
+	
+	#main-window[devtoolstheme="light"] findbar[movetotop][DevEdition]:not([inPDFJS]) {
+		background-color: #f5f6f7;
+		-moz-border-bottom-colors: #cccccc;
+		-moz-border-right-colors: #cccccc;
+		-moz-border-left-colors: #cccccc;
+	}
+	
+	#main-window[devtoolstheme="light"] findbar[movetotop][DevEdition]:not([inPDFJS]):-moz-locale-dir(ltr):before,
+	#main-window[devtoolstheme="light"] findbar[movetotop][DevEdition]:not([inPDFJS]):-moz-locale-dir(rtl):after {
+		box-shadow: 	2px -2px 0 -2px #cccccc,
+		                7px -4px 0px -4px #f5f6f7,
+		                6px -4px 0px -4px #f5f6f7;
+	}
+	#main-window[devtoolstheme="light"] findbar[movetotop][DevEdition]:not([inPDFJS]):-moz-locale-dir(ltr):after,
+	#main-window[devtoolstheme="light"] findbar[movetotop][DevEdition]:not([inPDFJS]):-moz-locale-dir(rtl):before {
+		box-shadow: 	-2px -2px 0 -2px #cccccc,
+		                -7px -4px 0px -4px #f5f6f7,
+		                -6px -4px 0px -4px #f5f6f7;
+	}
+	
 	/* Textbox resizers */
 	
 	findbar .find-textbox-resizer {

@@ -1,8 +1,9 @@
-Modules.VERSION = '2.0.8';
+Modules.VERSION = '2.0.9';
 
 this.__defineGetter__('gBrowserBox', function() { return $('browser'); });
 this.__defineGetter__('gAppContent', function() { return $('appcontent'); });
 this.__defineGetter__('TabsToolbar', function() { return $('TabsToolbar'); });
+this.__defineGetter__('DevEdition', function() { return window.DevEdition; });
 
 // until I find a better way of finding out on which side of the browser is the scrollbar, I'm setting equal margins
 this.MIN_LEFT = 22;
@@ -203,18 +204,33 @@ this.personaChanged = function() {
 this.stylePersonaFindBar = function() {
 	if(!moveTopStyle) { return; }
 	
+	var windowStyle = getComputedStyle(document.documentElement);
+	
 	if(!trueAttribute(document.documentElement, 'lwtheme')) {
 		lwtheme.bgImage = '';
 		lwtheme.color = '';
 		lwtheme.bgColor = '';
 	}
 	else {
-		var windowStyle = getComputedStyle(document.documentElement);
 		if(lwtheme.bgImage != windowStyle.backgroundImage && windowStyle.backgroundImage != 'none') {
 			lwtheme.bgImage = windowStyle.backgroundImage;
 			lwtheme.color = windowStyle.color;
 			lwtheme.bgColor = windowStyle.backgroundColor;
 		}
+	}
+	
+	if(DevEdition && DevEdition.isThemeCurrentlyApplied) {
+		initFindBar('DevEdition',
+			function(bar) {
+				setAttribute(bar, 'DevEdition', 'true');
+			},
+			function(bar) {
+				removeAttribute(bar, 'DevEdition');
+			}
+		);
+	}
+	else {
+		deinitFindBar('DevEdition');
 	}
 	
 	// Unload current stylesheet if it's been loaded
@@ -223,7 +239,6 @@ this.stylePersonaFindBar = function() {
 		return;
 	}
 	
-	var windowStyle = getComputedStyle(document.documentElement);
 	var barStyle = getComputedStyle(gFindBar);
 	
 	// Another personas in OSX tweak
@@ -488,6 +503,7 @@ Modules.UNLOADMODULE = function() {
 		
 		deinitFindBar('resetTopState');
 		deinitFindBar('moveToTopContent');
+		deinitFindBar('DevEdition');
 	}
 	
 	Listeners.remove(window, "resize", delayMoveTop);

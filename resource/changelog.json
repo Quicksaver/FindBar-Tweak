@@ -1,6 +1,19 @@
 {
-	"current":"2.0.1",
+	"current":"2.0.2",
 	"releases": {
+		"2.0.2":{
+			"date":"August 9, 2015",
+			"notes":[
+				["updated","fr and zh-TW locales"],
+				["changed","To go to a match you have to press enter or double-click an entry from the Find in All Tabs lists; single-clicking the exact (highlighted) match in the lists is still possible"],
+				["bugfix","Pressing Alt+F3 in the browser window should open the Find in All Tabs dialog"],
+				["bugfix","Selecting a match from the Find in All Tabs lists should highlight all matches if Highlight All button is toggled or Highlight All by Default is enabled"],
+				["bugfix","\"Show the Quick Findbar when selected text is used\" was not working in Firefox 40+"],
+				["bugfix","Sometimes \"Empty the Findbar when no text is selected\" would require a second click outside of any text selection to clear the findbar (<a target=\"blank\" href=\"https://github.com/Quicksaver/FindBar-Tweak/issues/208\">issue #208</a>)"],
+				["bugfix","Enhanced compatibility with my other add-ons"],
+				["bugfix","Appearance issues when using the Firefox Developer Edition theme with the findbar at the top (<a target=\"blank\" href=\"https://github.com/Quicksaver/FindBar-Tweak/issues/211\">issue #211</a>)"]
+			]
+		},
 		"2.0.1":{
 			"date":"July 28, 2015",
 			"notes":[

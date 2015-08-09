@@ -1,4 +1,4 @@
-Modules.VERSION = '2.3.1';
+Modules.VERSION = '2.3.2';
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -56,7 +56,7 @@ this.Styles = {
 		return true;
 	},
 	
-	unload: function(aName, aPath, isData, aType) {
+	unload: function(aName, aPath, isData) {
 		if(typeof(aName) != 'string') {
 			for(let x of aName) {
 				this.unload(x);

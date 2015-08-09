@@ -1,4 +1,4 @@
-Modules.VERSION = '2.15.4';
+Modules.VERSION = '2.15.5';
 Modules.UTILS = true;
 
 // Overlays - to use overlays in my bootstraped add-ons. The behavior is as similar to what is described in https://developer.mozilla.org/en/XUL_Tutorial/Overlays as I could manage.
@@ -473,6 +473,16 @@ this.Overlays = {
 		var skipActions = ['appendXMLSS', 'sizeToContent', 'addPreferencesElement', 'addPreference', 'appendButton', 'addToolbar'];
 		var conflictingFields = ['node', 'originalParent'];
 		
+		var toIgnore = [
+			// ignore menu items added or modified somewhere in a navigator-toolbox's child menu
+			{
+				type: 1,
+				actions: new Set([ 'appendChild', 'insertBefore', 'addAttribute', 'modifyAttribute' ]),
+				nodes: new Set([ 'menuitem', 'menupopup' ]),
+				parentIds: new Set([ 'navigator-toolbox' ])
+			}
+		];
+		
 		// we need to go through their traceBack's to see if any of them might conflict with each other
 		for(var traceA of aOverlay.traceBack) {
 			if(skipActions.indexOf(traceA.action) > -1) { continue; }
@@ -483,10 +493,29 @@ this.Overlays = {
 				var bAction = this.fixTraceBackNodes(aWindow, traceB);
 				
 				// if any of the nodes overlap, we consider them conflicting
-				for(var aa=0; aa<conflictingFields.length; aa++) {
-					for(var bb=0; bb<conflictingFields.length; bb++) {
-						if(isAncestor(aAction[conflictingFields[aa]], bAction[conflictingFields[bb]])
-						|| isAncestor(bAction[conflictingFields[bb]], aAction[conflictingFields[aa]])) {
+				for(let aa of conflictingFields) {
+					if(!aAction[aa]) { continue; }
+					
+					b_loop: for(let bb of conflictingFields) {
+						if(!bAction[bb]) { continue; }
+						
+						if(isAncestor(aAction[aa], bAction[bb])
+						|| isAncestor(bAction[bb], aAction[aa])) {
+							for(let ignore of toIgnore) {
+								switch(ignore.type) {
+									case 1:
+										if(	(ignore.nodes.has(aAction[aa].nodeName)
+											&& ignore.parentIds.has(bAction[bb].id)
+											&& ignore.actions.has(aAction.action))
+										||	(ignore.nodes.has(bAction[bb].nodeName)
+											&& ignore.parentIds.has(aAction[aa].id)
+											&& ignore.actions.has(bAction.action))
+										) {
+											continue b_loop;
+										}
+										break;
+								}
+							}
 							return true;
 						}
 					}

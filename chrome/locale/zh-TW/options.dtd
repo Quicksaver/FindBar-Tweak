@@ -35,10 +35,10 @@
 <!ENTITY OptgridLimit.tooltip "This is only for the highlights grid in the scrollbar! If there are too many results, which could slow down the process and lag the browser because of it, the highlights grid in the scrollbar will not be used.">
 <!ENTITY OptminNoDelay.labela "如果搜尋項少於">
 <!ENTITY OptminNoDelay.labelb "個字符則延遲強調">
-<!ENTITY OptminNoDelay.tooltip "When you first start typing in the Findbar, it's unlikely you're looking for just those one or two first characters. This delays the Find operation for short words for 1.5 seconds, to give you time to type the rest of your query. Note that it will still find matches for short words if you let that time pass without entering any more characters.">
+<!ENTITY OptminNoDelay.tooltip "當你開始輸入文字至搜尋欄內時，你很可能並非尋找該一兩個字母。這將較短字符的搜尋延遲1.5秒，以讓你有時間輸入餘下的字串。注意該段時間過後即使未有輸入其他字符亦會自動搜尋。">
 <!ENTITY OptadjustGridPadding.labela "調整網格與邊框之距離：">
 <!ENTITY OptadjustGridPadding.labelb "像素">
-<!ENTITY OptadjustGridPadding.tooltip "Adjust the relative position of the highlights grid if needed, to better fit themes that change the appearance of the scrollbar.">
+<!ENTITY OptadjustGridPadding.tooltip "如有需要，可調整強調網格的寬度以適應改變卷軸寬度的樣式。">
 <!ENTITY OptadjustGridWidth.labela "調整網格寬度：">
 <!ENTITY OptadjustGridWidth.labelb "像素">
 <!ENTITY OptadjustGridWidth.tooltip "Adjust the width of the marks in the highlights grid if needed, to better fit themes that change the appearance of the scrollbar.">
@@ -71,7 +71,7 @@
 <!ENTITY OptmovetoRight.tooltip "The Findbar's input field and buttons will be reversed and aligned on the right. If the Findbar is moved to the top, the whole Findbar appears on the top right corner instead of on the left.">
 <!ENTITY OptblurCloses.label "失去焦点時關閉搜尋欄">
 <!ENTITY OptblurCloses.tooltip "As soon as you click anywhere on the webpage, or move the cursor to another place like the location bar, the Findbar will close automatically.">
-<!ENTITY OptglobalFB.label "Use a single global Findbar for all tabs">
+<!ENTITY OptglobalFB.label "所有分頁使用同一搜尋欄">
 <!ENTITY OptglobalFB.tooltip "When you open the Findbar in one tab, then switch to another tab, you should see the Findbar still open in the new tab.">
 <!ENTITY OptonStartup.label "啟動時恢復上次的打開狀態">
 <!ENTITY OptonStartup.tooltip "If you close the browser with the Findbar still open, the next time you start the browser it will be already opened.">
@@ -94,7 +94,7 @@
 <!ENTITY OptkeyboardShortcut.label "快捷鍵">
 <!ENTITY OptctrlFCloses.win "Ctrl+F亦可關閉搜尋欄">
 <!ENTITY OptctrlFCloses.mac "Command+F亦可關閉搜尋欄">
-<!ENTITY OptctrlFCloses.tooltip "You can open the Findbar and then close it when you no longer need it through the same keyboard shortcut.">
+<!ENTITY OptctrlFCloses.tooltip "你可以使用同一鍵盤快捷鍵以開啟並關閉搜尋欄。">
 <!ENTITY OptctrlFprefill.label "開啟時將已選中文字填入搜尋欄">
 <!ENTITY OptctrlFprefill.tooltip.a "If there is any text selected in the webpage when the Findbar is opened, this text is automatically copied to the Findbar to be used as a find query.">
 <!ENTITY OptctrlFprefill.tooltip.b "若「預設強調全部」已啟用，將會立刻強調所有結果。">

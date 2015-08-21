@@ -1,6 +1,13 @@
 {
-	"current":"2.0.2",
+	"current":"2.0.3",
 	"releases": {
+		"2.0.3":{
+			"date":"August 21, 2015",
+			"notes":[
+				["new","pl locale"],
+				["bugfix","Move to Right was causing the findbar's textbox to be reversed as well (<a target=\"blank\" href=\"https://github.com/Quicksaver/FindBar-Tweak/issues/215\">issue #215</a>)"]
+			]
+		},
 		"2.0.2":{
 			"date":"August 9, 2015",
 			"notes":[

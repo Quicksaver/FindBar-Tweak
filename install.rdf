@@ -36,7 +36,7 @@
 				<em:locale>de</em:locale>
 				<em:name>FindBar Tweak</em:name>
 				<em:description>Findbar Tweak hat alles – von einfachen Anpassungen wie einer Suchleiste am oberen Rand bis zum mächtigen Werkzeug „In allen Tabs suchen“, um die Suchleiste zu einem mächtigen und zugänglichen Suchwerkzeug zu machen!</em:description>
-				<em:translator>Michael Köhler, Wawuschel @ babelzilla</em:translator>
+				<em:translator>Michael Köhler, Wawuschel @ Babelzilla</em:translator>
 			</Description>
 		</em:localized>
 		<em:localized>
@@ -53,6 +53,14 @@
 				<em:name>FindBar Tweak</em:name>
 				<em:description>Depuis des réglages simples comme placer la barre dans le coin supérieur, jusqu'au puissant « Rechercher dans tous les onglets », il a tout pour rendre la barre d'outils de recherche puissante et accessible !</em:description>
 				<em:translator>BlackJack</em:translator>
+			</Description>
+		</em:localized>
+		<em:localized>
+			<Description>
+				<em:locale>pl</em:locale>
+				<em:name>FindBar Tweak</em:name>
+				<em:description>Between simple tweaks such as placing the findbar in the top corner, to the powerful "Find in All Tabs" tool, it has everything to make the Find Toolbar a powerful and accessible research tool!</em:description>
+				<em:translator>piotrex - https://github.com/piotrex/, Kityn @ Babelzilla</em:translator>
 			</Description>
 		</em:localized>
 		<em:localized>

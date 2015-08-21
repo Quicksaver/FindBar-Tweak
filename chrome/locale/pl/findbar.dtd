@@ -1,0 +1,5 @@
+<!ENTITY MenuOptions.label "Opcje paska wyszukiwań">
+<!ENTITY FITbutton.label "Znajdź we wszystkich kartach">
+<!ENTITY FITbutton.tooltip.win "Znajdź wyrażenie we wszystkich otwartych kartach (Ctrl+F3)">
+<!ENTITY FITbutton.tooltip.mac "Znajdź wyrażenie we wszystkich otwartych kartach (Command+F3)">
+<!ENTITY FITbutton.accesskey "k">

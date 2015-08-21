@@ -1,0 +1,23 @@
+<!ENTITY about.paneTitle "Informacja">
+<!ENTITY about.version "Wersja {v}">
+<!ENTITY about.versionDivider " - ">
+<!ENTITY about.uptodate "aktualny, gratulacje!">
+<!ENTITY about.needsupdate "dostępna aktualizacja!">
+<!ENTITY about.description "Przejrzyj &quot;Informacje o wydaniu&quot; oraz &quot;Znane problemy&quot; wersji poniżej. Powiadom mnie, jeżeli znajdziejsz jakieś problemy albo masz propozycje dla przyszłych wydań.">
+<!ENTITY about.descriptionB "Ten dodatek jest darmowy, ale naprawianie błędów, dodawanie nowych opcji oraz dbanie, aby wszystko działało w nowych wydaniach Firefoksa, jest pracochłonne i może czasami być trudne. Jeżeli podoba ci się ten dodatek, proszę wesprzeć kontynuowanie jego rozwoju. Jak podaje łącze &quot;Możesz pomóc&quot;!">
+<!ENTITY about.allVersions "Pokaż notatki ze wszystkich poprzednich wersji">
+<!ENTITY about.notifyOnUpdates "Pokaż mi tę kartę przy następnej aktualizacji">
+<!ENTITY about.development "Stan rozwoju">
+<!ENTITY about.helpdevelopment "MOŻESZ POMÓC">
+<!ENTITY about.information "Więcej informacji">
+<!ENTITY about.home "Strona domowa dodatku">
+<!ENTITY about.fullchangelog "Pełna lista zmian">
+<!ENTITY about.problems "Masz problemy?">
+<!ENTITY about.tech "Otwórz wątek na stronie wsparcia z opisem twojego problemu">
+<!ENTITY about.email "Albo wyślij do mnie e-mail w tej sprawie">
+<!ENTITY about.author "Więcej od autora">
+<!ENTITY about.trymore "Wybróbuj jeden z moich innych dodatków dla jeszcze lepszego doświadczania Firefoksa!">
+<!ENTITY about.profile "Znajdź je na moim profilu">
+<!ENTITY about.share "Podziel się!">
+<!ENTITY about.friends "Nie bądź jedynym z tą świętną przeglądarką. Dopuść znajomych do tej wspaniałości!">
+<!ENTITY about.moreshare "Inne usługi...">

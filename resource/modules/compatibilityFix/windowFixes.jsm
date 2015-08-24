@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.17';
+Modules.VERSION = '1.1.18';
 
 Modules.LOADMODULE = function() {
 	if(!viewSource && !FITFull) {
@@ -22,6 +22,10 @@ Modules.LOADMODULE = function() {
 			Modules.loadIf('compatibilityFix/S3', (addon && addon.isActive));
 		});
 		
+		AddonManager.getAddonByID("unloadtab@firefox.ext", function(addon) {
+			Modules.loadIf('compatibilityFix/UnloadTab', (addon && addon.isActive));
+		});
+		
 		Modules.load('compatibilityFix/InstantFox');
 	}
 	
@@ -38,6 +42,7 @@ Modules.UNLOADMODULE = function() {
 	Modules.unload('compatibilityFix/findlist');
 	Modules.unload('compatibilityFix/ClearFields');
 	
+	Modules.unload('compatibilityFix/UnloadTab');
 	Modules.unload('compatibilityFix/S3');
 	Modules.unload('compatibilityFix/UpdateScanner');
 	Modules.unload('compatibilityFix/noScript');

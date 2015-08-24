@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.11';
+Modules.VERSION = '1.1.0';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return FITFull || viewSource || window.gFindBarInitialized; });
@@ -370,15 +370,46 @@ this.deinitFindBar = function(name) {
 };
 
 this.initializeListener = function(e) {
-	var bar = e.target._findBar;
+	let bar = e.target._findBar;
 	if(!bar) { return; }
 	
 	bar[objName+'_initialized'] = { length: 0 };
-	for(var r in initRoutines) {
+	for(let r in initRoutines) {
 		initRoutines[r].init(bar);
 		bar[objName+'_initialized'][r] = true;
 		bar[objName+'_initialized'].length++;
 	}
+	
+	// in case we want to recycle the state from the findbar saved on that same tab
+	restoreFindBarState(bar, e.target._findBar_state);
+};
+
+this.saveFindBarState = function(tab) {
+	// nothing to save if there's no findbar
+	if(!tab._findBar) { return null; }
+	
+	// only save the state if the findbar is opened and if it's not any of the quick modes
+	let bar = tab._findBar;
+	if(!bar.hidden && bar._findMode == bar.FIND_NORMAL) {
+		tab._findBar_state = {
+			value: bar._findField.value,
+			highlight: bar.getElement('highlight').checked,
+			caseSensitive: bar.getElement('find-case-sensitive').checked
+		};
+		return tab._findBar_state;
+	}
+	
+	return null;
+};
+
+// restores the state from saveFindBarState
+this.restoreFindBarState = function(bar, state) {
+	if(!state) { return; }
+	
+	bar._findField.value = state.value;
+	bar.getElement('highlight').checked = state.highlight;
+	bar.getElement('find-case-sensitive').checked = state.caseSensitive;
+	bar.open();
 };
 
 this.tabRemotenessChanged = function(e) {
@@ -418,6 +449,13 @@ this.destroyFindBar = function(tab) {
 	}
 	catch(ex) {} // don't really care if this fails
 	
+	// also deinitialize the Finder object
+	if(bar.browser.isRemoteBrowser) {
+		bar.browser._remoteFinder = null;
+	} else {
+		bar.browser._finder = null;
+	}
+	
 	bar.destroy();
 	bar.remove();
 	tab._findBar = null;
@@ -448,9 +486,9 @@ Modules.UNLOADMODULE = function() {
 	if(FITFull || viewSource) {
 		delete gFindBar[objName+'_initialized'];
 	} else {
-		for(var tab of gBrowser.tabs) {
+		for(let tab of gBrowser.tabs) {
 			if(gBrowser.isFindBarInitialized(tab)) {
-				var bar = gBrowser.getFindBar(tab);
+				let bar = gBrowser.getFindBar(tab);
 				delete bar[objName+'_initialized'];
 			}
 		}

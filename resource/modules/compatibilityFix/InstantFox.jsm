@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.1';
+Modules.VERSION = '1.0.2';
 
 this.__defineGetter__('InstantFox', function() { return window.InstantFox; });
 
@@ -25,21 +25,22 @@ this.instantFox = {
 		this.disable();
 	},
 	
-	query: null,
+	state: null,
 	
 	enable: function() {
 		Piggyback.add('findbartweak', InstantFox.pageLoader, 'beforeSwap', () => {
 			if(gFindBarInitialized && !gFindBar.hidden) {
-				this.query = findQuery;
-				destroyFindBar(gBrowser.mCurrentTab);
+				let tab = gBrowser.mCurrentTab;
+				// the swap causes the tab to lose the state property (binding reset?), so we have to keep a reference to it here
+				this.state = saveFindBarState(tab);
+				destroyFindBar(tab);
 			}
 		}, Piggyback.MODE_AFTER);
 		
 		Piggyback.add('findbartweak', InstantFox.pageLoader, 'afterSwap', () => {
-			if(this.query !== null) {
-				findQuery = this.query;
-				gFindBar.open();
-				this.query = null;
+			if(this.state) {
+				restoreFindBarState(gFindBar, this.state);
+				this.state = null;
 			}
 		}, Piggyback.MODE_AFTER);
 	},

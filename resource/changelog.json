@@ -1,6 +1,12 @@
 {
-	"current":"2.0.3",
+	"current":"2.0.4",
 	"releases": {
+		"2.0.4":{
+			"date":"August 27, 2015",
+			"notes":[
+				["bugfix","compatibility with <a target=\"blank\" href=\"https://addons.mozilla.org/firefox/addon/unloadtab/\">UnloadTab</a>: findbar would stop working in any tabs that had been unloaded before (<a target=\"blank\" href=\"https://github.com/Quicksaver/FindBar-Tweak/issues/216\">issue #216</a>)"]
+			]
+		},
 		"2.0.3":{
 			"date":"August 21, 2015",
 			"notes":[

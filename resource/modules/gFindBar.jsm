@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.0';
+Modules.VERSION = '1.1.1';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return FITFull || viewSource || window.gFindBarInitialized; });
@@ -385,12 +385,11 @@ this.initializeListener = function(e) {
 };
 
 this.saveFindBarState = function(tab) {
-	// nothing to save if there's no findbar
-	if(!tab._findBar) { return null; }
-	
-	// only save the state if the findbar is opened and if it's not any of the quick modes
 	let bar = tab._findBar;
-	if(!bar.hidden && bar._findMode == bar.FIND_NORMAL) {
+	
+	// nothing to save if there's no findbar
+	// only save the state if the findbar is opened and if it's not any of the quick modes
+	if(bar && !bar.hidden && bar._findMode == bar.FIND_NORMAL) {
 		tab._findBar_state = {
 			value: bar._findField.value,
 			highlight: bar.getElement('highlight').checked,
@@ -399,7 +398,7 @@ this.saveFindBarState = function(tab) {
 		return tab._findBar_state;
 	}
 	
-	return null;
+	return tab._findBar_state || null;
 };
 
 // restores the state from saveFindBarState

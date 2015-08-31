@@ -13,11 +13,11 @@
 <!ENTITY OpthideWhenFinderHidden.tooltip "W skrócie, nieotwarty pasek wyszukiwania = brak pokazanych wyróżnień. Obejmuje to pasek szybkiego wyszukiwania. Jeżeli pasek wyszukiwania zostanie zamknięty, wszystkie dopasowania zostaną usunięte ze strony.">
 <!ENTITY OptgridInScrollbar.label "Zaznaczaj kolorem lokalizacje wyników na pasku przewijania">
 <!ENTITY OptgridInScrollbar.tooltip "Względne położenie każdego wyróżnionego dopasowania na stronie internetowej pojawi się na pasku przewijania.">
-<!ENTITY OptuseCounter.label "Pokazuj ilość wystąpień in pasku wyszukiwania">
+<!ENTITY OptuseCounter.label "Pokazuj licznik dopasowań na pasku wyszukiwania">
 <!ENTITY OptuseCounter.tooltip "Przy każdej operacji wyszukiwania liczba znalezionych dopasowań na stronie pojawi się na końcu paska wyszukiwań.">
-<!ENTITY OptfindInTabs.label "Włącz &quot;Znajdź w kartach&quot;">
+<!ENTITY OptfindInTabs.label "Włącz &quot;Znajdź we wszystkich kartach&quot;">
 <!ENTITY OptfindInTabs.tooltip "Przycisk jest umieszczony na pasku wyszukiwań, aby otworzyć okno &quot;Znajdź we wszystkich kartach&quot;, które pozwala na szybkie wyszukiwanie dowolnego słowa we wszystkich otwartych kartach i oknach.">
-<!ENTITY OptmultipleFITFull.label "Pozwalaj na wiele okien &quot;Znajdź w kartach&quot; jednocześnie">
+<!ENTITY OptmultipleFITFull.label "Pozwalaj na wiele okien &quot;Znajdź we wszystkich kartach&quot; jednocześnie">
 <!ENTITY OptmultipleFITFull.tooltip "Jeżeli jest to wyłączone, kolejne kliknięcie przycisku &quot;Znajdź na wszystkich kartach&quot; ponownie użyje dowolnego otwartego okna &quot;Znajdź we wszystkich kartach&quot; zamiast otwierania za każdym razem nowego.">
 <!ENTITY Optcolor.label "Kolor wyróżnienia">
 <!ENTITY Optcolor.tooltip "Zmień kolor używany do wyróżniania dopasowań na stronie.">
@@ -51,17 +51,17 @@
 <!ENTITY OptsightsHighlights.tooltip "Umieść cel wokół każdego podświetlenia widocznego na stronie. Podczas przewijania strony więcej celów zostanie umieszczonych, bo inne wyróżnienia zostaną przewinięte w polu widzenia.">
 <!ENTITY OptsightsHighlights.warning "Uwaga: To może znacznie zużywać zasoby komputera! Renderowanie i przewijanie stron może stać się powolne!">
 <!ENTITY OptsightsStyle.label "Styl sygnalizowania (kliknij, aby zobaczyć)">
-<!ENTITY OptsightsStyle.focus "Skupianie">
+<!ENTITY OptsightsStyle.focus "Miejsce uaktywnienia">
 <!ENTITY OptsightsStyle.circle "Okrąg">
 <!ENTITY OptsightsRepeat.label "Ilość powtarzań animacji:">
 <!ENTITY OptsightsColor.tooltip "Skonfiguruj kolor używany przez te widoki.">
-<!ENTITY OptsightsSameColor.label "Ten sam kolor co podświetlenia">
+<!ENTITY OptsightsSameColor.label "Użyj tego samego koloru co wyróżnienia">
 <!ENTITY OptsightsSameColor.tooltip "Kolor użyty dla tych widoków będzie taki sam, jak kolor użyty do wyróżnienia wszystkich dopasowań na stronie internetowej (panel Wyróżnienia).">
-<!ENTITY OptsightsSameColorCurrent.label "Ten sam kolor co aktualne wystąpienie">
+<!ENTITY OptsightsSameColorCurrent.label "Użyj tego samego koloru co bieżące wystąpienie">
 <!ENTITY OptsightsSameColorCurrent.tooltip "Kolor użyty dla tych widoków będzie taki sam, jak kolor użyty do rozróżnienia bieżącego dopasowania (panel Wygląd).">
 <!ENTITY OptsightsLimit.label "Maks. ilość sygnalizatorów na ekranie:">
 <!ENTITY OptsightsLimit.tooltip "Funkcja ta może wymagać wielu zasobów. Lepiej ograniczyć maksymalną liczbę ukazanych widoków do liczby, która nie spowolni przeglądarki przy ich wyświetlaniu.">
-<!ENTITY OpthideLabels.label "Show button icons instead of labels">
+<!ENTITY OpthideLabels.label "Pokaż ikony przycisków zamiast etykiet">
 <!ENTITY OpthideLabels.tooltip "Domyślne przyciski paska narzędzi mają etykiety tekstowe. To ustawienie zamienia je na obrazy, czyni je łatwiejszymi do odróżnienia, a także bardziej zwartymi.">
 <!ENTITY OpthideClose.label "Ukryj przycisk zamykania paska">
 <!ENTITY OpthideClose.tooltip "Przycisk zamknięcia paska wyszukiwań nie będzie dostępny do jego zamknięcia.">
@@ -69,15 +69,15 @@
 <!ENTITY OptmovetoTop.tooltip "Chudszy pasek wyszukiwań będzie umieszczony na górze strony internetowej, w kącie nad nią.">
 <!ENTITY OptmovetoRight.label "Pokazuj po prawej stronie">
 <!ENTITY OptmovetoRight.tooltip "Pole wprowadzania i przyciski paska wyszukiwania zostaną odwrócone i wyrównane do prawej stronie. Jeśli pasek wyszukiwania zostanie przeniesiony do góry, w prawym górnym rogu, a nie po lewej stronie, pojawi się cały pasek wyszukiwania.">
-<!ENTITY OptblurCloses.label "Zamykaj pasek, gdy traci on fokus">
-<!ENTITY OptblurCloses.tooltip "Jak tylko klikniesz dowolne miejsce na stronie internetowej, albo przesuniesz kursor w inne miejsce, np. na pasek adresu, pasek wyszukiwań zamknie się automatycznie.">
-<!ENTITY OptglobalFB.label "Użyj jednego paska wyszukiwań dla wszystkich kart">
+<!ENTITY OptblurCloses.label "Zamykaj pasek, gdy traci on uaktywnienie">
+<!ENTITY OptblurCloses.tooltip "Jak tylko klikniesz dowolne miejsce na stronie internetowej, albo przesuniesz kursor w inne miejsce, np. na pasek adresu, pasek wyszukiwania zamknie się automatycznie.">
+<!ENTITY OptglobalFB.label "Użyj jednego paska wyszukiwania dla wszystkich kart">
 <!ENTITY OptglobalFB.tooltip "Jeżeli otworzysz pasek wyszukiwania w jednej karcie, a następnie przełączysz na następną, powinieneś zobaczyć nadal otwarty pasek wyszukiwania w nowej karcie.">
 <!ENTITY OptonStartup.label "Pamiętaj stan pokazania/schowania paska przy starcie">
 <!ENTITY OptonStartup.tooltip "Jeżeli zamkniesz przeglądarkę z otwartym paskiem wyszukiwania, po następnym uruchomieniu przeglądarki będzie on już otwarty.">
 <!ENTITY OptopenFindbar.label "Przy otwieraniu paska wyszukiwania">
-<!ENTITY OptquickFindOptions.label "Znajdowanie szybkie">
-<!ENTITY OptkeepButtons.label "Pokazuj przyciski w &quot;Znajdź szybko&quot;">
+<!ENTITY OptquickFindOptions.label "Pasek szybkiego wyszukiwania">
+<!ENTITY OptkeepButtons.label "Pokazuj przyciski na pasku szybkiego wyszukiwania">
 <!ENTITY OptkeepButtons.tooltip "Domyślnie pasek szybkiego wyszukiwania nie ma żadnych przycisków, zawiera jedynie pole wprowadzania dla operacji szybkiego wyszukiwania. Z tym możesz nadal mieć dostęp do funkcji Wyróżnij wszystko oraz Uwzględnij wielkość liter podczas korzystania z niego.">
 <!ENTITY OptFAYT.label "Rozpoczynaj wyszukiwanie podczas wpisywania tekstu">
 <!ENTITY OptFAYT.tooltip "Wciśnij dowolny klawisz podczas przeglądania strony internetowej, a pasek szybkiego wyszukiwania wyskoczy, aby wyszukać ten tekst. Kursor zostanie w nim umieszczony, więc będziesz móc pisać, aby zmienić zapytanie.">
@@ -85,32 +85,32 @@
 <!ENTITY OptFAYTTimeout.afterLabel "sekundach">
 <!ENTITY OptFAYTTimeout.tooltip "Pasek szybkiego wyszukiwania zostanie automatycznie zamknięty po okresie nieaktywności. Pamiętaj, że również zostanie zamknięty, jeżeli straci aktywność, choćby po kliknięciu strony internetowej.">
 <!ENTITY OptFAYTmode.caption "Tryb paska wyszukiwania">
-<!ENTITY OptFAYTmode.quickFind.label "Używaj &quot;Znajdź szybko&quot; podczas wpisywania tekstu do szukania">
+<!ENTITY OptFAYTmode.quickFind.label "Używaj paska szybkiego wyszukiwania podczas wpisywania tekstu do szukania">
 <!ENTITY OptFAYTmode.quickFind.tooltip "Tryb domyślny. Pasek szybkiego wyszukiwania jest używany, gdy wpiszesz cokolwiek na stronie internetowej, musisz użyć skrótu klawiaturowego albo przycisku przełączania paska narzędzi, aby uzyskać dostęp do zwykłego paska wyszukiwania.">
 <!ENTITY OptFAYTmode.normalFind.label "Zawsze używaj zwykłego paska wyszukiwania">
 <!ENTITY OptFAYTmode.normalFind.tooltip "Zwykły pasek wyszukiwania jest używany, nawet gdy wpiszesz cokolwiek na stronie internetowej, nie zamknie się automatycznie po pewnym okresie albo po utraty uaktywnienia (pod warunkiem, że nie włączysz ustawienia powyżej).">
-<!ENTITY OptFAYTmode.alwaysQuick.label "Zawsze używaj &quot;Znajdź szybko&quot;">
+<!ENTITY OptFAYTmode.alwaysQuick.label "Zawsze używaj paska szybkiego wyszukiwania">
 <!ENTITY OptFAYTmode.alwaysQuick.tooltip "Pasek szybkiego wyszukiwania jest używany, nawet gdy użyjesz skrórtu klawiszowego, zawsze zamknie się automatycznie po pewnym okresie albo po utracie uaktywnienia.">
 <!ENTITY OptkeyboardShortcut.label "Skrót klawiszowy">
 <!ENTITY OptctrlFCloses.win "Ctrl+F zamyka także pasek wyszukiwania">
 <!ENTITY OptctrlFCloses.mac "Command+F zamyka także pasek wyszukiwania">
 <!ENTITY OptctrlFCloses.tooltip "Możesz otworzyć pasek wyszukiwań, a następnie go zamknąć, gdy już go nie potrzebujesz, za pomocą skrótu klawiaturowego.">
-<!ENTITY OptctrlFprefill.label "Wypełniaj pole wyszuk. zaznaczonym tekstem przy jego otwieraniu">
+<!ENTITY OptctrlFprefill.label "Wypełniaj pasek wyszukiwania zaznaczonym tekstem przy jego otwieraniu">
 <!ENTITY OptctrlFprefill.tooltip.a "Jeżeli istnieje zaznaczony tekst na stronie internetowej, gdy pasek wyszukiwania jest otwarty, tekst zostanie automatycznie skopiowany do paska wyszukiwania i użyty jako zapytanie.">
 <!ENTITY OptctrlFprefill.tooltip.b "Jeśli opcja &quot;Domyśnie wyróżnij wszystkie&quot; jest włączona, natychmiast znajdzie wszystkie wystąpienia wybranego tekstu.">
-<!ENTITY OptctrlFOnFocused.label "Zamknij tylko, gdy jest już aktwyny">
+<!ENTITY OptctrlFOnFocused.label "Zamknij tylko, gdy jest już aktywny">
 <!ENTITY OptctrlFOnFocused.tooltip "Skrót klawiszowy zawsze umieści kursor w pasku wyszukiwania, skopiuje do niego każdy zaznaczony tekst ze strony internetowej, jeżeli powyższa opcja jest zaznaczona. Zamknie pasek wyszukiwania, tylko wtedy, gdy kursor jest już w nim umieszczony.">
 <!ENTITY OptSelectingText.label "Przy zaznaczaniu tekstu">
-<!ENTITY OptfillSelectedText.label "Wypełniaj pole wyszukiwania zaznaczonym tekstem">
+<!ENTITY OptfillSelectedText.label "Wypełniaj pasek wyszukiwania zaznaczonym tekstem">
 <!ENTITY OptfillSelectedText.tooltip.a "Za każdym razem, gdy słowo jest zaznaczone na stronie internetowej, zostanie automatycznie skopiowane do paska wyszukiwań, aby służyć za zapytanie.">
 <!ENTITY OptfillSelectedText.tooltip.b "Jeżeli 'Wyróżniaj automatycznie wszystkie' jest włączone, zaznaczenie tekstu na stronie internetowej natychmiast wyróżni wszystkie wystąpienia w wyborze.">
 <!ENTITY OptemptySelectedText.label "Wyczyść pasek wyszukiwań, gdy tekst nie jest zaznaczony">
 <!ENTITY OptemptySelectedText.tooltip "Podobnie jak na górze, jeśli klikniesz dowolne miejsce na stronie internetowej, aby odznaczyć tekst, pasek wyszukiwań zostanie wyczyszczony, a wszystkie wyróżnienia zostaną również usunięte.">
-<!ENTITY OptfillSelectedOpenFindbar.label "Pokaż pasek &quot;Znajdź szybko&quot; przy używaniu zaznaczonego tesktu">
+<!ENTITY OptfillSelectedOpenFindbar.label "Pokaż pasek szybkiego wyszukiwania przy używaniu zaznaczonego tekstu">
 <!ENTITY OptfillSelectedOpenFindbar.tooltip "Gdy pasek wyszukiwań wypełni sie zaznaczonym tekstem, na krótko pojawi się, aby zasygnalizować, że to się stało.">
 <!ENTITY OptglobalBehavior.warning "Uwaga: następujące ustawienia nie są ograniczone do paska wyszukiwań, wpływają one na całą przeglądarkę, choćby na strony internetowe, pasek adresu oraz inne miejsca, gdzie można zaznaczyć tekst. Zmień je ostrożnie!">
-<!ENTITY OptdblClickEatSpaces.label "Podwójny klik na wyrazie zaznacza także następująca spację">
-<!ENTITY OptdblClickStopAtPunctuation.label "Zaznaczaj tylko do zn. interpunkcyjnego przy podwójnym kliknięciu">
+<!ENTITY OptdblClickEatSpaces.label "Podwójne kliknięcie na wyrazie zaznacza także następująca spację">
+<!ENTITY OptdblClickStopAtPunctuation.label "Zaznaczaj tylko do znaku interpunkcyjnego przy podwójnym kliknięciu">
 <!ENTITY OptNativePrefs.label "Wbudowane ustawienia Firefoksa">
 <!ENTITY OptNativePrefs.description "Niektóre ustawienia, takie jak kolory wyróżnienia albo ustawienia paska szybkiego wyszukiwania, już istnieją w Firefoksie, są one tutaj pokazane tylko dla łatwiejszego dostępu i konfiguracji. Dodatek powinien zająć się nimi automatycznie, więc użyj ich, jeżeli koniecznie musisz!">
 <!ENTITY OptResetNativeOnDisabled.label "Resetuj wszystkie zmienione wbudowane ustawienia, gdy dodatek jest wyłączany">

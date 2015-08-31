@@ -57,9 +57,17 @@
 		</em:localized>
 		<em:localized>
 			<Description>
+				<em:locale>ja-JP</em:locale>
+				<em:name>FindBar Tweak</em:name>
+				<em:description>「"検索バーを上隅に配置" などのシンプルなカスタマイズ」と、「"すべてのタブを検索" などのパワフルなツール」の両方で、FindBar Tweak は検索バーを "本当に素晴らしいもの" にします！</em:description>
+				<em:translator>Yukto8492</em:translator>
+			</Description>
+		</em:localized>
+		<em:localized>
+			<Description>
 				<em:locale>pl</em:locale>
 				<em:name>FindBar Tweak</em:name>
-				<em:description>Between simple tweaks such as placing the findbar in the top corner, to the powerful "Find in All Tabs" tool, it has everything to make the Find Toolbar a powerful and accessible research tool!</em:description>
+				<em:description>Od prostych usprawnień, jak umieszczenie paska wyszukiwania w górnym rogu, do potężnego narzędzia "Znajdź we wszystkich kartach", ma wszystko, aby uczynić pasek wyszukiwania silnym i przystępnym narzędziem do znajdowania!</em:description>
 				<em:translator>piotrex - https://github.com/piotrex/, Kityn @ Babelzilla</em:translator>
 			</Description>
 		</em:localized>

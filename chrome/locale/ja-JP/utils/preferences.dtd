@@ -1,0 +1,13 @@
+<!ENTITY preferences.button "設定">
+<!ENTITY preferences.undo.label "元に戻す">
+<!ENTITY preferences.redo.label "やり直し">
+<!ENTITY preferences.undoredo.tooltip "ファイルからのインポートやデフォルト値の復元など、変更したアドオンの設定を元に戻します。">
+<!ENTITY preferences.import.label "ファイルからインポート…">
+<!ENTITY preferences.import.tooltip "過去アドオン設定をエクスポートしたファイルから、読み込みます。">
+<!ENTITY preferences.export.label "ファイルへエクスポート…">
+<!ENTITY preferences.export.tooltip "あなたのアドオン設定をバックアップ用の外部ファイルに保存します。">
+<!ENTITY preferences.reset.label "デフォルト設定に戻す">
+<!ENTITY preferences.reset.tooltip.a "アドオンが新規インストールされたときと同じく、すべての設定はデフォルト値にロールバックされます。">
+<!ENTITY preferences.reset.tooltip.b "ツールバー内のボタンの配置は、「カスタマイズ表示」で「初期設定に戻す」ボタンを押さなければ、影響を受けません。">
+<!ENTITY preferences.jumpto.label "設定項目へジャンプ…">
+<!ENTITY preferences.jumpto.tooltip "単語を入力し始めると、(クイック検索と同じく) それを含む最初の設定項目にジャンプします。">

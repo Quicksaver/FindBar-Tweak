@@ -1,0 +1,119 @@
+<!ENTITY OptHighlights.label "ハイライト">
+<!ENTITY OptSightsTab.label "視覚効果">
+<!ENTITY OptGeneral.label "一般">
+<!ENTITY OptAppearance.label "設定">
+<!ENTITY Opttweaks.label "Tweaks">
+<!ENTITY Optgen.label "検索バーのオプション">
+<!ENTITY Optdisplay.label "検索バーの位置">
+<!ENTITY OptButtonAndLabels.label "ボタンとラベル">
+<!ENTITY Optgrid.label "ハイライトのグリッド">
+<!ENTITY OpthighlightByDefault.label "一致したすべての文字列をハイライト">
+<!ENTITY OpthighlightByDefault.tooltip "検索バーを開くと、「すべてハイライト」ボタンは、すでにチェックされますので、何か検索操作を実行するたびに、すべての検索結果を表示します。">
+<!ENTITY OpthideWhenFinderHidden.label "検索バーを閉じた時、すべてのハイライトを解除">
+<!ENTITY OpthideWhenFinderHidden.tooltip "要するに、検索バーが非表示ならば、ハイライトは表示されません。これは、クイック検索でも同じです！検索バーを閉じるとすぐに、すべての検索結果のハイライトはページから削除されます。">
+<!ENTITY OptgridInScrollbar.label "スクロールバーにハイライトのグリッドを表示">
+<!ENTITY OptgridInScrollbar.tooltip "Web ページ内のハイライトされたヒットの相対的な位置は、スクロールバー上に表示されます。">
+<!ENTITY OptuseCounter.label "検索バーに一致した件数を表示">
+<!ENTITY OptuseCounter.tooltip "すべての Web ページ内検索操作で見つかった一致数は、検索ツールバー内に表示されます。">
+<!ENTITY OptfindInTabs.label "「すべてのタブで検索」を有効にする">
+<!ENTITY OptfindInTabs.tooltip "検索バー内には「すべてのタブで検索」ダイアログを表示するためのボタンがあり、すべての開いているタブとウィンドウ内を対象とした単語検索が可能です。">
+<!ENTITY OptmultipleFITFull.label "「すべてのタブで検索」でウィンドウの複数インスタンスを許可">
+<!ENTITY OptmultipleFITFull.tooltip "これを無効にすると、その後の「すべてのタブで検索」ボタンのクリックでは、新しいものを毎回開く代わりにすでにオープンされているダイアログを再利用します。">
+<!ENTITY Optcolor.label "ハイライトの色">
+<!ENTITY Optcolor.tooltip "ページ内の一致した箇所を強調するために使う色を変更します。">
+<!ENTITY OptselectColor.label "ヒットした文字列の色">
+<!ENTITY OptselectColor.tooltip "最初の検索操作を実行するとき、または [F3]／[次]／[前] ボタンで前回の検索結果を確認するとき、現在の一致はそれと区別するために、他のハイライトとは異なる色で表示されるべきでしょう。">
+<!ENTITY OptcolorReset.label "(リセット)">
+<!ENTITY OptcolorKeepOSdefault.label "標準のコントラストカラーを維持 (推奨)">
+<!ENTITY OptcolorKeepOSdefault.tooltip.a "コントラストカラーは Webページの背景に応じて、現在のヒットカラーのテキストの色又はその逆背景のどちらかが使用されます。これは、上記で選択した色に応じて、白または黒のどちらかです。">
+<!ENTITY OptcolorKeepOSdefault.tooltip.b "上記の色設定は、検索操作の現在のヒットにのみ影響しますが、そのコントラストの色は、すべての選択したテキストのコントラストを変えずに、変更することはできません。選択したテキストが読めなくならないように、使用するときには注意してください！">
+<!ENTITY OptcolorKeepOSdefault.tooltip.c "選択したテキストが読めなくならないように、警告して無効にします！">
+<!ENTITY OpthighlightOnFindAgain.label "「再検索」(F3) の時にもハイライト">
+<!ENTITY OpthighlightOnFindAgain.tooltip "「すべてのタブで検索」ボタンがチェックされているとき、F3 キーを押すか、またはまだハイライトになっていないときは、[次]／[前] ボタンを押すことで同様になります。">
+<!ENTITY OptgridLimit.labela "グリッドに使用するハイライトの最大件数:">
+<!ENTITY OptgridLimit.labelb "件">
+<!ENTITY OptgridLimit.tooltip "これは、スクロールバーでのハイライトグリッドです！ヒット数があまりにも多くてプロセスを遅くし、ブラウザが重くなる可能性があるとき、スクロールバーでのハイライトグリッドは使用されません。">
+<!ENTITY OptminNoDelay.labela "検索文字列が">
+<!ENTITY OptminNoDelay.labelb "文字未満の時はハイライトを遅らせる">
+<!ENTITY OptminNoDelay.tooltip "最初に検索バーへ入力を開始すると、おそらく、一つまたは二つめの文字で検索しているはずです。これはあなたのクエリの残りの部分を入力する時間を与えるために、検索を 1.5 秒遅らせています。ですから、それ以上の文字を入力せずに検索させたときは、入力した文字よりも短い言葉を検索していることに注意してください。">
+<!ENTITY OptadjustGridPadding.labela "グリッドとボーダーの間隔を調整:">
+<!ENTITY OptadjustGridPadding.labelb "ピクセル">
+<!ENTITY OptadjustGridPadding.tooltip "もしスクロールバーの外観を変更する適当なテーマを改良するために必要ならば、ハイライトグリッドの相対的なポジションを調整してください。">
+<!ENTITY OptadjustGridWidth.labela "グリッドの幅を調整:">
+<!ENTITY OptadjustGridWidth.labelb "ピクセル">
+<!ENTITY OptadjustGridWidth.tooltip "もしスクロールバーの外観を変更する適当なテーマを改良するために必要ならば、ハイライトグリッドのマークの幅を調整してください。">
+<!ENTITY Optsights.label "フォーカスの視覚効果">
+<!ENTITY OptsightsCurrentHit.label "ヒットした文字列">
+<!ENTITY OptsightsAllHighlights.label "すべてハイライト">
+<!ENTITY OptsightsCurrent.label "ヒットした文字列に視覚効果を適用">
+<!ENTITY OptsightsCurrent.tooltip "あなたが単語を探すか、または [F3]／[次]／[前] ボタンで前回の検索結果を確認するとき、簡単に見つけ易いようにターゲットが現在のヒットの周りのあなたの画面上に表示されます。">
+<!ENTITY OptsightsHighlights.label "すべてのハイライトに視覚効果を適用">
+<!ENTITY OptsightsHighlights.tooltip "すべてのヒット位置へアニメーション表示します。ページをスクロールすると、次のターゲットが表示されたあと、そのヒット位置に対してアニメーション表示をします。">
+<!ENTITY OptsightsHighlights.warning "警告: これは非常に集中的にリソースを消費します! レンダリングとページスクロールが遅くなることがあります!">
+<!ENTITY OptsightsStyle.label "視覚スタイル (項目をクリックしてプレビュー)">
+<!ENTITY OptsightsStyle.focus "フォーカスで位置を示す">
+<!ENTITY OptsightsStyle.circle "円を描き位置を示す">
+<!ENTITY OptsightsRepeat.label "アニメーションの繰り返し回数:">
+<!ENTITY OptsightsColor.tooltip "ハイライトで使う色を編集。">
+<!ENTITY OptsightsSameColor.label "強調表示と同じ色を使用">
+<!ENTITY OptsightsSameColor.tooltip "この色はウェブページ （ハイライトペイン） 内のすべての一致を強調するために使用されるので、これらのスポットのために使用される色とは同じになります。">
+<!ENTITY OptsightsSameColorCurrent.label "ヒットした文字列と同じ色を使用">
+<!ENTITY OptsightsSameColorCurrent.tooltip "この色は現在のヒット （アピアランスペイン） を区別するために使用されるので、これらのスポットのために使用される色とは同じになります。">
+<!ENTITY OptsightsLimit.label "画面上の視覚効果の最大数:">
+<!ENTITY OptsightsLimit.tooltip "この機能はリソースを激しく消費します！画面内のアニメーション表示する最大数は、レンダリングでブラウザが重くならない程度に抑えておくことをお勧めします。">
+<!ENTITY OpthideLabels.label "ボタンアイコンの代わりにラベルを表示">
+<!ENTITY OpthideLabels.tooltip "デフォルトでは、ツールバーのボタンは、テキストラベルを併せ持ちます。これを変更すると、多くの項目が識別可能になり、また、よりコンパクトになります。">
+<!ENTITY OpthideClose.label "検索バーの[閉じる]ボタンを非表示">
+<!ENTITY OpthideClose.tooltip "「検索バーを閉じるボタン」[X] を無効にします。(閉じられません)">
+<!ENTITY OptmovetoTop.label "ブラウザの上側に移動">
+<!ENTITY OptmovetoTop.tooltip "よりスリムな検索バーはウェブページのトップにそれの上のコーナーに置かれます。">
+<!ENTITY OptmovetoRight.label "右側に配置">
+<!ENTITY OptmovetoRight.tooltip "検索バーの入力フィールドとボタンが逆転し、右側に整列されます。 検索バーが上に移動された場合、全ての検索バーは右上の代わりの左側に表示されます。">
+<!ENTITY OptblurCloses.label "フォーカスを失った時に検索バーを自動で閉じる">
+<!ENTITY OptblurCloses.tooltip "ウェブページ上の任意の場所をクリックするか、ロケーションバーのような別の場所にカーソルを移動すると、検索バーは自動的に閉じます。">
+<!ENTITY OptglobalFB.label "すべてのタブで共通の、単一の検索バーを使う">
+<!ENTITY OptglobalFB.tooltip "あるタブで検索バーを開き、その後別の新しいタブを開いて切り替えたとき、先ほど開いた検索バーが表示されます。">
+<!ENTITY OptonStartup.label "ブラウザ起動時に検索バーの表示/非表示の状態を復帰">
+<!ENTITY OptonStartup.tooltip "検索バーを開いたままブラウザを閉じたとき、次回ブラウザを起動したとき検索バーも開かれた状態になります。">
+<!ENTITY OptopenFindbar.label "検索バーを開いた時の動作">
+<!ENTITY OptquickFindOptions.label "クイック検索バー">
+<!ENTITY OptkeepButtons.label "クイック検索バーにボタンを表示">
+<!ENTITY OptkeepButtons.tooltip "デフォルトでは、クイック検索はそれの操作のためだけの入力ボックスだけで、任意のボタンを持っていません。それを使用する際に初めて、「すべてハイライト」と「大／小文字を区別」の機能にアクセスすることができます。">
+<!ENTITY OptFAYT.label "タイピング開始で文字を検索">
+<!ENTITY OptFAYT.tooltip "Web ページを閲覧中に任意のキーを押して、クイック検索はそのテキストを検索するために飛び出します。カーソルがそれに配置されているので、あなたは、検索クエリを変更するタイピングを継続できます。">
+<!ENTITY OptFAYTTimeout.beforeLabel "自動で閉じるまでの時間:">
+<!ENTITY OptFAYTTimeout.afterLabel "秒">
+<!ENTITY OptFAYTTimeout.tooltip "クイック検索は、非アクティブ後に自動的に閉じます。それはWebページをクリックしたときのように、何か他にフォーカスを移すときも同じだということに注意してください。">
+<!ENTITY OptFAYTmode.caption "検索バーのモード">
+<!ENTITY OptFAYTmode.quickFind.label "検索文字列の入力中にクイック検索バーを使用">
+<!ENTITY OptFAYTmode.quickFind.tooltip "デフォルトのモードです。あなたがウェブページ上の任意の場所でキー入力を始めると、クイック検索になります。しかしそれが通常の検索バーにアクセスしているときならば、キーボードショートカットを使用するか、そのツールバーボタンをトグルする必要があります。">
+<!ENTITY OptFAYTmode.normalFind.label "常に通常の検索バーを使用">
+<!ENTITY OptFAYTmode.normalFind.tooltip "あなたがウェブページ上の任意の場所でキー入力を始めると、通常の検索になります。遅延中やフォーカスを失ったときには、自動的に閉じません。 （上記のその設定を有効にしないかぎり）">
+<!ENTITY OptFAYTmode.alwaysQuick.label "常にクイック検索バーを使用">
+<!ENTITY OptFAYTmode.alwaysQuick.tooltip "キーボードショートカットを使うときにも、クイック検索になります。遅延後やフォーカスを失ったときに、自動的に閉じます。">
+<!ENTITY OptkeyboardShortcut.label "ショートカット・キー">
+<!ENTITY OptctrlFCloses.win "Ctrl+F で検索バーを閉じる">
+<!ENTITY OptctrlFCloses.mac "Command+F で検索バーを閉じる">
+<!ENTITY OptctrlFCloses.tooltip "検索バーを開き、またそれが不要となったとき、同じキーボードショートカットを使ってそれを閉じることができます。">
+<!ENTITY OptctrlFprefill.label "検索バーを開いた時、選択したテキストを入力">
+<!ENTITY OptctrlFprefill.tooltip.a "検索バーが開かれていてウェブページで選択されたテキストがあるとき、このテキストは、自動的に検索クエリとして使用するために、検索バーにコピーされます。">
+<!ENTITY OptctrlFprefill.tooltip.b "「デフォルトですべてをハイライト」が有効なとき、それはすぐに選択したテキストのすべての出現を検索します。">
+<!ENTITY OptctrlFOnFocused.label "検索文字が選択したテキストと同じであるときのみ、検索バーを閉じる">
+<!ENTITY OptctrlFOnFocused.tooltip "上記の設定が有効になっている場合、キーボードショートカットは、常に先ずウェブページ内の任意の選択されたテキストを検索バーにコピーし、カーソルをフォーカスします。カーソルが既にそこにある場合にのみ、検索バーを閉じます。">
+<!ENTITY OptSelectingText.label "テキストを選択した時の動作">
+<!ENTITY OptfillSelectedText.label "選択したテキストを検索バーに入力">
+<!ENTITY OptfillSelectedText.tooltip.a "任意の単語は、Web ページ内で選択されるたびに、自動的に検索クエリとして使用するために、検索バーにコピーされます。">
+<!ENTITY OptfillSelectedText.tooltip.b "「デフォルトですべてをハイライト」が有効なとき、Web ページ内のテキストを選択すると、すぐに選択のすべてのヒットを強調表示します。">
+<!ENTITY OptemptySelectedText.label "テキストが選択されていないとき、検索バーをクリアする">
+<!ENTITY OptemptySelectedText.tooltip "Web ページの任意の場所をクリックすると、テキストの選択は解除され、検索バーはクリアされ、すべてのハイライトは同様に削除されます。">
+<!ENTITY OptfillSelectedOpenFindbar.label "選択テキストを使用した場合、クイック検索バーを表示">
+<!ENTITY OptfillSelectedOpenFindbar.tooltip "検索バーに選択されたテキストがあるとき、全体的に起こったことをアピールします。">
+<!ENTITY OptglobalBehavior.warning "警告:">
+<!ENTITY OptdblClickEatSpaces.label "単語をダブルクリックした時、続きの空白を選択">
+<!ENTITY OptdblClickStopAtPunctuation.label "単語をダブルクリックした時、句読点を選択に含めない">
+<!ENTITY OptNativePrefs.label "Firefox 内部設定">
+<!ENTITY OptNativePrefs.description "次の設定は、検索バー特有のものではありません。それは Web ブラウザ全体、つまりは Web ページ、ロケーションバーやテキストの選択が可能である他の場所に影響を与えます。変更するときは、慎重に行ってください！">
+<!ENTITY OptResetNativeOnDisabled.label "アドオンを無効にした時、変更された全ての内部設定を初期化">
+<!ENTITY OptResetNativeOnDisabled.tooltip "もし、何らかの設定変更が残っているとき、ハイライト色などアドオンを使用停止にしても適切にリセットされないならば、それらがリセットされることを確認するために、これを有効にしてください。">
+<!ENTITY OptResetNativeNow.label "変更された全ての内部設定を初期化">
+<!ENTITY OptResetNativeNow.tooltip "すべての変更点を初期化する。">

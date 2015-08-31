@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.8';
+Modules.VERSION = '1.1.9';
 
 this.grids = {
 	allHits: new Set(),
@@ -271,9 +271,10 @@ this.grids = {
 				if(pages[pIdx].length == 0) { continue; }
 				
 				// If the page is rendered, place the actual highlights positions
-				if(PDFJS.viewerApplication.pdfViewer.pages[pIdx].textLayer
-				&& PDFJS.viewerApplication.pdfViewer.pages[pIdx].textLayer.renderingDone
-				&& PDFJS.viewerApplication.pdfViewer.pages[pIdx].renderingState == PDFJS.unWrap.RenderingStates.FINISHED) {
+				let pageView = PDFJS.getPageView(pIdx);
+				if(pageView.textLayer
+				&& pageView.textLayer.renderingDone
+				&& pageView.renderingState == PDFJS.unWrap.RenderingStates.FINISHED) {
 					this.fillWithPDFPage(grid, pIdx);
 				}
 				
@@ -457,9 +458,10 @@ this.grids = {
 		
 		var updatePages = [];
 		for(let [pIdx, page] of this.pdfPageRows) {
-			if(PDFJS.viewerApplication.pdfViewer.pages[pIdx].textLayer
-			&& PDFJS.viewerApplication.pdfViewer.pages[pIdx].textLayer.renderingDone
-			&& PDFJS.viewerApplication.pdfViewer.pages[pIdx].renderingState == PDFJS.unWrap.RenderingStates.FINISHED) {
+			let pageView = PDFJS.getPageView(pIdx);
+			if(pageView.textLayer
+			&& pageView.textLayer.renderingDone
+			&& pageView.renderingState == PDFJS.unWrap.RenderingStates.FINISHED) {
 				updatePages.push(pIdx);
 				
 				this.removeHighlight(page.row);
@@ -485,7 +487,7 @@ this.grids = {
 	
 	fillWithPDFPage: function(grid, pIdx) {
 		var matches = PDFJS.findController.pageMatches[pIdx];
-		var textLayer = PDFJS.viewerApplication.pdfViewer.pages[pIdx].textLayer;
+		var textLayer = PDFJS.getPageView(pIdx).textLayer;
 		
 		// We need to associate the highlighted nodes with the matches, since PDF.JS doesn't actually do that
 		for(let mIdx in matches) {
@@ -548,10 +550,11 @@ this.grids = {
 				
 				var placeNode = node;
 				if(isPDFJS) {
+					let pageView = PDFJS.getPageView(node.pIdx);
 					if(pattern) {
-						placeNode = $('pageContainer'+PDFJS.viewerApplication.pdfViewer.pages[node.pIdx].id);
+						placeNode = $('pageContainer'+pageView.id);
 					} else {
-						placeNode = PDFJS.viewerApplication.pdfViewer.pages[node.pIdx].textLayer.textDivs[node.divIdx].childNodes[node.childIdx];
+						placeNode = pageView.textLayer.textDivs[node.divIdx].childNodes[node.childIdx];
 					}
 				}
 				

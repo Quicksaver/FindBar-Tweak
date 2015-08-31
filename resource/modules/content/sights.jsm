@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.5';
+Modules.VERSION = '1.1.6';
 
 this.sights = {
 	allSights: new Set(),
@@ -237,15 +237,15 @@ this.sights = {
 				if(!PDFJS.findController || PDFJS.findController.selected.matchIdx == -1 || PDFJS.findController.selected.pageIdx == -1) { return; }
 				
 				// Let's get the right one
-				var page = PDFJS.viewerApplication.pdfViewer.pages[PDFJS.findController.selected.pageIdx];
-				if(!page.textLayer
-				|| !page.textLayer.matches
-				|| !page.textLayer.matches[PDFJS.findController.selected.matchIdx]) {
+				let pageView = PDFJS.getPageView(PDFJS.findController.selected.pageIdx);
+				if(!pageView.textLayer
+				|| !pageView.textLayer.matches
+				|| !pageView.textLayer.matches[PDFJS.findController.selected.matchIdx]) {
 					Timers.init('currentSights', () => { this.current(); }, 10);
 					return;
 				}
 				
-				var sel = $$('.highlight.selected', page.textLayer.textDivs[page.textLayer.matches[PDFJS.findController.selected.matchIdx].begin.divIdx]);
+				var sel = $$('.highlight.selected', pageView.textLayer.textDivs[pageView.textLayer.matches[PDFJS.findController.selected.matchIdx].begin.divIdx]);
 				if(sel.length == 0) { return; }
 				
 				// make sure we place a sight on it, even if's already been sighted for the highlight

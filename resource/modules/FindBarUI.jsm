@@ -1,4 +1,4 @@
-Modules.VERSION = '1.7.8';
+Modules.VERSION = '1.7.9';
 
 this.__defineGetter__('findButton', function() {
 	var node = $('find-button');
@@ -78,10 +78,12 @@ this.toggleFindBar = function() {
 };
 
 this.openFindBar = function() {
-	gFindBar.onFindCommand();
-	if(findQuery && (findQuery != findWord || !documentHighlighted)) {
-		gFindBar._setHighlightTimeout();
-	}
+	let promise = gFindBar.onFindCommand();
+	promise.then(function() {
+		if(findQuery && (findQuery != findWord || !documentHighlighted)) {
+			gFindBar._setHighlightTimeout();
+		}
+	});
 };
 
 this.toggleButtonState = function() {

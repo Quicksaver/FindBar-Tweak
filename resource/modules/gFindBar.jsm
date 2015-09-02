@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.1';
+Modules.VERSION = '1.1.2';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return FITFull || viewSource || window.gFindBarInitialized; });
@@ -42,7 +42,6 @@ this.baseInit = function(bar) {
 			var suffix = (!viewSource && this.browser != gBrowser.mCurrentBrowser) ? 'Background' : '';
 			
 			if(dispatch(this, { type: 'WillOpenFindBar'+suffix, detail: aMode })) {
-				this._didFind = false;
 				var ret = this._open(aMode);
 				
 				Messenger.messageBrowser(this.browser, 'FindBar:State', true);
@@ -134,9 +133,12 @@ this.baseInit = function(bar) {
 			// Only search on input if we don't have a last-failed string, or if the current search string doesn't start with it.
 			// https://bugzilla.mozilla.org/show_bug.cgi?id=926033
 			if(!this._findFailedString || !val.startsWith(this._findFailedString)) {
-				// only set this flag if we will actually find something
-				if(val) {
-					this._didFind = true;
+				// only resolve this when we will actually find something;
+				// usually gFindBar.onCurrentSelection is what takes care of focusing and selecting the find query,
+				// but at this point the findbar should always already be focused (done sync in startFind()) and selected (done sync in perTab.jsm and globalFB.jsm)
+				if(val && this._startFindDeferred) {
+					this._startFindDeferred.resolve();
+					this._startFindDeferred = null;
 				}
 				
 				this._enableFindButtons(val);
@@ -197,11 +199,10 @@ this.baseInit = function(bar) {
 	
 	// opening the findbar is a somewhat asynchronous process, it needs to fetch the value to prefill from content,
 	// if the user types in the findbar after it's opened, but before the prefill value is fetched, it can lead to some weirdness with the search query
-	// see https://github.com/Quicksaver/FindBar-Tweak/issues/198
-	bar._didFind = false;
-	
+	// see https://github.com/Quicksaver/FindBar-Tweak/issues/198 and https://bugzilla.mozilla.org/show_bug.cgi?id=1198465
 	Piggyback.add('gFindBar', bar, 'onCurrentSelection', function() {
-		return !this._didFind;
+		// no-op in case something resolved and nulled startFindDeferred in the meantime
+		return this._startFindDeferred;
 	}, Piggyback.MODE_BEFORE);
 	
 	Piggyback.add('gFindBar', bar, '_onBrowserKeypress', function(aFakeEvent) {
@@ -211,7 +212,7 @@ this.baseInit = function(bar) {
 		
 		// in theory, fast keypresses could stack up when the process is slow/hanging, especially in e10s-code which has a high degree of asynchronicity here.
 		// we should make sure the findbar isn't "opened" several times, otherwise it could lead to erroneous find queries
-		// see https://github.com/Quicksaver/FindBar-Tweak/issues/198
+		// see https://github.com/Quicksaver/FindBar-Tweak/issues/198 and https://bugzilla.mozilla.org/show_bug.cgi?id=1198465
 		if(!legacy && !this.hidden && document.activeElement == this._findField.inputField) {
 			this._dispatchKeypressEvent(this._findField.inputField, aFakeEvent);
 			return false;
@@ -291,8 +292,6 @@ this.baseDeinit = function(bar) {
 		Piggyback.revert('gFindBar', bar, '_findAgain');
 		Piggyback.revert('gFindBar', bar, 'onFindAgainCommand');
 		Piggyback.revert('gFindBar', bar, '_updateMatchesCount');
-		
-		delete bar._didFind;
 		Piggyback.revert('gFindBar', bar, 'onCurrentSelection');
 		Piggyback.revert('gFindBar', bar, '_onBrowserKeypress');
 	}

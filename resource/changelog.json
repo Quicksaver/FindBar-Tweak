@@ -1,6 +1,13 @@
 {
-	"current":"2.0.5",
+	"current":"2.0.6",
 	"releases": {
+		"2.0.6":{
+			"date":"September 2, 2015",
+			"notes":[
+				["bugfix","Selecting text in the webpage and hitting Ctrl+F to prefill the findbar with the text selection would not highlight all results immediately"],
+				["","Other minor improvements"]
+			]
+		},
 		"2.0.5":{
 			"date":"August 31, 2015",
 			"notes":[
@@ -8,7 +15,6 @@
 				["updated","pl locale"],
 				["bugfix","compatibility with <a target=\"blank\" href=\"https://addons.mozilla.org/firefox/addon/unloadtab/\">UnloadTab</a>: fix from previous version caused unloaded tabs to show \"New Tab\" instead of the actual tab title (<a target=\"blank\" href=\"https://github.com/Quicksaver/FindBar-Tweak/issues/216\">issue #216</a>)"],
 				["bugfix","(Firefox 41+): compatibility with changes made to the PDF.JS viewer, which prevented the add-on from working correctly in PDF pages"]
-
 			]
 		},
 		"2.0.4":{

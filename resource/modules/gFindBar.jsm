@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.2';
+Modules.VERSION = '1.1.3';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return FITFull || viewSource || window.gFindBarInitialized; });
@@ -111,7 +111,7 @@ this.baseInit = function(bar) {
 		}
 	});
 	
-	Piggyback.add('gFindBar', bar, '_find', function(aValue) {
+	Piggyback.add('gFindBar', bar, '_find', function(aValue, wasPrefill) {
 		// sync the find value with content
 		Messenger.messageBrowser(this.browser, 'FindBar:Query', this._findField.value);
 		
@@ -139,6 +139,12 @@ this.baseInit = function(bar) {
 				if(val && this._startFindDeferred) {
 					this._startFindDeferred.resolve();
 					this._startFindDeferred = null;
+				}
+				
+				// when running immediate finds after opening the findbar and prefilling it, some things don't need to happen,
+				// such as sights on the current hit
+				if(wasPrefill) {
+					Messenger.messageBrowser(this.browser, 'Sights.doCurrent', true);
 				}
 				
 				this._enableFindButtons(val);

@@ -1,6 +1,8 @@
-Modules.VERSION = '1.1.6';
+Modules.VERSION = '1.1.7';
 
 this.sights = {
+	noCurrent: false,
+	
 	allSights: new Set(),
 	allGroups: new Map(),
 	nextGroup: 0,
@@ -52,6 +54,16 @@ this.sights = {
 		if(Prefs.sightsHighlights) {
 			Timers.init('sightsOnScroll', () => { this.highlights(); }, 10);
 		}
+	},
+	
+	doCurrent: function(v) {
+		// make sure we only set this to true if sightsCurrent is enabled, otherwise there's a chance noCurrent could persist when it shouldn't
+		if(v && Prefs.sightsCurrent) {
+			this.noCurrent = true;
+			return;
+		}
+		
+		this.noCurrent = false;
 	},
 	
 	// We pass it clientHeight and clientWidth because it's much lighter than by getting them every position cycle
@@ -224,8 +236,8 @@ this.sights = {
 			
 			// we don't want to show sights when selecting text in the page and using it as a find query,
 			// it's unnecessary, and a little weird
-			if(self.selectedText && selectedText.noSights) {
-				selectedText.noSights = false;
+			if(this.noCurrent) {
+				this.noCurrent = false;
 				return;
 			}
 			
@@ -456,6 +468,10 @@ Modules.LOADMODULE = function() {
 	RemoteFinderListener.addMessage('Sights:Remove', data => {
 		sights.remove(data);
 	});
+	
+	RemoteFinderListener.addMessage('Sights.doCurrent', data => {
+		sights.doCurrent(data);
+	});
 }
 
 Modules.UNLOADMODULE = function() {
@@ -469,6 +485,7 @@ Modules.UNLOADMODULE = function() {
 	catch(ex) {}
 	
 	RemoteFinderListener.removeMessage('Sights:Remove');
+	RemoteFinderListener.removeMessage('Sights.doCurrent');
 	
 	Finder.buildHighlights.delete('sights');
 	Finder.removeResultListener(sights);

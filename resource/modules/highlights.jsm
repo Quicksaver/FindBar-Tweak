@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.6';
+Modules.VERSION = '2.1.7';
 
 this.highlights = {
 	observe: function(aSubject, aTopic) {
@@ -69,7 +69,7 @@ this.highlights = {
 			
 			case 'FoundAgain':
 				// Trigger highlights when hitting Find Again
-				if(!Prefs.highlightOnFindAgain || isPDFJS || (documentHighlighted && findWord && findWord == findQuery)) { return; }
+				if(!Prefs.highlightOnFindAgain || isPDFJS || (documentHighlighted && highlightedWord && highlightedWord == findQuery)) { return; }
 				if(gFindBar.hidden && Prefs.hideWhenFinderHidden) { return; } // Don't highlight if it's not supposed to when the findbar is hidden
 				
 				gFindBar._setHighlightTimeout();
@@ -267,9 +267,6 @@ Modules.LOADMODULE = function() {
 	initFindBar('highlights',
 		function(bar) {
 			Piggyback.add('highlights', bar, '_setHighlightTimeout', function() {
-				// We want this to be updated regardless of what happens
-				findWord = this._findField.value;
-				
 				// don't trigger re-highlights when selecting hits from the FIT window
 				if(this.browser.finder.isPDFJS && this.browser.finder.workAroundFind) {
 					return;

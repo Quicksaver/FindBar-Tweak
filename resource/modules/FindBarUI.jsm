@@ -1,4 +1,4 @@
-Modules.VERSION = '1.7.9';
+Modules.VERSION = '1.7.10';
 
 this.__defineGetter__('findButton', function() {
 	var node = $('find-button');
@@ -79,8 +79,24 @@ this.toggleFindBar = function() {
 
 this.openFindBar = function() {
 	let promise = gFindBar.onFindCommand();
+	
+	// when the findbar is finished opening, we need to make sure that any prefilled value is immediately searched for, and that all matches are highlighted if needed
 	promise.then(function() {
-		if(findQuery && (findQuery != findWord || !documentHighlighted)) {
+		let query = findQuery;
+		
+		// nothing to do if the findbar is empty
+		if(!query) { return; }
+		
+		// Finder.searchString should always reflect a valid findQuery
+		if(query != Finder.searchString) {
+			Finder.workAroundFind = true;
+			gFindBar._find(query, true);
+			Finder.workAroundFind = false;
+			return;
+		}
+		
+		// at this point we just want to make sure all the matches are highlighted if necessary
+		if(!documentHighlighted || highlightedWord != query) {
 			gFindBar._setHighlightTimeout();
 		}
 	});

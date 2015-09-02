@@ -1,8 +1,6 @@
-Modules.VERSION = '2.0.3';
+Modules.VERSION = '2.0.4';
 
 this.selectedText = {
-	noSights: false,
-	
 	handleEvent: function(e) {
 		switch(e.type) {
 			case 'mouseup':
@@ -36,8 +34,14 @@ this.selectedText = {
 		
 		switch(name) {
 			case 'FillSelectedTextFinished':
-				this.noSights = false;
+				this.noSights(false);
 				break;
+		}
+	},
+	
+	noSights: function(v) {
+		if(self.sights) {
+			sights.doCurrent(v);
 		}
 	},
 	
@@ -45,14 +49,14 @@ this.selectedText = {
 		// aSync because sometimes the events fire before the text selection actually changes, no idea why that is though...
 		// see https://github.com/Quicksaver/FindBar-Tweak/issues/208
 		Timers.init('FillSelectedText', () => {
-			// we need this even if the findbar hasn't been created in this tab yet; the tab and forth afterwards will initialize everything properly
+			// we need this even if the findbar hasn't been created in this tab yet; the back and forth afterwards will initialize everything properly
 			if(typeof(Finder) == 'undefined') {
 				Modules.load('content/gFindBar');
 				Modules.load('content/mFinder');
 			}
 			
 			if(!Finder.isValid) { return; }
-			this.noSights = true;
+			this.noSights(true);
 			
 			var selText = Finder.getActiveSelectionText();
 			message('FillSelectedText', selText);

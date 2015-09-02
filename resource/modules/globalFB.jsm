@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.3';
+Modules.VERSION = '2.0.4';
 
 this.globalFB = {
 	hidden: true,
@@ -87,7 +87,7 @@ Modules.UNLOADMODULE = function() {
 	for(let tab of gBrowser.tabs) {
 		if(tab == gBrowser.mCurrentTab) { continue; }
 		
-		if(gBrowser.isFindBarInitialized(tab) && !tab.linkedBrowser.finder.findWord) {
+		if(gBrowser.isFindBarInitialized(tab) && !tab.linkedBrowser.finder.searchString) {
 			var bar = gBrowser.getFindBar(tab);
 			bar.close();
 		}

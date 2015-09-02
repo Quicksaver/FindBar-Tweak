@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.6';
+Modules.VERSION = '1.0.7';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -10,13 +10,11 @@ this.__defineGetter__('documentHighlighted', function() { return gFindBarInitial
 this.__defineGetter__('documentReHighlight', function() { return gFindBarInitialized && Finder.documentReHighlight; });
 this.__defineGetter__('highlightedWord', function() { return gFindBarInitialized && Finder.highlightedWord; });
 this.__defineGetter__('highlightedText', function() { return gFindBarInitialized && Finder.highlightedText; });
-this.__defineGetter__('findWord', function() { return gFindBarInitialized && Finder.findWord; });
 
 this.__defineSetter__('documentHighlighted', function(v) { if(!gFindBarInitialized) return v; return Finder.documentHighlighted = v; });
 this.__defineSetter__('documentReHighlight', function(v) { if(!gFindBarInitialized) return v; return Finder.documentReHighlight = v; });
 this.__defineSetter__('highlightedWord', function(v) { if(!gFindBarInitialized) return v; return Finder.highlightedWord = v; });
 this.__defineSetter__('highlightedText', function(v) { if(!gFindBarInitialized) return v; return Finder.highlightedText = v; });
-this.__defineSetter__('findWord', function(v) { if(!gFindBarInitialized) return v; return Finder.findWord = v; });
 
 // Because I can't access Finder.jsm in its active context (for some reason), I need to completely replace it.
 // A lot of the code here is based on http://mxr.mozilla.org/mozilla-central/source/toolkit/modules/RemoteFinder.jsm
@@ -289,13 +287,11 @@ this.RemoteFinder.prototype = {
 	_documentReHighlight: false,
 	_highlightedWord: '',
 	_highlightedText: '',
-	_findWord: '',
 	
 	get documentHighlighted() { return this._documentHighlighted; },
 	get documentReHighlight() { return this._documentReHighlight; },
 	get highlightedWord() { return this._highlightedWord; },
 	get highlightedText() { return this._highlightedText; },
-	get findWord() { return this._findWord; },
 	
 	set documentHighlighted(v) {
 		this._documentHighlighted = v;
@@ -313,10 +309,6 @@ this.RemoteFinder.prototype = {
 		this._highlightedText = v;
 		this.highlightsInfo();
 	},
-	set findWord(v) {
-		this._findWord = v;
-		this.highlightsInfo();
-	},
 	
 	_highlightsInfoTimer: null,
 	highlightsInfo: function() {
@@ -332,8 +324,7 @@ this.RemoteFinder.prototype = {
 				documentHighlighted: this.documentHighlighted,
 				documentReHighlight: this.documentReHighlight,
 				highlightedWord: this.highlightedWord,
-				highlightedText: this.highlightedText,
-				findWord: this.findWord
+				highlightedText: this.highlightedText
 			});
 		});
 	}

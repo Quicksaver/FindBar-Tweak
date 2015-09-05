@@ -36,7 +36,6 @@
 //	aCallback - (function(aSubject)) to be called on aSubject
 //	(optional) beforeComplete - (bool) if true, aCallback will be called on aSubject immediately, regardless of its readyState value; defaults to false.
 // disable() - disables the add-on, in general the add-on disabling itself is a bad idea so I shouldn't use it
-// Note: Firefox 38 is the minimum version supported as the script assumes the resource path will be automatically loaded from chrome.manifest.
 
 let UNLOADED = false;
 let STARTED = false;

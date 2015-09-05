@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.3';
+Modules.VERSION = '2.1.4';
 
 this.highlightByDefault = {
 	apply: function(bar) {
@@ -48,7 +48,7 @@ Modules.LOADMODULE = function() {
 					enumerable: true,
 					get: function() { return this._checked; },
 					set: function(v) {
-						if(arguments.callee.caller.toString().contains('bug 253793')) { return this._checked; }
+						if(arguments.callee.caller.toString().includes('bug 253793')) { return this._checked; }
 						return this._checked = v;
 					}
 				});

@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.6';
+Modules.VERSION = '1.0.9';
 Modules.UTILS = true;
 
 // PrefPanes - handles the preferences tab and all its contents for the add-on
@@ -113,21 +113,8 @@ this.PrefPanes = {
 			Styles.load('PrefPanesHtmlFix', sscode, true);
 		}
 		
-		// and this doesn't seem need in current Aurora (FF40+)
-		if(Services.vc.compare(Services.appinfo.version, '40.0a2') < 0) {	
-			var sscode = '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
-			sscode += '@-moz-document url-prefix("'+this.chromeUri+'")'+(this.aboutUri ? ', url-prefix("'+this.aboutUri.spec+'")' : '')+' {\n';
-			sscode += '	.smallindent[focused="true"] > .radio-label-box {\n';
-			sscode += '		-moz-margin-start: -1px;\n';
-			sscode += '		-moz-margin-end: 0;\n';
-			sscode += '	}\n';
-			sscode += '}';
-			
-			Styles.load('PrefPanesXulFix', sscode, true);
-		}
-		
 		// if we're in a dev version, ignore all this
-		if(AddonData.version.contains('a') || AddonData.version.contains('b')) { return; }
+		if(AddonData.version.includes('a') || AddonData.version.includes('b')) { return; }
 		
 		// if we're updating from a version without this module, try to figure out the last version
 		if(Prefs.lastVersionNotify == '0' && STARTED == ADDON_UPGRADE && AddonData.oldVersion) {
@@ -194,8 +181,7 @@ this.PrefPanes = {
 	open: function(aWindow, loadOnStartup) {
 		// first try to switch to an already opened options tab
 		for(let tab of aWindow.gBrowser.mTabs) {
-			if(tab.linkedBrowser.currentURI.spec.startsWith(this.chromeUri)
-			|| (this.aboutUri && tab.linkedBrowser.currentURI.spec.startsWith(this.aboutUri.spec))) {
+			if(this.ours(tab.linkedBrowser.currentURI.spec)) {
 				aWindow.gBrowser.selectedTab = tab;
 				aWindow.focus();
 				return;
@@ -216,12 +202,34 @@ this.PrefPanes = {
 	closeAll: function() {
 		Windows.callOnAll(aWindow => {
 			for(let tab of aWindow.gBrowser.mTabs) {
-				if(tab.linkedBrowser.currentURI.spec.startsWith(this.chromeUri)
-				|| (this.aboutUri && tab.linkedBrowser.currentURI.spec.startsWith(this.aboutUri.spec))) {
+				if(this.ours(tab.linkedBrowser.currentURI.spec)) {
 					aWindow.gBrowser.removeTab(tab);
 				}
 			}
+			
+			// since we're disabling the add-on there's really no point in keeping closed tabs references to our preferences tab, as they won't be valid anymore
+			if(aWindow.__SSi && aWindow.SessionStore) {
+				let closedTabs = JSON.parse(aWindow.SessionStore.getClosedTabData(aWindow));
+				let count = closedTabs.length;
+				
+				// we go backwards because forgetClosedTab() changes the array and we can only do one tab at once
+				for(let i = count-1; i >= 0; i--) {
+					let state = closedTabs[i].state;
+					if(state && state.entries && state.entries.length) {
+						for(let entry of state.entries) {
+							if(this.ours(entry.url)) {
+								aWindow.SessionStore.forgetClosedTab(aWindow, i);
+								break;
+							}
+						}
+					}
+				}
+			}
 		}, 'navigator:browser');
+	},
+	
+	ours: function(spec) {
+		return spec.startsWith(this.chromeUri) || (this.aboutUri && spec.startsWith(this.aboutUri.spec));
 	},
 	
 	initWindow: function(aWindow) {
@@ -262,7 +270,8 @@ Modules.LOADMODULE = function() {
 	Prefs.setDefaults({
 		lastPrefPane: '',
 		lastVersionNotify: '0',
-		showTabOnUpdates: true
+		showTabOnUpdates: true,
+		userNoticedTabOnUpdates: false
 	});
 	
 	PrefPanes.init();

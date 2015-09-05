@@ -35,10 +35,6 @@ page[currentcategory="paneAbout"] #header-about {
 	margin: 0 26px 30px;
 }
 
-#general checkbox {
-	margin-bottom: 15px;
-}
-
 #version label {
 	-moz-margin-start: 3px;
 	-moz-margin-end: 0;
@@ -78,6 +74,39 @@ p.signature {
 .row {
 	margin: 0 auto;
 	position: relative;
+}
+
+/* make the "Show this tab on the next update" checkbox more noticeable */
+
+#notifyOnUpdates {
+	width: 100%;
+	padding-top: calc(15px - 0.75em);
+}
+
+#notifyOnUpdates checkbox {
+	margin: 0.75em;
+}
+
+#notifyOnUpdates checkbox:not([checked="true"]) {
+	font-weight: normal;
+}
+
+#notifyOnUpdates[blink="true"] .notifyOnUpdates-checkbox-container {
+	animation: noticeMe 1.5s linear infinite;
+}
+@keyframes noticeMe {
+	0% {
+		background-color: rgba(255,255,0,0);
+		box-shadow: 0 0 4px 4px rgba(255,255,0,0);
+	}
+	50% {
+		background-color: rgba(255,255,0,1);
+		box-shadow: 0 0 4px 4px rgba(255,255,0,1);
+	}
+	100% {
+		background-color: rgba(255,255,0,0);
+		box-shadow: 0 0 4px 4px rgba(255,255,0,0);
+	}
 }
 
 /* development hours section */
@@ -224,10 +253,10 @@ p.signature {
 	animation: blink 1s linear infinite;
 }
 @keyframes blink {
-    0% { opacity: 1; }
-    50% { opacity: 1; }
-    50.01% { opacity: 0; }
-    100% { opacity: 0; }
+	0% { opacity: 1; }
+	50% { opacity: 1; }
+	50.01% { opacity: 0; }
+	100% { opacity: 0; }
 }
 
 #bank a {

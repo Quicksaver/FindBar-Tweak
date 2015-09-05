@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.3';
+Modules.VERSION = '1.0.4';
 
 this.PDFJS = {
 	// We need this to access protected properties, hidden from privileged code
@@ -48,7 +48,6 @@ this.PDFJS = {
 		// We can't pass fakeEvent below and let the native method handle it because of a lot of limitations with its binds and stuff,
 		// especially because we also replace PDFJS.findController.nextMatch. So we have to reproduce the whole thing here.
 		// This turns out to be good because we can also apply our delay settings here as well.
-		//this.findController.handleEvent(fakeEvent);
 		
 		if(this.findController.state === null || fakeEvent.type !== 'findagain') {
 			this.findController.dirtyMatch = true;
@@ -105,16 +104,6 @@ this.PDFJS = {
 			// hide the viewer's own findbar, we use the native one
 			setAttribute($('findbar'), 'hidden', 'true');
 			setAttribute($('viewFind'), 'hidden', 'true');
-			
-			// we don't need to unlisten for these in FF39
-			if(this.findController.handleEvent) {
-				// these events aren't carried to content in e10s, so they're irrelevant, let's just get rid of them
-				// instead, we use messages to carry out actions through PDFJSEventReceiver()
-				var events = [ 'find', 'findagain', 'findhighlightallchange', 'findcasesensitivitychange' ];
-				for (var i = 0, len = events.length; i < len; i++) {
-					content.removeEventListener(events[i], this.findController);
-				}
-			}
 			
 			// we also need to use messages to update the integrated findbar, and not the viewer's own
 			Piggyback.add('PDFJS', this.findController, 'updateUIState', function(state, previous) {
@@ -184,13 +173,6 @@ this.PDFJS = {
 		
 		this.findController.nextMatch = this.findController._nextMatch;
 		delete this.findController._nextMatch;
-		
-		if(this.findController.handleEvent) {
-			var events = [ 'find', 'findagain', 'findhighlightallchange', 'findcasesensitivitychange' ];
-			for (var i = 0, len = events.length; i < len; i++) {
-				content.addEventListener(events[i], this.findController);
-			}
-		}
 		
 		toggleAttribute($('findbar'), 'hidden', this.viewerApplication.supportsIntegratedFind);
 		toggleAttribute($('viewFind'), 'hidden', this.viewerApplication.supportsIntegratedFind);

@@ -1,4 +1,4 @@
-Modules.VERSION = '2.3.1';
+Modules.VERSION = '2.3.2';
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -48,7 +48,7 @@ this.Strings = {
 		}
 		
 		// This means we are dealing with a possible Plural Form, so we need to make sure we treat it accordingly
-		if(aNumber != undefined && string.contains(';')) {
+		if(aNumber != undefined && string.includes(';')) {
 			try {
 				var [getForm, numForms] = PluralForm.makeGetter(this.bundles[bundleObj].GetStringFromName('PluralRule'));
 				string = getForm(aNumber, string);
@@ -58,7 +58,7 @@ this.Strings = {
 		
 		if(replace) {
 			for(let x of replace) {
-				while(string.contains(x[0])) {
+				while(string.includes(x[0])) {
 					string = string.replace(x[0], x[1]);
 				}
 			}

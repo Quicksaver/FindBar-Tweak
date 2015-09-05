@@ -1,4 +1,4 @@
-Modules.VERSION = '1.2.1';
+Modules.VERSION = '1.2.2';
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -34,7 +34,7 @@ this.toCode = {
 		};
 		
 		for(let param of params) {
-			if(!methodCode.contains(param[0])) {
+			if(!methodCode.includes(param[0])) {
 				Cu.reportError('Could not find occurence of string '+param[0]+' in '+aName+'! Interrupting modification.');
 				return;
 			}

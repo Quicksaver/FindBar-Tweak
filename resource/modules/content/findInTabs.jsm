@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.5';
+Modules.VERSION = '1.1.6';
 
 this.FIT = {
 	// this keeps a list of all hits in a page, mapped to an id that can be used to keep things sync'ed up with the chrome process
@@ -578,7 +578,7 @@ this.FIT = {
 			if(doLastStart +1 < endContainerText.length && endContainerText[doLastStart] != ' ') {
 				if(!this.hits.all.has(h +1)
 				|| ((!isPDF) ? this.hits.all.get(h +1).startContainer != endContainer : this.hits.all.get(h +1).pIdx != range.pIdx)
-				|| 	(endContainerText.contains(' ', doLastStart)
+				|| 	(endContainerText.includes(' ', doLastStart)
 					&& this.hits.all.get(h +1)[(!isPDF) ? 'startOffset' : 'offset'] > endContainerText.indexOf(' ', doLastStart))) {
 						var doLastLength = endContainerText.indexOf(' ', doLastStart);
 						if(doLastLength == -1) { doLastLength = endContainerText.length; }
@@ -633,7 +633,7 @@ this.FIT = {
 					&& nextEndContainerText[nextLastStart] != ' ') {
 						if(!this.hits.all.has(hh +1)
 						|| ((!isPDF) ? this.hits.all.get(hh +1).startContainer != nextRange.endContainer : this.hits.all.get(hh +1).pIdx != nextRange.pIdx)
-						|| 	(nextEndContainerText.contains(' ', nextLastStart)
+						|| 	(nextEndContainerText.includes(' ', nextLastStart)
 							&& this.hits.all.get(hh +1)[(!isPDF) ? 'startOffset' : 'offset'] > nextEndContainerText.indexOf(' ', nextLastStart))) {
 								var fillNextLength = nextEndContainerText.indexOf(' ', nextLastStart);
 								if(fillNextLength == -1) { fillNextLength = nextEndContainerText.length; }

@@ -1,4 +1,4 @@
-Modules.VERSION = '2.5.3';
+Modules.VERSION = '2.5.4';
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -11,8 +11,8 @@ Modules.BASEUTILS = true;
 //	(optional) trunk - (string) defaults to 'extensions'
 // listen(pref, handler) - add handler as a change event listener to pref
 //	pref - (string) name of preference to append handler to
-//	handler -	(function) to be fired on change event, expects (pref, newValue) arguments;
-//			or (nsiObserver) with observe(aSubject, aTopic, aData) where
+//	handler -	(function) to be fired on change event, expects (aSubject, aData) arguments,
+//			or (nsiObserver) with observe(aSubject, aTopic, aData), where:
 //				aSubject - (string) name of preference that was changed
 //				aTopic - (string) "nsPref:changed"
 //				aData - new preference value
@@ -165,7 +165,7 @@ this.Prefs = {
 	observe: function(aSubject, aTopic, aData) {
 		let pref = aData;
 		while(!this._prefObjects[pref]) {
-			if(!pref.contains('.')) {
+			if(!pref.includes('.')) {
 				Cu.reportError("Couldn't find listener handlers for preference "+aData);
 				return;
 			}

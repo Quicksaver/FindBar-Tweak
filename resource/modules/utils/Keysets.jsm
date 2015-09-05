@@ -1,4 +1,4 @@
-Modules.VERSION = '1.6.0';
+Modules.VERSION = '1.6.1';
 Modules.UTILS = true;
 
 // Keysets - handles editable keysets for the add-on
@@ -269,9 +269,9 @@ this.Keysets = {
 			};
 			
 			var modifiers = k.getAttribute('modifiers').toLowerCase();
-			key.accel = modifiers.contains('accel') || modifiers.contains('control'); // control or command key on mac
-			key.alt = modifiers.contains('alt'); // option key on mac
-			key.shift = modifiers.contains('shift');
+			key.accel = modifiers.includes('accel') || modifiers.includes('control'); // control or command key on mac
+			key.alt = modifiers.includes('alt'); // option key on mac
+			key.shift = modifiers.includes('shift');
 			
 			key.keycode = k.getAttribute('keycode') || k.getAttribute('key');
 			key.keycode = key.keycode.toUpperCase();

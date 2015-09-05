@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.7';
+Modules.VERSION = '2.1.8';
 
 this.FIT = {
 	get box() { return $(objName+'-findInTabs-box'); },
@@ -753,7 +753,7 @@ this.FIT = {
 					} else {
 						var inBox = tab.boxObject.firstChild;
 						if(!inBox) { return; }
-						while(!inBox.className.contains('tab-stack')) {
+						while(!inBox.classList.contains('tab-stack')) {
 							inBox = inBox.nextSibling;
 							if(!inBox) { return; }
 						}

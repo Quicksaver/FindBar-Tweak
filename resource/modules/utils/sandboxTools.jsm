@@ -1,4 +1,4 @@
-Modules.VERSION = '2.7.1';
+Modules.VERSION = '2.7.2';
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -124,10 +124,10 @@ this.replaceObjStrings = function(node, prop) {
 	if(prop) {
 		if(!node[prop]) { return; }
 		
-		while(node[prop].contains('objName')) {
+		while(node[prop].includes('objName')) {
 			node[prop] = node[prop].replace('objName', objName);
 		}
-		while(node[prop].contains('objPathString')) {
+		while(node[prop].includes('objPathString')) {
 			node[prop] = node[prop].replace('objPathString', objPathString);
 		}
 		
@@ -136,10 +136,10 @@ this.replaceObjStrings = function(node, prop) {
 	
 	if(node.attributes) {
 		for(let attr of node.attributes) {
-			while(attr.value.contains('objName')) {
+			while(attr.value.includes('objName')) {
 				attr.value = attr.value.replace('objName', objName);
 			}
-			while(attr.value.contains('objPathString')) {
+			while(attr.value.includes('objPathString')) {
 				attr.value = attr.value.replace('objPathString', objPathString);
 			}
 		}

@@ -12,6 +12,7 @@
   %preferences;
 ]>
 <page	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+		id="objName-preferences"
 		title="&preferences.title;">
 
 	<keyset id="mainKeyset">

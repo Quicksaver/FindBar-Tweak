@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.3';
+Modules.VERSION = '1.1.4';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return FITFull || viewSource || window.gFindBarInitialized; });
@@ -24,17 +24,20 @@ this.baseInit = function(bar) {
 	Messenger.loadInBrowser(bar.browser, 'gFindBar');
 	
 	if(!FITFull) {
-		// In FF40 _findMode was changed to a getter of __findMode
-		var prop = (bar.__findMode !== undefined) ? '__findMode' : '_findMode';
-		bar['_'+prop] = bar[prop];
-		delete bar[prop];
-		bar.__defineGetter__(prop, function() { return this['_'+prop]; });
-		bar.__defineSetter__(prop, function(v) {
-			if(this['_'+prop] != v) {
-				let previous = this['_'+prop];
-				this['_'+prop] = v;
+		// _findMode is already a getter of __findMode, but because of the way it's implemented (property node in xbl binding), I also need to set the getter as well
+		bar._findMode_originalSetter = bar.__lookupSetter__('_findMode');
+		bar._findMode_originalGetter = bar.__lookupGetter__('_findMode');
+		bar.__defineGetter__('_findMode', function() { return this.__findMode; });
+		bar.__defineSetter__('_findMode', function(v) {
+			if(this.__findMode != v) {
+				let previous = this.__findMode;
+				this.__findMode = v;
 				dispatch(this, { type: 'FindModeChange', cancelable: false, detail: { before: previous, after: v } });
 			}
+			
+			// as in original setter
+			this._updateBrowserWithState();
+			
 			return v;
 		});
 			
@@ -71,26 +74,24 @@ this.baseInit = function(bar) {
 			}
 		});
 		
-		// this was introduced in FF40 by bug 1133981; replaces handleEvent method
-		if(bar.receiveMessage) {
-			Piggyback.add('gFindBar', bar, 'receiveMessage', function(aMessage) {
-				if(aMessage.target != this._browser) { return; }
+		// this acts as a fake-handleEvent for these events carried from content
+		Piggyback.add('gFindBar', bar, 'receiveMessage', function(aMessage) {
+			if(aMessage.target != this._browser) { return; }
+			
+			switch(aMessage.name) {
+				case "Findbar:Mouseup":
+					if(!this.hidden && this._findMode != this.FIND_NORMAL
+					// this receiver would prevent fillSelectedText from showing the quick findbar, because it would close it
+					// right after it opened. We obviously don't want the Mouseup from going through if it's meant as a text selection action
+					&& !this._keepOpen) {
+						this.close();
+					}
+					break;
 				
-				switch(aMessage.name) {
-					case "Findbar:Mouseup":
-						if(!this.hidden && this._findMode != this.FIND_NORMAL
-						// this receiver would prevent fillSelectedText from showing the quick findbar, because it would close it
-						// right after it opened. We obviously don't want the Mouseup from going through if it's meant as a text selection action
-						&& !this._keepOpen) {
-							this.close();
-						}
-						break;
-					
-					case "Findbar:Keypress":
-						return this._onBrowserKeypress(aMessage.data);
-				}
-			});
-		}
+				case "Findbar:Keypress":
+					return this._onBrowserKeypress(aMessage.data);
+			}
+		});
 	}
 	
 	Piggyback.add('gFindBar', bar, 'close', function() {
@@ -211,15 +212,12 @@ this.baseInit = function(bar) {
 		return this._startFindDeferred;
 	}, Piggyback.MODE_BEFORE);
 	
+	// keypresses are communicated through a message sent from content
 	Piggyback.add('gFindBar', bar, '_onBrowserKeypress', function(aFakeEvent) {
-		// keypresses are communicated through a message sent from content starting with FF40
-		let legacy = !!this._shouldFastFind;
-		if(legacy && !this._shouldFastFind(aFakeEvent)) { return; }
-		
 		// in theory, fast keypresses could stack up when the process is slow/hanging, especially in e10s-code which has a high degree of asynchronicity here.
 		// we should make sure the findbar isn't "opened" several times, otherwise it could lead to erroneous find queries
 		// see https://github.com/Quicksaver/FindBar-Tweak/issues/198 and https://bugzilla.mozilla.org/show_bug.cgi?id=1198465
-		if(!legacy && !this.hidden && document.activeElement == this._findField.inputField) {
+		if(!this.hidden && document.activeElement == this._findField.inputField) {
 			this._dispatchKeypressEvent(this._findField.inputField, aFakeEvent);
 			return false;
 		}
@@ -229,17 +227,12 @@ this.baseInit = function(bar) {
 		
 		if(this._findMode != this.FIND_NORMAL && this._quickFindTimeout) {
 			if(!aFakeEvent.charCode) {
-				if(legacy) { return; }
 				return true;
 			}
 			
 			this._findField.select();
 			this._findField.focus();
 			this._dispatchKeypressEvent(this._findField.inputField, aFakeEvent);
-			if(legacy) {
-				aFakeEvent.preventDefault();
-				return;
-			}
 			return false;
 		}
 		
@@ -263,10 +256,6 @@ this.baseInit = function(bar) {
 				this._updateStatusUI(this.nsITypeAheadFind.FIND_FOUND);
 			}
 			
-			if(legacy) {
-				aFakeEvent.preventDefault();
-				return;
-			}
 			return false;
 		}
 	});
@@ -275,10 +264,10 @@ this.baseInit = function(bar) {
 this.baseDeinit = function(bar) {
 	if(!bar._destroying) {
 		if(!FITFull) {
-			var prop = (bar.___findMode !== undefined) ? '__findMode' : '_findMode';
-			delete bar[prop];
-			bar[prop] = bar['_'+prop];
-			delete bar['_'+prop];
+			bar.__defineGetter__('_findMode', bar._findMode_originalGetter);
+			bar.__defineSetter__('_findMode', bar._findMode_originalSetter);
+			delete bar._findMode_originalGetter;
+			delete bar._findMode_originalSetter;
 			
 			Piggyback.revert('gFindBar', bar, 'open');
 			Piggyback.revert('gFindBar', bar, 'close');

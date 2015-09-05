@@ -1,4 +1,4 @@
-Modules.VERSION = '2.15.5';
+Modules.VERSION = '2.15.6';
 Modules.UTILS = true;
 
 // Overlays - to use overlays in my bootstraped add-ons. The behavior is as similar to what is described in https://developer.mozilla.org/en/XUL_Tutorial/Overlays as I could manage.
@@ -1954,30 +1954,35 @@ this.Overlays = {
 	
 	// some nodes shouldn't be made visible until the appended stylesheets have loaded, to prevent lots of jumping around and distorted elements by being unstyled for a moment
 	waitForSSLoaded: function(aWindow, aNode) {
-		var sheet = aNode.sheet.href;
+		let sheet = aNode.sheet.href;
 		
-		if(!aWindow[this._obj+'_wait']) {
-			aWindow[this._obj+'_wait'] = {
+		let obj = aWindow[this._obj+'_wait'];
+		if(!obj) {
+			obj = aWindow[this._obj+'_wait'] = {
 				sheets: new Set(),
 				queued: new Set()
 			};
 		}
-		aWindow[this._obj+'_wait'].sheets.add(sheet);
 		
-		var sscode = '/*OmniSidebar CSS declarations of variable values*/\n';
+		obj.sheets.add(sheet);
+		
+		let sscode = '/*'+objName+' CSS declarations of variable values*/\n';
 		sscode += '@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n';
 		sscode += '[waitForSS~="'+sheet+'"] { visibility: collapse !important; transition: none !important; }';
 		Styles.load('waitfor:'+sheet, sscode, true);
 		
-		var waitSSLoaded = () => {
+		let waitSSLoaded = () => {
 			aNode.removeEventListener('load', waitSSLoaded);
 			Styles.unload('waitfor:'+sheet);
-			aWindow[this._obj+'_wait'].sheets.delete(sheet);
+			obj.sheets.delete(sheet);
 			
-			if(aWindow[this._obj+'_wait'].sheets.size == 0) {
+			if(obj.sheets.size == 0) {
 				// run the queued methods that were waiting for the SS's to laod
-				for(let method of aWindow[this._obj+'_wait'].queued) {
-					try { method(); }
+				for(let method of obj.queued) {
+					try {
+						method();
+						obj.queued.delete(method);
+					}
 					catch(ex) { Cu.reportError(ex); }
 				}
 				

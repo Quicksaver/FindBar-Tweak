@@ -1,4 +1,4 @@
-Modules.VERSION = '2.4.2';
+Modules.VERSION = '2.4.4';
 Modules.UTILS = true;
 
 // dependsOn - object that adds a dependson attribute functionality to xul preference elements.
@@ -34,7 +34,7 @@ this.dependsOn = {
 			for(let node of elements) {
 				if(alreadyChanged.has(node)) { continue; }
 				
-				if(node.getAttribute('dependson').contains(field.id)) {
+				if(node.getAttribute('dependson').includes(field.id)) {
 					this.updateElement(node);
 					alreadyChanged.add(node);
 				}
@@ -44,7 +44,7 @@ this.dependsOn = {
 		for(let node of elements) {
 			if(alreadyChanged.has(node)) { continue; }
 			
-			if(node.getAttribute('dependson').contains(e.target.id)) {
+			if(node.getAttribute('dependson').includes(e.target.id)) {
 				this.updateElement(node);
 				alreadyChanged.add(node);
 			}
@@ -79,7 +79,7 @@ this.dependsOn = {
 			while(a < alternates.length) {
 				let inverse = false;
 				let dependency = alternates[a].split(':');
-				if(dependency[0].contains('!')) {
+				if(dependency[0].includes('!')) {
 					inverse = true;
 					dependency[0] = dependency[0].replace('!', '');
 				}
@@ -1074,7 +1074,7 @@ this.controllers = {
 		
 		// first find the exact word in the jump attributes
 		for(let node of this.jumpNodes) {
-			if(node._jumpPref.contains(val)) {
+			if(node._jumpPref.includes(val)) {
 				this.highlight(node);
 				return;
 			}
@@ -1082,7 +1082,7 @@ this.controllers = {
 		
 		// try to find the word in the collective text of the nodes childNodes
 		for(let node of this.jumpNodes) {
-			if(node._jumpText.contains(val)) {
+			if(node._jumpText.includes(val)) {
 				this.highlight(node);
 				return;
 			}
@@ -1137,12 +1137,39 @@ this.controllers = {
 	}
 };
 
+this.DnDproxy = {
+	areas: null,
+	
+	init: function() {
+		// we initialize the DnDprefs module only if there are any such areas to be initialized
+		this.areas = $$('[DnDpref]');
+		for(let area of this.areas) {
+			let pref = area.getAttribute('DnDpref');
+			if(pref) {
+				DnDprefs.addArea(pref, area);
+			}
+		}
+	},
+	
+	uninit: function() {
+		if(this.areas) {
+			for(let area of this.areas) {
+				let pref = area.getAttribute('DnDpref');
+				if(pref) {
+					DnDprefs.removeArea(pref, area);
+				}
+			}
+		}
+	}
+};
+
 Modules.LOADMODULE = function() {
 	alwaysRunOnClose.push(function() {
 		Overlays.removeOverlayWindow(helptext.root, 'utils/helptext');
 	});
 	
 	callOnLoad(window, function() {
+		DnDproxy.init();
 		delayPreferences.init();
 		dependsOn.init();
 		keys.init();
@@ -1166,6 +1193,7 @@ Modules.LOADMODULE = function() {
 Modules.UNLOADMODULE = function() {
 	dependsOn.uninit();
 	delayPreferences.uninit();
+	DnDproxy.uninit();
 	keys.uninit();
 	categories.uninit();
 	controllers.uninit();

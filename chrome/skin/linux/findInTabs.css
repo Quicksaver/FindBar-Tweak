@@ -1,19 +1,17 @@
 @namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
-@-moz-document url("chrome://findbartweak/content/findInTabsFull.xul") {
-	
-	findbar.findInTabs-bar {
-		-moz-padding-end: 8px;
-		border-top: 1px solid;
-		-moz-border-top-colors: ThreeDHighlight;
-	}
-	
-	.findInTabs-bar textbox {
-		border-left-width: 1px;
-		border-right-width: 1px;
-		border-radius: 3px;
-	}
-	
-	#contentBox {
-		background-color: -moz-dialog;
-	}
+
+findbar.findInTabs-bar {
+	-moz-padding-end: 8px;
+	border-top: 1px solid;
+	-moz-border-top-colors: ThreeDHighlight;
+}
+
+.findInTabs-bar textbox {
+	border-left-width: 1px;
+	border-right-width: 1px;
+	border-radius: 3px;
+}
+
+#contentBox {
+	background-color: -moz-dialog;
 }

@@ -1,144 +1,138 @@
 @namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
-@-moz-document
-	url("chrome://browser/content/browser.xul"),
-	url("chrome://global/content/viewSource.xul"),
-	url("chrome://global/content/viewPartialSource.xul"),
-	url("chrome://findbartweak/content/findInTabsFull.xul") {
-	
-	/* findbar appearance */
-	
-	.browserContainer findbar:not([movetotop]) {
-		border-bottom: none;
-	}
-	
-	findbar:not([movetotop]):-moz-lwtheme {
-		border-top: 1px solid #888;
-	}
-	
-	/* Find in All Tabs */
-	
-	findbar toolbarbutton[anonid="findbartweak-find-tabs"] {
-		-moz-margin-end: 5px;
-		padding: 2px 9px;
-	}
-	
-	/* small findbar at the top */
-	
-	findbar[movetotop] {
-		z-index: 50;
-	}
-	
-	findbar[movetotop] .findbar-container {
-		padding-top: 3px;
-		padding-bottom: 3px;
-	}
-	
-	findbar[movetotop] .findbar-closebutton {
-		padding-top: 5px;
-		padding-bottom: 5px;
-	}
-	
-	findbar[movetotop]:not([movetoright]):-moz-locale-dir(ltr) > hbox.findbar-container,
-	findbar[movetotop][movetoright]:-moz-locale-dir(rtl) > hbox.findbar-container {
-		-moz-padding-end: 1px;
-	}
-	
-	findbar[movetotop][movetoright]:-moz-locale-dir(ltr) > hbox.findbar-container,
-	findbar[movetotop]:not([movetoright]):-moz-locale-dir(rtl) > hbox.findbar-container {
-		-moz-padding-start: 1px;
-		-moz-padding-end: 0;
-	}
-	
-	findbar[movetotop]:not([movetoright]):-moz-locale-dir(ltr) .findbar-closebutton,
-	findbar[movetotop][movetoright]:-moz-locale-dir(rtl) .findbar-closebutton {
-		-moz-padding-start: 1px;
-	}
-	
-	findbar[movetotop][movetoright]:-moz-locale-dir(ltr) .findbar-closebutton,
-	findbar[movetotop]:not([movetoright]):-moz-locale-dir(rtl) .findbar-closebutton {
-		-moz-padding-end: 1px;
-	}
 
-	findbar[movetotop]:not([inPDFJS]) {
-		-moz-appearance: none !important;
-		background: url(chrome://browser/skin/Toolbar-background-noise.png) hsl(0,0%,83%);
-		border-right: 1px solid #ababab;
-		border-left: 1px solid #ababab;
-		border-bottom: 1px solid #ababab;
-		-moz-border-right-colors: #ababab;
-		-moz-border-left-colors: #ababab;
-		-moz-border-bottom-colors: #ababab;
-	}
-	
-	findbar[movetotop]:not([inPDFJS]) .findbar-container:-moz-lwtheme {
-		background-color: rgba(253,253,253,0.45);
-	}
-	
-	/* Rounded inner corners */
-	
-	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
-	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
-		box-shadow:	2px -2px 0 -2px #ababab,
-				7px -4px 0px -4px hsl(0,0%,83%),
-				6px -4px 0px -4px hsl(0,0%,83%);
-	}
-	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
-	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
-		box-shadow: 	-2px -2px 0 -2px #ababab,
-				-7px -4px 0px -4px hsl(0,0%,83%),
-				-6px -4px 0px -4px hsl(0,0%,83%);
-	}
-	
-	
-	/* Using The Fox, Only Better, the bottom color of the slimmer isn't the same, so we (try to) apply the same style as the nav-bar */
-	/* needs to follow includeNavBar preference */
-	/*#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]) .findbar-container:not(:-moz-lwtheme) {
-		background-image: linear-gradient(hsl(0,0%,91%), hsl(0,0%,83%));
-		background-size: auto auto;
-		background-repeat: repeat;
-		background-clip: padding-box;
-	}
-	
-	#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
-	#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
-		box-shadow: 	2px -2px 0 -2px #ababab,
-		                7px -4px 0px -4px hsl(0,0%,90%),
-		                6px -4px 0px -4px hsl(0,0%,90%),
-		                7px -4px 0px -4px hsl(0,0%,83%),
-		                6px -4px 0px -4px hsl(0,0%,83%);
-	}
-	#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
-	#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
-		box-shadow: 	-2px -2px 0 -2px #ababab,
-		                -7px -4px 0px -4px hsl(0,0%,90%),
-		                -6px -4px 0px -4px hsl(0,0%,90%),
-		                -7px -4px 0px -4px hsl(0,0%,83%),
-		                -6px -4px 0px -4px hsl(0,0%,83%);
-	}*/
-	
-	/* Textbox resizers */
-	
-	findbar .findbar-textbox {
-		min-width: 176px;
-	}
-	
-	findbar .find-textbox-resizer {
-		width: 6px;
-		height: 1.6em; /* I think this faithfully represents font-height plus box-padding, thus should work with OS font zoom */
-	}
-	
-	findbar resizer[anonid="find-left-resizer"] {
-		width: 6px;
-		min-width: 6px;
-		max-width: 6px;
-		-moz-margin-end: -4px;
-		-moz-margin-start: -2px;
-	}
-	findbar resizer[anonid="find-right-resizer"] {
-		width: 6px;
-		min-width: 6px;
-		max-width: 6px;
-		-moz-margin-start: -4px;
-		-moz-margin-end: -2px;
-	}
+/* findbar appearance */
+
+.browserContainer findbar:not([movetotop]) {
+	border-bottom: none;
+}
+
+findbar:not([movetotop]):-moz-lwtheme {
+	border-top: 1px solid #888;
+}
+
+/* Find in All Tabs */
+
+findbar toolbarbutton[anonid="findbartweak-find-tabs"] {
+	-moz-margin-end: 5px;
+	padding: 2px 9px;
+}
+
+/* small findbar at the top */
+
+findbar[movetotop] {
+	z-index: 50;
+}
+
+findbar[movetotop] .findbar-container {
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+
+findbar[movetotop] .findbar-closebutton {
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+findbar[movetotop]:not([movetoright]):-moz-locale-dir(ltr) > hbox.findbar-container,
+findbar[movetotop][movetoright]:-moz-locale-dir(rtl) > hbox.findbar-container {
+	-moz-padding-end: 1px;
+}
+
+findbar[movetotop][movetoright]:-moz-locale-dir(ltr) > hbox.findbar-container,
+findbar[movetotop]:not([movetoright]):-moz-locale-dir(rtl) > hbox.findbar-container {
+	-moz-padding-start: 1px;
+	-moz-padding-end: 0;
+}
+
+findbar[movetotop]:not([movetoright]):-moz-locale-dir(ltr) .findbar-closebutton,
+findbar[movetotop][movetoright]:-moz-locale-dir(rtl) .findbar-closebutton {
+	-moz-padding-start: 1px;
+}
+
+findbar[movetotop][movetoright]:-moz-locale-dir(ltr) .findbar-closebutton,
+findbar[movetotop]:not([movetoright]):-moz-locale-dir(rtl) .findbar-closebutton {
+	-moz-padding-end: 1px;
+}
+
+findbar[movetotop]:not([inPDFJS]) {
+	-moz-appearance: none !important;
+	background: url(chrome://browser/skin/Toolbar-background-noise.png) hsl(0,0%,83%);
+	border-right: 1px solid #ababab;
+	border-left: 1px solid #ababab;
+	border-bottom: 1px solid #ababab;
+	-moz-border-right-colors: #ababab;
+	-moz-border-left-colors: #ababab;
+	-moz-border-bottom-colors: #ababab;
+}
+
+findbar[movetotop]:not([inPDFJS]) .findbar-container:-moz-lwtheme {
+	background-color: rgba(253,253,253,0.45);
+}
+
+/* Rounded inner corners */
+
+findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
+findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
+	box-shadow:	2px -2px 0 -2px #ababab,
+			7px -4px 0px -4px hsl(0,0%,83%),
+			6px -4px 0px -4px hsl(0,0%,83%);
+}
+findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
+findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
+	box-shadow: 	-2px -2px 0 -2px #ababab,
+			-7px -4px 0px -4px hsl(0,0%,83%),
+			-6px -4px 0px -4px hsl(0,0%,83%);
+}
+
+
+/* Using The Fox, Only Better, the bottom color of the slimmer isn't the same, so we (try to) apply the same style as the nav-bar */
+/* needs to follow includeNavBar preference */
+/*#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]) .findbar-container:not(:-moz-lwtheme) {
+	background-image: linear-gradient(hsl(0,0%,91%), hsl(0,0%,83%));
+	background-size: auto auto;
+	background-repeat: repeat;
+	background-clip: padding-box;
+}
+
+#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
+#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
+	box-shadow: 	2px -2px 0 -2px #ababab,
+	                7px -4px 0px -4px hsl(0,0%,90%),
+	                6px -4px 0px -4px hsl(0,0%,90%),
+	                7px -4px 0px -4px hsl(0,0%,83%),
+	                6px -4px 0px -4px hsl(0,0%,83%);
+}
+#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
+#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
+	box-shadow: 	-2px -2px 0 -2px #ababab,
+	                -7px -4px 0px -4px hsl(0,0%,90%),
+	                -6px -4px 0px -4px hsl(0,0%,90%),
+	                -7px -4px 0px -4px hsl(0,0%,83%),
+	                -6px -4px 0px -4px hsl(0,0%,83%);
+}*/
+
+/* Textbox resizers */
+
+findbar .findbar-textbox {
+	min-width: 176px;
+}
+
+findbar .find-textbox-resizer {
+	width: 6px;
+	height: 1.6em; /* I think this faithfully represents font-height plus box-padding, thus should work with OS font zoom */
+}
+
+findbar resizer[anonid="find-left-resizer"] {
+	width: 6px;
+	min-width: 6px;
+	max-width: 6px;
+	-moz-margin-end: -4px;
+	-moz-margin-start: -2px;
+}
+findbar resizer[anonid="find-right-resizer"] {
+	width: 6px;
+	min-width: 6px;
+	max-width: 6px;
+	-moz-margin-start: -4px;
+	-moz-margin-end: -2px;
 }

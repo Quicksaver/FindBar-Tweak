@@ -1,25 +1,23 @@
 @namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
-@-moz-document url("chrome://findbartweak/content/findInTabsFull.xul") {
-	
-	findbar.findInTabs-bar {
-		-moz-padding-end: 8px;
-		background-image: linear-gradient(rgba(255,255,255,.15) 1px, transparent);
-		background-size: 100% 2px;
-	}
-	
-	.findInTabs-bar textbox {
-		border-radius: 2px;
-	}
-	
-	#contentBox {
-		background-color: -moz-dialog;
-	}
-	
-	@media not all and (-moz-windows-classic) {
-		@media (-moz-windows-default-theme) {
-			#contentBox {
-				background-color: hsl(210,75%,92%);
-			}
+
+findbar.findInTabs-bar {
+	-moz-padding-end: 8px;
+	background-image: linear-gradient(rgba(255,255,255,.15) 1px, transparent);
+	background-size: 100% 2px;
+}
+
+.findInTabs-bar textbox {
+	border-radius: 2px;
+}
+
+#contentBox {
+	background-color: -moz-dialog;
+}
+
+@media not all and (-moz-windows-classic) {
+	@media (-moz-windows-default-theme) {
+		#contentBox {
+			background-color: hsl(210,75%,92%);
 		}
 	}
 }

@@ -1,4 +1,4 @@
-Modules.VERSION = '2.7.2';
+Modules.VERSION = '2.7.3';
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -95,13 +95,6 @@ this.isAncestor = function(aNode, aParent, aWindow) {
 		if(isAncestor(aNode, frame.document, frame)) { return true; }
 	}
 	return false;
-};
-
-// hideIt(aNode, show) - in theory this should collapse whatever I want
-//	aNode - (xul element) node to collapse
-//	(optional) show - false collapses aNode, true 'un'collapses it, defaults to false
-this.hideIt = function(aNode, show) {
-	toggleAttribute(aNode, 'collapsed', !show);
 };
 
 // trim(str) - trims whitespaces from a string (found in http://blog.stevenlevithan.com/archives/faster-trim-javascript -> trim3())

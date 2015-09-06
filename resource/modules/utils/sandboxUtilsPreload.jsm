@@ -1,4 +1,4 @@
-// VERSION = '1.0.5'
+// VERSION = '1.0.6'
 
 // Prefs - Object to contain and manage all preferences related to the add-on (and others if necessary)
 this.__defineGetter__('Prefs', function() { delete this.Prefs; Modules.load('utils/Prefs'); return Prefs; });
@@ -17,9 +17,6 @@ this.dispatch = function(obj, properties) { loadSandboxTools(); return dispatch(
 
 // isAncestor() - Checks if aNode decends from aParent
 this.isAncestor = function(aNode, aParent) { loadSandboxTools(); return isAncestor(aNode, aParent); };
-
-// hideIt() - in theory this should collapse whatever I want
-this.hideIt = function(aNode, show) { loadSandboxTools(); return hideIt(aNode, show); };
 
 // trim() - trims whitespaces from a string
 this.trim = function(str) { loadSandboxTools(); return trim(str); };
@@ -60,7 +57,6 @@ this.loadSandboxTools = function() {
 	delete this.aSync;
 	delete this.dispatch;
 	delete this.isAncestor;
-	delete this.hideIt;
 	delete this.trim;
 	delete this.replaceObjStrings;
 	delete this.getComputedStyle;

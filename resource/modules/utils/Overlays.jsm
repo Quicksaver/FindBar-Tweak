@@ -1,4 +1,4 @@
-Modules.VERSION = '2.15.6';
+Modules.VERSION = '2.15.7';
 Modules.UTILS = true;
 
 // Overlays - to use overlays in my bootstraped add-ons. The behavior is as similar to what is described in https://developer.mozilla.org/en/XUL_Tutorial/Overlays as I could manage.
@@ -823,7 +823,7 @@ this.Overlays = {
 				if(!node && !aDestroy) {
 					var node = aDocument.importNode(Globals.widgets[this.id], true);
 					setAttribute(node, 'CUI_placeholder', 'true');
-					hideIt(node);
+					node.collapsed = true;
 				}
 				
 				return node;
@@ -1031,7 +1031,7 @@ this.Overlays = {
 								// If it's a placeholder created by us to deal with CustomizableUI, just use it.
 								if(trueAttribute(existButton, 'CUI_placeholder')) {
 									removeAttribute(existButton, 'CUI_placeholder');
-									hideIt(existButton, true);
+									existButton.collapsed = false;
 									this.appendButton(aWindow, palette, existButton);
 									continue buttons_loop;
 								}

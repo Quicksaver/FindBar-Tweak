@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.9';
+Modules.VERSION = '2.0.10';
 
 this.__defineGetter__('gBrowserBox', function() { return $('browser'); });
 this.__defineGetter__('gAppContent', function() { return $('appcontent'); });
@@ -402,7 +402,7 @@ this.hideOnChrome = function(previous) {
 		
 		var isValid = Finder.isValid;
 		if(isValid == gFindBar.collapsed) {
-			hideIt(gFindBar, isValid);
+			gFindBar.collapsed = !isValid;
 			if(isValid) {
 				// Sometimes switching to the add-ons manager and then back to another tab, the find bar would be poorly positioned
 				moveTop();
@@ -483,7 +483,7 @@ Modules.LOADMODULE = function() {
 			function(bar) {
 				if(bar._destroying) { return; }
 				
-				hideIt(bar, true);
+				bar.collapsed = true;
 				removeAttribute(bar, 'inPDFJS');
 				removeAttribute(bar, 'inNotification');
 			}

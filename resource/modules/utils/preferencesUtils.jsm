@@ -1,4 +1,4 @@
-Modules.VERSION = '2.4.4';
+Modules.VERSION = '2.4.5';
 Modules.UTILS = true;
 
 // dependsOn - object that adds a dependson attribute functionality to xul preference elements.
@@ -559,7 +559,7 @@ this.categories = {
 //	helpbox - id pointing to a node that will be shown in the helptext panel, useful for more complex instances and takes precedence over helptext
 //	helpactive - set in nodes that will be selectable using the keyboard (i.e. scales, radiogroups), the script will look for the other attributes in any related node 
 this.helptext = {
-	kPanelWidth: 310, // roughly the maximum size of the panel node
+	kPanelWidth: 311, // roughly the maximum size of the panel node
 	kContentsWidth: 275, // the actual maximum size of the helptext contents
 	
 	root: null,

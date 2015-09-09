@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.1';
+Modules.VERSION = '1.1.0';
 
 this.about = {
 	kNS: 'http://www.w3.org/1999/xhtml',
@@ -108,41 +108,27 @@ this.about = {
 			
 		for(let release in this.changelog.releases) {
 			if(Services.vc.compare(release, version) > 0 || (!PrefPanes.previousVersion && Services.vc.compare(release, version) == 0)) {
-				var section = document.createElementNS(this.kNS, 'section');
+				let section = document.createElementNS(this.kNS, 'section');
 				section.id = release;
 				section.classList.add('notes');
 				
-				var h3 = document.createElementNS(this.kNS, 'h3');
+				let h3 = document.createElementNS(this.kNS, 'h3');
 				h3.textContent = 'Version '+release+' - Release Notes';
 				section.appendChild(h3);
 				
-				var h4 = document.createElementNS(this.kNS, 'h4');
+				let h4 = document.createElementNS(this.kNS, 'h4');
 				h4.textContent = 'Released '+this.changelog.releases[release].date;
 				section.appendChild(h4);
 				
-				var ul = document.createElementNS(this.kNS, 'ul');
+				let ul = document.createElementNS(this.kNS, 'ul');
 				ul.classList.add('notes-items');
 				section.appendChild(ul);
 				
 				for(let note of this.changelog.releases[release].notes) {
-					var li = document.createElementNS(this.kNS, 'li');
-					
-					if(note[0] != "") {
-						var b = document.createElementNS(this.kNS, 'b');
-						b.classList.add(note[0]);
-						b.textContent = note[0];
-						li.appendChild(b);
-						li.classList.add('tagged');
-					}
-					
-					var p = document.createElementNS(this.kNS, 'p');
-					p.innerHTML = note[1]; // just string text, with some <a> tags on occasion; all these can be found in the resource/changelog.json file
-					li.appendChild(p);
-					
-					ul.appendChild(li);
+					this.appendLogEntry(ul, note[1], note[0]);
 				}
 				
-				var sibling = notes.firstChild;
+				let sibling = notes.firstChild;
 				while(sibling && (sibling.id == 'knownissues' || Services.vc.compare(release, sibling.id) < 0)) {
 					sibling = sibling.nextSibling;
 				}
@@ -150,32 +136,20 @@ this.about = {
 				
 				// if we're printing the current release, also print the known issues if there are any
 				if(release == this.changelog.current && this.changelog.knownissues) {
-					var section = document.createElementNS(this.kNS, 'section');
+					let section = document.createElementNS(this.kNS, 'section');
 					section.id = 'knownissues';
 					section.classList.add('notes');
 					
-					var h3 = document.createElementNS(this.kNS, 'h3');
+					let h3 = document.createElementNS(this.kNS, 'h3');
 					h3.textContent = 'Known Issues';
 					section.appendChild(h3);
 					
-					var ul = document.createElementNS(this.kNS, 'ul');
+					let ul = document.createElementNS(this.kNS, 'ul');
 					ul.classList.add('notes-items');
 					section.appendChild(ul);
 					
 					for(let issue of this.changelog.knownissues) {
-						var li = document.createElementNS(this.kNS, 'li');
-						li.classList.add('tagged');
-						
-						var b = document.createElementNS(this.kNS, 'b');
-						b.classList.add('unresolved');
-						b.textContent = 'unresolved';
-						li.appendChild(b);
-						
-						var p = document.createElementNS(this.kNS, 'p');
-						p.innerHTML = issue[0]; // just string text, with some <a> tags on occasion; all these can be found in the resource/changelog.json file
-						li.appendChild(p);
-						
-						ul.appendChild(li);
+						this.appendLogEntry(ul, issue[0], 'unresolved');
 					}
 								
 					notes.insertBefore(section, sibling);
@@ -186,6 +160,89 @@ this.about = {
 		// if we're printing all the releases, hide the button to show them as it won't be needed anymore
 		if(Services.vc.compare(version, '0') == 0) {
 			$('allVersions').hidden = true;
+		}
+	},
+	
+	appendLogEntry: function(ul, string, category) {
+		let li = document.createElementNS(this.kNS, 'li');
+		
+		if(category) {
+			let b = document.createElementNS(this.kNS, 'b');
+			b.classList.add(category);
+			b.textContent = category;
+			li.appendChild(b);
+			li.classList.add('tagged');
+		}
+		
+		let p = document.createElementNS(this.kNS, 'p');
+		p.textContent = string;
+		this.parseTextMarkup(p.firstChild);
+		
+		li.appendChild(p);
+		ul.appendChild(li);
+	},
+	
+	// there's no need to keep assigning these on each parseTextMarkup call
+	markupExp: /<(b|a=([^<]*)?)?>/,
+	markupAExp: /<\/a>/,
+	markupBExp: /<\/b>/,
+	
+	parseTextMarkup: function(textNode) {
+		// textNode should always be a #text element
+		while(textNode) {
+			// if there's no valid beginning markup tag, bail out already
+			if(!this.markupExp.test(textNode.textContent)) { break; }
+			
+			let matchBegin = this.markupExp.exec(textNode.textContent);
+			let markup = matchBegin[1][0]; // first character == tag name
+			
+			// we always split the #text nodes here, even if we end up not actually creating any sub nodes (i.e. no valid closing tag),
+			// it's just easier to continue processing the rest this way
+			let tempTextNode = textNode.splitText(matchBegin.index);
+			
+			// unless our regexps fail, we should always have a valid expression for finding the closing node
+			let endExp;
+			switch(markup) {
+				case 'a':
+					endExp = this.markupAExp;
+					break;
+					
+				case 'b':
+					endExp = this.markupBExp;
+					break;
+			}
+			
+			// there's no valid closing tag, so continue processing the rest of the text for any other opening tags
+			if(!endExp.test(tempTextNode.textContent)) {
+				textNode = tempTextNode;
+				continue;
+			}
+			
+			let matchEnd = endExp.exec(tempTextNode.textContent);
+			let endTextNode = tempTextNode.splitText(matchEnd.index +matchEnd[0].length);
+			
+			let addNode;
+			switch(markup) {
+				case 'a':
+					addNode = document.createElementNS(this.kNS, 'a');
+					setAttribute(addNode, 'target', '_blank');
+					setAttribute(addNode, 'href', matchBegin[2]);
+					break;
+				
+				case 'b':
+					addNode = document.createElementNS(this.kNS, 'span');
+					addNode.style.fontWeight = 'bold';
+					break;
+			}
+			
+			addNode.textContent = tempTextNode.textContent.substring(matchBegin[0].length, matchEnd.index);	
+			node.replaceChild(addNode, tempTextNode);
+			
+			// process the just added node for any nested tags
+			this.parseTextMarkup(addNode.firstChild);
+			
+			// continue processing the rest of the text for more markup tags
+			textNode = endTextNode;
 		}
 	},
 	

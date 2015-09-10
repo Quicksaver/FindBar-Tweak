@@ -1,6 +1,17 @@
 {
-	"current":"2.0.6",
+	"current":"2.0.7",
 	"releases": {
+		"2.0.7":{
+			"date":"September 10, 2015",
+			"notes":[
+				["changed","The \"Show this tab on the next update\" checkbox will be highlighted the first time the About pane is shown on an update, to better mark where future notifications can be easily disabled"],
+				["removed","Compatibility with Firefox 39 and below"],
+				["bugfix","The highlights grid and matches counter would not appear/update immediately when prefilling the findbar with the selected text"],
+				["bugfix","Compatibility with latest Nightly build (Firefox 43)"],
+				["bugfix","The helptext panel in the add-on's preferences would sometimes cover the options on small screens or if the sidebar was open"],
+				["","Other minor fixes and improvements"]
+			]
+		},
 		"2.0.6":{
 			"date":"September 2, 2015",
 			"notes":[

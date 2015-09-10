@@ -50,7 +50,7 @@
 				<html:div id="general" class="main-column">
 					<hbox id="notifyOnUpdates" class="header">
 						<hbox class="notifyOnUpdates-checkbox-container">
-							<checkbox label="&about.notifyOnUpdates;" delayPreference="pref-showTabOnUpdates"/>
+							<checkbox id="showTabOnUpdates" label="&about.notifyOnUpdates;" delayPreference="pref-showTabOnUpdates"/>
 						</hbox>
 					</hbox>
 					<html:p>&about.description;</html:p>

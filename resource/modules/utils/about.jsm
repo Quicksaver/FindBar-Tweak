@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.0';
+Modules.VERSION = '1.1.2';
 
 this.about = {
 	kNS: 'http://www.w3.org/1999/xhtml',
@@ -11,11 +11,19 @@ this.about = {
 		return this._gNotifyOnUpdates;
 	},
 	
+	_gShowTabOnUpdates: null,
+	get gShowTabOnUpdates() {
+		if(!this._gShowTabOnUpdates) {
+			this._gShowTabOnUpdates = $('showTabOnUpdates');
+		}
+		return this._gShowTabOnUpdates;
+	},
+	
 	changelog: null,
 	
 	handleEvent: function(e) {
 		// are we mousing over the Show On Updates checkbox? That requires a specific action
-		if(e.target == this.gNotifyOnUpdates) {
+		if(e.target == this.gShowTabOnUpdates) {
 			this.disableNoticeShowOnUpdates();
 		}
 		
@@ -236,7 +244,7 @@ this.about = {
 			}
 			
 			addNode.textContent = tempTextNode.textContent.substring(matchBegin[0].length, matchEnd.index);	
-			node.replaceChild(addNode, tempTextNode);
+			tempTextNode.parentNode.replaceChild(addNode, tempTextNode);
 			
 			// process the just added node for any nested tags
 			this.parseTextMarkup(addNode.firstChild);
@@ -337,7 +345,7 @@ this.about = {
 		setAttribute(this.gNotifyOnUpdates, 'blink', 'true');
 		
 		// if the mouse goes over the checkbox, or if the user toggles it, it's a good sign it has been noticed, so we can disable this from now on
-		Listeners.add(this.gNotifyOnUpdates, 'mouseover', this);
+		Listeners.add(this.gShowTabOnUpdates, 'mouseover', this);
 		Prefs.listen('showTabOnUpdates', this);
 	},
 	
@@ -347,7 +355,7 @@ this.about = {
 		
 		removeAttribute(this.gNotifyOnUpdates, 'blink');
 		
-		Listeners.remove(this.gNotifyOnUpdates, 'mouseover', this);
+		Listeners.remove(this.gShowTabOnUpdates, 'mouseover', this);
 		Prefs.unlisten('showTabOnUpdates', this);
 	},
 	

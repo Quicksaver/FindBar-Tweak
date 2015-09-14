@@ -1,9 +1,9 @@
 <!ENTITY about.paneTitle "À propos">
 <!ENTITY about.version "Version {v}">
-<!ENTITY about.versionDivider " - ">
+<!ENTITY about.versionDivider "-">
 <!ENTITY about.uptodate "à jour, félicitation !">
 <!ENTITY about.needsupdate "mise à jour disponible !">
-<!ENTITY about.description "Ci-dessous, vous trouverez les « Notes de version » et « Problèmes connus ». Faites-moi savoir si vous remarquez un quelconque problème, ou si vous avez des suggestions pour les prochaines sorties.">
+<!ENTITY about.description "Ci-dessous, vous trouverez les « Notes de version » et « Problèmes connus ». Faites-moi savoir si vous remarquez un quelconque problème, ou si vous avez des suggestions pour les prochaines versions.">
 <!ENTITY about.descriptionB "Le module est gratuit, mais corriger les problème, ajouter de nouvelles fonctionnalités et s'assurer que tout fonctionne à chaque sortie d'une nouvelle version de Firefox est laborieux et parfois difficile. Si vous appréciez ce module, veuillez encourager la poursuite de son développement. Comme dit le lien, « Vous pouvez aider » !">
 <!ENTITY about.allVersions "Afficher les notes de toutes les versions précédentes">
 <!ENTITY about.notifyOnUpdates "Me montrer cet onglet lors de la prochaine mise à jour">
@@ -13,7 +13,7 @@
 <!ENTITY about.home "Page d'accueil du module complémentaire">
 <!ENTITY about.fullchangelog "Liste complète des modifications">
 <!ENTITY about.problems "Vous avez des problèmes ?">
-<!ENTITY about.tech "Ouvrez un nouveau problème, en le décrivant, sur la page de soutien technique">
+<!ENTITY about.tech "Ouvrez un nouveau problème, en le décrivant, sur la page du support technique">
 <!ENTITY about.email "Ou envoyez-moi un courriel">
 <!ENTITY about.author "Du même auteur">
 <!ENTITY about.trymore "Essayez un de mes autres modules pour une expérience de Firefox encore meilleure !">

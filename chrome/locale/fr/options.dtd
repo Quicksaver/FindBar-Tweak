@@ -17,7 +17,7 @@
 <!ENTITY OptuseCounter.tooltip "Pour chaque opération de recherche, le nombre d'occurrences trouvées dans la page Web sera affiché au bout de la barre.">
 <!ENTITY OptfindInTabs.label "Activer « Rechercher dans tous les onglets »">
 <!ENTITY OptfindInTabs.tooltip "Un bouton est placé sur la barre afin d'ouvrir la fenêtre « Rechercher dans tous les onglets », qui vous permet de trouver rapidement un mot parmi tous vos onglets et fenêtres ouverts.">
-<!ENTITY OptmultipleFITFull.label "Autoriser plusieurs instances de la fenêtre « Rechercher dans tous les onglets »">
+<!ENTITY OptmultipleFITFull.label "Autoriser plusieurs instances de la fenêtre de recherche dans les onglets">
 <!ENTITY OptmultipleFITFull.tooltip "Lorsque ceci est désactivé, les clics ultérieurs sur le bouton « Rechercher dans tous les onglets » réutilisera toute fenêtre « Rechercher dans tous les onglets » déjà ouverte, au lieu d'en ouvrir une nouvelle à chaque fois.">
 <!ENTITY Optcolor.label "Couleur du surlignage">
 <!ENTITY Optcolor.tooltip "Modifie la couleur utilisée pour surligner les occurrences sur la page.">

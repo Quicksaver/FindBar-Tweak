@@ -1,4 +1,4 @@
-Modules.VERSION = '2.2.0';
+Modules.VERSION = '2.2.1';
 
 this.FIT = {
 	kNS: 'http://www.w3.org/1999/xhtml',
@@ -992,17 +992,6 @@ this.FIT = {
 Modules.LOADMODULE = function() {
 	initFindBar('findInTabs',
 		function(bar) {
-			var updateButton = document.createElement('toolbarbutton');
-			setAttribute(updateButton, 'anonid', objName+'-find-tabs-update');
-			setAttribute(updateButton, 'class', 'findbar-button findbar-tabs-update findbar-no-find-fast findbar-no-auto-show tabbable');
-			setAttribute(updateButton, 'label', Strings.get('findInTabs', 'updateButtonLabel'));
-			setAttribute(updateButton, 'tooltiptext', Strings.get('findInTabs', 'updateButtonTooltip'+(DARWIN ? 'Mac' : 'Win')));
-			setAttribute(updateButton, 'oncommand', objName+'.FIT.shouldFindAll();');
-			bar.getElement("findbar-container").insertBefore(updateButton, bar.getElement('findbar-textbox-wrapper'));
-			
-			// make sure the australis styling is also applied to the FIT update button
-			buttonLabels.toggle();
-			
 			// Just a few special modifications to the findbar, to prevent some messages in the error console
 			
 			delete bar.browser;
@@ -1016,9 +1005,9 @@ Modules.LOADMODULE = function() {
 			
 			Piggyback.add('findInTabs', bar, 'startFind', function(aMode) {
 				this.open(aMode);
+				this._findField.select();
 				this._findField.focus();
 			});
-				
 		},
 		function(bar) {
 			// No need to undo the modifications we do in the special case of FITFull, as the window will be closed anyway

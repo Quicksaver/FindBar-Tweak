@@ -1,7 +1,6 @@
 @namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
 
-.findbar-tabs image,
-.findbar-tabs-update image {
+.findbar-tabs image {
 	min-height: 14px;
 }
 

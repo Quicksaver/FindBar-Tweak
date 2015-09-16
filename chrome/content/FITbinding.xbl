@@ -22,14 +22,23 @@
 				// After that, even if user converts the composition string to the
 				// expected word, it may find second or later searching word in the
 				// document.
-				if (this.findbar._isIMEComposing) {
+				if(this.findbar._isIMEComposing) {
 					return;
 				}
 				this.findbar._find(this.value);
 			]]></handler>
 			
+			<handler event="keypress"><![CDATA[
+				switch(event.keyCode) {
+					case KeyEvent.DOM_VK_RETURN:
+						// pressing Enter in the findField should re-do all the lists
+						this.findbar._find(this.value);
+						break;
+				}
+			]]></handler>
+			
 			<handler event="dragover"><![CDATA[
-				if (event.dataTransfer.types.contains("text/plain"))
+				if(event.dataTransfer.types.contains("text/plain"))
 					event.preventDefault();
 			]]></handler>
 			

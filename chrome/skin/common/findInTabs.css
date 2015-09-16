@@ -5,19 +5,11 @@
 	min-height: 20px;
 }
 
-.findbar-tabs-update {
-	list-style-image: url("chrome://findbartweak/skin/findintabs.png");
-	-moz-image-region: rect(0px, 32px, 16px, 16px);
-	-moz-margin-end: 5px;
-}
-
-findbar:not([hideLabels]) .findbar-tabs-update image,
 findbar:not([hideLabels]) .findbar-tabs image {
 	display: none;
 }
 
-.findbar-tabs image,
-.findbar-tabs-update image {
+.findbar-tabs image {
 	background: none;
 	border: none;
 }

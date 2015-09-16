@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.4';
+Modules.VERSION = '1.1.5';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return FITFull || viewSource || window.gFindBarInitialized; });
@@ -405,9 +405,14 @@ this.restoreFindBarState = function(bar, state) {
 	bar.open();
 };
 
+// when a browser's content goes from remote to non-remote or vice-versa, its Finder will lose all its active references,
+// so we destroy the findbar and recreate it to ensure everything is properly re-initialized (anything destroyed/removed is also properly deinitialized in this way),
+// afterwards we recreate the find bar and apply its previous state, so that for the user it will seem like nothing actually happened to it
 this.tabRemotenessChanged = function(e) {
 	if(gBrowser.isFindBarInitialized(e.target)) {
+		saveFindBarState(e.target);
 		destroyFindBar(e.target);
+		gBrowser.getFindBar(e.target);
 	}
 };
 

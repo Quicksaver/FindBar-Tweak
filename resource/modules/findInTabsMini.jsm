@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.6';
+Modules.VERSION = '2.1.7';
 
 this.FITMini = {
 	get broadcaster() { return $(objName+'-findInTabs-broadcaster'); },
@@ -19,6 +19,9 @@ this.FITMini = {
 	handleEvent: function(e) {
 		switch(e.type) {
 			case 'TabClose':
+				// make sure any focus or state changes that may happen while the browser is being removed don't recreate the tab entry
+				Messenger.unloadFromBrowser(e.target.linkedBrowser, 'findInTabs');
+				
 				if(FITSandbox.fulls.size > 0) {
 					Observers.notify('FIT:Update', e.target.linkedBrowser, 'removeBrowser');
 				}
@@ -29,6 +32,7 @@ this.FITMini = {
 				break;
 			
 			case 'TabOpen':
+			case 'TabRemotenessChange':
 				// if any FIT window is open, we need to make sure the findInTabs content script is loaded, even if its findbar isn't initialized yet
 				if(FITSandbox.fulls.size > 0) {
 					Messenger.loadInBrowser(e.target.linkedBrowser, 'findInTabs');
@@ -170,6 +174,7 @@ this.FITMini = {
 			Listeners.add(gBrowser.tabContainer, 'TabClose', this);
 			Listeners.add(gBrowser.tabContainer, 'TabSelect', this);
 			Listeners.add(gBrowser.tabContainer, 'TabOpen', this);
+			Listeners.add(gBrowser.tabContainer, 'TabRemotenessChange', this);
 		}
 		
 		Observers.add(this, 'FIT:Load');
@@ -195,6 +200,7 @@ this.FITMini = {
 			Listeners.remove(gBrowser.tabContainer, 'TabClose', this);
 			Listeners.remove(gBrowser.tabContainer, 'TabSelect', this);
 			Listeners.remove(gBrowser.tabContainer, 'TabOpen', this);
+			Listeners.remove(gBrowser.tabContainer, 'TabRemotenessChange', this);
 		}
 		
 		Messenger.unlistenWindow(window, 'FIT:Find', this);

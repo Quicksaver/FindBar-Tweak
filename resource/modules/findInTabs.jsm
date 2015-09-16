@@ -1,6 +1,8 @@
-Modules.VERSION = '2.1.8';
+Modules.VERSION = '2.2.0';
 
 this.FIT = {
+	kNS: 'http://www.w3.org/1999/xhtml',
+	
 	get box() { return $(objName+'-findInTabs-box'); },
 	get tabs() { return $(objName+'-findInTabs-tabs'); },
 	get tabsList() { return this.tabs.firstChild; },
@@ -827,11 +829,10 @@ this.FIT = {
 				this.resetTabHits(item);
 			}
 			
-			var hit = document.createElement('richlistitem');
-			var hitLabel = document.createElement('label');
-			hitLabel.setAttribute('flex', '1');
-			hitLabel.setAttribute('unloaded', 'true');
-			hitLabel.setAttribute('value', label);
+			let hit = document.createElement('richlistitem');
+			hit.setAttribute('unloaded', 'true');
+			let hitLabel = document.createElementNS(this.kNS, 'span');
+			hitLabel.textContent = label;
 			hit.appendChild(hitLabel);
 			item.linkedHits.appendChild(hit);
 			
@@ -845,7 +846,6 @@ this.FIT = {
 		}
 		item.linkedHits.childNodes[0].doNothing = data.doNothing;
 		item.linkedHits.childNodes[0].isUnloadedTab = data.isUnloadedTab;
-		setAttribute(item.linkedHits.childNodes[0].childNodes[0], 'value', label);
 		
 		if(data.isUnloadedTab) {
 			this.orderByHits(item);
@@ -918,7 +918,7 @@ this.FIT = {
 	buildHitItem: function(item, data) {
 		if(data.query != findQuery) { return; }
 		
-		var hitItem = document.createElement('richlistitem');
+		let hitItem = document.createElement('richlistitem');
 		hitItem.linkedBrowser = item.linkedBrowser;
 		hitItem.hitIdx = data.firstHit;
 		
@@ -926,57 +926,65 @@ this.FIT = {
 		setAttribute(hitItem, 'onmouseover', objName+'.FIT.delayHoverGrid(this);');
 		setAttribute(hitItem, 'onmouseout', objName+'.FIT.clearHoverGrid(this);');
 		
-		// Place the text inside a hbox so we can change it's direction without affecting the rest of the layout
-		var labelBox = document.createElement('hbox');
+		let container = document.createElementNS(this.kNS, 'div');
+		container.classList.add('findInTabs-match-container');
+		
+		// Place the text inside its own div so we can change it's direction without affecting the rest of the layout
+		let labelBox = document.createElementNS(this.kNS, 'div');
+		labelBox.classList.add('findInTabs-match-label');
 		labelBox.style.direction = (data.directionRTL) ? 'rtl' : 'ltr';
 		for(let str of data.itemStrings) {
-			var label = document.createElement('label');
-			if(str.opposite) {
-				label.style.direction = (data.directionRTL) ? 'ltr' : 'rtl';
+			// add surrounding text directly, no need for any special handlers
+			if(str.highlight === null) {
+				let label = document.createElementNS(this.kNS, 'span');
+				label.textContent = str.text;
+				labelBox.appendChild(label);
+				continue;
 			}
-			setAttribute(label, 'value', str.text);
-			labelBox.appendChild(label);
 			
-			if(str.highlight !== null) {
-				setAttribute(label, 'highlight', 'true');
-				label.hitIdx = str.highlight;
-				
-				label.handleEvent = function(e) {
-					switch(e.type) {
-						case 'mouseover':
-							FIT.onHoverHit(this);
-							break;
-						
-						case 'click':
-							FIT.selectHit();
-							break;
-					}
-				};
-				
-				label.addEventListener('mouseover', label);
-				label.addEventListener('click', label);
-				
-				item.linkedHits.hits.set(str.highlight, {
-					item: hitItem,
-					label: label
-				});
-			}
+			// matches are added into their own span elements, so that we can add click handlers to them
+			let label = document.createElementNS(this.kNS, 'span');
+			label.classList.add('findInTabs-match');
+			label.textContent = str.text;
+			label.hitIdx = str.highlight;
+			
+			label.handleEvent = function(e) {
+				switch(e.type) {
+					case 'mouseover':
+						FIT.onHoverHit(this);
+						break;
+					
+					case 'click':
+						FIT.selectHit();
+						break;
+				}
+			};
+			
+			label.addEventListener('mouseover', label);
+			label.addEventListener('click', label);
+			
+			item.linkedHits.hits.set(str.highlight, {
+				item: hitItem,
+				label: label
+			});
+			
+			labelBox.appendChild(label);
 		}
-		hitItem.appendChild(labelBox);
+		container.appendChild(labelBox);
 		
-		var spacer = document.createElement('label');
-		spacer.setAttribute('flex', '1');
-		spacer.setAttribute('value', ' ');
-		hitItem.appendChild(spacer);
+		let flex = document.createElementNS(this.kNS, 'div');
+		flex.classList.add('findInTabs-match-flex');
+		container.appendChild(flex);
 		
-		var hitNumber = document.createElement('label');
-		var hitNumberValue = data.initNumber;
+		let hitNumber = document.createElementNS(this.kNS, 'div');
+		hitNumber.classList.add('findInTabs-match-number');
+		hitNumber.textContent = data.initNumber;
 		if(data.initNumber != data.endNumber) {
-			hitNumberValue += '-'+data.endNumber;
+			hitNumber.textContent += '-'+data.endNumber;
 		}
-		hitNumber.setAttribute('value', hitNumberValue);
-		hitItem.appendChild(hitNumber);
+		container.appendChild(hitNumber);
 		
+		hitItem.appendChild(container);
 		item.linkedHits.appendChild(hitItem);
 	}
 };

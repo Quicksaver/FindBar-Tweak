@@ -1,20 +1,8 @@
 @namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
+@namespace html url(http://www.w3.org/1999/xhtml);
 
 #findbartweak-findInTabs-box {
 	min-height: 20px;
-}
-
-#findbartweak-findInTabs-hits richlistitem {
-	padding: 0 5px;
-}
-
-#findbartweak-findInTabs-hits richlistitem label {
-	margin-left: 0;
-	margin-right: 0;
-}
-
-#findbartweak-findInTabs-hits label[unloaded] {
-	text-align: center;
 }
 
 .findbar-tabs-update {
@@ -64,10 +52,6 @@ findbar:not([hideLabels]) .findbar-tabs image {
 	-moz-margin-start: 1px;
 }
 
-.findInTabs-list .right {
-	text-align: end;
-}
-
 #findbartweak-findInTabs-tabs label[unloaded] {
 	font-style: italic;
 	color: rgb(204,0,0);
@@ -104,13 +88,33 @@ findbar:not([hideLabels]) .findbar-tabs image {
 	-moz-image-region: rect(16px 48px 32px 32px);
 }
 
+#findbartweak-findInTabs-hits richlistitem {
+	display: block;
+	padding: 2px 5px;
+	cursor: default;
+}
+
+#findbartweak-findInTabs-hits richlistitem[unloaded] {
+	text-align: center;
+	cursor: pointer;
+}
+
 /* Some personas add a shadow to the entries */
 .findInTabs-list label:not([unloaded]) {
 	text-shadow: none;
 }
 
-.findInTabs-list label[highlight]:hover {
+html|span.findInTabs-match {
 	cursor: pointer;
+}
+
+html|div.findInTabs-match-container {
+	display: flex;
+}
+
+html|div.findInTabs-match-flex {
+	flex: 1 1 auto;
+	min-width: 2em;
 }
 
 /* these aren't needed in the FIT standalone window */

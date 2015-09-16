@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.6';
+Modules.VERSION = '1.2.0';
 
 this.FIT = {
 	// this keeps a list of all hits in a page, mapped to an id that can be used to keep things sync'ed up with the chrome process
@@ -494,22 +494,18 @@ this.FIT = {
 	_segment: Task.async(function* (aWord, aCaseSensitive) {
 		let count = 0;
 		
-		var isPDF = isPDFJS;
-		var lastEndContainer = null;
-		var lastEndOffset = null;
-		var lastDone = -1;
+		let isPDF = isPDFJS;
+		let lastEndContainer = null;
+		let lastEndOffset = null;
+		let lastDone = -1;
 		
 		for(let [ h, range ] of this.hits.all) {
-			// this hit has probably been merge to a previous one
+			// this hit has probably been merged to a previous one
 			if(h <= lastDone) { continue; }
 			lastDone = h;
 			
-			var hits = new Map();
+			let hits = new Map();
 			hits.set(h, range);
-			
-			var initNumber = h +1;
-			var endNumber = h +1;
-			var itemStrings = [];
 			
 			if(isPDF) {
 				var partialString = this._replaceLineBreaks(PDFJS.findController.pageContents[range.pIdx].substr(range.offset, aWord.length));
@@ -534,21 +530,13 @@ this.FIT = {
 				var endContainer = range.endContainer;
 				var endContainerText = endContainer.textContent;
 				
-				var styleElement = range.startContainer;
+				let styleElement = range.startContainer;
 				while(!styleElement.style && styleElement.parentNode) { styleElement = styleElement.parentNode; }
 				var directionRTL = (getComputedStyle(styleElement).direction == 'rtl');
 			}
 			
-			var completeString = this._appendStringToList(
-				itemStrings,
-				partialString,
-				h,
-				'',
-				false,
-				startContainerText.substr(0, doFirstLength),
-				endContainerText.substr(doLastStart),
-				directionRTL
-			);
+			let item = new FITitem(aWord, directionRTL, h);
+			item.append(partialString, h);
 			
 			var initialPoints = (doFirstLength != 0);
 			var finalPoints = (doLastStart != endContainer.length);
@@ -564,16 +552,7 @@ this.FIT = {
 					initialPoints = false;
 				}
 				
-				completeString = this._appendStringToList(
-					itemStrings,
-					fillString,
-					null,
-					completeString,
-					true,
-					startContainerText.substr(0, doFirstLength),
-					endContainerText.substr(doLastStart),
-					directionRTL
-				);
+				item.append(fillString, true);
 			}
 			if(doLastStart +1 < endContainerText.length && endContainerText[doLastStart] != ' ') {
 				if(!this.hits.all.has(h +1)
@@ -591,23 +570,14 @@ this.FIT = {
 							finalPoints = false;
 						}
 						
-						completeString = this._appendStringToList(
-							itemStrings,
-							fillString,
-							null,
-							completeString,
-							false,
-							startContainerText.substr(0, doFirstLength),
-							endContainerText.substr(doLastStart),
-							directionRTL
-						);
+						item.append(fillString);
 				}
 			}
 			
 			// We attempt to merge very close occurences into the same item whenever possible
 			var lastRange = range;
 			var hh = h+1;
-			if(completeString.length < this.kHitsLength) {
+			if(item.str.length < this.kHitsLength) {
 				while(this.hits.all.has(hh) && this.hits.all.get(hh)[(isPDF) ? 'pIdx' : 'startContainer'] == endContainer) {
 					var nextRange = this.hits.all.get(hh);
 					if(isPDF) {
@@ -646,44 +616,15 @@ this.FIT = {
 					var inBetweenStart = doLastStart;
 					var inBetweenLength = nextFirstLength -inBetweenStart;
 					var inBetween = this._replaceLineBreaks(nextStartContainerText.substr(inBetweenStart, inBetweenLength));
-					if(completeString.length +nextString.length +fillNext.length +inBetween.length <= this.kHitsLength) {
+					if(item.str.length +nextString.length +fillNext.length +inBetween.length <= this.kHitsLength) {
 						doLastStart = nextLastStart +fillNext.length;
 						if(doLastStart == nextEndContainerText.length) {
 							finalPoints = false;
 						}
 						
-						var lastEndContainerText = (isPDF) ? PDFJS.findController.pageContents[nextRange.pIdx] : nextRange.endContainer.textContent;
-						
-						completeString = this._appendStringToList(
-							itemStrings,
-							inBetween,
-							null,
-							completeString,
-							false,
-							startContainerText.substr(0, doFirstLength),
-							nextString +fillNext +lastEndContainerText.substr(doLastStart),
-							directionRTL
-						);
-						completeString = this._appendStringToList(
-							itemStrings,
-							nextString,
-							hh,
-							completeString,
-							false,
-							startContainerText.substr(0, doFirstLength),
-							fillNext +lastEndContainerText.substr(doLastStart),
-							directionRTL
-						);
-						completeString = this._appendStringToList(
-							itemStrings,
-							fillNext,
-							null,
-							completeString,
-							false,
-							startContainerText.substr(0, doFirstLength),
-							lastEndContainerText.substr(doLastStart),
-							directionRTL
-						);
+						item.append(inBetween);
+						item.append(nextString, hh);
+						item.append(fillNext);
 						
 						hits.set(hh, nextRange);
 						lastRange = nextRange;
@@ -703,7 +644,7 @@ this.FIT = {
 			var lastEndContainerText = (isPDF) ? PDFJS.findController.pageContents[lastRange.pIdx] : lastRange.endContainer.textContent;
 			
 			// Now we complete with some before and after text strings
-			while(completeString.length < this.kHitsLength) {
+			while(item.str.length < this.kHitsLength) {
 				doLast = !doLast;
 				
 				if(doLast) {
@@ -737,7 +678,7 @@ this.FIT = {
 					var fillString = this._replaceLineBreaks(startContainerText.substr(doFirstStart, doFirstLength));
 				}
 				
-				if(fillString.length > 0 && completeString.length +fillString.length < this.kHitsLength) {
+				if(fillString.length > 0 && item.str.length +fillString.length < this.kHitsLength) {
 					if(doLast) {
 						doLastStart += doLastLength;
 						if(doLastStart == lastEndContainerText.length) {
@@ -746,16 +687,7 @@ this.FIT = {
 						
 						// Trimming those extra white spaces
 						if(trim(fillString)) {
-							completeString = this._appendStringToList(
-								itemStrings,
-								fillString,
-								null,
-								completeString,
-								false,
-								startContainerText.substr(0, doFirstLength),
-								lastEndContainerText.substr(doLastStart),
-								directionRTL
-							);
+							item.append(fillString);
 						}
 					} else {
 						doFirstLength = doFirstStart;
@@ -765,16 +697,7 @@ this.FIT = {
 						
 						// Trimming those extra white spaces
 						if(trim(fillString)) {
-							completeString = this._appendStringToList(
-								itemStrings,
-								fillString,
-								null,
-								completeString,
-								true,
-								startContainerText.substr(0, doFirstLength),
-								lastEndContainerText.substr(doLastStart),
-								directionRTL
-							);
+							item.append(fillString, true);
 						}
 					}
 					
@@ -790,38 +713,13 @@ this.FIT = {
 			lastEndOffset = doLastStart;
 			
 			if(initialPoints) {
-				this._appendStringToList(
-					itemStrings,
-					'... ',
-					null,
-					completeString,
-					true,
-					startContainerText.substr(0, doFirstLength),
-					lastEndContainerText.substr(doLastStart),
-					directionRTL
-				);
+				item.append('... ', true);
 			}
 			if(finalPoints) {
-				this._appendStringToList(
-					itemStrings,
-					' ...',
-					null,
-					completeString,
-					false,
-					startContainerText.substr(0, doFirstLength),
-					lastEndContainerText.substr(doLastStart),
-					directionRTL
-				);
+				item.append(' ...');
 			}
 			
-			message('FIT:AddHit', {
-				query: aWord,
-				itemStrings: itemStrings,
-				initNumber: initNumber,
-				endNumber: endNumber,
-				directionRTL: directionRTL,
-				firstHit: h
-			});
+			item.finish();
 			
 			this.hits.items.set(this.hits.items.size, {
 				hits: hits,
@@ -844,367 +742,70 @@ this.FIT = {
 		return str.replace(/(\r\n|\n|\r)/gm, " ");
 	},
 	
-	// Use this method to append to the beginning or the end of the item, taking into consideration ltr and rtl directions.
-	// If the directionality of the last character in the string that leads into the next is not the same as the overall directionality of the document,
-	// append the string to the opposite end of the list (if it should come first, place it last).
-	// In this case, switch whiteplaces if it has any.
-	_appendStringToList: function(list, text, highlight, original, preceed, predecessor, followup, directionRTL) {
-		var stringWeak = testDirection.isWeak(text);
-		var originalWeak = testDirection.isWeak(original);
-		
-		var toAdd = {
-			text: text,
-			highlight: highlight,
-			opposite: false
-		};
-		
-		//var log = 't: "'+text+'" o: "'+original+'" d: '+directionRTL;
-		if(preceed) { //log += ' preceed';
-			// Full string text is easy to form
-			var modified = text +original;
-			
-			// Get edge directionality of text, these will be the guides to how they will be added to the list
-			if(!stringWeak) {
-				// own string direction
-				var lastStringRTL = testDirection.isLastRTL(text);
-				var firstStringRTL = testDirection.isFirstRTL(text);
-			}
-			else {
-				// previous string direction
-				if(!testDirection.isWeak(predecessor)) {
-					var lastStringRTL = testDirection.isLastRTL(predecessor);
-				}
-				// next string direction
-				else if(!testDirection.isWeak(original)) {
-					var lastStringRTL = testDirection.isFirstRTL(original);
-				}
-				// end of string direction
-				else if(!testDirection.isWeak(followup)) {
-					var lastStringRTL = testDirection.isFirstRTL(followup);
-				}
-				// default to document direction
-				else {
-					var lastStringRTL = directionRTL;
-				}
-				var firstStringRTL = lastStringRTL;
-			}
-			
-			if(!originalWeak) {
-				var firstOriginalRTL = testDirection.isFirstRTL(original);
-				var lastOriginalRTL = testDirection.isLastRTL(original);
-			} else {
-				var firstOriginalRTL = lastStringRTL;
-				var lastOriginalRTL = firstOriginalRTL;
-			}
-			
-			//log += ' sF: '+firstStringRTL+' sL: '+lastStringRTL+' oF: '+firstOriginalRTL+' oL: '+lastOriginalRTL;
-			// Current start position of the item string in the array list
-			var sI = 0;
-			for(var i=0; i<list.length; i++ ) {
-				if(list[i].sI) {
-					sI = i;
-					list[i].sI = false;
-					break;
-				}
-			} //log += ' sI: '+sI;
-			
-			if(!testDirection.isBiDi(text)) { //log += ' !BiDi';
-				toAdd.sI = true;
-				if(firstOriginalRTL == lastStringRTL) { //log += ' f==l';
-					if(lastStringRTL == directionRTL) { //log += ' l==d';
-						list.splice(sI, 0, toAdd);
-					}
-					else { //log += ' l!=d';
-						toAdd.opposite = true;
-						list.push(toAdd);
-					}
-				}
-				else { //log += ' f!=l';
-					if(lastStringRTL == directionRTL) { //log += ' l==d';
-						toAdd.text = testSpaces.moveEdges(toAdd.text, true);
-						list.unshift(toAdd);
-					}
-					else { //log += ' l!=d';
-						toAdd.text = testSpaces.moveEdges(toAdd.text, true, true);
-						toAdd.opposite = true;
-						list.unshift(toAdd);
-					}
-				}	
-			}
-			else { //log += ' BiDi';
-				var bits = testDirection.breakApart(toAdd.text);
-				
-				var lastBit = {
-					text: bits.pop(),
-					highlight: highlight,
-					opposite: false
-				};
-				
-				if(firstOriginalRTL == lastStringRTL) { //log += ' f==l';
-					if(lastStringRTL == directionRTL) { //log += ' l==d';
-						list.splice(sI, 0, lastBit);
-					}
-					else { //log += ' l!=d';
-						lastBit.opposite = true;
-						list.push(lastBit);
-					}
-				}
-				else { //log += ' f!=l';
-					if(lastStringRTL == directionRTL) { //log += ' l==d';
-						list.unshift(lastBit);
-					}
-					else { //log += ' l!=d';
-						lastBit.text = testSpaces.moveEdges(lastBit.text, true, true);
-						lastBit.opposite = true;
-						list.unshift(lastBit);
-					}
-				}
-				
-				var firstBit = {
-					text: bits.shift(),
-					highlight: highlight,
-					opposite: false
-				};
-				
-				if(bits.length > 0) { //log += ' m';
-					var middleBit = {
-						text: bits.join(""),
-						highlight: highlight,
-						opposite: false
-					};
-					list.unshift(middleBit);
-				}
-				
-				firstBit.sI = true;
-				if(firstStringRTL == directionRTL) { //log += ' f==d';
-					list.unshift(firstBit);
-				}
-				else { //log += ' f!=d';
-					firstBit.opposite = true;
-					list.unshift(firstBit);
-				}
-			}
-		}
-		else { //log += ' succeed';
-			// Full string text is easy to form
-			var modified = original +text;
-			
-			// Get edge directionality of text, these will be the guides to how they will be added to the list
-			if(!stringWeak) {
-				// own string direction
-				var firstStringRTL = testDirection.isFirstRTL(text);
-				var lastStringRTL = testDirection.isLastRTL(text);
-			}
-			else {
-				// next string direction
-				if(!testDirection.isWeak(original)) {
-					var firstStringRTL = testDirection.isLastRTL(original);
-				}
-				// previous string direction
-				else if(!testDirection.isWeak(predecessor)) {
-					var firstStringRTL = testDirection.isLastRTL(predecessor);
-				}
-				// end of string direction
-				else if(!testDirection.isWeak(followup)) {
-					var firstStringRTL = testDirection.isFirstRTL(followup);
-				}
-				// default to document direction
-				else {
-					var firstStringRTL = directionRTL;
-				}
-				var lastStringRTL = firstStringRTL;
-			}
-			
-			if(!originalWeak) {
-				var firstOriginalRTL = testDirection.isFirstRTL(original);
-				var lastOriginalRTL = testDirection.isLastRTL(original);
-			} else {
-				var lastOriginalRTL = firstStringRTL;
-				var firstOriginalRTL = lastOriginalRTL;
-			}
-			
-			//log += ' sF: '+firstStringRTL+' sL: '+lastStringRTL+' oF: '+firstOriginalRTL+' oL: '+lastOriginalRTL;
-			// Current end position of the item string in the array list
-			var eI = list.length -1;
-			for(var i=list.length -1; i>=0; i--) {
-				if(list[i].eI) {
-					eI = i;
-					list[i].eI = false;
-					break;
-				}
-			} //log += ' eI: '+eI;
-			
-			if(!testDirection.isBiDi(text)) { //log += ' !BiDi';
-				toAdd.eI = true;
-				if(firstStringRTL == lastOriginalRTL) { //log += ' f==l';
-					if(firstStringRTL == directionRTL) { //log += ' f==d';
-						list.push(toAdd);
-					}
-					else { //log += ' f!=d';
-						toAdd.opposite = true;
-						list.splice((eI > -1) ? eI : eI +1, 0, toAdd);
-					}
-				}
-				else { //log += ' f!=l';
-					if(firstStringRTL == directionRTL) { //log += ' f==d';
-						toAdd.text = testSpaces.moveEdges(toAdd.text, false);
-						list.push(toAdd);
-					}
-					else { //log += ' f!=d';
-						toAdd.text = testSpaces.moveEdges(toAdd.text, false, true);
-						toAdd.opposite = true;
-						list.push(toAdd);
-					}
-				}	
-			}
-			else { //log += ' BiDi';
-				var bits = testDirection.breakApart(toAdd.text);
-				
-				var firstBit = {
-					text: bits.shift(),
-					highlight: highlight,
-					opposite: false
-				};
-				
-				if(firstStringRTL == lastOriginalRTL) { //log += ' f==l';
-					if(firstStringRTL == directionRTL) { //log += ' f==d';
-						list.push(firstBit);
-					}
-					else { //log += ' f!=d';
-						firstBit.opposite = true;
-						list.splice((eI > -1) ? eI : eI +1, 0, firstBit);
-					}
-				}
-				else { //log += ' f!=l';
-					if(firstStringRTL == directionRTL) { //log += ' f==d';
-						list.push(firstBit);
-					}
-					else { //log += ' f!=d';
-						firstBit.text = testSpaces.moveEdges(firstBit.text, false, true);
-						firstBit.opposite = true;
-						list.push(firstBit);
-					}
-				}
-				
-				var lastBit = {
-					text: bits.pop(),
-					highlight: highlight,
-					opposite: false
-				};
-				
-				if(bits.length > 0) { //log += ' m';
-					var middleBit = {
-						text: bits.join(""),
-						highlight: highlight,
-						opposite: false
-					};
-					list.push(middleBit);
-				}
-				
-				lastBit.eI = true;
-				if(lastStringRTL == directionRTL) { //log += ' l==d';
-					list.push(lastBit);
-				}
-				else { //log += ' l!=d';
-					lastBit.opposite = true;
-					list.push(lastBit);
-				}
-			}
-		}
-		//LOG(log);
-		
-		// Return the new complete string
-		return modified;
-	},
-	
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIWebProgressListener, Ci.nsISupportsWeakReference])
 };
 
-this.testDirection = {
-	// A practical pattern to identify strong LTR characters. This pattern is not theoretically correct according to the Unicode standard.
-	// It is simplified for performance and small code size.
-	ltrChars: 'A-Za-z0-9_\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02B8\u0300-\u0590\u0800-\u1FFF\u2C00-\uFB1C\uFE00-\uFE6F\uFEFD-\uFFFF',
+this.FITitem = function(aWord, directionRTL, firstHit) {
+	this.word = aWord;
+	this.directionRTL = directionRTL;
+	this.firstHit = firstHit;
 	
-	// A practical pattern to identify strong RTL character. This pattern is not theoretically correct according to the Unicode standard.
-	// It is simplified for performance and small code size.
-	rtlChars: '\u0591-\u07FF\uFB1D-\uFDFF\uFE70-\uFEFC',
-	
-	// Checks whether the first strongly-typed character in the string (if any) is of RTL directionality
-	isFirstRTL: function(str) {
-		let test = new RegExp('^[^' + this.ltrChars + ']*[' + this.rtlChars + ']');
-		return test.test(str);
-	},
-	
-	// Checks whether the last strongly-typed character in the string (if any) is of RTL directionality
-	isLastRTL: function(str) {
-		let test = new RegExp('[' + this.rtlChars + '][^' + this.ltrChars + ']*$');
-		return test.test(str);
-	},
-	
-	LTRexp: function() { return new RegExp('[' + this.ltrChars + ']'); },
-	RTLexp: function() { return new RegExp('[' + this.rtlChars + ']'); },
-	
-	// Checks if the string has any LTR chars in it
-	hasLTR: function(str) {
-		return this.LTRexp().test(str);
-	},
-	
-	// Checks if the string has any RTL chars in it
-	hasRTL: function(str) {
-		return this.RTLexp().test(str);
-	},
-	
-	// Checks if the string has only weak characters (actually it just checks if it has either LTR or RTL strong chars)
-	isWeak: function(str) {
-		return (!this.hasLTR(str) && !this.hasRTL(str));
-	},
-	
-	// Checks if the string has both LTR and RTL chars
-	isBiDi: function(str) {
-		return (this.hasLTR(str) && this.hasRTL(str)); 
-	},
-	
-	// Breaks the string into an array of strings of different direction
-	breakApart: function(str) {
-		if(!this.isBiDi(str)) { return [ str ]; }
-		
-		var ret = [];
-		var doRTL = !this.isFirstRTL(str);
-		while(this.isBiDi(str)) {
-			var exp = (doRTL) ? this.RTLexp() : this.LTRexp();
-			var i = str.indexOf(exp.exec(str));
-			ret.push(str.substr(0, i));
-			str = str.substr(i);
-			doRTL = !doRTL;
-		}
-		if(str) { ret.push(str); }
-		
-		return ret;
-	}	
+	this.list = [];
+	this.str = '';
+	this.initNumber = firstHit +1;
+	this.endNumber = firstHit +1;
 };
-
-// This move all spaces in the beginning of the string to the end when the direction is inverted
-this.testSpaces = {
-	findFirst: function(str) { return str.search(/\s/); },
-	findLast: function(str) { return str.search(/\s\S*$/); },
-	
-	moveEdges: function(str, moveFromEnd, force) {
-		if(trim(str) && force || testDirection.isWeak(str)) {
-			if(moveFromEnd) {
-				let i = this.findLast(str);
-				while(i == str.length -1) {
-					str = ' '+str.substr(0, str.length -1);
-					i = this.findLast(str);
-				}
+this.FITitem.prototype = {
+	// text -	(str) to append to the item
+	// param -	(bool) true: text will be appended to the beginning of the string;
+	// 		(int) text will be applied as a match referencing to the index provided, always appended at the end of the item;
+	//		any other value will append the text at the end of the item, not highlighted.
+	append: function(text, param) {
+		let before = false;
+		let highlight = null;
+		
+		if(typeof(param) == 'number') {
+			highlight = param;
+			this.endNumber = highlight +1;
+		}
+		else if(param === true) {
+			before = true;
+		}
+		
+		let toAdd = {
+			text: text,
+			highlight: highlight
+		};
+		
+		if(before) {
+			this.str = text +this.str;
+			
+			if(this.list.length && this.list[0].highlight === highlight) {
+				this.list[0].text = text +this.list[0].text;
 			} else {
-				let i = this.findFirst(str);
-				while(i == 0) {
-					str = str.substr(1)+' ';
-					i = this.findFirst(str);
-				}
+				this.list.unshift(toAdd);
 			}
 		}
-		return str;
+		else {
+			this.str += text;
+			
+			if(this.list.length && this.list[this.list.length-1].highlight === highlight) {
+				this.list[this.list.length-1].text += text;
+			} else {
+				this.list.push(toAdd);
+			}
+		}
+	},
+	
+	finish: function() {
+		message('FIT:AddHit', {
+			query: this.word,
+			itemStrings: this.list,
+			initNumber: this.initNumber,
+			endNumber: this.endNumber,
+			directionRTL: this.directionRTL,
+			firstHit: this.firstHit
+		});
 	}
 };
 

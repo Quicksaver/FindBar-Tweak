@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.7';
+Modules.VERSION = '1.0.8';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -262,23 +262,22 @@ this.RemoteFinder.prototype = {
 	_innerTextDeep: null,
 	
 	get innerText() {
-		if(this._innerText) {
-			return this._innerText.promise;
+		if(!this._innerText) {
+			this._innerText = Promise.defer();
+			Messenger.messageBrowser(this._browser, 'InnerText');
 		}
 		
-		this._innerText = Promise.defer();
-		Messenger.messageBrowser(this._browser, 'InnerText');
 		return this._innerText.promise;
 	},
 	
 	get innerTextDeep() {
-		if(this._innerTextDeep) {
-			return this._innerTextDeep.promise;
+		if(!this._innerTextDeep) {
+			// when populating Deep, we should ensure innerText is populated as well (it will exist in content anyway, might as well have it here too)
+			this.innerText;
+			
+			this._innerTextDeep = Promise.defer();
+			Messenger.messageBrowser(this._browser, 'InnerTextDeep');
 		}
-		
-		this.innerText; // when populating Deep, we should ensure innerText is populated as well (it will exist in content anyway, might as well have it here too)
-		this._innerTextDeep = Promise.defer();
-		Messenger.messageBrowser(this._browser, 'InnerTextDeep');
 		return this._innerTextDeep.promise;
 	},
 	

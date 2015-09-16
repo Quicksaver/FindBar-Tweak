@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.11';
+Modules.VERSION = '1.0.12';
 
 this.__defineGetter__('isPDFJS', function() { return Finder.isPDFJS; });
 
@@ -984,47 +984,41 @@ this.Finder = {
 	_innerTextDeep: null,
 	
 	get innerText() {
-		if(this._innerText) {
-			return this._innerText.promise;
+		if(!this._innerText) {
+			this._innerText = new Promise((resolve, reject) => {
+				let text = '';
+				if(this.isPDFJS) {
+					text = 'PDF.JS '+document.URL+' '+(new Date().getTime());
+				}
+				else if(!document) {
+					text = '';
+				}
+				else {		
+					var body = (document instanceof Ci.nsIDOMHTMLDocument && document.body) ? document.body : document.documentElement;
+					text = innerText(body);
+				}
+				resolve(text);
+			});
 		}
-		this._innerText = Promise.defer();
 		
-		var promise = this._innerText;
-		var text = '';
-		aSync(() => {
-			if(this.isPDFJS) {
-				text = 'PDF.JS '+document.URL+' '+(new Date().getTime());
-			}
-			else if(!document) {
-				text = '';
-			}
-			else {		
-				var body = (document instanceof Ci.nsIDOMHTMLDocument && document.body) ? document.body : document.documentElement;
-				text = innerText(body);
-			}
-			
-			promise.resolve(text);
-		});
-		
-		return this._innerText.promise;
+		return this._innerText;
 	},
 	
 	get innerTextDeep() {
-		if(this._innerTextDeep) {
-			return this._innerTextDeep.promise;
+		if(!this._innerTextDeep) {
+			this._innerTextDeep = new Promise((resolve, reject) => {
+				this.innerText.then(text => {
+					let textDeep = text;
+					if(document && !isPDFJS) {
+						textDeep += this.getInnerTextFrames(content);
+					}
+					
+					resolve(textDeep);
+				});
+			});
 		}
-		this._innerTextDeep = Promise.defer();
 		
-		this.innerText.then(text => {
-			let textDeep = text;
-			if(document && !isPDFJS) {
-				textDeep += this.getInnerTextFrames(content);
-			}
-			
-			this._innerTextDeep.resolve(textDeep);
-		});
-		
-		return this._innerTextDeep.promise;
+		return this._innerTextDeep;
 	},
 	
 	getInnerTextFrames: function(aWindow) {

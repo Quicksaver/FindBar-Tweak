@@ -1,4 +1,7 @@
-Modules.VERSION = '2.2.1';
+Modules.VERSION = '2.2.2';
+
+this.__defineGetter__('FITdeferred', function() { return window.FITdeferred; });
+this.__defineGetter__('FITinitialized', function() { return FITdeferred.promise; });
 
 this.FIT = {
 	kNS: 'http://www.w3.org/1999/xhtml',
@@ -197,11 +200,7 @@ this.FIT = {
 	},
 	
 	getWindowForBrowser: function(aBrowser) {
-		if(FITSandbox.navigators.has(aBrowser.ownerGlobal)) {
-			return aBrowser.ownerGlobal;
-		}
-		
-		if(FITSandbox.viewSources.has(aBrowser.ownerGlobal)) {
+		if(FITSandbox.has(aBrowser.ownerGlobal)) {
 			return aBrowser.ownerGlobal;
 		}
 		
@@ -456,7 +455,7 @@ this.FIT = {
 		// We need all tab groups initialized in all windows, wait until all's ok
 		for(let win of FITSandbox.navigators) {
 			if(!win.TabView._window) {
-				win.TabView._initFrame(function() { FIT.shouldFindAll(); });
+				win.TabView._initFrame(() => { this.shouldFindAll(); });
 				return;
 			}
 		}
@@ -1025,9 +1024,15 @@ Modules.LOADMODULE = function() {
 	
 	// Needs to be done once when opening the FIT window
 	gFindBar.hidden = false;
-	dispatch(window, { type: 'FITLoaded', cancelable: false });
-	gFindBar.onFindCommand();
-	FIT.shouldFindAll();
+	
+	// run an initial search if needed, to populate the lists with any existing prefilled query
+	FITinitialized.then(function() {
+		gFindBar.onFindCommand();
+		FIT.shouldFindAll();
+	});
+	
+	// finish initializing the FIT window, prefill it with the query from the opening findbar and record which tab should be focused first in the list
+	FITdeferred.resolve();
 };
 
 Modules.UNLOADMODULE = function() {

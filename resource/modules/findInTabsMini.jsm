@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.8';
+Modules.VERSION = '2.1.9';
 
 this.FITMini = {
 	get broadcaster() { return $(objName+'-findInTabs-broadcaster'); },
@@ -67,7 +67,7 @@ this.FITMini = {
 	},
 	
 	onFindResult: function(data, browser) {
-		FITMini.sendToUpdate(browser);
+		this.sendToUpdate(browser);
 	},
 	
 	onPDFJSState: function(browser) {
@@ -94,40 +94,15 @@ this.FITMini = {
 			return;
 		}
 		
-		// Re-use an already opened window if possible
-		if(!Prefs.multipleFITFull && FITSandbox.fulls.size > 0) {
-			for(let aWindow of FITSandbox.fulls) {
-				if(aWindow.document.readyState != 'uninitialized'
-				&& (viewSource || gFindBarInitialized)
-				&& !gFindBar.hidden
-				&& findQuery
-				&& findQuery != aWindow.document.getElementById('FindToolbar')._findField.value) {
-					aWindow.document.getElementById('FindToolbar')._findField.value = findQuery;
-					aWindow[objName].FIT.shouldFindAll();
-				}
-				aWindow.document.getElementById('FindToolbar').onFindCommand();
-				aWindow.focus();
-				
-				// we only really care about the first window in the set, it's highly unlikely there will be more anyway
-				return;
-			}
+		let state = {
+			lastBrowser: (viewSource) ? gFindBar.browser : gBrowser.mCurrentBrowser
+		};
+		if((viewSource || gFindBarInitialized) && !gFindBar.hidden && findQuery) {
+			state.query = findQuery;
+			state.caseSensitive = gFindBar.getElement("find-case-sensitive").checked;
 		}
 		
-		// No window found, we need to open a new one
-		var aWindow = window.open("chrome://"+objPathString+"/content/findInTabsFull.xul", '', 'chrome,extrachrome,toolbar,resizable,centerscreen');
-		callOnLoad(aWindow, () => {
-			if((viewSource || gFindBarInitialized) && (!gFindBar.hidden || documentHighlighted) && findQuery) {
-				aWindow.document.getElementById('FindToolbar')._findField.value = findQuery;
-			}
-			
-			if(typeof(aWindow[objName].FIT) == 'undefined') {
-				Listeners.add(aWindow, 'FITLoaded', function() {
-					aWindow[objName].FIT.lastBrowser = (viewSource) ? gFindBar.browser : gBrowser.mCurrentBrowser;
-				}, false, true);
-			} else {
-				aWindow[objName].FIT.lastBrowser = (viewSource) ? gFindBar.browser : gBrowser.mCurrentBrowser;
-			}
-		});
+		FITSandbox.commandWindow(window, state);
 	},
 	
 	sendToUpdate: function(browser) {

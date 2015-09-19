@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.5';
+Modules.VERSION = '1.1.6';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return FITFull || viewSource || window.gFindBarInitialized; });
@@ -207,9 +207,9 @@ this.baseInit = function(bar) {
 	// opening the findbar is a somewhat asynchronous process, it needs to fetch the value to prefill from content,
 	// if the user types in the findbar after it's opened, but before the prefill value is fetched, it can lead to some weirdness with the search query
 	// see https://github.com/Quicksaver/FindBar-Tweak/issues/198 and https://bugzilla.mozilla.org/show_bug.cgi?id=1198465
-	Piggyback.add('gFindBar', bar, 'onCurrentSelection', function() {
+	Piggyback.add('gFindBar', bar, 'onCurrentSelection', function(aSelectionString, aIsInitialSelection) {
 		// no-op in case something resolved and nulled startFindDeferred in the meantime
-		return this._startFindDeferred;
+		return !aIsInitialSelection || this._startFindDeferred;
 	}, Piggyback.MODE_BEFORE);
 	
 	// keypresses are communicated through a message sent from content

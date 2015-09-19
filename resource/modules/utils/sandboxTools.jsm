@@ -1,4 +1,4 @@
-Modules.VERSION = '2.7.3';
+Modules.VERSION = '2.7.4';
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -80,14 +80,16 @@ this.isAncestor = function(aNode, aParent, aWindow) {
 	
 	if(aNode == aParent) { return true; }
 	
-	var ownDocument = aNode.ownerDocument || aNode.document;
+	let ownDocument = aNode.ownerDocument || aNode.document;
 	if(ownDocument && ownDocument == aParent) { return true; }
 	if(aNode.compareDocumentPosition && (aNode.compareDocumentPosition(aParent) & aNode.DOCUMENT_POSITION_CONTAINS)) { return true; }
 	
-	var browserNodes = (aParent.tagName == 'browser') ? [aParent] : aParent.getElementsByTagName('browser');
-	for(var browser of browserNodes) {
-		try { if(isAncestor(aNode, browser.contentDocument, browser.contentWindow)) { return true; } }
-		catch(ex) { /* this will fail in e10s */ }
+	if(aParent.nodeType == aParent.ELEMENT_NODE) {
+		let browserNodes = (aParent.tagName == 'browser') ? [aParent] : aParent.getElementsByTagName('browser');
+		for(let browser of browserNodes) {
+			try { if(!browser.isRemoteBrowser && isAncestor(aNode, browser.contentDocument, browser.contentWindow)) { return true; } }
+			catch(ex) { /* this will fail in e10s if comparing a node from a non-remote document to a remote parent, which means we don't care either way */ }
+		}
 	}
 	
 	if(!aWindow) { return false; }

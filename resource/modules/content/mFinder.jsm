@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.12';
+Modules.VERSION = '1.0.13';
 
 this.__defineGetter__('isPDFJS', function() { return Finder.isPDFJS; });
 
@@ -778,11 +778,64 @@ this.Finder = {
 	
 	// quick method to compare two ranges, to see if they cover the same text in a webpage even if they're not the exact same node/reference
 	compareRanges: function(aRange, bRange) {
-		if(aRange.nodeType || bRange.nodeType) { return false; } // Don't know if this could get here
-		return	(aRange.startContainer == bRange.startContainer
-			&& aRange.endContainer == bRange.endContainer
-			&& aRange.startOffset == bRange.startOffset
-			&& aRange.endOffset == bRange.endOffset);
+		// if the supplied nodes aren't even ranges, we're pretty sure they're not meant to be compared anyway
+		if(!(aRange instanceof content.Range) || !(bRange instanceof content.Range)) {
+			return false;
+		}
+		
+		// first we use the range's own compare methods, they're the fastest and they should correctly match ranges almost 100% percent of the time;
+		// reference: https://developer.mozilla.org/en-US/docs/Web/API/Range/compareBoundaryPoints
+		if(!aRange.compareBoundaryPoints(aRange.START_TO_START, bRange) && !aRange.compareBoundaryPoints(aRange.END_TO_END, bRange)) {
+			return true;
+		}
+		
+		// Most often we want to compare automatically created ranges with user selections,
+		// and sometimes these user selections might end in a node boundary, which while being the same selection to the eye,
+		// it technically might not have the same range boundary as the equivalent automatically created range.
+		// So we have to take a more thorough approach for some cases; see https://github.com/Quicksaver/FindBar-Tweak/issues/223
+		// In order to try and save some resources, we try to cache some of these values within the ranges themselves.
+		
+		// obviously the ranges won't match if their contents don't either
+		if(aRange._text === undefined) {
+			aRange._text = aRange.toString();
+		}
+		if(bRange._text === undefined) {
+			bRange._text = bRange.toString();
+		}
+		if(aRange._text != bRange._text) {
+			return false;
+		}
+		
+		// the visual boundaries checks below are very resource intensive, so let's try to only continue if it's actually worth doing them,
+		// as it's highly unlikely the ranges will match if their closest common ancestors aren't related
+		if(!isAncestor(aRange.commonAncestorContainer, bRange.commonAncestorContainer) && !isAncestor(bRange.commonAncestorContainer, aRange.commonAncestorContainer)) {
+			return false;
+		}
+		
+		// try to match the ranges by their visual boundaries
+		if(aRange._rects === undefined) {
+			aRange._rects = aRange.getClientRects();
+		}
+		if(bRange._rects === undefined) {
+			bRange._rects = bRange.getClientRects();
+		}
+		// empty selections?
+		if(!aRange._rects.length || !bRange._rects.length || aRange._rects.length != bRange._rects.length) {
+			return false;
+		}
+		for(let i = 0; i < aRange._rects.length; i++) {
+			// we compare by exclusion so that we can stop on the first hint that the ranges don't match
+			if(aRange._rects[i].x != bRange._rects[i].x
+			|| aRange._rects[i].y != bRange._rects[i].y
+			|| aRange._rects[i].width != bRange._rects[i].width
+			|| aRange._rects[i].height != bRange._rects[i].height) {
+				return false;
+			}
+		}
+		
+		// we've gone through every parameter of every client rectangle object of these ranges and haven't excluded any,
+		// which means the ranges are visually the same
+		return true;
 	},
 	
 	// Start of nsIWebProgressListener implementation.

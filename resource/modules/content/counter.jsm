@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.3';
+Modules.VERSION = '1.0.4';
 
 this.counter = {
 	redoing: false,
@@ -91,16 +91,16 @@ this.counter = {
 			return;
 		}
 		
-		var hit = 0;
-		var length = Finder._highlights.all.length;
+		let hit = 0;
+		let length = Finder._highlights.all.length;
 		
-		var sel = Finder.currentTextSelection;
-		if(sel.rangeCount == 1) {
-			var cRange = sel.getRangeAt(0);
-			var i = 0;
+		let sel = length && Finder.currentTextSelection;
+		if(sel && sel.rangeCount == 1) {
+			let cRange = sel.getRangeAt(0);
+			let i = 0;
 			
 			// Most times we don't need to start from the beginning of the array, it's faster to resume from a previous point
-			var c = this.current || 0;
+			let c = this.current || 0;
 			if(c >= length) {
 				c = 0;
 			}
@@ -108,7 +108,7 @@ this.counter = {
 			
 			// loop forward (increment) when finding ahead; loop backward (decrement) when finding behind
 			// conditionally setting a method like this is probably more efficient (especially on large pages with tons of highlights) than checking on each loop for this
-			let looper = null;
+			let looper;
 			if(!Finder._lastFindPrevious) {
 				looper = function loopCurrent() {
 					c++;
@@ -132,15 +132,25 @@ this.counter = {
 				i++;
 			}
 			
-			if(!this.redoing && hit == 0 && length > 0 && cRange.toString() == findQuery) {
-				this.redoing = true;
-				highlights.apply(documentHighlighted);
-				return;
+			if(!this.redoing && !hit) {
+				let rangeText = cRange.toString();
+				let word = findQuery;
+				if(!Finder.caseSensitive) {
+					rangeText = rangeText.toLowerCase();
+					word = word.toLowerCase();
+				}
+				// if the find query is the same as the selected text then something must be wrong with the current highlights,
+				// reapply them and try again
+				if(rangeText == word) {
+					this.redoing = true;
+					highlights.apply(documentHighlighted);
+					return;
+				}
 			}
 		}
 		
-		this.redoing = false;
-		if(hit > 0) {
+		if(hit) {
+			this.redoing = false;
 			this.result(Strings.get('counter', 'counterFormat', [ ["$hit$", hit], ["$total$", length] ], length));
 		} else {
 			this.result(Strings.get('counter', 'counterSimple', [ ["$total$", length] ], length));

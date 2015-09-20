@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.6';
+Modules.VERSION = '1.1.7';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return FITFull || viewSource || window.gFindBarInitialized; });
@@ -116,13 +116,11 @@ this.baseInit = function(bar) {
 		// sync the find value with content
 		Messenger.messageBrowser(this.browser, 'FindBar:Query', this._findField.value);
 		
-		var suffix = (!FITFull && !viewSource && this.browser != gBrowser.mCurrentBrowser) ? 'Background' : '';
+		let val = aValue || this._findField.value;
+		let suffix = (!FITFull && !viewSource && this.browser != gBrowser.mCurrentBrowser) ? 'Background' : '';
 		
-		if(dispatch(this, { type: 'WillFindFindBar'+suffix, detail: aValue })) {
+		if(dispatch(this, { type: 'WillFindFindBar'+suffix, detail: val })) {
 			if(!this._dispatchFindEvent("")) { return; }
-			
-			var val = aValue || this._findField.value;
-			var res = this.nsITypeAheadFind.FIND_NOTFOUND;
 			
 			if(!viewSource) {
 				gBrowser._lastFindValue = val;

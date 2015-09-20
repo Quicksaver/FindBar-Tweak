@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.0';
+Modules.VERSION = '2.1.1';
 
 this.ctrlF = function() {
 	// See if the findbar should only be closed when it's focused
@@ -22,7 +22,7 @@ Modules.LOADMODULE = function() {
 	this.backups = {
 		oncommand: $('cmd_find').getAttribute('oncommand')
 	};
-	setAttribute($('cmd_find'), 'oncommand', objName+'.ctrlF(event);');
+	setAttribute($('cmd_find'), 'oncommand', objName+'.ctrlF();');
 };
 
 Modules.UNLOADMODULE = function() {

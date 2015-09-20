@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.4';
+Modules.VERSION = '2.0.5';
 
 this.globalFB = {
 	hidden: true,
@@ -23,9 +23,9 @@ this.globalFB = {
 					this.noAnimation(gFindBar);
 					gFindBar.close();
 				}
-				else if(!this.hidden && (!gFindBarInitialized || gFindBar.hidden)) {
+				else if(!this.hidden && (gFindBar.hidden || gFindBar._findMode != gFindBar.FIND_NORMAL)) {
 					this.noAnimation(gFindBar);
-					gFindBar.open();
+					gFindBar.open(gFindBar.FIND_NORMAL);
 				}
 				
 				// Copy the values of the findField from one tab to another

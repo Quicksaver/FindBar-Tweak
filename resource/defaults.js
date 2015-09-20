@@ -1,4 +1,4 @@
-// VERSION = '1.5.2';
+// VERSION = '1.3.8';
 
 objName = 'findbartweak';
 objPathString = 'findbartweak';

@@ -68,9 +68,19 @@ image[anonid="find-status-icon"][status="pending"] {
 
 /* Find in All Tabs */
 
-findbar toolbarbutton[anonid="findbartweak-find-tabs"] {
+findbar toolbarbutton[anonid="findbartweak-find-tabs"],
+findbar toolbarbutton[anonid="findbartweak-find-tabs-goto"],
+findbar toolbarbutton[anonid="findbartweak-find-tabs-tabs"] {
 	list-style-image: url("chrome://findbartweak/skin/findintabs.png");
+}
+
+findbar toolbarbutton[anonid="findbartweak-find-tabs-tabs"] {
 	-moz-image-region: rect(0px, 16px, 16px, 0px);
+}
+
+findbar toolbarbutton[anonid="findbartweak-find-tabs"],
+findbar toolbarbutton[anonid="findbartweak-find-tabs-goto"] {
+	-moz-image-region: rect(0px, 32px, 16px, 16px);
 }
 
 findbar:not([hideLabels]) toolbarbutton[anonid="findbartweak-find-tabs"] > .toolbarbutton-icon {

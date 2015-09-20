@@ -1,4 +1,4 @@
-Modules.VERSION = '2.2.2';
+Modules.VERSION = '2.3.0';
 
 this.__defineGetter__('FITdeferred', function() { return window.FITdeferred; });
 this.__defineGetter__('FITinitialized', function() { return FITdeferred.promise; });
@@ -13,6 +13,8 @@ this.FIT = {
 	get tabsHeader() { return this.tabsList.firstChild; },
 	get hits() { return $(objName+'-findInTabs-hits'); },
 	get filter() { return $(objName+'-findInTabs-filter'); },
+	get tabsButton() { return gFindBar.getElement(objName+'-find-tabs-tabs'); },
+	get splitter() { return $(objName+'-findInTabs-splitter'); },
 	
 	// tab menu items mapped to their browsers
 	tabItems: new Map(),
@@ -71,7 +73,9 @@ this.FIT = {
 				break;
 			
 			case 'FIT:CountResult':
-				this.tabCounted(item, m.data);
+				if(item) {
+					this.tabCounted(item, m.data);
+				}
 				break;
 			
 			case 'FIT:CurrentHit':
@@ -79,7 +83,9 @@ this.FIT = {
 				break;
 			
 			case 'FIT:AddHit':
-				this.buildHitItem(item, m.data);
+				if(item) {
+					this.buildHitItem(item, m.data);
+				}
 				break;
 			
 			case 'FIT:Update':
@@ -101,13 +107,23 @@ this.FIT = {
 				// Don't bother yet, we'll get to it when there is something to search for
 				if(!findQuery) { break; }
 				
-				if(this.tabs._selectedGroupI) {
-					var win = this.getWindowForBrowser(m.target);
+				if(FITSidebar) {
+					let owner = FITSandbox.getWindowForSidebar(window);
+					let win = this.getWindowForBrowser(m.target);
+					let tab = this.getTabForBrowser(m.target);
+					
+					if(owner != win
+					|| (!tab.pinned && (!tab._tabViewTabItem || !tab._tabViewTabItem.parent || tab._tabViewTabItem.parent != this.tabs._selectedGroup))) {
+						break;
+					}
+				}
+				else if(this.tabs._selectedGroupI) {
+					let win = this.getWindowForBrowser(m.target);
 					if(win.document.documentElement.getAttribute('windowtype') == 'navigator:view-source') {
 						if(this.tabs._selectedGroupI > 1) { break; } // Only tabs
 					}
 					else if(this.tabs._selectedGroupI > 2) {
-						var tab = this.getTabForBrowser(m.target);
+						let tab = this.getTabForBrowser(m.target);
 						
 						if(this.tabs._selectedGroupI == 3) { // Pinned
 							if(!tab.pinned) { break; }
@@ -118,9 +134,7 @@ this.FIT = {
 					}
 				}
 				
-				item = this.createTabItem(m.target);
-				this.aSyncSetTab(m.target, item, findQuery);
-				
+				this.setTabEntry(m.target);
 				break;
 		}
 	},
@@ -149,13 +163,35 @@ this.FIT = {
 				}
 				
 				break;
+			
+			case 'nsPref:changed':
+				switch(aSubject) {
+					case 'showTabsInFITSidebar':
+						this.toggleTabs();
+						break;
+				}
+				break;
 		}
 	},
 	
 	handleEvent: function(e) {
-		e.preventDefault();
-		e.stopPropagation();
-		this.shouldFindAll();
+		switch(e.type) {
+			case 'WillFindFindBar':
+				e.preventDefault();
+				e.stopPropagation();
+				this.shouldFindAll();
+				break;
+			
+			case 'command':
+				// the only case here is the Show Tabs button
+				Prefs.showTabsInFITSidebar = !Prefs.showTabsInFITSidebar;
+				break;
+		}
+	},
+	
+	toggleTabs: function() {
+		this.tabsButton.checked = Prefs.showTabsInFITSidebar;
+		toggleAttribute(FITFull, 'showTabs', Prefs.showTabsInFITSidebar);
 	},
 	
 	toggleGroups: function() {
@@ -444,16 +480,26 @@ this.FIT = {
 	
 	// The main commander of the FIT function, cleans up results and schedules new ones if the box is opened	
 	shouldFindAll: function() {
-		if(this.tabsList) {
-			// Update in case we are filtering only source windows and we close the last one
-			if((this.tabs._selectedGroupI == 1 || this.tabs._selectedGroupI == 2) && FITSandbox.viewSources.size == 0) {
-				this.tabs._selectedGroupI = 0;
+		if(!FITSidebar) {
+			if(this.tabsList) {
+				// Update in case we are filtering only source windows and we close the last one
+				if((this.tabs._selectedGroupI == 1 || this.tabs._selectedGroupI == 2) && !FITSandbox.viewSources.size) {
+					this.tabs._selectedGroupI = 0;
+				}
+				this.selectGroup();
 			}
-			this.selectGroup();
+			
+			// We need all tab groups initialized in all windows, wait until all's ok
+			for(let win of FITSandbox.navigators) {
+				if(!win.TabView._window) {
+					win.TabView._initFrame(() => { this.shouldFindAll(); });
+					return;
+				}
+			}
 		}
-		
-		// We need all tab groups initialized in all windows, wait until all's ok
-		for(let win of FITSandbox.navigators) {
+		else {
+			// the FITSidebar only needs tab groups initialized in its owner window
+			let win = FITSandbox.getWindowForSidebar(window);
 			if(!win.TabView._window) {
 				win.TabView._initFrame(() => { this.shouldFindAll(); });
 				return;
@@ -491,6 +537,15 @@ this.FIT = {
 		
 		this.tabs.appendChild(newTabs);
 		
+		// groups are irrelevant when in the FIT sidebar, it always processes only pinned and visible tabs
+		if(!FITSidebar) {
+			this.buildGroups();
+		}
+		
+		Timers.init('shouldFindAll', () => { this.beginFind(); }, 250);
+	},
+	
+	buildGroups: function() {
 		// Tab Groups List
 		if(!this.tabs._selectedGroupI || this.tabs._selectedGroupI == -1) {
 			this.tabs._selectedGroup = null;
@@ -509,7 +564,7 @@ this.FIT = {
 			this.tabs._selectedGroupI = 0;
 		}
 		
-		var groupTabs = document.createElement('richlistbox');
+		let groupTabs = document.createElement('richlistbox');
 		groupTabs.setAttribute('flex', '1');
 		groupTabs.ondblclick = (e) => {
 			if(e.button == 0) {
@@ -522,8 +577,8 @@ this.FIT = {
 			}
 		};
 		
-		var newHeader = document.createElement('listheader');
-		var firstCol = document.createElement('treecol');
+		let newHeader = document.createElement('listheader');
+		let firstCol = document.createElement('treecol');
 		firstCol.setAttribute('label', Strings.get('findInTabs', 'groupsHeader'));
 		firstCol.setAttribute('flex', '1');
 		newHeader.appendChild(firstCol);
@@ -532,7 +587,7 @@ this.FIT = {
 		for(let filter of this.filterList) {
 			this.createGroupItem(null, groupTabs, filter);
 		}
-		var itemCount = this.filterList.length -1;
+		let itemCount = this.filterList.length -1;
 		
 		for(let win of FITSandbox.navigators) {
 			for(let groupItem of win.TabView._window.GroupItems.groupItems) {
@@ -549,7 +604,7 @@ this.FIT = {
 		if(this.tabs._selectedGroupI <= this.filterList.length -1) {
 			this.tabs._selectedGroup = null;
 			if(!this.tabs._selectedGroupI) {
-				this.tabs._selectedGroupTitle = this.filterList[(FITSandbox.viewSources.size > 0) ? 0 : 2];
+				this.tabs._selectedGroupTitle = this.filterList[(FITSandbox.viewSources.size) ? 0 : 2];
 			} else {
 				this.tabs._selectedGroupTitle = this.filterList[this.tabs._selectedGroupI];
 			}
@@ -558,12 +613,34 @@ this.FIT = {
 		this.tabs.appendChild(groupTabs);
 		
 		this.updateFilterTooltip();
-		
-		Timers.init('shouldFindAll', () => { this.beginFind(); }, 250);
 	},
 	
 	beginFind: function() {
 		if(!findQuery) { return; }
+		
+		// the FIT sidebar should always process only tabs from its owner window
+		if(FITSidebar) {
+			let win = FITSandbox.getWindowForSidebar(window);
+			
+			// start with the current tab so that its results are more quickly shown,
+			// we're sure it will be either pinned or in the visible group, otherwise it couldn't be the current tab,
+			// for that reason we also use it to set _selectedGroup property, i.e. the selected tab surely belongs to the selected tab group
+			let selectedTab = win.gBrowser.selectedTab;
+			this.tabs._selectedGroup = selectedTab._tabViewTabItem.parent;
+			this.setTabEntry(win.gBrowser.selectedTab.linkedBrowser);
+			
+			// do all the other tabs now, only pinned tabs or those from the visible tab group
+			for(let tab of win.gBrowser.tabs) {
+				if(tab == selectedTab
+				|| (!tab.pinned && (!tab._tabViewTabItem || !tab._tabViewTabItem.parent || tab._tabViewTabItem.parent != this.tabs._selectedGroup))) {
+					continue;
+				}
+				
+				this.setTabEntry(tab.linkedBrowser);
+			}
+			
+			return;
+		}
 		
 		if(this.tabs._selectedGroupI != 1) { // Only Source Windows
 			for(let win of FITSandbox.navigators) {
@@ -776,7 +853,7 @@ this.FIT = {
 		// about:blank tabs don't need to be listed, they're, by definition, blank
 		if(aBrowser.currentURI.spec == 'about:blank' && !this.isPending(aBrowser)) { return; }
 		
-		var newItem = this.createTabItem(aBrowser);
+		let newItem = this.createTabItem(aBrowser);
 		this.aSyncSetTab(aBrowser, newItem, findQuery);
 	},
 	
@@ -898,6 +975,7 @@ this.FIT = {
 	// When the user finds for text or uses the find again button, select the corresponding item in the hits list
 	currentHit: function(item, hitIdx) {
 		let hit = item.linkedHits.hits.get(hitIdx);
+		if(!hit) { return; }
 		
 		if(hit.item != item.linkedHits.selectedItem) {
 			item.linkedHits.selectItem(hit.item);
@@ -991,6 +1069,37 @@ this.FIT = {
 Modules.LOADMODULE = function() {
 	initFindBar('findInTabs',
 		function(bar) {
+			let container = bar.getElement("findbar-container");
+			let sibling = bar.getElement('find-case-sensitive').nextSibling;
+			
+			if(FITSidebar) {
+				let tabsButton = document.createElement('toolbarbutton');
+				setAttribute(tabsButton, 'anonid', objName+'-find-tabs-tabs');
+				setAttribute(tabsButton, 'class', 'findbar-button findbar-tabs tabbable findbar-no-find-fast');
+				setAttribute(tabsButton, 'type', 'checkbox');
+				setAttribute(tabsButton, 'autoCheck', 'false');
+				setAttribute(tabsButton, 'label', Strings.get('findInTabs', 'showTabsButtonLabel'));
+				setAttribute(tabsButton, 'tooltiptext', Strings.get('findInTabs', 'showTabsButtonTooltip'));
+				setAttribute(tabsButton, 'accesskey', Strings.get('findInTabs', 'showTabsButtonAccesskey'));
+				Listeners.add(tabsButton, 'command', FIT);
+				container.insertBefore(tabsButton, sibling);
+				
+				// get an initial state, both for the button and for the rest of the sidebar layout
+				FIT.toggleTabs();
+				
+				let fullButton = document.createElement('toolbarbutton');
+				setAttribute(fullButton, 'anonid', objName+'-find-tabs-goto');
+				setAttribute(fullButton, 'class', 'findbar-button findbar-tabs tabbable findbar-no-find-fast');
+				setAttribute(fullButton, 'observes', objName+'-findInTabs-broadcaster');
+				container.insertBefore(fullButton, sibling);
+				
+				// set the correct label on the button
+				FITMini.updateBroadcaster();
+				
+				// make sure the australis styling is also applied to the Find in All Tabs button in the sidebar
+				buttonLabels.toggle();
+			}
+			
 			// Just a few special modifications to the findbar, to prevent some messages in the error console
 			
 			delete bar.browser;
@@ -1009,12 +1118,18 @@ Modules.LOADMODULE = function() {
 			});
 		},
 		function(bar) {
-			// No need to undo the modifications we do in the special case of FITFull, as the window will be closed anyway
+			// No need to undo the modifications we do in the special case of FITFull, the window will be closed anyway
 		}
 	);
 	
 	for(let msg of FIT.MESSAGES) {
 		Messenger.listenAll(msg, FIT);
+	}
+	
+	if(FITSidebar) {
+		Prefs.listen('showTabsInFITSidebar', FIT);
+		
+		setAttribute(FIT.splitter, 'orient', 'vertical');
 	}
 	
 	Listeners.add(window, 'WillFindFindBar', FIT, true);
@@ -1039,6 +1154,10 @@ Modules.UNLOADMODULE = function() {
 	deinitFindBar('findInTabs');
 	
 	Listeners.remove(window, 'WillFindFindBar', FIT, true);
+	
+	if(FITSidebar) {
+		Prefs.unlisten('showTabsInFITSidebar', FIT);
+	}
 	
 	for(let msg of FIT.MESSAGES) {
 		Messenger.unlistenAll(msg, FIT);

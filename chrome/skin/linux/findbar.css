@@ -8,7 +8,8 @@ findbar[noClose] {
 
 /* Find in All Tabs */
 
-findbar toolbarbutton[anonid="findbartweak-find-tabs"] {
+findbar toolbarbutton[anonid="findbartweak-find-tabs"],
+findbar toolbarbutton[anonid="findbartweak-find-tabs-goto"] {
 	-moz-margin-start: 5px;
 }
 

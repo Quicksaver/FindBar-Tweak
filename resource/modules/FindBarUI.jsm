@@ -1,4 +1,4 @@
-Modules.VERSION = '1.7.11';
+Modules.VERSION = '1.7.12';
 
 this.__defineGetter__('findButton', function() {
 	var node = $('find-button');
@@ -158,7 +158,9 @@ this.buttonLabels = {
 	btns: [
 		'highlight',
 		'find-case-sensitive',
-		objName+'-find-tabs'
+		objName+'-find-tabs',
+		objName+'-find-tabs-tabs',
+		objName+'-find-tabs-goto'
 	],
 	
 	observe: function(aSubject, aTopic, aData) {
@@ -274,6 +276,13 @@ Modules.LOADMODULE = function() {
 						|| (this.findbar._findMode == this.findbar.FIND_TYPEAHEAD && Prefs.keepButtons)) {
 							let metaKey = DARWIN ? e.metaKey : e.ctrlKey;
 							if(metaKey) {
+								// or toggle Find All if Ctrl+Shift+Enter,
+								// the quick find bar should never be able to access Find All!
+								if(e.shiftKey && this.findbar._findMode == this.findbar.FIND_NORMAL && self.FITMini) {
+									FITMini.toggle();
+									return;
+								}
+								
 								this.findbar.getElement("highlight").click();
 								return;
 							}

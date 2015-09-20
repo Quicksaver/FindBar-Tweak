@@ -1,7 +1,10 @@
-Modules.VERSION = '2.0.4';
+Modules.VERSION = '2.0.5';
 
 this.viewSource = false;
 this.FITFull = false;
+this.FITSidebar = false;
+
+this.__defineGetter__('FITSidebarOpen', function() { return self.FITMini && FITMini.sidebar; });
 
 this.openOptions = function() {
 	// if this is a normal browser window, just open a new preferences tab in it
@@ -35,8 +38,8 @@ this.toggleBlurCloses = function() {
 };
 
 this.togglePerTab = function() {
-	Modules.loadIf('perTab', !viewSource && !FITFull && !Prefs.globalFB);
-	Modules.loadIf('globalFB', !viewSource && !FITFull && Prefs.globalFB);
+	Modules.loadIf('perTab', !viewSource && !FITFull && !Prefs.globalFB && !FITSidebarOpen);
+	Modules.loadIf('globalFB', !viewSource && !FITFull && (Prefs.globalFB || FITSidebarOpen));
 };
 
 this.toggleRememberStartup = function() {
@@ -50,6 +53,7 @@ this.toggleFindInTabs = function() {
 Modules.LOADMODULE = function() {
 	viewSource = (document.documentElement.getAttribute('windowtype') == 'navigator:view-source') && $('viewSource');
 	FITFull = (document.documentElement.getAttribute('windowtype') == 'addon:findInTabs') && $(objPathString+'-findInTabs');
+	FITSidebar = FITFull && trueAttribute(document.documentElement, 'FITSidebar');
 	
 	Modules.load('gFindBar');
 	if(!FITFull) {

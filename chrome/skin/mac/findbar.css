@@ -12,7 +12,9 @@ findbar:not([movetotop]):-moz-lwtheme {
 
 /* Find in All Tabs */
 
-findbar toolbarbutton[anonid="findbartweak-find-tabs"] {
+findbar toolbarbutton[anonid="findbartweak-find-tabs"],
+findbar toolbarbutton[anonid="findbartweak-find-tabs-goto"],
+findbar toolbarbutton[anonid="findbartweak-find-tabs-tabs"] {
 	-moz-margin-end: 5px;
 	padding: 2px 9px;
 }

@@ -50,7 +50,7 @@ findbar:not([hideLabels]) .findbar-tabs image {
 	text-shadow: 0px 0px 9px white, 0px 0px 9px white, 0px 1px 0px rgba(255, 255, 255, 0.3);
 }
 
-.findInTabs-splitter {
+window:not([FITSidebar]) #findbartweak-findInTabs-splitter {
 	margin-top: 26px;
 	margin-bottom: 5px;
 }
@@ -128,4 +128,34 @@ html|div.findInTabs-match-flex {
 /* Original binding has many handlers that don't work when the findbar has no browser associated */
 .findInTabs-bar textbox {
 	-moz-binding: url("chrome://findbartweak/content/FITbinding.xbl#FIT-textbox");
+}
+
+/* FIT sidebar */
+
+window[FITSidebar] .findInTabs-bar hbox[anonid="findbar-textbox-wrapper"],
+window[FITSidebar] .findInTabs-bar toolbarbutton[anonid="find-case-sensitive"],
+window[FITSidebar] #findbartweak-findInTabs-filterBox,
+window[FITSidebar]:not([showTabs]) #findbartweak-findInTabs-tabs,
+window[FITSidebar]:not([showTabs]) #findbartweak-findInTabs-splitter {
+	visibility: collapse;
+}
+
+window[FITSidebar] #findbartweak-findInTabs-box {
+	-moz-box-orient: vertical;
+}
+
+window[FITSidebar] #findbartweak-findInTabs-tabs,
+window[FITSidebar] #findbartweak-findInTabs-hits {
+	padding: 0;
+}
+
+window[FITSidebar] #findbartweak-findInTabs-tabs richlistbox,
+window[FITSidebar] #findbartweak-findInTabs-hits richlistbox {
+	margin: 0;
+	-moz-appearance: none;
+}
+
+window[FITSidebar] #findbartweak-findInTabs-tabs richlistbox,
+window[FITSidebar]:not([showTabs]) #findbartweak-findInTabs-hits richlistbox {
+	border-top: 1px solid ThreeDShadow;
 }

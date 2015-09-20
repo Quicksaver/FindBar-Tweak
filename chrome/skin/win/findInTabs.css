@@ -14,10 +14,24 @@ findbar.findInTabs-bar {
 	background-color: -moz-dialog;
 }
 
-@media not all and (-moz-windows-classic) {
-	@media (-moz-windows-default-theme) {
-		#contentBox {
+@media (-moz-windows-default-theme) {
+	@media	(-moz-os-version: windows-vista),
+		(-moz-os-version: windows-win7) {
+		
+		window:not([FITSidebar]) #contentBox {
 			background-color: hsl(210,75%,92%);
+		}
+	}
+}
+
+/* FIT sidebar */
+
+@media (-moz-windows-default-theme) {
+	@media	(-moz-os-version: windows-vista),
+		(-moz-os-version: windows-win7) {
+		
+		window[FITSidebar] #contentBox {
+			background-color: #EEF3FA;
 		}
 	}
 }

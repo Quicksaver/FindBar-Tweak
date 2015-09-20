@@ -4,41 +4,21 @@
 	
 	<broadcasterset id="mainBroadcasterSet">
 		<broadcaster id="objName-findInTabs-broadcaster"
-			label="&FITbutton.label;"
-			tooltiptext="&FITbutton.tooltip.win;"
-			accesskey="&FITbutton.accesskey;"
 			type="checkbox"
 			autoCheck="false"
+			group="sidebar"
+			sidebarurl="chrome://objPathString/content/findInTabsFull.xul"
 			oncommand="objName.FITMini.toggle();" />
 	</broadcasterset>
 	
-	<window id="main-window">
-		<keyset id="objName-findInTabs-keyset">
-			<key id="objName-findInTabs-key"
-				keycode="VK_F3"
-				modifiers="alt"
-				oncommand="objName.FITMini.command();" />
-		</keyset>
-	</window>
-	
-	<!-- The view source window doesn't have any of these main elements -->
+	<!-- The view source window doesn't have the mainBroadcasterSet -->
 	<window id="viewSource">
 		<broadcasterset id="objName-findInTabs-broadcasterSet">
 			<broadcaster id="objName-findInTabs-broadcaster"
-				label="&FITbutton.label;"
-				tooltiptext="&FITbutton.tooltip.win;"
-				accesskey="&FITbutton.accesskey;"
 				type="checkbox"
 				autoCheck="false"
 				oncommand="objName.FITMini.toggle();" />
 		</broadcasterset>
-		
-		<keyset id="objName-findInTabs-keyset">
-			<key id="objName-findInTabs-key"
-				keycode="VK_F3"
-				modifiers="alt"
-				oncommand="objName.FITMini.command();" />
-		</keyset>
 	</window>
 	
 </overlay>

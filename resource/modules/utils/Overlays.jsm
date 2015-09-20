@@ -1,4 +1,4 @@
-Modules.VERSION = '2.15.7';
+Modules.VERSION = '2.15.8';
 Modules.UTILS = true;
 
 // Overlays - to use overlays in my bootstraped add-ons. The behavior is as similar to what is described in https://developer.mozilla.org/en/XUL_Tutorial/Overlays as I could manage.
@@ -273,7 +273,7 @@ this.Overlays = {
 				break;
 			
 			case 'pagehide':
-			case 'SidebarClosed':
+			case 'SidebarUnloaded':
 				if(!(aSubject.document instanceof aSubject.XULDocument)) { break; } // at least for now I'm only overlaying xul documents
 				aSubject.willClose = true;
 				this.unloadAll(aSubject);
@@ -2028,7 +2028,7 @@ Modules.LOADMODULE = function() {
 	Browsers.register(Overlays, 'pageshow');
 	Browsers.register(Overlays, 'SidebarFocused');
 	Browsers.register(Overlays, 'pagehide');
-	Browsers.register(Overlays, 'SidebarClosed');
+	Browsers.register(Overlays, 'SidebarUnloaded');
 	Observers.add(Overlays, 'window-overlayed');
 	
 	Piggyback.add('Overlays', CUIBackstage.CustomizableUIInternal, 'registerToolbarNode', Overlays.registerToolbarNode);
@@ -2040,7 +2040,7 @@ Modules.UNLOADMODULE = function() {
 	Browsers.unregister(Overlays, 'pageshow');
 	Browsers.unregister(Overlays, 'SidebarFocused');
 	Browsers.unregister(Overlays, 'pagehide');
-	Browsers.unregister(Overlays, 'SidebarClosed');
+	Browsers.unregister(Overlays, 'SidebarUnloaded');
 	
 	Windows.callOnAll((aWindow) => {
 		Overlays.unloadAll(aWindow);

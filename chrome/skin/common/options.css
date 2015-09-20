@@ -5,6 +5,7 @@
 #categories .category[value="paneSights"] image { -moz-image-region: rect(0px 96px 24px 72px); }
 #categories .category[value="paneTweaks"] image { -moz-image-region: rect(0px 120px 24px 96px); }
 #categories .category[value="paneAbout"] image { -moz-image-region: rect(0px 144px 24px 120px); }
+#categories .category[value="paneFindAll"] image { -moz-image-region: rect(0px 168px 24px 144px); }
 
 colorpicker {
 	width: 50px;

@@ -3,6 +3,7 @@
 <!ENTITY OptGeneral.label "General">
 <!ENTITY OptAppearance.label "Appearance">
 <!ENTITY Opttweaks.label "Tweaks">
+<!ENTITY OptFindAll.label "Find All">
 
 <!ENTITY Optgen.label "Findbar Options">
 <!ENTITY Optdisplay.label "Findbar Position">
@@ -17,10 +18,21 @@
 <!ENTITY OptgridInScrollbar.tooltip "The relative position of each highlighted match in the webpage will be shown on the scrollbar.">
 <!ENTITY OptuseCounter.label "Show matches counter in the Findbar">
 <!ENTITY OptuseCounter.tooltip "On every Find operation, the number of matches found in the webpage will be shown at the end of the Find toolbar.">
-<!ENTITY OptfindInTabs.label "Enable 'Find in All Tabs'">
-<!ENTITY OptfindInTabs.tooltip "A button is placed in the Findbar to open the 'Find in All Tabs' dialog, which lets you quickly find any word in all your opened tabs and windows.">
-<!ENTITY OptmultipleFITFull.label "Allow multiple instances of the 'Find in All Tabs' window">
-<!ENTITY OptmultipleFITFull.tooltip "When this is disabled, subsequent clicks on the 'Find in All Tabs' button will reuse any already opened 'Find in All Tabs' dialog instead of opening a new one each time.">
+
+<!ENTITY OptfindAll.label "Enable Find All">
+<!ENTITY OptfindAll.tooltip "List all the found matches in all your opened tabs and windows.">
+<!ENTITY OptfindInTabsAction.caption "Pressing the Find All button...">
+<!ENTITY OptfindInTabsAction.sidebar.label "toggles the Find All sidebar">
+<!ENTITY OptfindInTabsAction.sidebar.tooltip.a "Shows the list in a sidebar next to the webpage, containing all the matches found in the page. You can also see matches from other tabs in the same window, and switch to them from within the sidebar.">
+<!ENTITY OptfindInTabsAction.sidebar.tooltip.b "Remember that for as long as this sidebar is open, the Findbar will act as a single global Findbar, even if you don't have that preference enabled!">
+<!ENTITY OptfindInTabsAction.full.label "opens the Find in All Tabs window">
+<!ENTITY OptfindInTabsAction.full.tooltip "Use a separate window to find matches in all opened tabs and windows.">
+<!ENTITY OptfindInTabsSidebar.caption "Find All sidebar">
+<!ENTITY OptautoShowHideFIT.label "Show and hide with the Findbar">
+<!ENTITY OptautoShowHideFIT.tooltip "The sidebar lists appear and hide automatically when you open and close the Findbar, so that you don't have to press the Find All button.">
+<!ENTITY OptfindInTabsFull.caption "Find in All Tabs window">
+<!ENTITY OptmultipleFITFull.label.b "Allow multiple instances">
+<!ENTITY OptmultipleFITFull.tooltip.b "Open a new window each time the Find in All Tabs button is pressed, otherwise it will reuse any already opened window.">
 
 <!ENTITY Optcolor.label "Highlights Color">
 <!ENTITY Optcolor.tooltip "Change the color used to highlight matches in the page.">

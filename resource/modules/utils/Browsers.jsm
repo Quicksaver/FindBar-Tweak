@@ -1,4 +1,4 @@
-Modules.VERSION = '2.4.2';
+Modules.VERSION = '2.5.0';
 Modules.UTILS = true;
 
 // Browsers - Aid object to track and perform tasks on all document browsers across the windows.
@@ -9,10 +9,13 @@ Modules.UTILS = true;
 //	(optional) beforeComplete - 	true calls aCallback immediatelly regardless of readyState, false fires aCallback when window loads if readyState != complete, defaults to false
 //					see notes on Windows.register()
 //	(optional) onlyTabs - (bool) true only executes aCallback on actual tabs, not sidebars or others, defaults to (bool) false
+// callOnBrowser(aBrowser, aCallback, aURI, beforeComplete) - executes aCallback on a specific browser's content window; mostly for internal use by callOnAll().
+//	aBrowser - (xul element) on which to execute aCallback
+//	see callOnAll()
 // register(aHandler, aTopic, aURI, beforeComplete) - registers aHandler to be notified of every aTopic
 //	Important note: handlers will no-op in remote browsers (e10s).
 //	aHandler - (function(aWindow)) handler to be fired. Or (nsiObserver object) with observe() method which will be passed aWindow and aTopic as its only two arguments.
-//	aTopic - (string) "pageshow" or (string) "pagehide" or (string) "SidebarFocused"
+//	aTopic - (string) "pageshow" or (string) "pagehide" or (string) "SidebarFocused" or (string) "SidebarUnloaded"
 //	see callOnAll()
 // unregister(aHandler, aTopic, aURI, beforeComplete) - unregisters aHandler from being notified of every aTopic
 //	see register()
@@ -30,33 +33,26 @@ this.Browsers = {
 			if(aWindow.gBrowser) {
 				// Browser panels (tabs)
 				for(let aBrowser of aWindow.gBrowser.browsers) {
-					// e10s fix, we don't check remote tabs
-					if(aBrowser.isRemoteBrowser) { continue; }
-					
-					if(!aURI || aBrowser.contentDocument.documentURI.startsWith(aURI)) {
-						callOnLoad(aBrowser.contentWindow, aCallback, beforeComplete);
-					}
-				}
-				
-				if(onlyTabs) { continue; }
-				
-				// Sidebars (compatible with OmniSidebar)
-				let sidebar = aWindow.document.getElementById('sidebar');
-				if(sidebar
-				&& sidebar.docShell
-				&& sidebar.contentWindow
-				&& (!aURI || sidebar.contentDocument.documentURI == aURI)) {
-					callOnLoad(sidebar.contentWindow, aCallback, beforeComplete);
-				}
-				
-				let sidebarTwin = aWindow.document.getElementById('omnisidebar-sidebar-twin');
-				if(sidebarTwin
-				&& sidebarTwin.docShell
-				&& sidebarTwin.contentWindow
-				&& (!aURI || sidebarTwin.contentDocument.documentURI == aURI)) {
-					callOnLoad(sidebarTwin.contentWindow, aCallback, beforeComplete);
+					this.callOnBrowser(aBrowser, aCallback, aURI, beforeComplete);
 				}
 			}
+			
+			if(onlyTabs) { continue; }
+			
+			// Sidebars are browser elements too
+			for(let sidebar of this.getSidebars(aWindow)) {
+				this.callOnBrowser(sidebar, aCallback, aURI, beforeComplete);
+			}
+		}
+	},
+	
+	callOnBrowser: function(aBrowser, aCallback, aURI, beforeComplete) {
+		// e10s fix, we don't check remote tabs
+		if(aBrowser.isRemoteBrowser) { return; }
+		
+		if(aBrowser && aBrowser.docShell && aBrowser.contentWindow
+		&& (!aURI || aBrowser.contentDocument.documentURI.startsWith(aURI))) {
+			callOnLoad(aBrowser.contentWindow, aCallback, beforeComplete);
 		}
 	},
 	
@@ -104,25 +100,43 @@ this.Browsers = {
 						// The event can be TabOpen, TabClose, TabSelect, TabShow, TabHide, TabPinned, TabUnpinned and possibly more.
 						aWindow.gBrowser.tabContainer.addEventListener('TabOpen', this, true);
 						aWindow.gBrowser.tabContainer.addEventListener('TabClose', this, true);
-						// Also listen for the sidebars
+					}
+					
+					if(aWindow.SidebarUI) {
+						// Also listen for the sidebars being loaded
 						aWindow.addEventListener('SidebarFocused', this, true);
-						aWindow.addEventListener('SidebarClosed', this, true);
+						
+						// any already loaded sidebars must have the unload listener setup as well
+						for(let sidebar of this.getSidebars(aWindow)) {
+							if(sidebar && sidebar.docShell && sidebar.contentWindow && sidebar.contentDocument.documentURI != 'about:blank') {
+								this.watchSidebarUnload(sidebar.contentWindow);
+							}
+						}
 					}
 				});
 				break;
 				
 			case 'domwindowclosed':
-				if(aWindow.document.readyState == 'complete' && aWindow.gBrowser) {
-					for(var tab of aWindow.gBrowser.mTabs) {
-						tab.removeEventListener('TabRemotenessChange', this);
-						if(!tab.linkedBrowser.isRemoteBrowser) {
-							this.tabRemote(tab); // this removes the listeners, which is what we want to do
+				if(aWindow.document.readyState == 'complete') {
+					if(aWindow.gBrowser) {
+						for(let tab of aWindow.gBrowser.mTabs) {
+							tab.removeEventListener('TabRemotenessChange', this);
+							if(!tab.linkedBrowser.isRemoteBrowser) {
+								this.tabRemote(tab); // this removes the listeners, which is what we want to do
+							}
+						}
+						aWindow.gBrowser.tabContainer.removeEventListener('TabOpen', this, true);
+						aWindow.gBrowser.tabContainer.removeEventListener('TabClose', this, true);
+					}
+					
+					if(aWindow.SidebarUI) {
+						aWindow.removeEventListener('SidebarFocused', this, true);
+						for(let sidebar of this.getSidebars(aWindow)) {
+							if(sidebar && sidebar.docShell && sidebar.contentWindow && sidebar.contentDocument.documentURI != 'about:blank') {
+								sidebar.contentWindow.removeEventListener('unload', this);
+							}
 						}
 					}
-					aWindow.gBrowser.tabContainer.removeEventListener('TabOpen', this, true);
-					aWindow.gBrowser.tabContainer.removeEventListener('TabClose', this, true);
-					aWindow.removeEventListener('SidebarFocused', this, true);
-					aWindow.removeEventListener('SidebarClosed', this, true);
 				}
 				break;
 		}
@@ -153,13 +167,33 @@ this.Browsers = {
 				break;
 			
 			case 'SidebarFocused':
-			case 'SidebarClosed':
+				// we need to know when this sidebar will be unloaded as well
+				this.watchSidebarUnload(e.target);
 				this.callWatchers(e.target.document, e.type);
+				break;
+				
+			case 'unload': // sidebar unloaded/closed
+				// pass a different event type to watchers, as "unload" is too generalized and could conflict with other listeners that want actual unload events
+				this.callWatchers(e.target, 'SidebarUnloaded');
 				break;
 				
 			default:
 				this.callWatchers(e.originalTarget, e.type);
 				break;
+		}
+	},
+	
+	getSidebars: function*(aWindow) {
+		if(aWindow.SidebarUI) {
+			// compatibility with OmniSidebar
+			if(aWindow.SidebarUI.browsers) {
+				for(let sidebar of aWindow.SidebarUI.browsers()) {
+					yield sidebar;
+				}
+			}
+			else {
+				yield aWindow.SidebarUI.browser;
+			}
 		}
 	},
 	
@@ -196,6 +230,12 @@ this.Browsers = {
 	tabRemote: function(tab) {
 		tab.linkedBrowser.removeEventListener('pageshow', this, true);
 		tab.linkedBrowser.removeEventListener('pagehide', this, true);
+	},
+	
+	watchSidebarUnload: function(aWindow) {
+		callOnLoad(aWindow, () => {
+			aWindow.addEventListener('unload', this);
+		});
 	}
 };
 

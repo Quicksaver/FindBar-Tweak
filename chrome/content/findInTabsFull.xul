@@ -9,11 +9,18 @@
 <window 
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	id="findbartweak-findInTabs"
-	title="&FITbutton.label;"
+	title="&FITFull.label;"
 	windowtype="addon:findInTabs"
 	height="350"
 	width="800"
 	persist="width height screenX screenY sizemode">
+	
+	<broadcasterset id="mainBroadcasterSet">
+		<broadcaster id="objName-findInTabs-broadcaster"
+			type="checkbox"
+			autoCheck="false"
+			oncommand="objName.FITMini.goToFITFull();" />
+	</broadcasterset>
 	
 	<popupset id="mainPopupSet">
 		<menupopup id="objName_findbarMenu">
@@ -22,10 +29,6 @@
 	</popupset>
 	
 	<keyset id="objName-findInTabs-keyset">
-		<key id="objName-findInTabs-key"
-			keycode="VK_F3"
-			modifiers="alt"
-			oncommand="objName.FITMini.command();" />
 		<key id="cmd_find"
 			key="F"
 			modifiers="accel"
@@ -49,12 +52,12 @@
 			position="1"
 			flex="1">
 			
-			<box id="findbartweak-findInTabs-tabs" class="findInTabs-list" flex="1" width="300" persist="width" />
+			<box id="findbartweak-findInTabs-tabs" class="findInTabs-list" flex="1" width="300" height="300" persist="width height" />
 			<vbox id="findbartweak-findInTabs-filterBox" flex="0">
 				<image id="objName-findInTabs-filter" onclick="objName.FIT.toggleGroups();"/>
 			</vbox>
-			<splitter class="findInTabs-splitter" resizebefore="flex"/>
-			<box id="findbartweak-findInTabs-hits" class="findInTabs-list" flex="1" width="500" persist="width" />
+			<splitter id="findbartweak-findInTabs-splitter" resizebefore="flex"/>
+			<box id="findbartweak-findInTabs-hits" class="findInTabs-list" flex="1" width="500" height="500" persist="width height" />
 		</hbox>
 	</vbox>
 	

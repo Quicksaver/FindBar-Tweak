@@ -18,8 +18,6 @@
 	
 	<prefpane id="mainPrefPane">
 		<preferences>
-			<preference id="pref-findInTabs" name="extensions.findbartweak.findInTabs" type="bool"/>
-			<preference id="pref-multipleFITFull" name="extensions.findbartweak.multipleFITFull" type="bool"/>
 			<preference id="pref-blurCloses" name="extensions.findbartweak.blurCloses" type="bool"/>
 			<preference id="pref-globalFB" name="extensions.findbartweak.globalFB" type="bool"/>
 			<preference id="pref-onStartup" name="extensions.findbartweak.onStartup" type="bool"/>
@@ -107,26 +105,6 @@
 				<description>&OptFAYTmode.normalFind.tooltip;</description>
 			</vbox>
         </groupbox>
-        
-		<groupbox align="start" id="paneGeneral-FIT" collapsed="true" data-category="paneGeneral">
-			<caption>
-				<checkbox label="&OptfindInTabs.label;"
-					helpbox="paneGeneral-FIT-helptext"
-					jump="findInTabs"
-					delayPreference="pref-findInTabs"/>
-			</caption>
-			<checkbox class="indent"
-				label="&OptmultipleFITFull.label;"
-				helpbox="paneGeneral-FIT-helptext"
-				jump="multipleFITFull"
-				dependson="pref-findInTabs"
-				delayPreference="pref-multipleFITFull"/>
-			<vbox id="paneGeneral-FIT-helptext" collapsed="true">
-				<description>&OptfindInTabs.tooltip;</description>
-				<description style="font-weight:bold; margin-top:1em;">&OptmultipleFITFull.label;</description>
-				<description>&OptmultipleFITFull.tooltip;</description>
-			</vbox>
-		</groupbox>
 	</prefpane>
 	
 </overlay>

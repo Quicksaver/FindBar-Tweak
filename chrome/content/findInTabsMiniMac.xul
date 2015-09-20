@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<!DOCTYPE overlay SYSTEM "chrome://findbartweak/locale/findbar.dtd">
-<overlay id="findInTabsMac_overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-	
-	<broadcaster id="objName-findInTabs-broadcaster"
-		tooltiptext="&FITbutton.tooltip.mac;" />
-	
-</overlay>

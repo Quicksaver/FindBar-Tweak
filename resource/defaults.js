@@ -1,4 +1,4 @@
-// VERSION = '1.3.11';
+// VERSION = '1.3.12';
 
 objName = 'findbartweak';
 objPathString = 'findbartweak';
@@ -19,8 +19,8 @@ paneList = [
 	[ "paneAppearance" ],
 	[ "paneHighlights" ],
 	[ "paneSights", true ],
-	[ "paneTweaks", true ],
-	[ "paneFindAll", true ]
+	[ "paneFindAll", true ],
+	[ "paneTweaks", true ]
 ];
 
 // We define this here so we can use it also as the default value for the preference

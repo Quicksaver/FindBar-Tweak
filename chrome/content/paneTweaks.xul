@@ -7,7 +7,7 @@
 			class="category"
 			value="paneTweaks"
 			tooltiptext="&Opttweaks.label;"
-			position="5"
+			position="6"
 			align="center">
 			
 			<image class="category-icon"/>

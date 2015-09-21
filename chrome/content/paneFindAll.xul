@@ -7,7 +7,7 @@
 			class="category"
 			value="paneFindAll"
 			tooltiptext="&OptFindAll.label;"
-			position="6"
+			position="5"
 			align="center">
 			
 			<image class="category-icon"/>

@@ -1,4 +1,4 @@
-// VERSION = '1.8.1';
+// VERSION = '1.8.2';
 
 // This looks for file defaults.js in resource folder, expects:
 //	objName - (string) main object name for the add-on, to be added to window element
@@ -43,6 +43,7 @@ let Addon = {};
 let AddonData = null;
 let onceListeners = [];
 let alwaysRunOnShutdown = [];
+let MessengerLoaded = false;
 let isChrome = true;
 
 // Globals - lets me use objects that I can share through all the windows
@@ -272,6 +273,12 @@ function shutdown(aData, aReason) {
 	}
 	
 	if(STARTED) {
+		// content scripts should know as soon as possible that we're disabling the add-on, before any of them starts unloading,
+		// otherwise they could try to load modules after the resource:// uri was gone
+		if(MessengerLoaded) {
+			Messenger.messageAll('disable');
+		}
+		
 		if(typeof(onShutdown) == 'function') {
 			onShutdown(aData, aReason);
 		}

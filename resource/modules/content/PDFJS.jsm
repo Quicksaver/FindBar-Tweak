@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.4';
+Modules.VERSION = '1.0.5';
 
 this.PDFJS = {
 	// We need this to access protected properties, hidden from privileged code
@@ -247,14 +247,14 @@ Modules.LOADMODULE = function() {
 		Finder.syncPDFJS();
 	});
 	
-	webProgress.addProgressListener(PDFJS, Ci.nsIWebProgress.NOTIFY_LOCATION);
+	WebProgress.add(PDFJS, Ci.nsIWebProgress.NOTIFY_LOCATION);
 	DOMContentLoaded.add(PDFJS);
 	
 	PDFJS.reset();
 };
 
 Modules.UNLOADMODULE = function() {
-	webProgress.removeProgressListener(PDFJS, Ci.nsIWebProgress.NOTIFY_LOCATION);
+	WebProgress.remove(PDFJS, Ci.nsIWebProgress.NOTIFY_LOCATION);
 	DOMContentLoaded.remove(PDFJS);
 	
 	RemoteFinderListener.removeMessage('PDFJS:Event');

@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.0';
+Modules.VERSION = '2.0.1';
 
 this.rememberStartup = {
 	handleEvent: function(e) {
@@ -24,8 +24,8 @@ Modules.LOADMODULE = function() {
 		gFindBar.onFindCommand();
 	}
 	
-	if(gFindBarInitialized && !gFindBar.hidden && gFindBar._findMode == gFindBar.FIND_NORMAL) {
-		Prefs.findbarHidden = gFindBar.hidden;
+	if(Prefs.findbarHidden && gFindBarInitialized && !gFindBar.hidden && gFindBar._findMode == gFindBar.FIND_NORMAL) {
+		Prefs.findbarHidden = false;
 	}
 };
 

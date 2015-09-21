@@ -195,6 +195,8 @@ this.FITSandbox = {
 			try { win.close(); }
 			catch(ex) { Cu.reportError(ex); }
 		}
+		
+		// closing the sidebars is done by FITMini so that the broadcaster still exists then
 	}
 };
 

@@ -25,20 +25,25 @@ this.self = this;
 //				so that they only unload on the very end; like above, should only be used in backbone modules
 //	Modules.CLEAN - (bool) if false, this module won't be removed by clean(); defaults to true
 this.Modules = {
-	version: '2.6.1',
+	version: '2.6.2',
 	modules: new Set(),
 	moduleVars: {},
 	
 	loadIf: function(aModule, anIf, delayed) {
 		if(anIf) {
 			return this.load(aModule, delayed);
-		} else {
-			return !this.unload(aModule);
 		}
+		return !this.unload(aModule);
 	},
 	
 	load: function(aModule, delayed) {
-		var path = this.preparePath(aModule);
+		// Because of process separation in e10s, the resource:// path can be removed before modules are fully unloaded from the child process,
+		// if their unload methods call for modules that had't been loaded, they won't be able to be loaded now.
+		// Just enclosing problematic routines in a try-catch block isn't enough, as apparently the IO thread somehow throws aSync,
+		// causing the messages to appear in the console anyway. They may be harmless but they're also confusing when debugging, so let's avoid them.
+		if(self.isContent && self.disabled) { return false; }
+		
+		let path = this.preparePath(aModule);
 		if(!path) { return false; }
 		
 		if(this.loaded(path)) { return true; }
@@ -49,7 +54,7 @@ this.Modules = {
 			return false;
 		}
 		
-		var module = {
+		let module = {
 			name: aModule,
 			path: path,
 			load: this.LOADMODULE || null,
@@ -74,7 +79,7 @@ this.Modules = {
 		
 		if(!module.vars) {
 			if(!Globals.moduleCache[aModule]) {
-				var tempScope = {
+				let tempScope = {
 					Modules: {},
 					$: function() { return null; },
 					$$: function() { return null; },
@@ -90,11 +95,10 @@ this.Modules = {
 				delete tempScope.$$;
 				delete tempScope.$ª;
 				
-				var scopeVars = [];
+				Globals.moduleCache[aModule] = [];
 				for(let v in tempScope) {
-					scopeVars.push(v);
+					Globals.moduleCache[aModule].push(v);
 				}
-				Globals.moduleCache[aModule] = scopeVars;
 			}
 			module.vars = Globals.moduleCache[aModule];
 		}
@@ -118,7 +122,8 @@ this.Modules = {
 			}
 			else {
 				module.aSync = () => {
-					if(typeof(Modules) == 'undefined') { return; } // when disabling the add-on before it's had time to perform the load call
+					// when disabling the add-on before it's had time to perform the load call
+					if(typeof(Modules) == 'undefined') { return; }
 					
 					try { module.load(); }
 					catch(ex) {
@@ -152,17 +157,20 @@ this.Modules = {
 	},
 	
 	unload: function(aModule, force, justVars) {
-		var path = this.preparePath(aModule);
+		let path = this.preparePath(aModule);
 		if(!path) { return true; }
 		
-		var module = this.loaded(aModule);
+		let module = this.loaded(aModule);
 		if(!module) { return true; }
 		
 		if(!justVars && module.unload && (module.loaded || force)) {
 			try { module.unload(); }
 			catch(ex) {
-				if(!force) { Cu.reportError(ex); }
-				Cu.reportError('Failed to load module '+aModule);
+				if(!force) {
+					Cu.reportError(ex);
+				} else {
+					Cu.reportError('Failed to load module '+aModule);
+				}
 				module.failed = true;
 				return false;
 			}
@@ -170,8 +178,11 @@ this.Modules = {
 		
 		try { this.deleteVars(module.vars); }
 		catch(ex) {
-			if(!force) { Cu.reportError(ex); }
-			Cu.reportError('Failed to load module '+aModule);
+			if(!force) {
+				Cu.reportError(ex);
+			} else {
+				Cu.reportError('Failed to load module '+aModule);
+			}
 			module.failed = true;
 			return false;
 		}
@@ -236,7 +247,7 @@ this.Modules = {
 		for(let x of aList) {
 			if(this.moduleVars[x]) {
 				this.moduleVars[x]--;
-				if(this.moduleVars[x] == 0) {
+				if(!this.moduleVars[x]) {
 					delete self[x];
 					delete this.moduleVars[x];
 				}

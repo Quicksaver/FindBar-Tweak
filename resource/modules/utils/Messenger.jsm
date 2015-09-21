@@ -1,4 +1,4 @@
-Modules.VERSION = '1.5.2';
+Modules.VERSION = '1.5.3';
 Modules.UTILS = true;
 
 // Messenger - 	Aid object to communicate with browser content scripts (e10s).
@@ -194,6 +194,8 @@ this.Messenger = {
 };
 
 Modules.LOADMODULE = function() {
+	MessengerLoaded = true;
+	
 	Messenger.listenAll('init', Messenger);
 	Messenger.globalMM.loadFrameScript('resource://'+objPathString+'/defaultsContent.js?'+AddonData.initTime, true);
 };

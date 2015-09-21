@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.5';
+Modules.VERSION = '2.0.6';
 
 this.globalFB = {
 	hidden: true,
@@ -85,11 +85,14 @@ Modules.UNLOADMODULE = function() {
 	Listeners.remove(window, 'ClosedFindBar', globalFB);
 	
 	for(let tab of gBrowser.tabs) {
+		// leave the findbar in the current tab as it is
 		if(tab == gBrowser.mCurrentTab) { continue; }
 		
 		if(gBrowser.isFindBarInitialized(tab) && !tab.linkedBrowser.finder.searchString) {
-			var bar = gBrowser.getFindBar(tab);
-			bar.close();
+			let bar = gBrowser.getFindBar(tab);
+			if(!bar.hidden) {
+				bar.close();
+			}
 		}
 	}
 };

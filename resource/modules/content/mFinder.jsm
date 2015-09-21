@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.13';
+Modules.VERSION = '1.0.14';
 
 this.__defineGetter__('isPDFJS', function() { return Finder.isPDFJS; });
 
@@ -37,12 +37,12 @@ this.Finder = {
 		this._fastFind = Cc["@mozilla.org/typeaheadfind;1"].createInstance(Ci.nsITypeAheadFind);
 		this._fastFind.init(docShell);
 		this._docShell = docShell;
-		webProgress.addProgressListener(this, Ci.nsIWebProgress.NOTIFY_ALL);
+		WebProgress.add(this, Ci.nsIWebProgress.NOTIFY_ALL);
 		DOMContentLoaded.add(this);
 	},
 	
 	deinit: function() {
-		webProgress.removeProgressListener(this, Ci.nsIWebProgress.NOTIFY_ALL);
+		WebProgress.remove(this, Ci.nsIWebProgress.NOTIFY_ALL);
 		DOMContentLoaded.remove(this);
 		
 		if(document instanceof Ci.nsIDOMHTMLDocument) {

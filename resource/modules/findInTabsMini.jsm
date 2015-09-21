@@ -1,4 +1,4 @@
-Modules.VERSION = '2.2.0';
+Modules.VERSION = '2.2.1';
 
 this.FITMini = {
 	get broadcaster() { return $(FITSandbox.kBroadcasterId); },
@@ -269,6 +269,11 @@ this.FITMini = {
 	},
 	
 	onUnload: function() {
+		// close the FIT sidebar if it's open in this window
+		if(!viewSource && this.sidebar) {
+			FITSandbox.commandSidebar(window, false);
+		}
+		
 		deinitFindBar('findInTabsMini');
 		
 		Observers.remove(this, 'FIT:Load');

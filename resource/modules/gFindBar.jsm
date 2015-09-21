@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.7';
+Modules.VERSION = '1.1.8';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return FITFull || viewSource || window.gFindBarInitialized; });
@@ -287,6 +287,13 @@ this.baseDeinit = function(bar) {
 		Piggyback.revert('gFindBar', bar, '_updateMatchesCount');
 		Piggyback.revert('gFindBar', bar, 'onCurrentSelection');
 		Piggyback.revert('gFindBar', bar, '_onBrowserKeypress');
+		
+		// this should always be resolved just after opening the sidebar,
+		// but in case any of our initialization listeners hangs around for some reason, better ret rid of it
+		if(bar._startFindDeferred) {
+			bar._startFindDeferred.reject();
+			bar._startFindDeferred = null;
+		}
 	}
 	
 	Messenger.unloadFromBrowser(bar.browser, 'gFindBar');
@@ -301,32 +308,27 @@ this.initFindBar = function(name, init, deinit, force) {
 	initRoutines[name] = { init: init, deinit: deinit };
 	
 	if(FITFull || viewSource) {
-		if(force || !gFindBar[objName+'_initialized'] || !gFindBar[objName+'_initialized'][name]) {
-			if(!gFindBar[objName+'_initialized']) {
-				gFindBar[objName+'_initialized'] = { length: 0 };
-			}
-			init(gFindBar);
-			if(!gFindBar[objName+'_initialized'][name]) {
-				gFindBar[objName+'_initialized'].length++;
-			}
-			gFindBar[objName+'_initialized'][name] = true;
-		}
+		initFindBarRoutine(gFindBar, name, init, force);
 	} else {
-		for(var tab of gBrowser.tabs) {
+		for(let tab of gBrowser.tabs) {
 			if(gBrowser.isFindBarInitialized(tab)) {
-				var bar = gBrowser.getFindBar(tab);
-				if(force || !bar[objName+'_initialized'] || !bar[objName+'_initialized'][name]) {
-					if(!bar[objName+'_initialized']) {
-						bar[objName+'_initialized'] = { length: 0 };
-					}
-					init(bar);
-					if(!bar[objName+'_initialized'][name]) {
-						bar[objName+'_initialized'].length++;
-					}
-					bar[objName+'_initialized'][name] = true;
-				}
+				let bar = gBrowser.getFindBar(tab);
+				initFindBarRoutine(bar, name, init, force);
 			}
 		}
+	}
+};
+
+this.initFindBarRoutine = function(bar, name, init, force) {
+	if(force || !bar[objName+'_initialized'] || !bar[objName+'_initialized'][name]) {
+		if(!bar[objName+'_initialized']) {
+			bar[objName+'_initialized'] = { length: 0 };
+		}
+		init(bar);
+		if(!bar[objName+'_initialized'][name]) {
+			bar[objName+'_initialized'].length++;
+		}
+		bar[objName+'_initialized'][name] = true;
 	}
 };
 
@@ -336,27 +338,24 @@ this.deinitFindBar = function(name) {
 	delete initRoutines[name];
 	
 	if(FITFull || viewSource) {
-		if(gFindBar[objName+'_initialized'] && gFindBar[objName+'_initialized'][name]) {
-			deinit(gFindBar);
-			delete gFindBar[objName+'_initialized'][name];
-			gFindBar[objName+'_initialized'].length--;
-			if(gFindBar[objName+'_initialized'].length == 0) {
-				delete gFindBar[objName+'_initialized'];
+		deinitFindBarRoutine(gFindBar, name, deinit);
+	} else {
+		for(let tab of gBrowser.tabs) {
+			if(gBrowser.isFindBarInitialized(tab)) {
+				let bar = gBrowser.getFindBar(tab);
+				deinitFindBarRoutine(bar, name, deinit);
 			}
 		}
-	} else {
-		for(var tab of gBrowser.tabs) {
-			if(gBrowser.isFindBarInitialized(tab)) {
-				var bar = gBrowser.getFindBar(tab);
-				if(bar[objName+'_initialized'] && bar[objName+'_initialized'][name]) {
-					deinit(bar);
-					delete bar[objName+'_initialized'][name];
-					bar[objName+'_initialized'].length--;
-					if(bar[objName+'_initialized'].length == 0) {
-						delete bar[objName+'_initialized'];
-					}
-				}
-			}
+	}
+};
+
+this.deinitFindBarRoutine = function(bar, name, deinit) {
+	if(bar[objName+'_initialized'] && bar[objName+'_initialized'][name]) {
+		deinit(bar);
+		delete bar[objName+'_initialized'][name];
+		bar[objName+'_initialized'].length--;
+		if(!bar[objName+'_initialized'].length) {
+			delete bar[objName+'_initialized'];
 		}
 	}
 };
@@ -372,8 +371,11 @@ this.initializeListener = function(e) {
 		bar[objName+'_initialized'].length++;
 	}
 	
-	// in case we want to recycle the state from the findbar saved on that same tab
-	restoreFindBarState(bar, e.target._findBar_state);
+	// in case we want to recycle the state from the findbar saved on that same tab,
+	// don't forget to delete the state property, otherwise we can end up with ZCs
+	if(restoreFindBarState(bar, e.target._findBar_state)) {
+		delete e.target._findBar_state;
+	}
 };
 
 this.saveFindBarState = function(tab) {
@@ -395,12 +397,14 @@ this.saveFindBarState = function(tab) {
 
 // restores the state from saveFindBarState
 this.restoreFindBarState = function(bar, state) {
-	if(!state) { return; }
+	if(!state) { return false; }
 	
 	bar._findField.value = state.value;
 	bar.getElement('highlight').checked = state.highlight;
 	bar.getElement('find-case-sensitive').checked = state.caseSensitive;
 	bar.open();
+	
+	return true;
 };
 
 // when a browser's content goes from remote to non-remote or vice-versa, its Finder will lose all its active references,

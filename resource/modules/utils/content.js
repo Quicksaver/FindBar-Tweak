@@ -1,4 +1,4 @@
-// VERSION = '1.5.2';
+// VERSION = '1.5.3';
 
 // This script should be loaded by defaultsContent.js, which is in turn loaded directly by the Messenger module.
 // defaultsContent.js should set this object's objName and objPathString properties and call its .init() method.
@@ -6,7 +6,7 @@
 //
 // Use the Messenger object to send message safely to this object without conflicting with other add-ons.
 // To load or unload modules in the modules/content/ folder into this object, use Messenger's loadIn* methods.
-// Reserved messages for the Messenger system: load, unload, init, reinit, pref, shutdown
+// Reserved messages for the Messenger system: shutdown, load, unload, loadQueued, init, reinit, disable
 //
 // Methods that can be used inside content modules:
 // listen(aMessage, aListener) - adds aListener as a receiver for when aMessage is passed from chrome to content through the Messenger object.
@@ -45,6 +45,7 @@ this.__contentEnvironment = {
 	},
 	
 	initialized: false,
+	disabled: false,
 	listeners: new Set(),
 	_queued: new Set(),
 	
@@ -69,9 +70,6 @@ this.__contentEnvironment = {
 	DARWIN: false,
 	LINUX: false,
 	
-	// and some global (content) things
-	webProgress: null,
-	
 	// implement message listeners
 	MESSAGES: [
 		'shutdown',
@@ -79,7 +77,8 @@ this.__contentEnvironment = {
 		'unload',
 		'loadQueued',
 		'init',
-		'reinit'
+		'reinit',
+		'disable'
 	],
 	
 	messageName: function(m) {
@@ -118,6 +117,10 @@ this.__contentEnvironment = {
 			case 'reinit':
 				this.reinit();
 				break;
+			
+			case 'disable':
+				this.disabled = true;
+				break;
 		}
 	},
 	
@@ -132,10 +135,6 @@ this.__contentEnvironment = {
 		XPCOMUtils.defineLazyModuleGetter(this.Scope, "Promise", "resource://gre/modules/Promise.jsm");
 		XPCOMUtils.defineLazyModuleGetter(this.Scope, "Task", "resource://gre/modules/Task.jsm");
 		XPCOMUtils.defineLazyServiceGetter(Services, "navigator", "@mozilla.org/network/protocol;1?name=http", "nsIHttpProtocolHandler");
-		
-		this.webProgress = docShell.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIWebProgress);
-		
-		this.Scope.addEventListener('DOMContentLoaded', this.DOMContentLoaded);
 		
 		// and finally our add-on stuff begins
 		Services.scriptloader.loadSubScript("resource://"+this.objPathString+"/modules/utils/Modules.jsm", this);
@@ -217,16 +216,47 @@ this.__contentEnvironment = {
 		this._queued = new Set();
 	},
 	
+	// Apparently if removing a listener that hasn't been added (or maybe it's something else?) this will throw,
+	// the error should be reported but it's probably ok to continue with the process, this shouldn't block modules from being (un)loaded.
+	WebProgress: {
+		nsI: null,
+		
+		add: function(aListener, aNotifyMask) {
+			if(!this.nsI) {
+				this.nsI = docShell.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIWebProgress);
+			}
+			
+			try { this.nsI.addProgressListener(aListener, aNotifyMask); }
+			catch(ex) { Cu.reportError(ex); }
+		},
+		
+		remove: function(aListener, aNotifyMask) {
+			if(!this.nsI) { return; }
+			
+			try { this.nsI.removeProgressListener(aListener, aNotifyMask); }
+			catch(ex) { Cu.reportError(ex); }
+		}
+	},
+	
 	// ZC is we add multiple listeners to Scope for DOMContentLoad, no clue why though...
 	DOMContentLoaded: {
+		Scope: this,
+		listening: false,
 		handlers: [],
+		
 		add: function(aMethod) {
+			if(!this.listening) {
+				this.Scope.addEventListener('DOMContentLoaded', this);
+				this.listening = true;
+			}
+			
 			for(var h of this.handlers) {
 				if(h == aMethod) { return; }
 			}
 			
 			this.handlers.push(aMethod);
 		},
+		
 		remove: function(aMethod) {
 			for(var h in this.handlers) {
 				if(this.handlers[h] == aMethod) {
@@ -235,6 +265,7 @@ this.__contentEnvironment = {
 				}
 			}
 		},
+		
 		handleEvent: function(e) {
 			for(let h of this.handlers) {
 				try {
@@ -268,7 +299,9 @@ this.__contentEnvironment = {
 		}
 		catch(ex) { Cu.reportError(ex); }
 		
-		this.Scope.removeEventListener('DOMContentLoaded', this.DOMContentLoaded);
+		if(this.DOMContentLoaded.listening) {
+			this.Scope.removeEventListener('DOMContentLoaded', this.DOMContentLoaded);
+		}
 		
 		// remove all listeners, to make sure nothing is left over
 		for(let l of this.listeners) {

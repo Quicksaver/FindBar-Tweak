@@ -1,4 +1,4 @@
-Modules.VERSION = '1.2.0';
+Modules.VERSION = '1.2.1';
 
 this.FIT = {
 	// this keeps a list of all hits in a page, mapped to an id that can be used to keep things sync'ed up with the chrome process
@@ -817,7 +817,7 @@ Modules.LOADMODULE = function() {
 	Modules.load('content/highlights');
 	
 	Listeners.add(Scope, 'focus', FIT, true);
-	webProgress.addProgressListener(FIT, Ci.nsIWebProgress.NOTIFY_ALL);
+	WebProgress.add(FIT, Ci.nsIWebProgress.NOTIFY_ALL);
 	DOMContentLoaded.add(FIT);
 	Finder.addResultListener(FIT);
 	
@@ -832,7 +832,7 @@ Modules.UNLOADMODULE = function() {
 	}
 	
 	Listeners.remove(Scope, 'focus', FIT, true);
-	webProgress.removeProgressListener(FIT, Ci.nsIWebProgress.NOTIFY_ALL);
+	WebProgress.remove(FIT, Ci.nsIWebProgress.NOTIFY_ALL);
 	DOMContentLoaded.remove(FIT);
 	
 	// we could have loaded mFinder while initializing this module, in which case it will be disabled first

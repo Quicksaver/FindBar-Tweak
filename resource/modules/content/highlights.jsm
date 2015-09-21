@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.2';
+Modules.VERSION = '1.1.3';
 
 this.getDocProperty = function(doc, prop, min) {
 	try {
@@ -182,7 +182,7 @@ Modules.LOADMODULE = function() {
 	});
 	
 	Finder.addResultListener(highlights);
-	webProgress.addProgressListener(highlights, Ci.nsIWebProgress.NOTIFY_ALL);
+	WebProgress.add(highlights, Ci.nsIWebProgress.NOTIFY_ALL);
 	DOMContentLoaded.add(highlights);
 	
 	// set outside Finder, as it's a message that it already listens to
@@ -207,7 +207,7 @@ Modules.UNLOADMODULE = function() {
 	}
 	
 	Finder.removeResultListener(highlights);
-	webProgress.removeProgressListener(highlights);
+	WebProgress.remove(highlights);
 	DOMContentLoaded.remove(highlights);
 	
 	RemoteFinderListener.removeMessage('Highlights:Clean');

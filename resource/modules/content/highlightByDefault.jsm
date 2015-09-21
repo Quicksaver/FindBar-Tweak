@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.0';
+Modules.VERSION = '1.0.1';
 
 this.highlightByDefault = {
 	hook: function() {
@@ -36,14 +36,14 @@ this.highlightByDefault = {
 
 Modules.LOADMODULE = function() {
 	if(!viewSource) {
-		webProgress.addProgressListener(highlightByDefault, Ci.nsIWebProgress.NOTIFY_LOCATION);
+		WebProgress.add(highlightByDefault, Ci.nsIWebProgress.NOTIFY_LOCATION);
 		DOMContentLoaded.add(highlightByDefault);
 	}
 };
 
 Modules.UNLOADMODULE = function() {
 	if(!viewSource) {
-		webProgress.removeProgressListener(highlightByDefault, Ci.nsIWebProgress.NOTIFY_LOCATION);
+		WebProgress.remove(highlightByDefault, Ci.nsIWebProgress.NOTIFY_LOCATION);
 		DOMContentLoaded.remove(highlightByDefault);
 	}
 };

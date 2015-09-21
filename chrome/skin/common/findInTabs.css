@@ -86,6 +86,10 @@ window:not([FITSidebar]) #findbartweak-findInTabs-splitter {
 	cursor: default;
 }
 
+#findbartweak-findInTabs-hits richlistitem:not(:first-child) {
+	border-top: 1px solid ThreeDShadow;
+}
+
 #findbartweak-findInTabs-hits richlistitem[unloaded] {
 	text-align: center;
 	cursor: pointer;

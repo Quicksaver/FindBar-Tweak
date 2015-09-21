@@ -1,4 +1,4 @@
-Modules.VERSION = '1.2.9';
+Modules.VERSION = '1.2.10';
 
 this.uiBackup = {};
 
@@ -152,8 +152,10 @@ this.setSelectColorStyleSheet = function(rgb) {
 	sscode += '	url("chrome://global/content/viewSource.xul"),\n';
 	sscode += '	url("chrome://global/content/viewPartialSource.xul"),\n';
 	sscode += '	url("chrome://findbartweak/content/findInTabsFull.xul") {\n';
-	sscode += '		.findInTabs-list richlistitem:hover {\n';
+	sscode += '		.findInTabs-list richlistitem:not([selected]):hover {\n';
 	sscode += '			background-color: rgba('+rgb.r+','+rgb.g+','+rgb.b+',0.03);\n';
+	sscode += '		}\n';
+	sscode += '		.findInTabs-list richlistitem:hover {\n';
 	sscode += '			box-shadow: inset 0 0 2px 1px rgba('+rgb.r+','+rgb.g+','+rgb.b+',0.2);\n';
 	sscode += '		}\n';
 	sscode += '		vbox[anonid="findGrid"] vbox[highlight][current],\n';

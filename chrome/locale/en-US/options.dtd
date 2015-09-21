@@ -130,6 +130,8 @@
 <!ENTITY OptfillSelectedText.tooltip.b "If 'Highlight All by Default' is enabled, selecting text in a webpage will immediately highlight all occurences of the selection.">
 <!ENTITY OptemptySelectedText.label "Empty the Findbar when no text is selected">
 <!ENTITY OptemptySelectedText.tooltip "Likewise from above, if you click anywhere in the webpage to unselect text, the Findbar will be cleared and all the highlights will be removed as well.">
+<!ENTITY OptfillTextFromEditable.label "Fill with text selected in editable elements">
+<!ENTITY OptfillTextFromEditable.tooltip "Choose whether you want selections in text boxes or input fields to also fill the Findbar.">
 <!ENTITY OptfillSelectedOpenFindbar.label "Show the Quick Findbar when selected text is used">
 <!ENTITY OptfillSelectedOpenFindbar.tooltip "When the Findbar is filled with the selected text, it will briefly appear to show that this happened.">
 <!ENTITY OptglobalBehavior.warning "Warning: the following preferences are not specific to the Findbar, they affect the browser globally, such as in webpages, the location bar and any other place where text selection is possible. Change these with caution!">

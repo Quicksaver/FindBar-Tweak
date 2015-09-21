@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.14';
+Modules.VERSION = '1.0.15';
 
 this.__defineGetter__('isPDFJS', function() { return Finder.isPDFJS; });
 
@@ -260,19 +260,25 @@ this.Finder = {
 		message('HighlightsFinished');
 	}),
 	
-	getActiveSelectionText: function() {
+	getFocused: function() {
+		let focused = {};
 		let focusedWindow = {};
-		let focusedElement = Services.focus.getFocusedElementForWindow(this.getWindow, true, focusedWindow);
-		focusedWindow = focusedWindow.value;
 		
+		focused.element = Services.focus.getFocusedElementForWindow(this.getWindow, true, focusedWindow);
+		focused.window = focusedWindow.value;
+		return focused;
+	},
+	
+	getActiveSelectionText: function() {
+		let focused = this.getFocused();
 		let selText;
 		
-		if(focusedElement instanceof Ci.nsIDOMNSEditableElement && focusedElement.editor) {
+		if(focused.element instanceof Ci.nsIDOMNSEditableElement && focused.element.editor) {
 			// The user may have a selection in an input or textarea.
-			selText = focusedElement.editor.selectionController.getSelection(Ci.nsISelectionController.SELECTION_NORMAL).toString();
+			selText = focused.element.editor.selectionController.getSelection(Ci.nsISelectionController.SELECTION_NORMAL).toString();
 		} else {
 			// Look for any selected text on the actual page.
-			selText = focusedWindow.getSelection().toString();
+			selText = focused.window.getSelection().toString();
 		}
 		
 		if(!selText) {

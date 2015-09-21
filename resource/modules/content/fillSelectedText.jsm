@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.4';
+Modules.VERSION = '2.0.5';
 
 this.selectedText = {
 	handleEvent: function(e) {
@@ -55,10 +55,22 @@ this.selectedText = {
 				Modules.load('content/mFinder');
 			}
 			
+			// there's no point in autofilling the find bar if it won't work in this page
 			if(!Finder.isValid) { return; }
+			
+			let selText = Finder.getActiveSelectionText();
+			
+			// don't autofill if we're selecitng text in an editable node and the user doesn't want that,
+			// but we do want to erase the findbar when there's no text selection
+			if(selText && !Prefs.fillTextFromEditable) {
+				let focused = Finder.getFocused();
+				if(focused.element && focused.element instanceof Ci.nsIDOMNSEditableElement) {
+					return;
+				}
+			}
+			
 			this.noSights(true);
 			
-			var selText = Finder.getActiveSelectionText();
 			message('FillSelectedText', selText);
 		}, 0);
 	}

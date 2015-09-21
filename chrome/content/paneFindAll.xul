@@ -20,6 +20,7 @@
 			<preference id="pref-findInTabs" name="extensions.findbartweak.findInTabs" type="bool"/>
 			<preference id="pref-findInTabsAction" name="extensions.findbartweak.findInTabsAction" type="string"/>
 			<preference id="pref-autoShowHideFIT" name="extensions.findbartweak.autoShowHideFIT" type="bool"/>
+			<preference id="pref-twinFITSidebar" name="extensions.findbartweak.twinFITSidebar" type="bool"/>
 			<preference id="pref-multipleFITFull" name="extensions.findbartweak.multipleFITFull" type="bool"/>
 		</preferences>
 		
@@ -66,6 +67,19 @@
 				jump="autoShowHideFIT"
 				dependson="pref-findInTabs,pref-findInTabsAction:sidebar"
 				delayPreference="pref-autoShowHideFIT"/>
+		</groupbox>
+		
+		<groupbox align="start" id="paneFindAll-getOSB" collapsed="true" data-category="paneFindAll">
+			<description>&OptgetOSB.description;</description>
+		</groupbox>
+		
+		<groupbox align="start" id="paneFindAll-hasOSB" collapsed="true" data-category="paneFindAll">
+			<description>&OpthasOSB.description;</description>
+			<checkbox label="&OpttwinFITSidebar.label;"
+				helptext="&OpttwinFITSidebar.tooltip;"
+				jump="twinFITSidebar"
+				dependson="pref-findInTabs,pref-findInTabsAction:sidebar"
+				delayPreference="pref-twinFITSidebar"/>
 		</groupbox>
 		
 		<groupbox align="start" id="paneFindAll-full" collapsed="true" data-category="paneFindAll">

@@ -14,3 +14,27 @@ colorpicker {
 caption colorpicker[type="button"] {
 	-moz-margin-start: 1.5em;
 }
+
+/* Get OmniSidebar section of the Find All pane */
+
+#paneFindAll-getOSB {
+	cursor: pointer;
+	background: rgb(255,255,255) url("chrome://findbartweak/skin/omnisidebar.png") no-repeat 8px 50%;
+	border: 1px solid rgb(193,193,193);
+	min-height: 68px;
+	margin: 15px 0 10px;
+	-moz-padding-start: 84px;
+	-moz-padding-end: 8px;
+	padding-top: 1.2em;
+	padding-bottom: 1.2em;
+}
+
+#paneFindAll-getOSB:hover {
+	border-color: rgb(0,149,221);
+}
+
+#paneFindAll-getOSB description {
+	cursor: pointer;
+	margin-top: 0;
+	margin-bottom: 0;
+}

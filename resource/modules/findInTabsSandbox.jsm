@@ -1,4 +1,4 @@
-Modules.VERSION = '2.2.0';
+Modules.VERSION = '2.2.1';
 
 this.FITSandbox = {
 	kBroadcasterId: objName+'-findInTabs-broadcaster',
@@ -79,7 +79,7 @@ this.FITSandbox = {
 		if(param === false) { return Promise.resolve(); }
 		
 		// the FIT sidebar isn't open and we want it to be, so let's start it up, the state will be carried by our observer
-		return SidebarUI.show(this.kBroadcasterId);
+		return SidebarUI.show(this.kBroadcasterId, Prefs.twinFITSidebar);
 	},
 	
 	findSidebar: function(aWindow) {

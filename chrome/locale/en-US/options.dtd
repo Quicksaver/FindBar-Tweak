@@ -30,6 +30,10 @@
 <!ENTITY OptfindInTabsSidebar.caption "Find All sidebar">
 <!ENTITY OptautoShowHideFIT.label "Show and hide with the Findbar">
 <!ENTITY OptautoShowHideFIT.tooltip "The sidebar lists appear and hide automatically when you open and close the Findbar, so that you don't have to press the Find All button.">
+<!ENTITY OptgetOSB.description "You can further control the position and behavior of the Find All sidebar with my other add-on, OmniSidebar. Click here to get it!">
+<!ENTITY OpthasOSB.description "Configure your OmniSidebar's preferences to further control the position and behavior of the Find All sidebar. For instance, remember that the preference below only works if the Twin Sidebar itself is enabled.">
+<!ENTITY OpttwinFITSidebar.label "Open in the Twin Sidebar">
+<!ENTITY OpttwinFITSidebar.tooltip "The Find All sidebar will always open in the Twin Sidebar, on the opposite side of the window from the main sidebar, so that you can keep your bookmarks or history open at the same time.">
 <!ENTITY OptfindInTabsFull.caption "Find in All Tabs window">
 <!ENTITY OptmultipleFITFull.label.b "Allow multiple instances">
 <!ENTITY OptmultipleFITFull.tooltip.b "Open a new window each time the Find in All Tabs button is pressed, otherwise it will reuse any already opened window.">

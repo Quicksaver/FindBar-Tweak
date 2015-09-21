@@ -1,4 +1,4 @@
-Modules.VERSION = '2.5.0';
+Modules.VERSION = '2.5.1';
 Modules.UTILS = true;
 
 // Browsers - Aid object to track and perform tasks on all document browsers across the windows.
@@ -29,7 +29,7 @@ this.Browsers = {
 	callOnAll: function(aCallback, aURI, beforeComplete, onlyTabs) {
 		var browserEnumerator = Services.wm.getEnumerator('navigator:browser');
 		while(browserEnumerator.hasMoreElements()) {
-			var aWindow = browserEnumerator.getNext();
+			let aWindow = browserEnumerator.getNext();
 			if(aWindow.gBrowser) {
 				// Browser panels (tabs)
 				for(let aBrowser of aWindow.gBrowser.browsers) {
@@ -47,6 +47,9 @@ this.Browsers = {
 	},
 	
 	callOnBrowser: function(aBrowser, aCallback, aURI, beforeComplete) {
+		// safeguard
+		if(!aBrowser) { return; }
+		
 		// e10s fix, we don't check remote tabs
 		if(aBrowser.isRemoteBrowser) { return; }
 		
@@ -187,11 +190,12 @@ this.Browsers = {
 		if(aWindow.SidebarUI) {
 			// compatibility with OmniSidebar
 			if(aWindow.SidebarUI.browsers) {
-				for(let sidebar of aWindow.SidebarUI.browsers()) {
-					yield sidebar;
+				for(let browser of aWindow.SidebarUI.browsers()) {
+					if(!browser) { continue; }
+					yield browser;
 				}
 			}
-			else {
+			else if(aWindow.SidebarUI.browser) {
 				yield aWindow.SidebarUI.browser;
 			}
 		}

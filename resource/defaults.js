@@ -1,4 +1,4 @@
-// VERSION = '1.3.9';
+// VERSION = '1.3.10';
 
 objName = 'findbartweak';
 objPathString = 'findbartweak';
@@ -20,7 +20,7 @@ paneList = [
 	[ "paneHighlights" ],
 	[ "paneSights", true ],
 	[ "paneTweaks", true ],
-	[ "paneFindAll" ]
+	[ "paneFindAll", true ]
 ];
 
 // We define this here so we can use it also as the default value for the preference
@@ -49,6 +49,7 @@ prefList = {
 	autoShowHideFIT: false,
 	multipleFITFull: false,
 	showTabsInFITSidebar: false,
+	twinFITSidebar: true,
 	
 	useGrid: true,
 	gridLimit: 100,

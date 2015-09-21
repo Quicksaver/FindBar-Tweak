@@ -1,4 +1,4 @@
-Modules.VERSION = '2.3.3';
+Modules.VERSION = '2.3.4';
 
 this.__defineGetter__('FITdeferred', function() { return window.FITdeferred; });
 this.__defineGetter__('FITinitialized', function() { return FITdeferred.promise; });
@@ -293,7 +293,7 @@ this.FIT = {
 		
 		// If tab is already loading, don't bother reloading, multiple clicks on the same item shouldn't re-trigger tab load
 		if(item.linkedHits.currentItem.loadingTab) {
-			item.linkedHits.selectedIndex = -1;
+			this.selectHitOnlyOnce(item.linkedHits, -1);
 			return;
 		}
 		
@@ -319,7 +319,7 @@ this.FIT = {
 			
 			setAttribute(hits.currentItem.childNodes[0], 'value', Strings.get('findInTabs', 'loadingTab'));
 			removeAttribute(item.linkedTitle, 'unloaded');
-			hits.selectedIndex = -1;
+			this.selectHitOnlyOnce(hits, -1);
 			return;
 		}
 		
@@ -340,6 +340,18 @@ this.FIT = {
 			caseSensitive: gFindBar.getElement("find-case-sensitive").checked,
 			findPrevious: aFindPrevious
 		});
+		
+		// onmousedown is called after onselect, but there's no need to run selectHit() twice
+		hits._noMouseDown = true;
+		aSync(() => {
+			hits._noMouseDown = false;
+		});
+	},
+	
+	selectHitOnlyOnce: function(hits, idx) {
+		hits._noSelect = true;
+		hits.selectedIndex = idx;
+		hits._noSelect = false;
 	},
 	
 	focusMe: function(aBrowser) {
@@ -764,12 +776,12 @@ this.FIT = {
 		newHits.setAttribute('flex', '1');
 		
 		// Don't use the Listeners object for the following, as there's no need to keep references to these nodes once they're gone, and they're gone a lot
-		newHits.handleEvent = (e) => {
+		newHits.handleEvent = function(e) {
 			switch(e.type) {
 				// double clicks on an entry should send the user to the selected hit
 				case 'dblclick':
-					if(e.target != newHits) {
-						this.selectHit();
+					if(e.target != this) {
+						FIT.selectHit();
 					}
 					break;
 				
@@ -777,23 +789,40 @@ this.FIT = {
 				case 'keypress':
 					switch(e.keyCode) {
 						case e.DOM_VK_RETURN:
-							this.selectHit();
+							FIT.selectHit();
 							break;
 					}
 					break;
 				
 				// some entries only require a single click, such as the "Load this tab..." entry for unloaded tabs
 				case 'click':
-					if(e.target != newHits && newHits.currentItem.isUnloadedTab) {
-						this.selectHit();
+					if(e.target != this && this.currentItem.isUnloadedTab) {
+						FIT.selectHit();
 					}
+					break;
+				
+				case 'mousedown':
+					if(e.target == this || this._noMouseDown) { break; }
+					// no break; continue to select
+				
+				case 'select':
+					if(this._noSelect) { break; }
+					
+					FIT.selectHit();
 					break;
 			}
 		};
 		
-		newHits.addEventListener('dblclick', newHits);
-		newHits.addEventListener('keypress', newHits);
-		newHits.addEventListener('click', newHits);
+		if(!FITSidebar) {
+			newHits.addEventListener('dblclick', newHits);
+			newHits.addEventListener('keypress', newHits);
+			newHits.addEventListener('click', newHits);
+		}
+		else {
+			// we should be able to immediately navigate through the items in the page from the FIT sidebar
+			newHits.addEventListener('mousedown', newHits);
+			newHits.addEventListener('select', newHits);
+		}
 		
 		newHits.hidden = (item != this.tabsList.currentItem); // Keep the hits list visible
 		newHits._currentLabel = null;
@@ -1046,7 +1075,10 @@ this.FIT = {
 			};
 			
 			label.addEventListener('mouseover', label);
-			label.addEventListener('click', label);
+			if(!FITSidebar) {
+				// matches in the FIT sidebar don't need this, as clicking them will also select the item, calling its own handler
+				label.addEventListener('click', label);
+			}
 			
 			item.linkedHits.hits.set(str.highlight, {
 				item: hitItem,

@@ -1,4 +1,4 @@
-Modules.VERSION = '2.2.1';
+Modules.VERSION = '2.2.2';
 
 this.FITMini = {
 	get broadcaster() { return $(FITSandbox.kBroadcasterId); },
@@ -52,11 +52,17 @@ this.FITMini = {
 				break;
 			
 			case 'OpenedFindBar':
-				FITSandbox.commandSidebar(window, true);
+				// the FIT sidebar should already be in the correct state when switching tabs!
+				// There's no need to toggle the sidebar if the find bar "was already open".
+				if(!trueAttribute(gFindBar, 'noAnimation')) {
+					FITSandbox.commandSidebar(window, true);
+				}
 				break;
 			
 			case 'ClosedFindBar':
-				FITSandbox.commandSidebar(window, false);
+				if(!trueAttribute(gFindBar, 'noAnimation')) {
+					FITSandbox.commandSidebar(window, false);
+				}
 				break;
 		}
 	},
@@ -87,8 +93,8 @@ this.FITMini = {
 			case 'nsPref:changed':
 				switch(aSubject) {
 					case 'findInTabsAction':
-						this.toggleAutoShowHide();
 						this.updateBroadcaster();
+						this.toggleAutoShowHide();
 						
 						// in case the user doesn't want the button to toggle the sidebar, make sure we close it now,
 						// otherwise the user would have to do it manually
@@ -122,6 +128,10 @@ this.FITMini = {
 		if(!unload && Prefs.autoShowHideFIT && Prefs.findInTabsAction == 'sidebar') {
 			Listeners.add(window, 'OpenedFindBar', this);
 			Listeners.add(window, 'ClosedFindBar', this);
+			
+			if(gFindBarInitialized && !gFindBar.hidden && !this.sidebar) {
+				this.toggle();
+			}
 		} else {
 			Listeners.remove(window, 'OpenedFindBar', this);
 			Listeners.remove(window, 'ClosedFindBar', this);
@@ -215,12 +225,12 @@ this.FITMini = {
 			FITSandbox.navigators.add(window);
 		}
 		
+		this.updateBroadcaster();
 		if(!viewSource) {
 			Prefs.listen('findInTabsAction', this);
 			Prefs.listen('autoShowHideFIT', this);
 			this.toggleAutoShowHide();
 		}
-		this.updateBroadcaster();
 		
 		initFindBar('findInTabsMini',
 			(bar) => {

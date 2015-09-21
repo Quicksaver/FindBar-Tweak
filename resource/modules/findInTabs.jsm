@@ -1,4 +1,4 @@
-Modules.VERSION = '2.3.2';
+Modules.VERSION = '2.3.3';
 
 this.__defineGetter__('FITdeferred', function() { return window.FITdeferred; });
 this.__defineGetter__('FITinitialized', function() { return FITdeferred.promise; });
@@ -355,7 +355,7 @@ this.FIT = {
 	},
 	
 	onHoverHit: function(label) {
-		var item = label.parentNode.parentNode;
+		var item = label.parentNode.parentNode.parentNode;
 		item.hitIdx = label.hitIdx;
 		this.delayHoverGrid(item);
 	},

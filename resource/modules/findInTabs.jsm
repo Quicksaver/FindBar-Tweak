@@ -1,4 +1,4 @@
-Modules.VERSION = '2.3.0';
+Modules.VERSION = '2.3.1';
 
 this.__defineGetter__('FITdeferred', function() { return window.FITdeferred; });
 this.__defineGetter__('FITinitialized', function() { return FITdeferred.promise; });
@@ -218,6 +218,7 @@ this.FIT = {
 		
 		this.tabsGroups.selectedIndex = this.tabs._selectedGroupI;
 		this.tabsGroups.ensureSelectedElementIsVisible();
+		this.tabsGroups.focus();
 		
 		this.updateGroupNames();
 	},
@@ -566,11 +567,7 @@ this.FIT = {
 		
 		let groupTabs = document.createElement('richlistbox');
 		groupTabs.setAttribute('flex', '1');
-		groupTabs.ondblclick = (e) => {
-			if(e.button == 0) {
-				this.toggleGroups();
-			}
-		};
+		groupTabs.onblur = (e) => { this.toggleGroups(); };
 		groupTabs.onkeyup = (e) => {
 			if(e.keyCode == e.DOM_VK_RETURN) {
 				this.toggleGroups();
@@ -708,11 +705,16 @@ this.FIT = {
 	},
 	
 	createGroupItem: function(aGroup, groupTabs, aName) {
-		var newItem = document.createElement('richlistitem');
+		let newItem = document.createElement('richlistitem');
 		newItem.setAttribute('align', 'center');
 		newItem.linkedGroup = aGroup;
+		newItem.onclick = (e) => {
+			if(e.button == 0) {
+				this.toggleGroups();
+			}
+		};
 		
-		var itemLabel = document.createElement('label');
+		let itemLabel = document.createElement('label');
 		itemLabel.setAttribute('flex', '1');
 		itemLabel.setAttribute('crop', 'end');
 		newItem.appendChild(itemLabel);

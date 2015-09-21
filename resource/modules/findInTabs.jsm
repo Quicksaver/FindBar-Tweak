@@ -1,4 +1,4 @@
-Modules.VERSION = '2.3.1';
+Modules.VERSION = '2.3.2';
 
 this.__defineGetter__('FITdeferred', function() { return window.FITdeferred; });
 this.__defineGetter__('FITinitialized', function() { return FITdeferred.promise; });
@@ -373,24 +373,28 @@ this.FIT = {
 	
 	updateGroupNames: function() {
 		// We only show these entries if there are any ViewSource Windows open
-		if(FITSandbox.viewSources.size == 0) {
+		if(!FITSandbox.viewSources.size) {
 			setAttribute(this.tabsGroups.children[0].childNodes[0], 'value', this.filterList[2]);
+			setAttribute(this.tabsGroups.children[0].childNodes[0], 'tooltiptext', this.filterList[2]);
 			if(this.tabs._selectedGroupI == 1 || this.tabs._selectedGroupI == 2) {
 				this.tabs._selectedGroupI = 0;
-				this.tabs._selectedGroupTitle = this.tabsGroups.children[0].childNodes[0].getAttribute('value');
+				this.tabs._selectedGroupTitle = this.filterList[2];
 				this.tabsGroups.selectedIndex = 0;
 			}
 			this.tabsGroups.children[1].hidden = true;
 			this.tabsGroups.children[2].hidden = true;
 		} else {
 			setAttribute(this.tabsGroups.children[0].childNodes[0], 'value', this.filterList[0]);
+			setAttribute(this.tabsGroups.children[0].childNodes[0], 'tooltiptext', this.filterList[0]);
 			this.tabsGroups.children[1].hidden = false;
 			this.tabsGroups.children[2].hidden = false;
 		}
 		
 		for(let item of this.tabsGroups.children) {
 			if(item.linkedGroup) {
-				setAttribute(item.childNodes[0], 'value', this.getTabGroupName(item.linkedGroup));
+				let name = this.getTabGroupName(item.linkedGroup);
+				setAttribute(item.childNodes[0], 'value', name);
+				setAttribute(item.childNodes[0], 'tooltiptext', name);
 			}
 		}
 		
@@ -724,6 +728,7 @@ this.FIT = {
 		}
 		
 		itemLabel.setAttribute('value', aName);
+		itemLabel.setAttribute('tooltiptext', aName);
 		groupTabs.appendChild(newItem);
 		
 		return newItem;
@@ -818,6 +823,7 @@ this.FIT = {
 		}
 		
 		item.linkedTitle.setAttribute('value', newTitle);
+		item.linkedTitle.setAttribute('tooltiptext', newTitle);
 		
 		// Let's make it pretty with the favicons
 		yield new Promise(function(resolve, reject) {

@@ -121,13 +121,13 @@
 <!ENTITY OptctrlFCloses.tooltip "You can open the Findbar and then close it when you no longer need it through the same keyboard shortcut.">
 <!ENTITY OptctrlFprefill.label "Fill the Findbar with the selected text when opening it">
 <!ENTITY OptctrlFprefill.tooltip.a "If there is any text selected in the webpage when the Findbar is opened, this text is automatically copied to the Findbar to be used as a find query.">
-<!ENTITY OptctrlFprefill.tooltip.b "If 'Highlight All by Default' is enabled, it will find all occurences of the selected text immediately.">
+<!ENTITY OptctrlFprefill.tooltip.b "If the 'Highlight all matches by default' is enabled, it will find all occurences of the selected text immediately.">
 <!ENTITY OptctrlFOnFocused.label "Only close when it is already focused">
 <!ENTITY OptctrlFOnFocused.tooltip "The keyboard shortcut will always first place the cursor in the Findbar, copying any selected text in the webpage into it if the above preference is enabled. It will only close the Findbar when the cursor is already in it.">
 <!ENTITY OptSelectingText.label "When Selecting Text">
 <!ENTITY OptfillSelectedText.label "Fill the Findbar with the selected text">
 <!ENTITY OptfillSelectedText.tooltip.a "Every time any word is selected in the webpage, it will be automatically copied to the Findbar to be used as a find query. ">
-<!ENTITY OptfillSelectedText.tooltip.b "If 'Highlight All by Default' is enabled, selecting text in a webpage will immediately highlight all occurences of the selection.">
+<!ENTITY OptfillSelectedText.tooltip.b "If the 'Highlight all matches by default' is enabled, selecting text in a webpage will immediately highlight all occurences of the selection.">
 <!ENTITY OptemptySelectedText.label "Empty the Findbar when no text is selected">
 <!ENTITY OptemptySelectedText.tooltip "Likewise from above, if you click anywhere in the webpage to unselect text, the Findbar will be cleared and all the highlights will be removed as well.">
 <!ENTITY OptfillTextFromEditable.label "Fill with text selected in editable elements">

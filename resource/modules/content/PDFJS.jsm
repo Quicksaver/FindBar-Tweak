@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.5';
+Modules.VERSION = '1.0.6';
 
 this.PDFJS = {
 	// We need this to access protected properties, hidden from privileged code
@@ -17,9 +17,6 @@ this.PDFJS = {
 	get findController() { return this.viewerApplication && this.viewerApplication.findController; },
 	
 	getPageView: function(pIdx) {
-		if(Services.vc.compare(Services.appinfo.version, '41.0a1') < 0) {
-			return this.viewerApplication.pdfViewer.pages[pIdx];
-		}
 		return this.viewerApplication.pdfViewer.getPageView(pIdx);
 	},
 	

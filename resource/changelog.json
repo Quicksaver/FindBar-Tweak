@@ -1,6 +1,31 @@
 {
-	"current":"2.0.7",
+	"current":"2.1",
 	"releases": {
+		"2.1":{
+			"date":"September 28, 2015",
+			"notes":[
+				["new","Find All feature, show all the matches in the page in the sidebar! (<a=https://github.com/Quicksaver/FindBar-Tweak/issues/206>issue #206</a>)"],
+				["changed","Reorganized a little the preferences tab for the new Find All feature"],
+				["changed","Items in the matches list of the Find in All Tabs dialog now show the text in a multi-line layout if the dialog is too small, instead of truncating the text like it did before."],
+				["changed","Can select a filter group from the Find in All Tabs filters section with only a single click"],
+				["changed","Tab and filter item in the Find in All Tabs lists now have tooltips with their names as well"],
+				["changed","Selecting text in an editable element will no longer fill the Findbar with the selection by default, there is a new preference in the Tweaks pane to re-enable that behavior (<a=https://github.com/Quicksaver/FindBar-Tweak/issues/106>issue #106</a>)"],
+				["removed","The Update Results button in the Find in All Tabs dialog was removed; for the same function press Enter when the cursor is in the find textbox."],
+				["removed","Alt+F3 shortcut to open/update the Find in All Tabs dialog, it was dangerously close to Alt+F4; instead hit Ctrl+Shift+Enter when the cursor is in the find bar to toggle Find All."],
+				["removed","Compatibility with Firefox 40"],
+				["updated","Some performance improvements when building the Find in All Tabs results"],
+				["updated","es, fr, ja-JP and zh-CN locales"],
+				["updated","Improvements when enabling/disabling the add-on"],
+				["bugfix","(e10s) find bar state would sometimes not be remembered on startup if that option was enabled"],
+				["bugfix","(e10s) find bar would sometimes disappear when surfing between remote and non-remote locations"],
+				["bugfix","Sometimes when closing tabs, they would persist in the tabs list in the Find in All Tabs dialog"],
+				["bugfix","Sometimes when opening new tabs, they wouldn't be searchable by Find in All Tabs"],
+				["bugfix","In some cases the add-on could get stuck in an endless loop when placing the highlights, often flickering them and possibly even lagging the browser (<a=https://github.com/Quicksaver/FindBar-Tweak/issues/223>issue #223</a>)"],
+				["bugfix","The global find bar could not work correctly when switching to a tab where the quick find bar was last used"],
+				["bugfix","Moving the mouse over any already selected item in the Find in All Tabs lists could make it very hard to read"],
+				["","Other minor improvements"]
+			]
+		},
 		"2.0.7":{
 			"date":"September 10, 2015",
 			"notes":[

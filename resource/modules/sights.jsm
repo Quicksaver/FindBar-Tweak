@@ -1,4 +1,4 @@
-Modules.VERSION = '2.2.2';
+Modules.VERSION = '2.2.3';
 
 this.SIGHTS_SIZE_FOCUS = 400;
 this.SIGHTS_SIZE_CIRCLE = 100;
@@ -249,14 +249,14 @@ this.sights = {
 	color: function() {
 		if(!preferencesDialog && !Prefs.sightsCurrent && !Prefs.sightsHighlights) { return; }
 		
-		let sscode =
-			'@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n' +
-			'@-moz-document\n' +
-			'	url("chrome://browser/content/browser.xul"),\n' +
-			'	url("chrome://global/content/viewSource.xul"),\n' +
-			'	url("chrome://global/content/viewPartialSource.xul"),\n' +
-			'	url-prefix("chrome://'+objPathString+'/content/utils/preferences.xul"),\n' +
-			'	url-prefix("about:'+objPathString+'") {\n';
+		let sscode = '\
+			@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n\
+			@-moz-document\n\
+				url("chrome://browser/content/browser.xul"),\n\
+				url("chrome://global/content/viewSource.xul"),\n\
+				url("chrome://global/content/viewPartialSource.xul"),\n\
+				url-prefix("chrome://'+objPathString+'/content/utils/preferences.xul"),\n\
+				url-prefix("about:'+objPathString+'") {\n';
 		
 		var color = Prefs.sightsSameColor ? Prefs.selectColor : Prefs.sightsSameColorAll ? Prefs.highlightColor : Prefs.sightsColor;
 		var m = color.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
@@ -265,15 +265,16 @@ this.sights = {
 		
 		var c = rgb.r+','+rgb.g+','+rgb.b;
 		var o = (darkBackgroundRGB(rgb)) ? '255,255,255' : '0,0,0';
+		var p = 'rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+',0.85) rgba('+o+',0.5) rgba('+c+',0.4) rgba('+c+',0.15)';
 		
-		sscode +=
-			' :root['+objName+'_UUID="'+_UUID+'"] box[anonid="highlightSights"][sightsStyle="focus"][current],\n' +
-			' :root['+objName+'_UUID="'+_UUID+'"] box[anonid="highlightSights"][sightsStyle="circle"][current] box[innerContainer] box {\n' +
-			'  -moz-border-top-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+',0.85) rgba('+o+',0.5) rgba('+c+',0.4) rgba('+c+',0.15) !important;\n' +
-			'  -moz-border-bottom-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+',0.85) rgba('+o+',0.5) rgba('+c+',0.4) rgba('+c+',0.15) !important;\n' +
-			'  -moz-border-left-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+',0.85) rgba('+o+',0.5) rgba('+c+',0.4) rgba('+c+',0.15) !important;\n' +
-			'  -moz-border-right-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+',0.85) rgba('+o+',0.5) rgba('+c+',0.4) rgba('+c+',0.15) !important;\n' +
-			' }\n';
+		sscode += '\
+				:root['+objName+'_UUID="'+_UUID+'"] box[anonid="highlightSights"][sightsStyle="focus"][current],\n\
+				:root['+objName+'_UUID="'+_UUID+'"] box[anonid="highlightSights"][sightsStyle="circle"][current] box[innerContainer] box {\n\
+					-moz-border-top-colors: '+p+' !important;\n\
+					-moz-border-bottom-colors: '+p+' !important;\n\
+					-moz-border-left-colors: '+p+' !important;\n\
+					-moz-border-right-colors: '+p+' !important;\n\
+				}\n';
 		
 		var color = Prefs.sightsAllSameColor ? Prefs.highlightColor : Prefs.sightsAllColor;
 		var m = color.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
@@ -282,17 +283,17 @@ this.sights = {
 		
 		var c = rgb.r+','+rgb.g+','+rgb.b;
 		var o = (darkBackgroundRGB(rgb)) ? '255,255,255' : '0,0,0';
+		var p = 'rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+',0.85) rgba('+o+',0.5) rgba('+c+',0.4) rgba('+c+',0.15)';
 		
-		sscode +=
-			' window['+objName+'_UUID="'+_UUID+'"] box[anonid="highlightSights"][sightsStyle="focus"]:not([current]),\n' +
-			' window['+objName+'_UUID="'+_UUID+'"] box[anonid="highlightSights"][sightsStyle="circle"]:not([current]) box[innerContainer] box {\n' +
-			'  -moz-border-top-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+',0.85) rgba('+o+',0.5) rgba('+c+',0.4) rgba('+c+',0.15) !important;\n' +
-			'  -moz-border-bottom-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+',0.85) rgba('+o+',0.5) rgba('+c+',0.4) rgba('+c+',0.15) !important;\n' +
-			'  -moz-border-left-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+',0.85) rgba('+o+',0.5) rgba('+c+',0.4) rgba('+c+',0.15) !important;\n' +
-			'  -moz-border-right-colors: rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+',0.85) rgba('+o+',0.5) rgba('+c+',0.4) rgba('+c+',0.15) !important;\n' +
-			' }\n' +
-			
-			'}';
+		sscode += '\
+				window['+objName+'_UUID="'+_UUID+'"] box[anonid="highlightSights"][sightsStyle="focus"]:not([current]),\n\
+				window['+objName+'_UUID="'+_UUID+'"] box[anonid="highlightSights"][sightsStyle="circle"]:not([current]) box[innerContainer] box {\n\
+					-moz-border-top-colors: '+p+' !important;\n\
+					-moz-border-bottom-colors: '+p+' !important;\n\
+					-moz-border-left-colors: '+p+' !important;\n\
+					-moz-border-right-colors: '+p+' !important;\n\
+				}\n\
+			}';
 		
 		Styles.load('sightsColor_'+_UUID, sscode, true);
 	}

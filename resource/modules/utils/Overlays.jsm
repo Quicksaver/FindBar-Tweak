@@ -1,4 +1,4 @@
-Modules.VERSION = '2.15.9';
+Modules.VERSION = '2.15.10';
 Modules.UTILS = true;
 
 // Overlays - to use overlays in my bootstraped add-ons. The behavior is as similar to what is described in https://developer.mozilla.org/en/XUL_Tutorial/Overlays as I could manage.
@@ -1966,9 +1966,9 @@ this.Overlays = {
 		
 		obj.sheets.add(sheet);
 		
-		let sscode =
-			'@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n' +
-			'[waitForSS~="'+sheet+'"] { visibility: collapse !important; transition: none !important; }';
+		let sscode = '\
+			@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n\
+			[waitForSS~="'+sheet+'"] { visibility: collapse !important; transition: none !important; }';
 		
 		Styles.load('waitfor:'+sheet, sscode, true);
 		

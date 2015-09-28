@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.11';
+Modules.VERSION = '2.0.12';
 
 this.__defineGetter__('gBrowserBox', function() { return $('browser'); });
 this.__defineGetter__('gAppContent', function() { return $('appcontent'); });
@@ -117,22 +117,21 @@ this.moveTop = function() {
 	
 	moveTopStyle = topStyle;
 	
-	let sscode =
-		'@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n' +
-		'@-moz-document url("'+document.baseURI+'") {\n' +
-		'	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop] {\n' +
-		'		max-width: ' + Math.max(topStyle.maxWidth, 5) + 'px;\n' +
-		
+	let sscode = '\
+		@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n\
+		@-moz-document url("'+document.baseURI+'") {\n\
+			window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop] {\n\
+				max-width: ' + Math.max(topStyle.maxWidth, 5) + 'px;\n\
+				top: ' + topStyle.top + 'px;\n\
+				bottom: auto;\n' +
+				
 				// Bug 893446 sets left and right values to 0, so we need to overwrite them
-		'		' + (!Prefs.movetoRight ?
+				(!Prefs.movetoRight ?
 					'left: ' + topStyle.left :
 					'right: ' + topStyle.right) +
-				'px;\n' +
-		
-		'		top: ' + topStyle.top + 'px;\n' +
-		'		bottom: auto;\n' +
-		'	}' +
-		'}';
+				'px;\n\
+			}\n\
+		}';
 	
 	Styles.load('topFindBar_'+_UUID, sscode, true);
 	
@@ -165,12 +164,12 @@ this.moveTopCorners = function() {
 	var beforeStart = -CORNER_WIDTH -findBarPaddingStart -(findBarBorderStart -1);
 	var afterStart = gFindBar.clientWidth -container.clientWidth +(findBarBorderEnd -1);
 	
-	let sscode =
-		'@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n' +
-		'@-moz-document url("'+document.baseURI+'") {\n' +
-		'	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:before { -moz-margin-start: ' + beforeStart + 'px; }\n' +
-		'	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:after { -moz-margin-start: ' + afterStart + 'px; }\n' +
-		'}';
+	let sscode = '\
+		@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n\
+		@-moz-document url("'+document.baseURI+'") {\n\
+			window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:before { -moz-margin-start: ' + beforeStart + 'px; }\n\
+			window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:after { -moz-margin-start: ' + afterStart + 'px; }\n\
+		}';
 	
 	Styles.load('topFindBarCorners_'+_UUID, sscode, true);
 	
@@ -179,11 +178,11 @@ this.moveTopCorners = function() {
 
 this.forceCornerRedraw = function() {
 	// Bugfix (a bit ugly, I know) to force the corners to redraw on changing tabs or resizing windows
-	let sscode =
-		'@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n' +
-		'@-moz-document url("'+document.baseURI+'") {\n' +
-		'	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:before, findbar[movetotop]:after { padding-bottom: 1px; }\n' +
-		'}';
+	let sscode = '\
+		@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n\
+		@-moz-document url("'+document.baseURI+'") {\n\
+			window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:before, findbar[movetotop]:after { padding-bottom: 1px; }\n\
+		}';
 	
 	Styles.load('tempRedrawCorners_'+_UUID, sscode, true);
 	aSync(function() {
@@ -262,25 +261,25 @@ this.stylePersonaFindBar = function() {
 		var offsetX = -moveTopStyle.right -borderStart;
 	}
 	
-	let sscode =
-		'@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n' +
-		'@-moz-document url("'+document.baseURI+'") {\n' +
-		'	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:not([inPDFJS]) {\n' +
-		'	  background-image: ' + lwtheme.bgImage + ';\n' +
-		'	  background-color: ' + lwtheme.bgColor + ';\n' +
-		'	  color: ' + lwtheme.color + ';\n' +
-		'	  background-position: '+offsetXSide+' '+offsetX+'px top '+offsetY+'px;\n' +
-		'	  background-repeat: repeat;\n' +
-		'	  background-size: auto auto;\n' +
-		'	}\n' +
+	let sscode = '\
+		@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n\
+		@-moz-document url("'+document.baseURI+'") {\n\
+			window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:not([inPDFJS]) {\n\
+				background-image: ' + lwtheme.bgImage + ';\n\
+				background-color: ' + lwtheme.bgColor + ';\n\
+				color: ' + lwtheme.color + ';\n\
+				background-position: '+offsetXSide+' '+offsetX+'px top '+offsetY+'px;\n\
+				background-repeat: repeat;\n\
+				background-size: auto auto;\n\
+			}\n' +
 	
-	// There's just no way I can have rounded corners with personas
-		'	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:not([inPDFJS]):before,\n' +
-		'	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:not([inPDFJS]):after {\n' +
-		'		display: none !important;\n' +
-		'	}\n' +
-		
-		'}';
+		// There's just no way I can have rounded corners with personas
+		'\
+			window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:not([inPDFJS]):before,\n\
+			window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:not([inPDFJS]):after {\n\
+				display: none !important;\n\
+			}\n\
+		}';
 	
 	Styles.load('personaFindBar_'+_UUID, sscode, true);
 };
@@ -302,13 +301,13 @@ this.toggleNotificationState = function() {
 	// I'm not using top and moveTopStyle values incremented because this comes before moveTop, and on resizing window, values wouldn't be accurate
 	var notificationHeight = gBrowser.getNotificationBox().currentNotification.clientHeight + (gBrowser.getNotificationBox().currentNotification.clientTop *2) +1;
 	
-	let sscode =
-		'@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n' +
-		'@-moz-document url("'+document.baseURI+'") {\n' +
-		'	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop][inNotification] {\n' +
-		'		margin-top: '+notificationHeight+'px !important;\n' +
-		'	}\n' +
-		'}';
+	let sscode = '\
+		@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n\
+		@-moz-document url("'+document.baseURI+'") {\n\
+			window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop][inNotification] {\n\
+				margin-top: '+notificationHeight+'px !important;\n\
+			}\n\
+		}';
 	
 	Styles.load('inNotification_'+_UUID, sscode, true);
 };
@@ -353,14 +352,14 @@ this.setOnTop = function(e) {
 		// We also need to properly place the rounder corners, as their position can vary with themes
 		var cornerMarginTop = -parseInt(barStyle.paddingTop);
 		
-		let sscode =
-			'@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n' +
-			'@-moz-document url("'+document.baseURI+'") {\n' +
-			'	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:before,\n' +
-			'	window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:after {\n' +
-			'	  margin-top: ' + cornerMarginTop + 'px;\n' +
-			'	}\n' +
-			'}';
+		let sscode = '\
+			@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n\
+			@-moz-document url("'+document.baseURI+'") {\n\
+				window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:before,\n\
+				window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:after {\n\
+					margin-top: ' + cornerMarginTop + 'px;\n\
+				}\n\
+			}';
 		
 		Styles.load('placeCornersFindBar_'+_UUID, sscode, true);
 	}

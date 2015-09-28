@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.2';
+Modules.VERSION = '2.0.3';
 
 this.UpdateScanner = {
 	handleEvent: function(e) {
@@ -23,29 +23,29 @@ this.UpdateScanner = {
 	adjustGrid: function() {
 		if(!grids.lastAdjust) { return; }
 		
-		let sscode =
-			'@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n' +
-			'@-moz-document url-prefix("chrome://updatescan/") {\n' +
-			'	hbox[ownedbyfindbartweak][anonid="gridBox"] vbox[anonid="findGrid"] {\n' +
-					grids.lastAdjust +
-			'	}\n' +
-			'}\n';
+		let sscode = '\
+			@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n\
+			@-moz-document url-prefix("chrome://updatescan/") {\n\
+				hbox[ownedbyfindbartweak][anonid="gridBox"] vbox[anonid="findGrid"] {\n' +
+					grids.lastAdjust + '\
+				}\n\
+			}\n';
 		
 		Styles.load('adjustUpdateScannerFrameGrid_'+_UUID, sscode, true);
 	},
 	
 	gridColors: function() {
-		let sscode =
-			'@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n' +
-			'@-moz-document url-prefix("chrome://updatescan/") {\n' +
-			'	hbox[ownedbyfindbartweak][anonid="gridBox"] vbox[anonid="findGrid"] vbox[highlight]:not([current]):not([hover]) {\n' +
-			'		background-color: '+Prefs.highlightColor+';\n' +
-			'	}\n' +
-			'	hbox[ownedbyfindbartweak][anonid="gridBox"] vbox[anonid="findGrid"] vbox[highlight][current],\n' +
-			'	hbox[ownedbyfindbartweak][anonid="gridBox"] vbox[anonid="findGrid"] vbox[highlight][hover] {\n' +
-			'		background-color: '+Prefs.selectColor+';\n' +
-			'	}\n' +
-			'}';
+		let sscode = '\
+			@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n\
+			@-moz-document url-prefix("chrome://updatescan/") {\n\
+				hbox[ownedbyfindbartweak][anonid="gridBox"] vbox[anonid="findGrid"] vbox[highlight]:not([current]):not([hover]) {\n\
+					background-color: '+Prefs.highlightColor+';\n\
+				}\n\
+				hbox[ownedbyfindbartweak][anonid="gridBox"] vbox[anonid="findGrid"] vbox[highlight][current],\n\
+				hbox[ownedbyfindbartweak][anonid="gridBox"] vbox[anonid="findGrid"] vbox[highlight][hover] {\n\
+					background-color: '+Prefs.selectColor+';\n\
+				}\n\
+			}';
 		
 		Styles.load('ColorUpdateScannerFrameGrid_'+_UUID, sscode, true);
 	}

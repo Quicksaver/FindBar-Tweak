@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.3';
+Modules.VERSION = '2.0.4';
 
 this.textboxResizers = {
 	resizing: false,
@@ -104,11 +104,11 @@ this.textboxResizers = {
 		if(overflow > 0) {
 			this.overflow = Math.max(0, Prefs.findFieldWidth -overflow);
 			
-			let sscode =
-				'@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n' +
-				'@-moz-document url("'+document.baseURI+'") {\n' +
-				'	window['+objName+'_UUID="'+_UUID+'"] .findbar-textbox { max-width: '+this.overflow+'px; }\n' +
-				'}';
+			let sscode = '\
+				@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n\
+				@-moz-document url("'+document.baseURI+'") {\n\
+					window['+objName+'_UUID="'+_UUID+'"] .findbar-textbox { max-width: '+this.overflow+'px; }\n\
+				}';
 			
 			Styles.load('findFieldMaxWidth_'+_UUID, sscode, true);
 		}

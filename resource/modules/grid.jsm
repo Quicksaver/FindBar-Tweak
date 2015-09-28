@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.4';
+Modules.VERSION = '2.1.5';
 
 this.grids = {
 	template: null,
@@ -174,25 +174,25 @@ this.grids = {
 		var defaultPadding = (WINNT) ? 2 : 0;
 		var defaultWidth = (WINNT) ? 13 : (DARWIN) ? 14 : 12;
 		
-		this.lastAdjust =
-			'	-moz-margin-start: '+(defaultPadding +Prefs.gridAdjustPadding)+'px;\n' +
-			'	width: '+(defaultWidth +Prefs.gridAdjustWidth)+'px;\n';
+		this.lastAdjust = '\
+				-moz-margin-start: '+(defaultPadding +Prefs.gridAdjustPadding)+'px;\n\
+				width: '+(defaultWidth +Prefs.gridAdjustWidth)+'px;\n';
 		
-		let sscode =
-			'@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n' +
-			'@-moz-document url("'+document.baseURI+'") {\n' +
-			'	window['+objName+'_UUID="'+_UUID+'"] vbox[anonid="findGrid"] {\n' +
-					this.lastAdjust +
-			'	}\n' +
-			'}';
+		let sscode = '\
+			@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n\
+			@-moz-document url("'+document.baseURI+'") {\n\
+				window['+objName+'_UUID="'+_UUID+'"] vbox[anonid="findGrid"] {\n' +
+					this.lastAdjust + '\
+				}\n\
+			}';
 		
 		Styles.load('adjustGrid_'+_UUID, sscode, true);
 		
-		sscode =
-			'@namespace url(http://www.w3.org/1999/xhtml);\n' +
-			'div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"] {\n' +
-				this.lastAdjust +
-			'}\n';
+		sscode = '\
+			@namespace url(http://www.w3.org/1999/xhtml);\n\
+			div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"] {\n' +
+				this.lastAdjust + '\
+			}';
 		
 		Styles.load('adjustFrameGrid_'+_UUID, sscode, true);
 		

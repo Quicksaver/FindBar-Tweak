@@ -1,4 +1,4 @@
-Modules.VERSION = '1.2.11';
+Modules.VERSION = '1.2.12';
 
 this.uiBackup = {};
 
@@ -86,37 +86,37 @@ this.changeHighlightColor = function() {
 };
 
 this.setHighlightColorStyleSheet = function(rgb) {
-	let sscode =
-		'@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n' +
-		'@-moz-document\n' +
-		'	url("chrome://browser/content/browser.xul"),\n' +
-		'	url("chrome://global/content/viewSource.xul"),\n' +
-		'	url("chrome://global/content/viewPartialSource.xul") {\n' +
-		'		vbox[anonid="findGrid"] vbox[highlight]:not([current]):not([hover]) {\n' +
-		'			background-color: '+Prefs.highlightColor+';\n' +
-		'		}\n' +
-		'}';
+	let sscode = '\
+		@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n\
+		@-moz-document\n\
+			url("chrome://browser/content/browser.xul"),\n\
+			url("chrome://global/content/viewSource.xul"),\n\
+			url("chrome://global/content/viewPartialSource.xul") {\n\
+				vbox[anonid="findGrid"] vbox[highlight]:not([current]):not([hover]) {\n\
+					background-color: '+Prefs.highlightColor+';\n\
+				}\n\
+		}';
 	
 	Styles.load('highlightColorStyleSheet', sscode, true);
 	
-	sscode = 
-		'@namespace url(http://www.w3.org/1999/xhtml);\n' +
+	sscode = '\
+		@namespace url(http://www.w3.org/1999/xhtml);\n' +
 		
 		// For PDF.JS
 		'body #outerContainer #mainContainer #viewerContainer .textLayer .highlight:not(.selected) { background-color: rgb('+rgb.r+','+rgb.g+','+rgb.b+'); }\n' +
 		
 		// For grids in frames
-		'div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"] div[highlight]:not([current]):not([hover]) {\n' +
-		'	background-color: '+Prefs.highlightColor+';\n' +
-		'}\n' +
+		'div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"] div[highlight]:not([current]):not([hover]) {\n\
+			background-color: '+Prefs.highlightColor+';\n\
+		}\n' +
 		
 		// color the matches in the FIT lists
-		'@-moz-document url("chrome://'+objPathString+'/content/findInTabsFull.xul") {\n' +
-		'	.findInTabs-match:not([current]):not(:hover) {\n' +
-		'		background-color: '+Prefs.highlightColor+';\n' +
-		'		color: '+((darkBackgroundRGB(rgb)) ? '#FFFFFF' : '#000000')+';\n' +
-		'	}\n' +
-		'}';
+		'@-moz-document url("chrome://'+objPathString+'/content/findInTabsFull.xul") {\n\
+			.findInTabs-match:not([current]):not(:hover) {\n\
+				background-color: '+Prefs.highlightColor+';\n\
+				color: '+((darkBackgroundRGB(rgb)) ? '#FFFFFF' : '#000000')+';\n\
+			}\n\
+		}';
 	
 	Styles.load('otherHighlightColorStyleSheet', sscode, true);
 };
@@ -145,47 +145,47 @@ this.changeSelectColor = function() {
 };
 
 this.setSelectColorStyleSheet = function(rgb) {
-	let sscode =
-		'@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n' +
-		'@-moz-document\n' +
-		'	url("chrome://browser/content/browser.xul"),\n' +
-		'	url("chrome://global/content/viewSource.xul"),\n' +
-		'	url("chrome://global/content/viewPartialSource.xul"),\n' +
-		'	url("chrome://findbartweak/content/findInTabsFull.xul") {\n' +
-		'		.findInTabs-list richlistitem:not([selected]):hover {\n' +
-		'			background-color: rgba('+rgb.r+','+rgb.g+','+rgb.b+',0.03);\n' +
-		'		}\n' +
-		'		.findInTabs-list richlistitem:hover {\n' +
-		'			box-shadow: inset 0 0 2px 1px rgba('+rgb.r+','+rgb.g+','+rgb.b+',0.2);\n' +
-		'		}\n' +
-		'		vbox[anonid="findGrid"] vbox[highlight][current],\n' +
-		'		vbox[anonid="findGrid"] vbox[highlight][hover] {\n' +
-		'			background-color: '+Prefs.selectColor+';\n' +
-		'		}\n' +
-		'}';
+	let sscode = '\
+		@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n\
+		@-moz-document\n\
+			url("chrome://browser/content/browser.xul"),\n\
+			url("chrome://global/content/viewSource.xul"),\n\
+			url("chrome://global/content/viewPartialSource.xul"),\n\
+			url("chrome://findbartweak/content/findInTabsFull.xul") {\n\
+				.findInTabs-list richlistitem:not([selected]):hover {\n\
+					background-color: rgba('+rgb.r+','+rgb.g+','+rgb.b+',0.03);\n\
+				}\n\
+				.findInTabs-list richlistitem:hover {\n\
+					box-shadow: inset 0 0 2px 1px rgba('+rgb.r+','+rgb.g+','+rgb.b+',0.2);\n\
+				}\n\
+				vbox[anonid="findGrid"] vbox[highlight][current],\n\
+				vbox[anonid="findGrid"] vbox[highlight][hover] {\n\
+					background-color: '+Prefs.selectColor+';\n\
+				}\n\
+		}';
 	
 	Styles.load('selectColorStyleSheet', sscode, true);
 	
-	sscode =
-		'@namespace url(http://www.w3.org/1999/xhtml);\n' +
+	sscode = '\
+		@namespace url(http://www.w3.org/1999/xhtml);\n' +
 		
 		// For PDF.JS
 		'body #outerContainer #mainContainer #viewerContainer .textLayer .highlight.selected { background-color: rgb('+rgb.r+','+rgb.g+','+rgb.b+'); }\n' +
 		
 		// For grids in frames
-		'div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"] div[highlight][current],\n' +
-		'div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"] div[highlight][hover] {\n' +
-		'	background-color: '+Prefs.selectColor+';\n' +
-		'}\n' +
+		'div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"] div[highlight][current],\n\
+		div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"] div[highlight][hover] {\n\
+			background-color: '+Prefs.selectColor+';\n\
+		}\n' +
 		
 		// color the matches in the FIT lists
-		'@-moz-document url("chrome://'+objPathString+'/content/findInTabsFull.xul") {\n' +
-		'	.findInTabs-match[current],\n' +
-		'	.findInTabs-match:hover {\n' +
-		'		background-color: '+Prefs.selectColor+';\n' +
-		'		color: '+((darkBackgroundRGB(rgb)) ? '#FFFFFF' : '#000000')+';\n' +
-		'	}\n' +
-		'}';
+		'@-moz-document url("chrome://'+objPathString+'/content/findInTabsFull.xul") {\n\
+			.findInTabs-match[current],\n\
+			.findInTabs-match:hover {\n\
+				background-color: '+Prefs.selectColor+';\n\
+				color: '+((darkBackgroundRGB(rgb)) ? '#FFFFFF' : '#000000')+';\n\
+			}\n\
+		}';
 	
 	Styles.load('otherSelectColorStyleSheet', sscode, true);
 };

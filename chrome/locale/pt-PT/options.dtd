@@ -3,6 +3,7 @@
 <!ENTITY OptGeneral.label "Geral">
 <!ENTITY OptAppearance.label "Aparência">
 <!ENTITY Opttweaks.label "Afinações">
+<!ENTITY OptFindAll.label "Encontrar Todos">
 <!ENTITY Optgen.label "Opções da Barra de Procura">
 <!ENTITY Optdisplay.label "Posição da Barra de Procura">
 <!ENTITY OptButtonAndLabels.label "Botões e Legendas">
@@ -15,10 +16,24 @@
 <!ENTITY OptgridInScrollbar.tooltip "A posição relativa de cada resultado realçado na página é mostrada na barra de rolamento.">
 <!ENTITY OptuseCounter.label "Mostrar o contador de ocorrências na barra de procura">
 <!ENTITY OptuseCounter.tooltip "Em cada procura, o número de resultados encontrados na página é mostrado na barra de procura.">
-<!ENTITY OptfindInTabs.label "Utilizar 'Procura em todos os Separadores'">
-<!ENTITY OptfindInTabs.tooltip "É adicionado um botão à barra de procura para abrir a janela de 'Procura em Todos os Separadores', que te permite procurar rapidamente qualquer palavra em todos os separadores e janelas abertas.">
-<!ENTITY OptmultipleFITFull.label "Permitir várias janelas distintas da &quot;Procura em Todos os Separadores&quot;">
-<!ENTITY OptmultipleFITFull.tooltip "Quando esta opção está inativa, cliques subsequentes no botão 'Procura em Todos os Separadores' irão reutilizar uma janela de 'Procura em Todos os Separadores' já aberta, em vez de abrir uma nova de cada vez.">
+<!ENTITY OptfindAll.label "Activar o Encontrar Todos">
+<!ENTITY OptfindAll.tooltip "Lista todas as ocorrências em todos os separadores e janelas abertas.">
+<!ENTITY OptfindInTabsAction.caption "Premir o botão Encontrar Todos...">
+<!ENTITY OptfindInTabsAction.sidebar.label "mostra o painel lateral Encontrar Todos">
+<!ENTITY OptfindInTabsAction.sidebar.tooltip.a "Mostra a lista no painel lateral junto à página web, contendo todas as ocorrências encontradas na página. Também pode mostrar resultados de outros separadores na mesma janela, e trocar de separador a partir do painel lateral.">
+<!ENTITY OptfindInTabsAction.sidebar.tooltip.b "Lembra-te que enquanto este painel lateral estive aberto, a barra de procura age como uma única barra de procura global, mesmo que essa opção não esteja activa!">
+<!ENTITY OptfindInTabsAction.full.label "abre a janela Encontrar em Todos os Separadores">
+<!ENTITY OptfindInTabsAction.full.tooltip "Usa uma janela dedicada para procurar em todos os separadores e janelas abertas.">
+<!ENTITY OptfindInTabsSidebar.caption "Painel lateral Encontar Todos">
+<!ENTITY OptautoShowHideFIT.label "Mostrar e esconder com a barra de procura">
+<!ENTITY OptautoShowHideFIT.tooltip "As listas são mostradas e escondidas no painel lateral automaticamente ao abrir e fechar a barra de procura, para que não seja necessário premir o botão Encontrar Todos.">
+<!ENTITY OptgetOSB.description "Podes controlar melhor o comportamento e a posição do painel Encontrar Todos com o meu outro extra, Painel OmniLateral. Clica aqui para o instalares!">
+<!ENTITY OpthasOSB.description "Configura as preferências do teu Painel OmniLateral para um maior controlo da posição e comportamento do painel Encontrar Todos. Por exemplo, lembra-te que a preferência abaixo só funciona se a opção do Painel Lateral Gémeo em si estiver activa.">
+<!ENTITY OpttwinFITSidebar.label "Abrir no Painel Lateral Gémeo">
+<!ENTITY OpttwinFITSidebar.tooltip "O painel Encontar Todos é mostrado sempre no painel lateral gémeo, no lado oposto da janela do painel lateral principal, para que possas manter os marcadores ou o histórico aberto em simultâneo.">
+<!ENTITY OptfindInTabsFull.caption "Janela Encontrar em Todos os Separadores">
+<!ENTITY OptmultipleFITFull.label.b "Permitir várias janelas">
+<!ENTITY OptmultipleFITFull.tooltip.b "Abre uma nova janela de cada vez que o botão Procurar em Todos os Separadores é premido, caso contrário irá reutilizar alguma janela já aberta.">
 <!ENTITY Optcolor.label "Cor dos realces">
 <!ENTITY Optcolor.tooltip "Muda a cor usada para realçar resultados na página.">
 <!ENTITY OptselectColor.label "Cor da ocorrência atual">
@@ -106,6 +121,8 @@
 <!ENTITY OptfillSelectedText.tooltip.b "Se 'Realçar todos por defeito' estiver ativo, selecionar texto na página realça imediatamente todas as ocorrências da seleção.">
 <!ENTITY OptemptySelectedText.label "Limpar a barra de procura quando não há texto selecionado">
 <!ENTITY OptemptySelectedText.tooltip "Semelhante à acima, ao clicar na página para remover a seleção de texto, o termo de pesquisa na barra de procura é limpo e todos os realces também são removidos.">
+<!ENTITY OptfillTextFromEditable.label "Preencher com texto seleccionado num elemento editável">
+<!ENTITY OptfillTextFromEditable.tooltip "Escolher se selecionar em caixas de texto também preenche a barra de procura.">
 <!ENTITY OptfillSelectedOpenFindbar.label "Mostrar a barra de procura rápida quando o texto selecionado é usado">
 <!ENTITY OptfillSelectedOpenFindbar.tooltip "Quando a barra de procura é preenchida com o texto selecionado, ela aparece brevemente para mostrar que isto aconteceu.">
 <!ENTITY OptglobalBehavior.warning "Aviso: as opções seguintes não são específicas para a barra de procura, elas afetam todo o navegador, como em páginas, a barra de endereço e qualquer outro local em que é possível selecionar texto. Altera com precaução!">

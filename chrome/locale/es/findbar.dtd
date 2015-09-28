@@ -1,5 +1,2 @@
 <!ENTITY MenuOptions.label "Opciones de barra de búsqueda">
-<!ENTITY FITbutton.label "Buscar en todas las pestañas">
-<!ENTITY FITbutton.tooltip.win "Busca la frase en todas las pestañas abiertas (Ctrl+F3)">
-<!ENTITY FITbutton.tooltip.mac "Busca la frase en todas las pestañas abiertas (Command+F3)">
-<!ENTITY FITbutton.accesskey "p">
+<!ENTITY FITFull.label "Buscar en todas las pestañas">

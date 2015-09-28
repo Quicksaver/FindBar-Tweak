@@ -3,6 +3,7 @@
 <!ENTITY OptGeneral.label "Ogólne">
 <!ENTITY OptAppearance.label "Wygląd">
 <!ENTITY Opttweaks.label "Ulepszenia">
+<!ENTITY OptFindAll.label "Znajdź wszystkie">
 <!ENTITY Optgen.label "Opcje paska wyszukiwania">
 <!ENTITY Optdisplay.label "Pozycja paska wyszukiwania">
 <!ENTITY OptButtonAndLabels.label "Przyciski i etykiety">
@@ -15,10 +16,24 @@
 <!ENTITY OptgridInScrollbar.tooltip "Względne położenie każdego wyróżnionego dopasowania na stronie internetowej pojawi się na pasku przewijania.">
 <!ENTITY OptuseCounter.label "Pokazuj licznik dopasowań na pasku wyszukiwania">
 <!ENTITY OptuseCounter.tooltip "Przy każdej operacji wyszukiwania liczba znalezionych dopasowań na stronie pojawi się na końcu paska wyszukiwań.">
-<!ENTITY OptfindInTabs.label "Włącz &quot;Znajdź we wszystkich kartach&quot;">
-<!ENTITY OptfindInTabs.tooltip "Przycisk jest umieszczony na pasku wyszukiwań, aby otworzyć okno &quot;Znajdź we wszystkich kartach&quot;, które pozwala na szybkie wyszukiwanie dowolnego słowa we wszystkich otwartych kartach i oknach.">
-<!ENTITY OptmultipleFITFull.label "Pozwalaj na wiele okien &quot;Znajdź we wszystkich kartach&quot; jednocześnie">
-<!ENTITY OptmultipleFITFull.tooltip "Jeżeli jest to wyłączone, kolejne kliknięcie przycisku &quot;Znajdź na wszystkich kartach&quot; ponownie użyje dowolnego otwartego okna &quot;Znajdź we wszystkich kartach&quot; zamiast otwierania za każdym razem nowego.">
+<!ENTITY OptfindAll.label "Włącz Znajdź wszystkie">
+<!ENTITY OptfindAll.tooltip "Wyświetl wszyskie odnalezione dopasowania we wszystkich otwartych kartach i oknach.">
+<!ENTITY OptfindInTabsAction.caption "Wciskanie przycisku Znajdź wszystkie...">
+<!ENTITY OptfindInTabsAction.sidebar.label "Przełącza pasek boczny Znajdź wszystkie">
+<!ENTITY OptfindInTabsAction.sidebar.tooltip.a "Pokazuje listę w pasku bocznym obok strony internetowej, która zawiera wszystkie dopasowania znalezione na stronie. Możesz także zobaczyć dopasowania z innych kart w tym samym oknie oraz przełączyć się do nich wewnątrz paska bocznego.">
+<!ENTITY OptfindInTabsAction.sidebar.tooltip.b "Pamiętaj, że tak długo, jak pasek boczny jest otwarty, pasek wyszukiwania będzie działać jako jeden ogólny pasek wyszukiwania, nawet jeśli nie masz tego ustawienia włączonego.">
+<!ENTITY OptfindInTabsAction.full.label "Otwiera okno Znajdź we wszystkich kartach">
+<!ENTITY OptfindInTabsAction.full.tooltip "Użyj oddzielnego okna do wyszukiwania dopasowań we wszystkich otwartych kartach i oknach.">
+<!ENTITY OptfindInTabsSidebar.caption "Pasek boczny Znajdź wszystkie">
+<!ENTITY OptautoShowHideFIT.label "Pokaż i ukryj razem z paskiem wyszukiwania">
+<!ENTITY OptautoShowHideFIT.tooltip "Listy paska bocznego pojawiają się i znikają automatycznie, gdy otwierasz i zamykasz pasek wyszukiwania, więc nie musisz wciskać przycisku Znajdź wszyskie.">
+<!ENTITY OptgetOSB.description "Możesz dodatkowo kontrolować pozycję i zachowanie paska bocznego Znajdź wszystkie za pomocą mojego innego dodatku, OmniSidebar. Kliknij tutaj, aby go zdobyć!">
+<!ENTITY OpthasOSB.description "Skonfiguruj swoje ustawienia OmniSidebar, aby dodatkowo kontrolować pozycję i zachowanie paska bocznego Znajdź wszystkie. Na przykład pamiętaj, że ustawienie poniżej działa tylko, jeżeli bliźniaczy pasek boczny jest włączony.">
+<!ENTITY OpttwinFITSidebar.label "Otwórz w bliźniaczym pasku bocznym">
+<!ENTITY OpttwinFITSidebar.tooltip "Pasek boczny Znajdź wszystkie zawsze otworzy się w bliźnaczym pasku bocznym, po przeciwnej stronie okna od głównego paska bocznego, więc możesz utrzymywać swoje zakładki i historię zawsze otwarte w tym samym czasie.">
+<!ENTITY OptfindInTabsFull.caption "Okno Znadź we wszystkich kartach">
+<!ENTITY OptmultipleFITFull.label.b "Zezwól na wiele wystąpień">
+<!ENTITY OptmultipleFITFull.tooltip.b "Otwórz nowe okna za każdym razem, gdy przycisk Znadź we wszystkich kartach zostanie wciśnięty, w innym przypadku użyje już otwartego okna.">
 <!ENTITY Optcolor.label "Kolor wyróżnienia">
 <!ENTITY Optcolor.tooltip "Zmień kolor używany do wyróżniania dopasowań na stronie.">
 <!ENTITY OptselectColor.label "Kolor aktualnego wystąpienia">
@@ -106,6 +121,8 @@
 <!ENTITY OptfillSelectedText.tooltip.b "Jeżeli 'Wyróżniaj automatycznie wszystkie' jest włączone, zaznaczenie tekstu na stronie internetowej natychmiast wyróżni wszystkie wystąpienia w wyborze.">
 <!ENTITY OptemptySelectedText.label "Wyczyść pasek wyszukiwań, gdy tekst nie jest zaznaczony">
 <!ENTITY OptemptySelectedText.tooltip "Podobnie jak na górze, jeśli klikniesz dowolne miejsce na stronie internetowej, aby odznaczyć tekst, pasek wyszukiwań zostanie wyczyszczony, a wszystkie wyróżnienia zostaną również usunięte.">
+<!ENTITY OptfillTextFromEditable.label "Wypełnij tekstem zaznaczonym w edytowalnych elementach">
+<!ENTITY OptfillTextFromEditable.tooltip "Wybierz, czy chcesz, aby zaznaczenia w polach tekstowych lub pola wejściowe, także wypełniały pasek wyszukiwania.">
 <!ENTITY OptfillSelectedOpenFindbar.label "Pokaż pasek szybkiego wyszukiwania przy używaniu zaznaczonego tekstu">
 <!ENTITY OptfillSelectedOpenFindbar.tooltip "Gdy pasek wyszukiwań wypełni sie zaznaczonym tekstem, na krótko pojawi się, aby zasygnalizować, że to się stało.">
 <!ENTITY OptglobalBehavior.warning "Uwaga: następujące ustawienia nie są ograniczone do paska wyszukiwań, wpływają one na całą przeglądarkę, choćby na strony internetowe, pasek adresu oraz inne miejsca, gdzie można zaznaczyć tekst. Zmień je ostrożnie!">

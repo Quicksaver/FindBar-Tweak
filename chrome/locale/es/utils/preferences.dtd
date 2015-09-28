@@ -1,13 +1,13 @@
-<!ENTITY preferences.button "Preferences">
-<!ENTITY preferences.undo.label "Undo">
-<!ENTITY preferences.redo.label "Redo">
-<!ENTITY preferences.undoredo.tooltip "Quickly revert any change made to the add-on's preferences, including importing from a file and restoring defaults.">
-<!ENTITY preferences.import.label "Import from file...">
-<!ENTITY preferences.import.tooltip "Load add-on preferences from a previously exported file on your computer.">
-<!ENTITY preferences.export.label "Export to file...">
-<!ENTITY preferences.export.tooltip "Save your add-on preferences into an external file for safekeeping.">
-<!ENTITY preferences.reset.label "Restore defaults">
-<!ENTITY preferences.reset.tooltip.a "All preferences are rolled back to their default values, as if the add-on was fresh installed.">
-<!ENTITY preferences.reset.tooltip.b "Button placements in toolbars are unaffected, to revert those use the Restore Defaults button in Customize view instead.">
-<!ENTITY preferences.jumpto.label "Jump to preference...">
-<!ENTITY preferences.jumpto.tooltip "Type in a word and you'll be taken to the first preference that contains it.">
+<!ENTITY preferences.button "Preferencias">
+<!ENTITY preferences.undo.label "Deshacer">
+<!ENTITY preferences.redo.label "Rehacer">
+<!ENTITY preferences.undoredo.tooltip "Revierte rápidamente cualquier cambio hecho a las preferencias del complemento, incluyendo la importación desde un fichero y la restauración de valores por defecto.">
+<!ENTITY preferences.import.label "Importar desde fichero...">
+<!ENTITY preferences.import.tooltip "Carga las preferencias del complemento desde un fichero previamente exportado en su computadora.">
+<!ENTITY preferences.export.label "Exportar a fichero...">
+<!ENTITY preferences.export.tooltip "Guarda las preferencias de su complemento en un fichero externo para salvaguarda.">
+<!ENTITY preferences.reset.label "Restaurar valores por defecto">
+<!ENTITY preferences.reset.tooltip.a "Todas las preferencias se devuelven a sus valores por defecto, como si el complemento estuviera recién instalado.">
+<!ENTITY preferences.reset.tooltip.b "Los emplazamientos de botones en las barras de herramientas no están afectados, para revertirlos use en su lugar el botón 'Restaurar valores por defecto' en la vista Personalizar.">
+<!ENTITY preferences.jumpto.label "Saltar a la preferencia...">
+<!ENTITY preferences.jumpto.tooltip "Escriba una palabra y se le llevará a la primera preferencia que la contenga.">

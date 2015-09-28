@@ -1,5 +1,2 @@
 <!ENTITY MenuOptions.label "検索バーのオプション">
-<!ENTITY FITbutton.label "すべてのタブで検索">
-<!ENTITY FITbutton.tooltip.win "開いているすべてのタブで検索 (Ctrl+F3)">
-<!ENTITY FITbutton.tooltip.mac "開いているすべてのタブで検索 (Command+F3)">
-<!ENTITY FITbutton.accesskey "T">
+<!ENTITY FITFull.label "すべてのタブで検索">

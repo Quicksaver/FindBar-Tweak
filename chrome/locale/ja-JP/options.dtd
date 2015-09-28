@@ -3,6 +3,7 @@
 <!ENTITY OptGeneral.label "一般">
 <!ENTITY OptAppearance.label "設定">
 <!ENTITY Opttweaks.label "Tweaks">
+<!ENTITY OptFindAll.label "すべてを検索">
 <!ENTITY Optgen.label "検索バーのオプション">
 <!ENTITY Optdisplay.label "検索バーの位置">
 <!ENTITY OptButtonAndLabels.label "ボタンとラベル">
@@ -15,10 +16,24 @@
 <!ENTITY OptgridInScrollbar.tooltip "Web ページ内のハイライトされたヒットの相対的な位置は、スクロールバー上に表示されます。">
 <!ENTITY OptuseCounter.label "検索バーに一致した件数を表示">
 <!ENTITY OptuseCounter.tooltip "すべての Web ページ内検索操作で見つかった一致数は、検索ツールバー内に表示されます。">
-<!ENTITY OptfindInTabs.label "「すべてのタブで検索」を有効にする">
-<!ENTITY OptfindInTabs.tooltip "検索バー内には「すべてのタブで検索」ダイアログを表示するためのボタンがあり、すべての開いているタブとウィンドウ内を対象とした単語検索が可能です。">
-<!ENTITY OptmultipleFITFull.label "「すべてのタブで検索」でウィンドウの複数インスタンスを許可">
-<!ENTITY OptmultipleFITFull.tooltip "これを無効にすると、その後の「すべてのタブで検索」ボタンのクリックでは、新しいものを毎回開く代わりにすでにオープンされているダイアログを再利用します。">
+<!ENTITY OptfindAll.label "すべてを検索">
+<!ENTITY OptfindAll.tooltip "List all the found matches in all your opened tabs and windows.">
+<!ENTITY OptfindInTabsAction.caption "Pressing the Find All button...">
+<!ENTITY OptfindInTabsAction.sidebar.label "toggles the Find All sidebar">
+<!ENTITY OptfindInTabsAction.sidebar.tooltip.a "Shows the list in a sidebar next to the webpage, containing all the matches found in the page. You can also see matches from other tabs in the same window, and switch to them from within the sidebar.">
+<!ENTITY OptfindInTabsAction.sidebar.tooltip.b "Remember that for as long as this sidebar is open, the Findbar will act as a single global Findbar, even if you don't have that preference enabled!">
+<!ENTITY OptfindInTabsAction.full.label "opens the Find in All Tabs window">
+<!ENTITY OptfindInTabsAction.full.tooltip "Use a separate window to find matches in all opened tabs and windows.">
+<!ENTITY OptfindInTabsSidebar.caption "Find All sidebar">
+<!ENTITY OptautoShowHideFIT.label "Show and hide with the Findbar">
+<!ENTITY OptautoShowHideFIT.tooltip "The sidebar lists appear and hide automatically when you open and close the Findbar, so that you don't have to press the Find All button.">
+<!ENTITY OptgetOSB.description "You can further control the position and behavior of the Find All sidebar with my other add-on, OmniSidebar. Click here to get it!">
+<!ENTITY OpthasOSB.description "Configure your OmniSidebar's preferences to further control the position and behavior of the Find All sidebar. For instance, remember that the preference below only works if the Twin Sidebar itself is enabled.">
+<!ENTITY OpttwinFITSidebar.label "Open in the Twin Sidebar">
+<!ENTITY OpttwinFITSidebar.tooltip "The Find All sidebar will always open in the Twin Sidebar, on the opposite side of the window from the main sidebar, so that you can keep your bookmarks or history open at the same time.">
+<!ENTITY OptfindInTabsFull.caption "Find in All Tabs window">
+<!ENTITY OptmultipleFITFull.label.b "Allow multiple instances">
+<!ENTITY OptmultipleFITFull.tooltip.b "Open a new window each time the Find in All Tabs button is pressed, otherwise it will reuse any already opened window.">
 <!ENTITY Optcolor.label "ハイライトの色">
 <!ENTITY Optcolor.tooltip "ページ内の一致した箇所を強調するために使う色を変更します。">
 <!ENTITY OptselectColor.label "ヒットした文字列の色">
@@ -106,6 +121,8 @@
 <!ENTITY OptfillSelectedText.tooltip.b "「デフォルトですべてをハイライト」が有効なとき、Web ページ内のテキストを選択すると、すぐに選択のすべてのヒットを強調表示します。">
 <!ENTITY OptemptySelectedText.label "テキストが選択されていないとき、検索バーをクリアする">
 <!ENTITY OptemptySelectedText.tooltip "Web ページの任意の場所をクリックすると、テキストの選択は解除され、検索バーはクリアされ、すべてのハイライトは同様に削除されます。">
+<!ENTITY OptfillTextFromEditable.label "Fill with text selected in editable elements">
+<!ENTITY OptfillTextFromEditable.tooltip "Choose whether you want selections in text boxes or input fields to also fill the Findbar.">
 <!ENTITY OptfillSelectedOpenFindbar.label "選択テキストを使用した場合、クイック検索バーを表示">
 <!ENTITY OptfillSelectedOpenFindbar.tooltip "検索バーに選択されたテキストがあるとき、全体的に起こったことをアピールします。">
 <!ENTITY OptglobalBehavior.warning "警告:">

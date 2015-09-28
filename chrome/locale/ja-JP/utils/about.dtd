@@ -3,10 +3,10 @@
 <!ENTITY about.versionDivider " - ">
 <!ENTITY about.uptodate "おめでとう！アップデートが完了しました！">
 <!ENTITY about.needsupdate "最新バージョンがあります！">
-<!ENTITY about.description "このバージョンのリリース・ノートを読んで、既知の問題かどうかを確認してください。あなたが見つけたいくつかの問題、又は将来のリリースのための提案があれば、私に知らせてください。">
-<!ENTITY about.descriptionB "このアドオンはフリーです。しかしバグ修正、機能追加、新しい Firefoxのリリースで確実に動作させることは大変であり、時には困難な場合があります。このアドオンを愛用してくれるなら、開発継続のために、支援して頂けませんか。リンク先を参照してください。">
+<!ENTITY about.description "このバージョンのリリース・ノートを読んで、既知の問題かどうかを確認してください。あなたが見つけた問題点、又は将来のリリースのための提案があれば、私に知らせてください。">
+<!ENTITY about.descriptionB "このアドオンはフリーです。しかしバグ修正、機能追加、新しい Firefox で確実に動作させることは大変であり、時には困難な場合があります。このアドオンを愛用してくれるなら、開発継続のために、支援して頂けませんか。リンク先を参照してください。">
 <!ENTITY about.allVersions "以前のバージョンからの変更事項">
-<!ENTITY about.notifyOnUpdates "次のアップデートで、このタブを表示します">
+<!ENTITY about.notifyOnUpdates "アップデートしたときに、このタブを表示します">
 <!ENTITY about.development "開発状況">
 <!ENTITY about.helpdevelopment "あなたができること">
 <!ENTITY about.information "さらなる情報">
@@ -18,6 +18,6 @@
 <!ENTITY about.author "作者より">
 <!ENTITY about.trymore "Firefox をもっと便利にするために、私が作った他のアドオンも試してみてください！">
 <!ENTITY about.profile "私のプロフィールを参照してください。">
-<!ENTITY about.share "共有">
+<!ENTITY about.share "共有！">
 <!ENTITY about.friends "この素晴らしいブラウザを、独り占めしてはダメです。素晴らしいものは、友人と共有しましょう！">
 <!ENTITY about.moreshare "他のサービス…">

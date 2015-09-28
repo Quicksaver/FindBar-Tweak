@@ -3,6 +3,7 @@
 <!ENTITY OptGeneral.label "Allgemein">
 <!ENTITY OptAppearance.label "Erscheinungsbild">
 <!ENTITY Opttweaks.label "Anpassungsmöglichkeiten">
+<!ENTITY OptFindAll.label "Alles suchen">
 <!ENTITY Optgen.label "Suchleisten-Einstellungen">
 <!ENTITY Optdisplay.label "Position der Suchleiste">
 <!ENTITY OptButtonAndLabels.label "Schaltflächen und Beschriftungen">
@@ -15,10 +16,24 @@
 <!ENTITY OptgridInScrollbar.tooltip "Die relative Position jedes hervorgehobenen Treffers wird in der Bildlaufleiste angezeigt.">
 <!ENTITY OptuseCounter.label "Zähler der Suchtreffer in der Suchleiste anzeigen">
 <!ENTITY OptuseCounter.tooltip "Bei jeder Suchaktion wird die Zahl der Treffer auf der Webseite am Ende der Suchleiste angezeigt.">
-<!ENTITY OptfindInTabs.label "„In allen Tabs suchen“ aktivieren">
-<!ENTITY OptfindInTabs.tooltip "In der Suchleiste wird eine Schaltfläche platziert, um den Dialog „In allen Tabs suchen“ zu öffnen, mit dem Sie schnell ein Wort in allen Ihren offenen Tabs und Fenstern suchen können.">
-<!ENTITY OptmultipleFITFull.label "Mehrere Instanzen des Fensters „In allen Tabs suchen“ erlauben">
-<!ENTITY OptmultipleFITFull.tooltip "Wenn dies deaktiviert ist, verwenden weitere Klicks auf die Schaltfläche „In allen Tabs suchen“ einen bereits geöffneten „In allen Tabs suchen“-Dialog, anstatt immer einen neuen zu öffnen.">
+<!ENTITY OptfindAll.label "„Alles suchen“ aktivieren">
+<!ENTITY OptfindAll.tooltip "Listet alle gefundenen Übereinstimmungen in allen geöffneten Tabs und Fenster auf.">
+<!ENTITY OptfindInTabsAction.caption "Drücken Sie die Schaltfläche „Alles suchen“">
+<!ENTITY OptfindInTabsAction.sidebar.label "„Alles Suchen-Seitenleiste“ ein-/ausblenden">
+<!ENTITY OptfindInTabsAction.sidebar.tooltip.a "Zeigt die Liste in einer Sidebar neben der Webseite, die alle Treffer auf dieser Seite enthält. Sie können auch Treffer anderer Tabs im gleichen Fenster sehen und sie direkt aus der Sidebar heraus aufrufen.">
+<!ENTITY OptfindInTabsAction.sidebar.tooltip.b "Denken Sie daran, dass die Suchleiste, solange die Sidebar geöffnet ist, als einzelne globale Suchleiste agiert, auch wenn diese Einstellung deaktiviert ist!">
+<!ENTITY OptfindInTabsAction.full.label "Öffnet das „In allen Tabs suchen“-Fenster">
+<!ENTITY OptfindInTabsAction.full.tooltip "Ein separates Fenster verwenden, um Treffer in allen offenen Tabs und Fenstern anzuzeigen.">
+<!ENTITY OptfindInTabsSidebar.caption "Alles Suchen-Seitenleiste">
+<!ENTITY OptautoShowHideFIT.label "Ein- und Ausblenden mit dem Suchleiste">
+<!ENTITY OptautoShowHideFIT.tooltip "Die Sidebar-Listen erscheinen und verschwinden automatisch, wenn Sie die Suchleiste öffnen und schließen, Sie müssen also nicht die Schaltfläche „Alles suchen“ anklicken.">
+<!ENTITY OptgetOSB.description "Sie können die Position und das Verhalten der Alles-suchen-Sidebar mit meinem anderen Add-on, OmniSidebar, ausführlicher steuern. Klicken Sie hier, um es zu installieren!">
+<!ENTITY OpthasOSB.description "Konfigurieren Sie Ihre Einstellungen von OmniSidebar, um die Position und das Verhalten der Alles-suchen-Sidebar ausführlicher zu steuern. Bedenken Sie beispielsweise, dass die folgende Einstellung nur funktioniert, wenn die Doppelsidebar selbst aktiviert ist.">
+<!ENTITY OpttwinFITSidebar.label "In Doppelsidebar öffnen">
+<!ENTITY OpttwinFITSidebar.tooltip "Die Alles-suchen-Sidebar öffnet sich immer in der Doppelsidebar auf der anderen Seite des Fensters gegenüber der Hauptsidebar, damit Sie Lesezeichen und Chronik gleichzeitig geöffnet lassen können">
+<!ENTITY OptfindInTabsFull.caption "„In allen Tabs suchen“-Fenster">
+<!ENTITY OptmultipleFITFull.label.b "Mehrere Instanzen zulassen">
+<!ENTITY OptmultipleFITFull.tooltip.b "Jedes Mal ein neues Fenster öffnen, wenn die Schaltfläche „In allen Tabs suchen“ gedrückt wird, anderenfalls wird ein bereits geöffnetes Fenster wiederverwendet.">
 <!ENTITY Optcolor.label "Markierungsfarbe">
 <!ENTITY Optcolor.tooltip "Ändern Sie die Farbe zur Hervorhebung auf der Seite.">
 <!ENTITY OptselectColor.label "Farbe des aktuellen Treffers">
@@ -106,6 +121,8 @@
 <!ENTITY OptfillSelectedText.tooltip.b "Wenn „Standardmäßig alles hervorheben“ aktiviert ist, werden bei Auswahl von Text auf einer Webseite sofort alle Treffer für den ausgewählten Text hervorgehoben.">
 <!ENTITY OptemptySelectedText.label "Die Suchleiste leeren, wenn kein Text ausgewählt wird">
 <!ENTITY OptemptySelectedText.tooltip "Wie oben, wenn Sie auf der Webseite irgendwo hinklicken, um die Auswahl von Text aufzuheben, wird die Suchleiste geleert und die Hervorhebungen werden ebenfalls entfernt.">
+<!ENTITY OptfillTextFromEditable.label "Mit in bearbeitbaren Elementen ausgewähltem Text füllen">
+<!ENTITY OptfillTextFromEditable.tooltip "Entscheidet, ob Auswahl in Textboxen oder Eingabefeldern auch in die Suchleiste eingetragen wird.">
 <!ENTITY OptfillSelectedOpenFindbar.label "Die Schnellsuchleiste anzeigen, wenn ausgewählter Text verwendet wird">
 <!ENTITY OptfillSelectedOpenFindbar.tooltip "Wenn die Suchleiste mit dem ausgewählten Text gefüllt ist, erscheint sie kurz, um dies anzuzeigen.">
 <!ENTITY OptglobalBehavior.warning "Warnung: Die folgenden Einstellungen betreffen nicht nur die Suchleiste, sondern den gesamten Browser, wie auf Webseiten, der Adressleiste und allen anderen Stellen, an denen Textauswahl möglich ist. Ändern Sie dies mit Bedacht!">

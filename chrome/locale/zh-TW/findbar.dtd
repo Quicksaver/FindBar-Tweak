@@ -1,5 +1,2 @@
 <!ENTITY MenuOptions.label "搜尋欄選項">
-<!ENTITY FITbutton.label "搜尋所有分頁">
-<!ENTITY FITbutton.tooltip.win "於所有已開啟分頁尋找（Ctrl+F3）">
-<!ENTITY FITbutton.tooltip.mac "於所有已開啟分頁尋找（Command+F3）">
-<!ENTITY FITbutton.accesskey "T">
+<!ENTITY FITFull.label "Find in All Tabs">

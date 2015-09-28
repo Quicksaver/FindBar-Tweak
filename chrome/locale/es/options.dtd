@@ -3,6 +3,7 @@
 <!ENTITY OptGeneral.label "General">
 <!ENTITY OptAppearance.label "Apariencia">
 <!ENTITY Opttweaks.label "Ajustes">
+<!ENTITY OptFindAll.label "Buscar todas">
 <!ENTITY Optgen.label "Opciones de barra de búsqueda">
 <!ENTITY Optdisplay.label "Posición de la barra de búsqueda">
 <!ENTITY OptButtonAndLabels.label "Botones y etiquetas">
@@ -15,10 +16,24 @@
 <!ENTITY OptgridInScrollbar.tooltip "La posición relativa de cada coincidencia resaltada en la página web se mostrará en la barra de desplazamiento.">
 <!ENTITY OptuseCounter.label "Mostrar contador de coincidencias en la barra de búsqueda">
 <!ENTITY OptuseCounter.tooltip "En cada operación de búsqueda, el número de coincidencias encontrado en la página web se mostrará al final de la barra de búsqueda.">
-<!ENTITY OptfindInTabs.label "Habilitar 'Buscar en todas las pestañas'">
-<!ENTITY OptfindInTabs.tooltip "Se sitúa un botón en la barra de búsqueda para abrir el cuadro de diálogo 'Buscar en todas las pestañas', que le permite buscar rápidamente cualquier palabra en todas sus pestañas y ventanas abiertas.">
-<!ENTITY OptmultipleFITFull.label "Permitir múltiples instancias de la ventana 'Buscar en todas las pestañas'">
-<!ENTITY OptmultipleFITFull.tooltip "Cuando esto esté deshabilitado, los clics subsiguientes en el botón 'Buscar en todas las pestañas' reutilizarán cualquier cuadro de diálogo 'Buscar en todas las pestañas' abierto, en lugar de abrir uno nuevo cada vez.">
+<!ENTITY OptfindAll.label "Habilitar 'Buscar todas'">
+<!ENTITY OptfindAll.tooltip "Lista todas las coincidencias encontradas en todas sus pestañas y ventanas abiertas">
+<!ENTITY OptfindInTabsAction.caption "Al pulsar el botón 'Buscar todas'">
+<!ENTITY OptfindInTabsAction.sidebar.label "acciona la barra lateral 'Buscar todas'">
+<!ENTITY OptfindInTabsAction.sidebar.tooltip.a "Muestra la lista en una barra lateral junto a la página web, conteniendo todas las coincidencias encontradas en la página. También puede ver las coincidencias de otras pestañas en la misma ventana, y cambiar a estas desde dentro de la barra lateral.">
+<!ENTITY OptfindInTabsAction.sidebar.tooltip.b "Recuerde que mientras la barra lateral esté abierta, la barra de búsqueda actuará como una única barra de búsqueda global, ¡incluso si no tiene esa preferencia habilitada!">
+<!ENTITY OptfindInTabsAction.full.label "abre la ventana 'Buscar en todas las pestañas'">
+<!ENTITY OptfindInTabsAction.full.tooltip "Usa una ventana aparte para buscar coincidencias en todas las pestañas y ventanas abiertas.">
+<!ENTITY OptfindInTabsSidebar.caption "Barra lateral 'Buscar todas'">
+<!ENTITY OptautoShowHideFIT.label "Mostrar y ocultar con la barra de búsqueda">
+<!ENTITY OptautoShowHideFIT.tooltip "Las listas de la barra lateral aparecen y se ocultan automáticamente cuando abre y cierra la barra de búsqueda, así que no tiene que pulsar el botón 'Buscar todas'.">
+<!ENTITY OptgetOSB.description "Puede controlar con mayor detalle la posición y comportamiento de la barra lateral 'Buscar todas' con mi otro complemento, OmniSidebar. ¡Haga clic aquí para obtenerlo!">
+<!ENTITY OpthasOSB.description "Configure las preferencias de su OmniSidebar para controlar con mayor detalle la posición y comportamiento de la barra lateral 'Buscar todas'. Por ejemplo, recuerde que la preferencia de debajo sólo funciona si la propia barra lateral gemela está habilitada.">
+<!ENTITY OpttwinFITSidebar.label "Abrir en la barra lateral gemela">
+<!ENTITY OpttwinFITSidebar.tooltip "La barra lateral 'Buscar todas' siempre se abrirá en la barra lateral gemela, en el lado opuesto de la ventana a la barra lateral principal, así que puede mantener abiertos sus marcadores o su historial al mismo tiempo.">
+<!ENTITY OptfindInTabsFull.caption "Ventana 'Buscar en todas las pestañas'">
+<!ENTITY OptmultipleFITFull.label.b "Permitir múltiples instancias">
+<!ENTITY OptmultipleFITFull.tooltip.b "Abre una nueva ventana cada vez que se pulsa el botón 'Buscar en todas las pestañas', de otro modo volverá a usar cualquier ventana ya abierta.">
 <!ENTITY Optcolor.label "Color de los resaltados">
 <!ENTITY Optcolor.tooltip "Cambia el color usado para resaltar coincidencias en la página.">
 <!ENTITY OptselectColor.label "Color de la coincidencia actual">
@@ -106,6 +121,8 @@
 <!ENTITY OptfillSelectedText.tooltip.b "Si &quot;Resaltar por defecto todas las coincidencias&quot; está habilitada, seleccionar texto en una página web inmediatamente resaltará todas las apariciones de la selección.">
 <!ENTITY OptemptySelectedText.label "Vaciar la barra de búsqueda cuando no haya texto seleccionado">
 <!ENTITY OptemptySelectedText.tooltip "De forma similar, si hace clic en cualquier parte de la página web sin seleccionar texto, la barra de búsqueda se despejará y todos los resaltes también se retirarán.">
+<!ENTITY OptfillTextFromEditable.label "Rellenar con el texto seleccionado en elementos editables">
+<!ENTITY OptfillTextFromEditable.tooltip "Elija si quiere que las selecciones en recuadros de texto o campos de entrada rellenen también la barra de búsqueda.">
 <!ENTITY OptfillSelectedOpenFindbar.label "Enseñar la barra de búsqueda rápida cuando se use el texto seleccionado">
 <!ENTITY OptfillSelectedOpenFindbar.tooltip "Cuando la barra de búsqueda rápida se rellene con el texto seleccionado, aparecerá brevemente para mostrar que esto ha sucedido.">
 <!ENTITY OptglobalBehavior.warning "Advertencia: Las siguientes preferencias no son específicas de la barra de búsqueda, afectan globalmente al navegador, por ejemplo en páginas web, en la barra de direcciones, y en cualquier otra parte donde la selección de texto sea posible. ¡Cámbielas con cuidado!">

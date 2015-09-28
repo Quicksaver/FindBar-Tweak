@@ -1,5 +1,2 @@
 <!ENTITY MenuOptions.label "Options de la barre">
-<!ENTITY FITbutton.label "Rechercher dans tous les onglets">
-<!ENTITY FITbutton.tooltip.win "Rechercher la phrase dans tous les onglets ouverts (Ctrl+F3)">
-<!ENTITY FITbutton.tooltip.mac "Rechercher la phrase dans tous les onglets ouverts (Cmd+F3)">
-<!ENTITY FITbutton.accesskey "O">
+<!ENTITY FITFull.label "Find in All Tabs">

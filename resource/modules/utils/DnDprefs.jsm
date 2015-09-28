@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.0';
+Modules.VERSION = '1.0.1';
 Modules.UTILS = true;
 
 // DnDprefs -	this is an adaptation of the browser's gCustomizeMode - http://mxr.mozilla.org/mozilla-central/source/browser/components/customizableui/CustomizeMode.jsm
@@ -308,7 +308,8 @@ this.DnDprefs = {
 		
 		let label = doc.createElement('label');
 		label.classList.add('DnDpref-label');
-		setAttribute(label, 'value', aLabel);
+		let text = doc.createTextNode(aLabel);
+		label.appendChild(text);
 		
 		let enable = doc.createElement('checkbox');
 		enable.classList.add('DnDpref-enable');

@@ -86,6 +86,11 @@ colorpicker * {
 	transition: none;
 }
 
+[DnDpref] .DnDpref-item-container .DnDpref-icon-container {
+	/* icon margin + icon height + label height + label margin */
+	min-height: calc(53px + 2.2em);
+}
+
 [DnDpref] .DnDpref-item-container .DnDpref-icon {
 	height: 32px;
 	width: 32px;
@@ -117,7 +122,14 @@ colorpicker * {
 }
 
 [DnDpref] .DnDpref-item-container .DnDpref-label {
+	line-height: 1.1;
+	min-height: 2.2em;
+	max-height: 2.2em;
+	clip: rect(auto, auto, 2.3em, auto);
+	margin-top: 2px;
+	margin-bottom: 3px;
 	text-align: center;
+	-moz-hyphens: auto;
 }
 
 /* footer controls */

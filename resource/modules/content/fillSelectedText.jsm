@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.5';
+Modules.VERSION = '2.0.6';
 
 this.selectedText = {
 	handleEvent: function(e) {
@@ -64,8 +64,12 @@ this.selectedText = {
 			// but we do want to erase the findbar when there's no text selection
 			if(selText && !Prefs.fillTextFromEditable) {
 				let focused = Finder.getFocused();
-				if(focused.element && focused.element instanceof Ci.nsIDOMNSEditableElement) {
-					return;
+				if(focused.element) {
+					// instances of any editable element (i.e. input,textarea) are of course editable
+					if(focused.element instanceof Ci.nsIDOMNSEditableElement) { return; }
+					
+					// in HTML5, elements with contenteditable="true" are freely editable
+					if(trueAttribute(focused.element, 'contenteditable')) { return; }
 				}
 			}
 			

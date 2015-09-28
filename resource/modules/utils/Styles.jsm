@@ -1,4 +1,4 @@
-Modules.VERSION = '2.3.2';
+Modules.VERSION = '2.3.3';
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -109,7 +109,8 @@ this.Styles = {
 		}
 		
 		if(isData && !aPath.startsWith("data:text/css,")) {
-			return 'data:text/css,' + encodeURIComponent(aPath);
+			let code = '/* CSS code appended by '+objPathString+':Styles.jsm */\n' + aPath;
+			return 'data:text/css,' + encodeURIComponent(code);
 		}
 		
 		return aPath;

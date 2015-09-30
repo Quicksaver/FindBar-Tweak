@@ -1,4 +1,4 @@
-Modules.VERSION = '2.3.5';
+Modules.VERSION = '2.3.6';
 
 this.__defineGetter__('FITdeferred', function() { return window.FITdeferred; });
 this.__defineGetter__('FITinitialized', function() { return FITdeferred.promise; });
@@ -344,7 +344,11 @@ this.FIT = {
 	
 	selectHitOnlyOnce: function(hits, idx) {
 		hits._noSelect = true;
-		hits.selectedIndex = idx;
+		if(typeof(idx) == 'number') {
+			hits.selectedIndex = idx;
+		} else {
+			hits.selectedItem = idx;
+		}
 		hits._noSelect = false;
 	},
 	
@@ -812,6 +816,7 @@ this.FIT = {
 					break;
 				
 				case 'select':
+					Timers.cancel('selectHit');
 					if(this._noSelect) { break; }
 					
 					// the delay helps when fast navigating the FITSidebar lists
@@ -1035,7 +1040,8 @@ this.FIT = {
 		if((!FITSidebar || !Timers.selectHit)
 		// only change if the item to be selected is not already the current item, to not trigger the onselect handlers in vain
 		&& hit.item != item.linkedHits.selectedItem) {
-			item.linkedHits.selectItem(hit.item);
+			hit.item.hitIdx = hitIdx;
+			this.selectHitOnlyOnce(item.linkedHits, hit.item);
 			item.linkedHits.ensureSelectedElementIsVisible();
 			item.linkedHits._lastSelected = item.linkedHits.selectedIndex;
 		}

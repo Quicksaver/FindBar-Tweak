@@ -1,4 +1,4 @@
-Modules.VERSION = '2.2.2';
+Modules.VERSION = '2.2.3';
 
 this.FITMini = {
 	get broadcaster() { return $(FITSandbox.kBroadcasterId); },
@@ -52,15 +52,21 @@ this.FITMini = {
 				break;
 			
 			case 'OpenedFindBar':
+				// never show the sidebar when using the quick findbar
+				if(gFindBar._findMode != gFindBar.FIND_NORMAL) {
+					FITSandbox.commandSidebar(window, false);
+					break;
+				}
+				
 				// the FIT sidebar should already be in the correct state when switching tabs!
 				// There's no need to toggle the sidebar if the find bar "was already open".
-				if(!trueAttribute(gFindBar, 'noAnimation')) {
+				if(Prefs.autoShowHideFIT && !trueAttribute(gFindBar, 'noAnimation')) {
 					FITSandbox.commandSidebar(window, true);
 				}
 				break;
 			
 			case 'ClosedFindBar':
-				if(!trueAttribute(gFindBar, 'noAnimation')) {
+				if(Prefs.autoShowHideFIT && !trueAttribute(gFindBar, 'noAnimation')) {
 					FITSandbox.commandSidebar(window, false);
 				}
 				break;
@@ -94,18 +100,20 @@ this.FITMini = {
 				switch(aSubject) {
 					case 'findInTabsAction':
 						this.updateBroadcaster();
-						this.toggleAutoShowHide();
-						
+						// no break; continue to autoShowHideFIT
+					
+					case 'autoShowHideFIT':
 						// in case the user doesn't want the button to toggle the sidebar, make sure we close it now,
 						// otherwise the user would have to do it manually
 						if(Prefs.findInTabsAction != 'sidebar') {
 							FITSandbox.commandSidebar(window, false);
 						}
+						
+						// otherwise see if the findbar is already opened and show the sidebar if it isn't shown already;
+						else if(Prefs.autoShowHideFIT && gFindBarInitialized && !gFindBar.hidden && !this.sidebar) {
+							this.toggle();
+						}
 						break;
-					
-					case 'autoShowHideFIT':
-						this.toggleAutoShowHide();
-						break;						
 				}
 				break;
 		}
@@ -122,20 +130,6 @@ this.FITMini = {
 		aSync(() => {
 			this.sendToUpdate(browser);
 		}, 10);
-	},
-	
-	toggleAutoShowHide: function(unload) {
-		if(!unload && Prefs.autoShowHideFIT && Prefs.findInTabsAction == 'sidebar') {
-			Listeners.add(window, 'OpenedFindBar', this);
-			Listeners.add(window, 'ClosedFindBar', this);
-			
-			if(gFindBarInitialized && !gFindBar.hidden && !this.sidebar) {
-				this.toggle();
-			}
-		} else {
-			Listeners.remove(window, 'OpenedFindBar', this);
-			Listeners.remove(window, 'ClosedFindBar', this);
-		}
 	},
 	
 	toggle: function() {
@@ -229,7 +223,8 @@ this.FITMini = {
 		if(!viewSource) {
 			Prefs.listen('findInTabsAction', this);
 			Prefs.listen('autoShowHideFIT', this);
-			this.toggleAutoShowHide();
+			Listeners.add(window, 'OpenedFindBar', this);
+			Listeners.add(window, 'ClosedFindBar', this);
 		}
 		
 		initFindBar('findInTabsMini',
@@ -302,7 +297,8 @@ this.FITMini = {
 		if(!viewSource) {
 			Prefs.unlisten('findInTabsAction', this);
 			Prefs.unlisten('autoShowHideFIT', this);
-			this.toggleAutoShowHide(true);
+			Listeners.remove(window, 'OpenedFindBar', this);
+			Listeners.remove(window, 'ClosedFindBar', this);
 		}
 		
 		if((window.closed || window.willClose) && !UNLOADED && Prefs.findInTabs) {

@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.15';
+Modules.VERSION = '1.0.16';
 
 this.__defineGetter__('isPDFJS', function() { return Finder.isPDFJS; });
 
@@ -786,6 +786,25 @@ this.Finder = {
 	compareRanges: function(aRange, bRange) {
 		// if the supplied nodes aren't even ranges, we're pretty sure they're not meant to be compared anyway
 		if(!(aRange instanceof content.Range) || !(bRange instanceof content.Range)) {
+			return false;
+		}
+		
+		// obviously if the ranges don't belong to the same document, they can't be the same range
+		try {
+			let aDoc = aRange.commonAncestorContainer;
+			let bDoc = bRange.commonAncestorContainer;
+			if(aDoc.ownerDocument) {
+				aDoc = aDoc.ownerDocument;
+			}
+			if(bDoc.ownerDocument) {
+				bDoc = bDoc.ownerDocument;
+			}
+			if(aDoc != bDoc) { return false; }
+		}
+		catch(ex) {
+			// if something goes wrong here, we assume the ranges aren't comparable,
+			// but still report it to the console, this should be rare though
+			Cu.reportError(ex);
 			return false;
 		}
 		

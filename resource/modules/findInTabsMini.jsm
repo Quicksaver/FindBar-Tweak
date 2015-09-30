@@ -1,4 +1,4 @@
-Modules.VERSION = '2.2.3';
+Modules.VERSION = '2.2.4';
 
 this.FITMini = {
 	get broadcaster() { return $(FITSandbox.kBroadcasterId); },
@@ -107,12 +107,11 @@ this.FITMini = {
 						// otherwise the user would have to do it manually
 						if(Prefs.findInTabsAction != 'sidebar') {
 							FITSandbox.commandSidebar(window, false);
+							break;
 						}
 						
 						// otherwise see if the findbar is already opened and show the sidebar if it isn't shown already;
-						else if(Prefs.autoShowHideFIT && gFindBarInitialized && !gFindBar.hidden && !this.sidebar) {
-							this.toggle();
-						}
+						this.autoShowSidebar();
 						break;
 				}
 				break;
@@ -130,6 +129,13 @@ this.FITMini = {
 		aSync(() => {
 			this.sendToUpdate(browser);
 		}, 10);
+	},
+	
+	autoShowSidebar: function() {
+		if(Prefs.findInTabsAction == 'sidebar' && Prefs.autoShowHideFIT
+		&& gFindBarInitialized && !gFindBar.hidden && !this.sidebar) {
+			this.toggle();
+		}
 	},
 	
 	toggle: function() {
@@ -225,6 +231,7 @@ this.FITMini = {
 			Prefs.listen('autoShowHideFIT', this);
 			Listeners.add(window, 'OpenedFindBar', this);
 			Listeners.add(window, 'ClosedFindBar', this);
+			this.autoShowSidebar();
 		}
 		
 		initFindBar('findInTabsMini',

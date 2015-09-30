@@ -1,4 +1,4 @@
-Modules.VERSION = '2.3.6';
+Modules.VERSION = '2.3.7';
 
 this.__defineGetter__('FITdeferred', function() { return window.FITdeferred; });
 this.__defineGetter__('FITinitialized', function() { return FITdeferred.promise; });
@@ -1196,6 +1196,9 @@ Modules.LOADMODULE = function() {
 		Prefs.listen('showTabsInFITSidebar', FIT);
 		
 		setAttribute(FIT.splitter, 'orient', 'vertical');
+		
+		// give control of the console shortcut back to the main window
+		setAttribute($('cmd_errorConsole'), 'disabled', 'true');
 	}
 	
 	Listeners.add(window, 'WillFindFindBar', FIT, true);

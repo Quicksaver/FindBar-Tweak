@@ -1,4 +1,4 @@
-Modules.VERSION = '2.3.4';
+Modules.VERSION = '2.3.5';
 
 this.__defineGetter__('FITdeferred', function() { return window.FITdeferred; });
 this.__defineGetter__('FITinitialized', function() { return FITdeferred.promise; });
@@ -340,12 +340,6 @@ this.FIT = {
 			caseSensitive: gFindBar.getElement("find-case-sensitive").checked,
 			findPrevious: aFindPrevious
 		});
-		
-		// onmousedown is called after onselect, but there's no need to run selectHit() twice
-		hits._noMouseDown = true;
-		aSync(() => {
-			hits._noMouseDown = false;
-		});
 	},
 	
 	selectHitOnlyOnce: function(hits, idx) {
@@ -358,9 +352,16 @@ this.FIT = {
 		this.working = true;
 		
 		let win = aBrowser.ownerGlobal;
-		win.focus();
-		if(win.gBrowser && win.gBrowser.selectedTab) {
-			win.gBrowser.selectedTab = win.gBrowser.getTabForBrowser(aBrowser);
+		
+		// it's unnecessary to focus the window when selecting matches in the FITSidebar,
+		// the window will be focused already when it needs to be, otherwise the sidebar couldn't be being used anyway
+		if(!FITSidebar) {
+			win.focus();
+		}
+		
+		let tab = win.gBrowser.getTabForBrowser(aBrowser);
+		if(win.gBrowser && win.gBrowser.selectedTab != tab) {
+			win.gBrowser.selectedTab = tab;
 		}
 		
 		this.working = false;
@@ -802,13 +803,25 @@ this.FIT = {
 					break;
 				
 				case 'mousedown':
-					if(e.target == this || this._noMouseDown) { break; }
-					// no break; continue to select
+					// we only want clicks to act when in an actual item
+					if(e.target == this) { break; }
+					
+					// mouse clicks can act immediately, unlike selecting with the keyboard or automatically
+					Timers.cancel('selectHit');
+					FIT.selectHit();
+					break;
 				
 				case 'select':
 					if(this._noSelect) { break; }
 					
-					FIT.selectHit();
+					// the delay helps when fast navigating the FITSidebar lists
+					Timers.init('selectHit', function() {
+						// do nothing if the lists have reset for this tab
+						if(!newHits.parentNode) { return; }
+						
+						Timers.cancel('selectHit');
+						FIT.selectHit();
+					}, 50);
 					break;
 			}
 		};
@@ -1014,7 +1027,14 @@ this.FIT = {
 		let hit = item.linkedHits.hits.get(hitIdx);
 		if(!hit) { return; }
 		
-		if(hit.item != item.linkedHits.selectedItem) {
+		// make sure the lists for this tab hasn't reset in the meantime
+		if(!item.linkedHits || !item.linkedHits.parentNode) { return; }
+		
+		// the user could be navigating the lists with the keyboard,
+		// since the onselect handler is done on a timer, we don't want the lists to re-select past matches and override the user's selection
+		if((!FITSidebar || !Timers.selectHit)
+		// only change if the item to be selected is not already the current item, to not trigger the onselect handlers in vain
+		&& hit.item != item.linkedHits.selectedItem) {
 			item.linkedHits.selectItem(hit.item);
 			item.linkedHits.ensureSelectedElementIsVisible();
 			item.linkedHits._lastSelected = item.linkedHits.selectedIndex;

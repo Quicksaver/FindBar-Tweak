@@ -1,4 +1,4 @@
-Modules.VERSION = '1.2.1';
+Modules.VERSION = '1.2.2';
 
 this.FIT = {
 	// this keeps a list of all hits in a page, mapped to an id that can be used to keep things sync'ed up with the chrome process
@@ -12,6 +12,7 @@ this.FIT = {
 	_lastText: '',
 	_lastQuery: '',
 	_lastCaseSensitive: false,
+	_lastMatch: -1,
 	
 	_holdingHit: null,
 	
@@ -121,7 +122,7 @@ this.FIT = {
 		if(!this.hits || this.hits.all.size == 0) { return; }
 		
 		var item = this.hits.items.get(data.item);
-		var hit = (data.hit > -1) ? this.hits.all.get(data.hit) : item.hits.get(item.firstHit);
+		var hit = this.hits.all.get(data.hit);
 		
 		// at this point we're sure we will show a hit somewhere, even if it's just to show the current hit, so we can start focusing the browser
 		message('FIT:FocusMe');
@@ -130,18 +131,9 @@ this.FIT = {
 			// Don't do anything when the current selection is contained within the ranges of this item.
 			// We don't want to keep re-selecting it.
 			if(PDFJS.findController.selected.pageIdx > -1 && PDFJS.findController.selected.matchIdx > -1) {
-				if(data.hit > -1) {
-					if(hit.pIdx == PDFJS.findController.selected.pageIdx && hit.mIdx == PDFJS.findController.selected.matchIdx) {
-						PDFJS.callOnPDFResults('find');
-						return;
-					}
-				} else {
-					for(let [ iI, iHit ] of item.hits) {
-						if(iHit.pIdx == PDFJS.findController.selected.pageIdx && iHit.mIdx == PDFJS.findController.selected.matchIdx) {
-							PDFJS.callOnPDFResults('find');
-							return;
-						}
-					}
+				if(hit.pIdx == PDFJS.findController.selected.pageIdx && hit.mIdx == PDFJS.findController.selected.matchIdx) {
+					PDFJS.callOnPDFResults('find');
+					return;
 				}
 			}
 			
@@ -171,18 +163,9 @@ this.FIT = {
 			var selRange = sel.getRangeAt(0);
 			// Don't do anything when the current selection is contained within the ranges of this item.
 			// We don't want to keep re-selecting it.
-			if(data.hit > -1) {
-				if(Finder.compareRanges(hit, selRange)) {
-					this.reNotify();
-					return;
-				}
-			} else {
-				for(let [ iI, iHit ] of item.hits) {
-					if(Finder.compareRanges(iHit, selRange)) {
-						this.reNotify();
-						return;
-					}
-				}
+			if(Finder.compareRanges(hit, selRange)) {
+				this.reNotify();
+				return;
 			}
 		}
 		
@@ -195,10 +178,21 @@ this.FIT = {
 			message('FIT:Find', data);
 		}
 		
+		// Which will be faster, search forward or backwards? We do an approximation based on the last selected match
+		var lastI = this._lastMatch;
+		var curI = data.hit;
+		var allI = this.hits.all.size;
+		if(lastI < curI) {
+			var aFindPrevious = ((allI -curI +lastI) < (curI -lastI));
+		} else {
+			var aFindPrevious = ((lastI -curI) < (allI -lastI +curI));
+		}
+		this._lastMatch = data.hit;
+		
 		// Then, we use fastFind until it finds our range.
 		// This is the only way I found to also update the browser._fastFind object, manually setting the range in the controllers doesn't do this,
 		// because of that, we often ended up with multiple selections on screen, and the cursor position wouldn't seem to update.
-		Finder.findRange(data.query, hit, data.caseSensitive, data.findPrevious, this.hits.all.size);
+		Finder.findRange(data.query, hit, data.caseSensitive, aFindPrevious, this.hits.all.size);
 	},
 	
 	// when mousing over a hit, we can show which hit it is in the highlights grid
@@ -242,6 +236,7 @@ this.FIT = {
 			items: new Map()
 		};
 		this._lastText = '';
+		this._lastMatch = -1;
 		
 		if(!fromChrome) {
 			message('FIT:ResetTabHits');
@@ -256,6 +251,7 @@ this.FIT = {
 			for(let [ idx, hit ] of this.hits.all) {
 				if(hit.pIdx == PDFJS.findController.selected.pageIdx
 				&& hit.mIdx == PDFJS.findController.selected.matchIdx) {
+					this._lastMatch = idx;
 					message('FIT:CurrentHit', idx);
 					break;
 				}
@@ -273,6 +269,7 @@ this.FIT = {
 			
 			for(let [ idx, hit ] of hits) {
 				if(Finder.compareRanges(selRange, hit)) {
+					this._lastMatch = idx;
 					message('FIT:CurrentHit', idx);
 					break;
 				}

@@ -1,4 +1,4 @@
-Modules.VERSION = '2.3.7';
+Modules.VERSION = '2.3.8';
 
 this.__defineGetter__('FITdeferred', function() { return window.FITdeferred; });
 this.__defineGetter__('FITinitialized', function() { return FITdeferred.promise; });
@@ -323,22 +323,11 @@ this.FIT = {
 			return;
 		}
 		
-		// Which is faster, search forward or backwards? We do an approximation based on the last selected row
-		var lastI = hits._lastSelected;
-		var curI = hits.selectedIndex;
-		var allI = hits.itemCount;
-		if(lastI < curI) {
-			var aFindPrevious = ((allI -curI +lastI) < (curI -lastI));
-		} else {
-			var aFindPrevious = ((lastI -curI) < (allI -lastI +curI));
-		}
-		
 		Messenger.messageBrowser(browser, 'FIT:SelectHit', {
 			item: hits.selectedIndex,
 			hit: hits.currentItem.hitIdx,
 			query: findQuery,
-			caseSensitive: gFindBar.getElement("find-case-sensitive").checked,
-			findPrevious: aFindPrevious
+			caseSensitive: gFindBar.getElement("find-case-sensitive").checked
 		});
 	},
 	
@@ -844,7 +833,6 @@ this.FIT = {
 		
 		newHits.hidden = (item != this.tabsList.currentItem); // Keep the hits list visible
 		newHits._currentLabel = null;
-		newHits._lastSelected = -1;
 		newHits.hits = new Map();
 		this.hits.appendChild(newHits);
 		item.linkedHits = newHits;
@@ -1043,7 +1031,6 @@ this.FIT = {
 			hit.item.hitIdx = hitIdx;
 			this.selectHitOnlyOnce(item.linkedHits, hit.item);
 			item.linkedHits.ensureSelectedElementIsVisible();
-			item.linkedHits._lastSelected = item.linkedHits.selectedIndex;
 		}
 		
 		if(item.linkedHits._currentLabel != hit.label) {

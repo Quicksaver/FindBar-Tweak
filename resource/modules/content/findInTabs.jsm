@@ -1,4 +1,4 @@
-Modules.VERSION = '1.2.2';
+Modules.VERSION = '1.2.3';
 
 this.FIT = {
 	// this keeps a list of all hits in a page, mapped to an id that can be used to keep things sync'ed up with the chrome process
@@ -492,8 +492,8 @@ this.FIT = {
 		let count = 0;
 		
 		let isPDF = isPDFJS;
-		let lastEndContainer = null;
-		let lastEndOffset = null;
+		let lastLine = null;
+		let lastLineText = null;
 		let lastDone = -1;
 		
 		for(let [ h, range ] of this.hits.all) {
@@ -504,198 +504,158 @@ this.FIT = {
 			let hits = new Map();
 			hits.set(h, range);
 			
+			let rangeText;
+			let startLine;
+			let startLineText;
+			let endLine;
+			let endLineText;
+			let directionRTL;
 			if(isPDF) {
-				var partialString = this._replaceLineBreaks(PDFJS.findController.pageContents[range.pIdx].substr(range.offset, aWord.length));
+				if(lastLine != range.pIdx) {
+					lastLine = range.pIdx;
+					lastLineText = PDFJS.findController.pageContents[lastLine];
+				}
 				
-				var doLastStart = range.offset +aWord.length;
-				var doFirstLength = range.offset;
+				rangeText = this._replaceLineBreaks(lastLineText.substr(range.offset, aWord.length));
 				
-				var startContainer = range.pIdx;
-				var startContainerText = PDFJS.findController.pageContents[range.pIdx];
-				var endContainer = range.pIdx;
-				var endContainerText = PDFJS.findController.pageContents[range.pIdx];
+				startLine = range.offset;
+				startLineText = this._replaceLineBreaks(lastLineText.substring(0, startLine));
 				
-				var directionRTL = (document.documentElement.dir == 'rtl');
+				endLine = range.offset +aWord.length;
+				endLineText = this._replaceLineBreaks(lastLineText.substring(endLine));
+				
+				directionRTL = (document.documentElement.dir == 'rtl');
 			} else {
-				var partialString = this._replaceLineBreaks(range.toString());
+				if(!this._withinRange(range, lastLine)) {
+					lastLine = this._buildLineRange(range);
+					lastLineText = this._replaceLineBreaks(lastLine.toString());
+				}
 				
-				var doLastStart = range.endOffset;
-				var doFirstLength = range.startOffset;
+				rangeText = this._replaceLineBreaks(range.toString());
 				
-				var startContainer = range.startContainer;
-				var startContainerText = startContainer.textContent;
-				var endContainer = range.endContainer;
-				var endContainerText = endContainer.textContent;
+				startLine = lastLine.cloneRange();
+				startLine.setEnd(range.startContainer, range.startOffset);
+				startLineText = this._replaceLineBreaks(startLine.toString());
 				
-				let styleElement = range.startContainer;
-				while(!styleElement.style && styleElement.parentNode) { styleElement = styleElement.parentNode; }
-				var directionRTL = (getComputedStyle(styleElement).direction == 'rtl');
+				endLine = lastLine.cloneRange();
+				endLine.setStart(range.endContainer, range.endOffset);
+				endLineText = this._replaceLineBreaks(endLine.toString());
+				
+				try {
+					let styleElement = lastLine.commonAncestorContainer;
+					while(!styleElement.style && styleElement.parentNode) { styleElement = styleElement.parentNode; }
+					directionRTL = (getComputedStyle(styleElement).direction == 'rtl');
+				}
+				catch(ex) {
+					directionRTL = false;
+				}
 			}
 			
 			let item = new FITitem(aWord, directionRTL, h);
-			item.append(partialString, h);
+			item.append(rangeText, h);
 			
-			var initialPoints = (doFirstLength != 0);
-			var finalPoints = (doLastStart != endContainer.length);
-			
-			// Let's try to add whole words whenever possible
-			if(doFirstLength > 0 && startContainerText[doFirstLength -1] != ' ') {
-				var doFirstStart = startContainerText.lastIndexOf(' ', doFirstLength) +1;
-				
-				var fillString = this._replaceLineBreaks(startContainerText.substr(doFirstStart, doFirstLength -doFirstStart));
-				
-				doFirstLength = doFirstStart;
-				if(doFirstStart == 0) {
-					initialPoints = false;
-				}
+			// Let's try to add whole words whenever possible, for now let's only do the beginning of the word,
+			// the rest (end) of the word will be unnecessary if we merge more matches into this item.
+			if(startLineText.length > 0 && startLineText[startLineText.length -1] != ' ') {
+				let spaceI = Math.max(0, startLineText.lastIndexOf(' ', startLineText.length -2));
+				let fillString = startLineText.substring(spaceI);
 				
 				item.append(fillString, true);
-			}
-			if(doLastStart +1 < endContainerText.length && endContainerText[doLastStart] != ' ') {
-				if(!this.hits.all.has(h +1)
-				|| ((!isPDF) ? this.hits.all.get(h +1).startContainer != endContainer : this.hits.all.get(h +1).pIdx != range.pIdx)
-				|| 	(endContainerText.includes(' ', doLastStart)
-					&& this.hits.all.get(h +1)[(!isPDF) ? 'startOffset' : 'offset'] > endContainerText.indexOf(' ', doLastStart))) {
-						var doLastLength = endContainerText.indexOf(' ', doLastStart);
-						if(doLastLength == -1) { doLastLength = endContainerText.length; }
-						doLastLength -= doLastStart;
-						
-						var fillString = this._replaceLineBreaks(endContainerText.substr(doLastStart, doLastLength));
-						
-						doLastStart += doLastLength;
-						if(doLastStart == endContainerText.length) {
-							finalPoints = false;
-						}
-						
-						item.append(fillString);
-				}
+				startLineText = startLineText.substring(0, spaceI);
 			}
 			
 			// We attempt to merge very close occurences into the same item whenever possible
-			var lastRange = range;
-			var hh = h+1;
+			let lastRange = range;
 			if(item.str.length < this.kHitsLength) {
-				while(this.hits.all.has(hh) && this.hits.all.get(hh)[(isPDF) ? 'pIdx' : 'startContainer'] == endContainer) {
-					var nextRange = this.hits.all.get(hh);
+				let hh = h+1;
+				let nextRange = this.hits.all.get(hh);
+				
+				while(nextRange && ((isPDF) ? nextRange.pIdx == lastLine : this._withinRange(nextRange, lastLine))) {
+					let nextStartLine;
+					let nextStartLineText;
 					if(isPDF) {
-						var nextString = this._replaceLineBreaks(PDFJS.findController.pageContents[nextRange.pIdx].substr(nextRange.offset, aWord.length));
-						var nextLastStart = nextRange.offset +aWord.length;
-						var nextFirstLength = nextRange.offset;
-						var nextStartContainer = nextRange.pIdx;
-						var nextStartContainerText = PDFJS.findController.pageContents[nextRange.pIdx];
-						var nextEndContainer = nextRange.pIdx;
-						var nextEndContainerText = PDFJS.findController.pageContents[nextRange.pIdx];
+						nextStartLine = nextRange.offset
+						nextStartLineText = this._replaceLineBreaks(lastLineText.substring(lastRange.offset +aWord.length, nextStartLine));
 					} else {
-						var nextString = this._replaceLineBreaks(nextRange.toString());
-						var nextLastStart = nextRange.endOffset;
-						var nextFirstLength = nextRange.startOffset;
-						var nextStartContainer = nextRange.startContainer;
-						var nextStartContainerText = nextStartContainer.textContent;
-						var nextEndContainer = nextRange.endContainer;
-						var nextEndContainerText = nextEndContainer.textContent;
+						nextStartLine = lastLine.cloneRange();
+						nextStartLine.setStart(lastRange.endContainer, lastRange.endOffset);
+						nextStartLine.setEnd(nextRange.startContainer, nextRange.startOffset);
+						nextStartLineText = this._replaceLineBreaks(nextStartLine.toString());
 					}
-					
-					var fillNext = '';
-					if(nextLastStart < nextEndContainerText.length
-					&& nextEndContainerText[nextLastStart] != ' ') {
-						if(!this.hits.all.has(hh +1)
-						|| ((!isPDF) ? this.hits.all.get(hh +1).startContainer != nextRange.endContainer : this.hits.all.get(hh +1).pIdx != nextRange.pIdx)
-						|| 	(nextEndContainerText.includes(' ', nextLastStart)
-							&& this.hits.all.get(hh +1)[(!isPDF) ? 'startOffset' : 'offset'] > nextEndContainerText.indexOf(' ', nextLastStart))) {
-								var fillNextLength = nextEndContainerText.indexOf(' ', nextLastStart);
-								if(fillNextLength == -1) { fillNextLength = nextEndContainerText.length; }
-								fillNextLength -= nextLastStart;
-								
-								fillNext = this._replaceLineBreaks(nextEndContainerText.substr(nextLastStart, fillNextLength));
-						}
-					}
-					
-					var inBetweenStart = doLastStart;
-					var inBetweenLength = nextFirstLength -inBetweenStart;
-					var inBetween = this._replaceLineBreaks(nextStartContainerText.substr(inBetweenStart, inBetweenLength));
-					if(item.str.length +nextString.length +fillNext.length +inBetween.length <= this.kHitsLength) {
-						doLastStart = nextLastStart +fillNext.length;
-						if(doLastStart == nextEndContainerText.length) {
-							finalPoints = false;
+			
+					// we estimate the size of the next match to be the same of the previous match
+					if(item.str.length +rangeText.length +nextStartLineText.length <= this.kHitsLength) {
+						let nextRangeText;
+						if(isPDF) {
+							nextRangeText = this._replaceLineBreaks(lastLineText.substr(nextRange.offset, aWord.length));
+							
+							endLine = nextRange.offset +aWord.length;
+							endLineText = this._replaceLineBreaks(lastLineText.substring(endLine));
+						} else {
+							nextRangeText = this._replaceLineBreaks(nextRange.toString());
+							
+							endLine.setStart(nextRange.endContainer, nextRange.endOffset);
+							endLineText = this._replaceLineBreaks(endLine.toString());
 						}
 						
-						item.append(inBetween);
-						item.append(nextString, hh);
-						item.append(fillNext);
+						item.append(nextStartLineText);
+						item.append(nextRangeText, hh);
 						
 						hits.set(hh, nextRange);
 						lastRange = nextRange;
 						lastDone = hh;
 						endNumber = hh +1;
+						
 						h = hh;
 						hh++;
+						nextRange = this.hits.all.get(hh);
+						
 						continue;
 					}
 					break;
 				}
 			}
 			
-			var doLast = false;
-			var didOne = true;
-			
-			var lastEndContainerText = (isPDF) ? PDFJS.findController.pageContents[lastRange.pIdx] : lastRange.endContainer.textContent;
-			
-			// Now we complete with some before and after text strings
-			while(item.str.length < this.kHitsLength) {
-				doLast = !doLast;
+			// Now we complete with some before and after text strings,
+			// make sure we complete the rest of the last word, since we haven't yet, even if it goes beyond the char limit.
+			let forceWordEnd = endLineText.length && endLineText[0] != ' ';
+			let doBefore = true;
+			let didOne = true;
+			while(item.str.length < this.kHitsLength || forceWordEnd) {
+				doBefore = !doBefore;
 				
-				if(doLast) {
-					if(!finalPoints) {
+				let fillString = '';
+				if(!doBefore) {
+					if(!endLineText.length) {
 						if(!didOne) { break; }
 						didOne = false;
 						continue;
 					}
 					
-					var doLastLength = lastEndContainerText.indexOf(' ', doLastStart +1);
-					if(doLastLength == -1) { doLastLength = lastEndContainerText.length; }
-					doLastLength -= doLastStart;
-					var fillString = this._replaceLineBreaks(lastEndContainerText.substr(doLastStart, doLastLength));
+					let spaceI = endLineText.indexOf(' ', 1);
+					if(spaceI < 0) {
+						spaceI = endLineText.length;
+					}
+					
+					fillString = endLineText.substring(0, spaceI);
+					endLineText = endLineText.substring(spaceI);
 				} else {
-					if(!initialPoints) {
+					if(!startLineText.length) {
 						if(!didOne) { break; }
 						didOne = false;
 						continue;
 					}
 					
-					var doFirstStart = (doFirstLength < 2) ? 0 : startContainerText.lastIndexOf(' ', Math.max(doFirstLength -2, 0)) +1;
-					doFirstLength -= doFirstStart;
+					let spaceI = Math.max(0, startLineText.lastIndexOf(' ', startLineText.length -2));
 					
-					// Don't use text that has been used before
-					if(startContainer == lastEndContainer && doFirstStart < lastEndOffset) {
-						if(!didOne) { break; }
-						didOne = false;
-						continue;
-					}
-					
-					var fillString = this._replaceLineBreaks(startContainerText.substr(doFirstStart, doFirstLength));
+					fillString = startLineText.substring(spaceI);
+					startLineText = startLineText.substring(0, spaceI);
 				}
 				
-				if(fillString.length > 0 && item.str.length +fillString.length < this.kHitsLength) {
-					if(doLast) {
-						doLastStart += doLastLength;
-						if(doLastStart == lastEndContainerText.length) {
-							finalPoints = false;
-						}
-						
-						// Trimming those extra white spaces
-						if(trim(fillString)) {
-							item.append(fillString);
-						}
-					} else {
-						doFirstLength = doFirstStart;
-						if(doFirstStart == 0) {
-							initialPoints = false;
-						}
-						
-						// Trimming those extra white spaces
-						if(trim(fillString)) {
-							item.append(fillString, true);
-						}
+				if(fillString.length && (item.str.length +fillString.length < this.kHitsLength || forceWordEnd)) {
+					// Trimming those extra white spaces
+					if(trim(fillString)) {
+						item.append(fillString, doBefore);
 					}
 					
 					didOne = true;
@@ -704,15 +664,14 @@ this.FIT = {
 					if(!didOne) { break; }
 					didOne = false;
 				}
+				
+				forceWordEnd = false;
 			}
 			
-			lastEndContainer = (isPDF) ? lastRange.pIdx : lastRange.endContainer;
-			lastEndOffset = doLastStart;
-			
-			if(initialPoints) {
+			if(startLineText.length) {
 				item.append('... ', true);
 			}
-			if(finalPoints) {
+			if(endLineText.length) {
 				item.append(' ...');
 			}
 			
@@ -737,6 +696,114 @@ this.FIT = {
 	// Replace all linebreaks with white spaces
 	_replaceLineBreaks: function(str) {
 		return str.replace(/(\r\n|\n|\r)/gm, " ");
+	},
+	
+	// list of inline nodes that don't create their own content blocks or new lines
+	_inlineNodes: /^(a|abbr|acronym|b|bdi|bdo|big|cite|code|del|dfn|em|font|i|ins|kbd|mark|q|rt|ruby|s|samp|small|span|strike|strong|sub|sup|time|tt|u|var|wbr)$/,
+	
+	_isNodeInline: function(aNode) {
+		return aNode && (aNode.nodeType == aNode.TEXT_NODE || (aNode.localName && this._inlineNodes.test(aNode.localName)));
+	},
+	
+	// returns the farthest sibling and position in the DOM tree that belongs to the whitelisted nodes list above
+	_findEdge: function(aNode, aBackward) {
+		if(!this._isNodeInline(aNode)) {
+			return this._getEdgeOffset(aNode, aBackward);
+		}
+		
+		if(!aBackward) {
+			var next = 'nextSibling';
+			var edge = 'firstChild';
+		} else {
+			var next = 'previousSibling';
+			var edge = 'lastChild';
+		}
+		
+		let sibling = aNode;
+		do {
+			while(!sibling[next]) {
+				let parent = sibling.parentNode;
+				if(!parent || parent == document.body || parent == document.documentElement) {
+					return this._getEdgeOffset(sibling, aBackward);
+				}
+				
+				sibling = parent;
+				if(!this._isNodeInline(sibling)) {
+					return this._getEdgeOffset(sibling, aBackward);
+				}
+			}
+			
+			if(!this._isNodeInline(sibling[next])) {
+				return this._getEdgeOffset(sibling, aBackward);
+			}
+			
+			sibling = sibling[next];
+			while(sibling.nodeType == sibling.ELEMENT_NODE) {
+				if(!this._isNodeInline(sibling[edge])) {
+					return this._getEdgeOffset(sibling, !aBackward);
+				}
+				sibling = sibling[edge];
+			}
+		}
+		while(this._isNodeInline(sibling));
+		
+		return this._getEdgeOffset(sibling, aBackward);
+	},
+	
+	_getEdgeOffset: function(aNode, aBackward) {
+		if(aBackward) {
+			return {
+				node: aNode,
+				offset: 0
+			};
+		}
+		
+		return {
+			node: aNode,
+			offset: (aNode.nodeType == aNode.TEXT_NODE) ? aNode.textContent.length : aNode.childNodes.length
+		};
+	},
+	
+	// walks the adjacent nodes of aRange to get a bounding range containing all the nodes and their contents that won't create content blocks,
+	// that is, text that should be on the same line
+	_buildLineRange: function(aRange) {
+		let line = aRange.cloneRange();
+		
+		let start = this._findEdge(line.startContainer, true);
+		line.setStart(start.node, start.offset);
+		
+		let end = this._findEdge(line.endContainer, false);
+		line.setEnd(end.node, end.offset);
+		
+		return line;
+	},
+	
+	// returns whether a range can be found within another range
+	_withinRange: function(aRange, bRange) {
+		if(!(aRange instanceof content.Range) || !(bRange instanceof content.Range)) {
+			return false;
+		}
+		
+		// obviously if the ranges don't belong to the same document, they can't be the same range
+		try {
+			let aDoc = aRange.commonAncestorContainer;
+			let bDoc = bRange.commonAncestorContainer;
+			if(aDoc.ownerDocument) {
+				aDoc = aDoc.ownerDocument;
+			}
+			if(bDoc.ownerDocument) {
+				bDoc = bDoc.ownerDocument;
+			}
+			if(aDoc != bDoc) { return false; }
+		}
+		catch(ex) {
+			// if something goes wrong here, we assume the ranges aren't comparable,
+			// but still report it to the console, this should be rare though
+			Cu.reportError(ex);
+			return false;
+		}
+		
+		return aRange.compareBoundaryPoints(aRange.START_TO_START, bRange) > -1 && aRange.compareBoundaryPoints(aRange.END_TO_END, bRange) < 1;
 	},
 	
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIWebProgressListener, Ci.nsISupportsWeakReference])

@@ -80,6 +80,10 @@ window:not([FITSidebar]) #findbartweak-findInTabs-splitter {
 	-moz-image-region: rect(16px 48px 32px 32px);
 }
 
+#findbartweak-findInTabs-hits richlistbox[unfinished] {
+	display: none;
+}
+
 #findbartweak-findInTabs-hits richlistitem {
 	display: block;
 	padding: 2px 5px;

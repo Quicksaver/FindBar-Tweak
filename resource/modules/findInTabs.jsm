@@ -1,4 +1,4 @@
-Modules.VERSION = '2.3.8';
+Modules.VERSION = '2.3.9';
 
 this.__defineGetter__('FITdeferred', function() { return window.FITdeferred; });
 this.__defineGetter__('FITinitialized', function() { return FITdeferred.promise; });
@@ -769,6 +769,10 @@ this.FIT = {
 		var newHits = document.createElement('richlistbox');
 		newHits.setAttribute('flex', '1');
 		
+		// the hits list won't be shown until all its items are finished (until the content process has finished segmenting the text),
+		// each appendChild would cause a reflow of the layout, so in tabs with lots of matches/entries this could lag the browser unnecessarily
+		newHits.setAttribute('unfinished', 'true');
+		
 		// Don't use the Listeners object for the following, as there's no need to keep references to these nodes once they're gone, and they're gone a lot
 		newHits.handleEvent = function(e) {
 			switch(e.type) {
@@ -919,6 +923,10 @@ this.FIT = {
 			var listener = function() {
 				Messenger.unlistenBrowser(aBrowser, 'FIT:FinishedProcessText', listener);
 				resolve();
+				
+				if(item) {
+					removeAttribute(item.linkedHits, 'unfinished');
+				}
 			}
 			Messenger.listenBrowser(aBrowser, 'FIT:FinishedProcessText', listener);
 		});

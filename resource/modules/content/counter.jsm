@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.4';
+Modules.VERSION = '1.0.5';
 
 this.counter = {
 	redoing: false,
@@ -36,7 +36,7 @@ this.counter = {
 	
 	result: function(v, held) {
 		message('Counter:Result', {
-			searchString: Finder.searchString,
+			searchString: (isPDFJS) ? findQuery : Finder.searchString,
 			result: v || '',
 			heldStatus: held || false
 		});

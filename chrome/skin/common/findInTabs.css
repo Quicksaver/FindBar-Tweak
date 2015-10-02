@@ -117,6 +117,13 @@ html|div.findInTabs-match-flex {
 	min-width: 2em;
 }
 
+/* this actually doesn't do anything, but it's supposed to, investigate later
+   see https://bugzilla.mozilla.org/show_bug.cgi?id=1136818 */
+html|div.findInTabs-match-label {
+	min-width: 0;
+	word-wrap: break-word;
+}
+
 /* these aren't needed in the FIT standalone window */
 .findInTabs-bar toolbarbutton[anonid="find-next"],
 .findInTabs-bar toolbarbutton[anonid="find-previous"],

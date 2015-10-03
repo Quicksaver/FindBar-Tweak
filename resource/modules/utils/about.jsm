@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.2';
+Modules.VERSION = '1.1.3';
 
 this.about = {
 	kNS: 'http://www.w3.org/1999/xhtml',
@@ -266,7 +266,24 @@ this.about = {
 		
 		let as = $$('.a2a_link');
 		for(let a of as) {
-			var href = a.getAttribute('href')+'?linkurl='+linkurl+'&linkname='+linkname;
+			let href = a.getAttribute('href');
+			switch(a.title) {
+				case 'Facebook':
+					href += '?u='+linkurl;
+					break;
+				
+				case 'Twitter':
+					href += '?text='+linkname+'%20'+linkurl;
+					break;
+				
+				case 'Google+':
+					href += '?url='+linkurl;
+					break;
+				
+				default:
+					href += '?linkurl='+linkurl+'&linkname='+linkname;
+					break;
+			}
 			setAttribute(a, 'href', href);
 		}
 	},

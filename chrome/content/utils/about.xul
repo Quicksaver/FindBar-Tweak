@@ -112,13 +112,32 @@
 						<html:h5>&about.share;</html:h5>
 						<html:p>&about.friends;</html:p>
 						<html:div id="a2a_div" linkname="&about.tryit;">
-							<!-- I am using all the links to a2a service with the permission to do so from its author -->
-							<html:a class="a2a_link" href="https://www.addtoany.com/add_to/facebook" target="_blank" title="Facebook"><html:span class="a2a_s_facebook"/></html:a>
-							<html:a class="a2a_link" href="https://www.addtoany.com/add_to/twitter" target="_blank" title="Twitter"><html:span class="a2a_s_twitter"/></html:a>
-							<html:a class="a2a_link" href="https://www.addtoany.com/add_to/google_plus" target="_blank" title="Google+"><html:span class="a2a_s_google_plus"/></html:a>
-							<html:a class="a2a_link" href="https://www.addtoany.com/add_to/blogger_post" target="_blank" title="Blogger"><html:span class="a2a_s_blogger"/></html:a>
-							<html:a class="a2a_link" href="https://www.addtoany.com/add_to/wordpress" target="_blank" title="WordPress"><html:span class="a2a_s_wordpress"/></html:a>
-							<html:a class="a2a_link" href="https://www.addtoany.com/share_save" target="_blank" title="&about.moreshare;"><html:span class="a2a_s_a2a"/></html:a>
+							<!-- these links go through directly to the social site instead of relying on a2a to mediate -->
+							<html:a class="a2a_link"
+								href="https://www.facebook.com/sharer/sharer.php"
+								target="objPathStringFacebook"
+								title="Facebook"><html:span class="a2a_s_facebook"/></html:a>
+							<html:a class="a2a_link"
+								href="https://twitter.com/intent/tweet"
+								target="objPathStringTwitter"
+								title="Twitter"><html:span class="a2a_s_twitter"/></html:a>
+							<html:a class="a2a_link"
+								href="https://plus.google.com/share"
+								target="objPathStringGooglePlus"
+								title="Google+"><html:span class="a2a_s_google_plus"/></html:a>
+							<!-- I am using the following links to a2a service with the permission to do so from its author -->
+							<html:a class="a2a_link"
+								href="https://www.addtoany.com/add_to/blogger_post"
+								target="_blank"
+								title="Blogger"><html:span class="a2a_s_blogger"/></html:a>
+							<html:a class="a2a_link"
+								href="https://www.addtoany.com/add_to/wordpress"
+								target="_blank"
+								title="WordPress"><html:span class="a2a_s_wordpress"/></html:a>
+							<html:a class="a2a_link"
+								href="https://www.addtoany.com/share_save"
+								target="objPathStringA2AShare"
+								title="&about.moreshare;"><html:span class="a2a_s_a2a"/></html:a>
 						</html:div>
 					</html:div>
 				</html:div>

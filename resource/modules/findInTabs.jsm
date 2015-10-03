@@ -1,4 +1,4 @@
-Modules.VERSION = '2.3.9';
+Modules.VERSION = '2.3.10';
 
 this.__defineGetter__('FITdeferred', function() { return window.FITdeferred; });
 this.__defineGetter__('FITinitialized', function() { return FITdeferred.promise; });
@@ -205,6 +205,11 @@ this.FIT = {
 		} else {
 			if(this.selectGroup()) {
 				this.shouldFindAll();
+			}
+			
+			// obviously the focus shouldn't stay with the tab groups list if it's hidden
+			if(document.activeElement == this.tabsGroups) {
+				this.tabsList.focus();
 			}
 		}
 	},
@@ -577,7 +582,11 @@ this.FIT = {
 		
 		let groupTabs = document.createElement('richlistbox');
 		groupTabs.setAttribute('flex', '1');
-		groupTabs.onblur = (e) => { this.toggleGroups(); };
+		groupTabs.onblur = (e) => {
+			if(!groupTabs.hidden) {
+				this.toggleGroups();
+			};
+		};
 		groupTabs.onkeyup = (e) => {
 			if(e.keyCode == e.DOM_VK_RETURN) {
 				this.toggleGroups();

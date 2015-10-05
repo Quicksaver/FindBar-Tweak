@@ -3,12 +3,12 @@
 <!ENTITY OptGeneral.label "Général">
 <!ENTITY OptAppearance.label "Apparence">
 <!ENTITY Opttweaks.label "Réglages">
-<!ENTITY OptFindAll.label "Find All">
+<!ENTITY OptFindAll.label "Rechercher partout">
 <!ENTITY Optgen.label "Options de la barre">
 <!ENTITY Optdisplay.label "Position de la barre">
 <!ENTITY OptButtonAndLabels.label "Boutons et texte">
 <!ENTITY Optgrid.label "Repères de surlignage">
-<!ENTITY OpthighlightByDefault.label "Tout surligner par défaut">
+<!ENTITY OpthighlightByDefault.label "Surligner toutes les occurrences par défaut">
 <!ENTITY OpthighlightByDefault.tooltip "Lors de l'ouverture de la barre, le bouton « Tout surligner » sera déjà pressé, si bien que lorsque vous lancerez une quelconque opération de recherche, cela vous montrera toutes les occurrences dès le début.">
 <!ENTITY OpthideWhenFinderHidden.label "Enlever le surlignage lorsque la barre est fermée">
 <!ENTITY OpthideWhenFinderHidden.tooltip "En clair, barre pas ouverte = aucun surlignage. Cela s'applique aussi à la recherche rapide ! Dès que la barre est fermée, toutes les occurrences disparaissent de la page.">
@@ -16,24 +16,24 @@
 <!ENTITY OptgridInScrollbar.tooltip "La position relative de chaque occurrence surlignée dans la page Web sera affichée dans la barre de défilement.">
 <!ENTITY OptuseCounter.label "Afficher le compteur des occurrences dans la barre">
 <!ENTITY OptuseCounter.tooltip "Pour chaque opération de recherche, le nombre d'occurrences trouvées dans la page Web sera affiché au bout de la barre.">
-<!ENTITY OptfindAll.label "Enable Find All">
-<!ENTITY OptfindAll.tooltip "List all the found matches in all your opened tabs and windows.">
-<!ENTITY OptfindInTabsAction.caption "Pressing the Find All button...">
-<!ENTITY OptfindInTabsAction.sidebar.label "toggles the Find All sidebar">
-<!ENTITY OptfindInTabsAction.sidebar.tooltip.a "Shows the list in a sidebar next to the webpage, containing all the matches found in the page. You can also see matches from other tabs in the same window, and switch to them from within the sidebar.">
-<!ENTITY OptfindInTabsAction.sidebar.tooltip.b "Remember that for as long as this sidebar is open, the Findbar will act as a single global Findbar, even if you don't have that preference enabled!">
-<!ENTITY OptfindInTabsAction.full.label "opens the Find in All Tabs window">
-<!ENTITY OptfindInTabsAction.full.tooltip "Use a separate window to find matches in all opened tabs and windows.">
-<!ENTITY OptfindInTabsSidebar.caption "Find All sidebar">
-<!ENTITY OptautoShowHideFIT.label "Show and hide with the Findbar">
-<!ENTITY OptautoShowHideFIT.tooltip "The sidebar lists appear and hide automatically when you open and close the Findbar, so that you don't have to press the Find All button.">
-<!ENTITY OptgetOSB.description "You can further control the position and behavior of the Find All sidebar with my other add-on, OmniSidebar. Click here to get it!">
-<!ENTITY OpthasOSB.description "Configure your OmniSidebar's preferences to further control the position and behavior of the Find All sidebar. For instance, remember that the preference below only works if the Twin Sidebar itself is enabled.">
-<!ENTITY OpttwinFITSidebar.label "Open in the Twin Sidebar">
-<!ENTITY OpttwinFITSidebar.tooltip "The Find All sidebar will always open in the Twin Sidebar, on the opposite side of the window from the main sidebar, so that you can keep your bookmarks or history open at the same time.">
-<!ENTITY OptfindInTabsFull.caption "Find in All Tabs window">
-<!ENTITY OptmultipleFITFull.label.b "Allow multiple instances">
-<!ENTITY OptmultipleFITFull.tooltip.b "Open a new window each time the Find in All Tabs button is pressed, otherwise it will reuse any already opened window.">
+<!ENTITY OptfindAll.label "Activer « Rechercher partout »">
+<!ENTITY OptfindAll.tooltip "Liste toutes les occurrences trouvées pour tous vos onglets et fenêtres ouverts.">
+<!ENTITY OptfindInTabsAction.caption "Appuyer sur le bouton « Rechercher partout »...">
+<!ENTITY OptfindInTabsAction.sidebar.label "active le panneau latéral « Rechercher partout »">
+<!ENTITY OptfindInTabsAction.sidebar.tooltip.a "Affiche une liste contenant toutes les occurrences trouvées dans la page, dans un panneau latéral à côté de la page Web. Vous pouvez également voir les occurrences pour les autres onglets de la même fenêtre, et basculer vers eux depuis le panneau latéral.">
+<!ENTITY OptfindInTabsAction.sidebar.tooltip.b "Souvenez-vous qu'aussi longtemps que ce panneau latéral est ouvert, la barre de recherche agira comme une simple barre de recherche globale, même si vous n'avez pas activé ce paramètre !">
+<!ENTITY OptfindInTabsAction.full.label "ouvre la fenêtre « Rechercher dans tous les onglets »">
+<!ENTITY OptfindInTabsAction.full.tooltip "Utilise une fenêtre séparée pour rechercher des occurences dans tous les onglets et fenêtres ouverts.">
+<!ENTITY OptfindInTabsSidebar.caption "Panneau latéral « Rechercher partout »">
+<!ENTITY OptautoShowHideFIT.label "S'afficher et se fermer en même temps que la barre de recherche">
+<!ENTITY OptautoShowHideFIT.tooltip "La liste du panneau latéral apparait et disparait automatiquement lorsque vous ouvrez et fermez la barre de recherche, pour que vous n'ayez pas à appuyer sur le bouton « Rechercher partout ».">
+<!ENTITY OptgetOSB.description "Vous pouvez en outre contrôler la position et le comportement du panneau latéral « Rechercher partout » à l'aide de mon autre extension, OmniSidebar. Cliquez-ici pour l'obtenir !">
+<!ENTITY OpthasOSB.description "Configurer les paramètres d'OmniSidebar pour contrôler plus avant la position et le comportement du panneau latéral « Rechercher partout ». Par exemple, souvenez-vous que le paramètre ci-dessous fonctionne uniquement si le panneau latéral secondaire lui-même est activé.">
+<!ENTITY OpttwinFITSidebar.label "Ouvrir dans le panneau latéral secondaire">
+<!ENTITY OpttwinFITSidebar.tooltip "Le panneau latéral « Rechercher partout » s'ouvrira toujours dans le panneau latéral secondaire, du côté opposé à la fenêtre du panneau latéral principal, pour que vous puissiez avoir vos marque-pages ou votre historique ouverts en même temps.">
+<!ENTITY OptfindInTabsFull.caption "Fenêtre « Rechercher dans tous les onglets »">
+<!ENTITY OptmultipleFITFull.label.b "Autoriser plusieurs instances">
+<!ENTITY OptmultipleFITFull.tooltip.b "Ouvre une nouvelle fenêtre à chaque fois que le bouton « Rechercher dans tous les onglets » est pressé, autrement le module réutilisera toute fenêtre déjà ouverte.">
 <!ENTITY Optcolor.label "Couleur du surlignage">
 <!ENTITY Optcolor.tooltip "Modifie la couleur utilisée pour surligner les occurrences sur la page.">
 <!ENTITY OptselectColor.label "Couleur de l'occurrence actuelle">
@@ -112,13 +112,13 @@
 <!ENTITY OptctrlFCloses.tooltip "Vous pouvez ouvrir la barre et puis la fermer quand vous n'en avez plus besoin grâce au même raccourci clavier.">
 <!ENTITY OptctrlFprefill.label "Lors de son ouverture, remplir la barre avec le texte sélectionné">
 <!ENTITY OptctrlFprefill.tooltip.a "Si du texte est sélectionné dans la page Web lors de l'ouverture de la barre, ce texte est automatiquement copié dans cette dernière pour être utilisée en tant que requête de recherche.">
-<!ENTITY OptctrlFprefill.tooltip.b "Si « Tout surligner par défaut » est activé, cela cherchera automatiquement toutes les occurrences du texte sélectionné.">
+<!ENTITY OptctrlFprefill.tooltip.b "Si « Surligner toutes les occurrences par défaut » est activé, cela cherchera automatiquement toutes les occurrences du texte sélectionné.">
 <!ENTITY OptctrlFOnFocused.label "Fermer uniquement lorsqu'elle a déjà le focus">
 <!ENTITY OptctrlFOnFocused.tooltip "Le raccourci clavier placera toujours le curseur dans la barre, en copiant tout texte sélectionné dans la page Web si le paramètre ci-dessus est activé. Il fermera la barre seulement si le curseur est déjà dedans.">
 <!ENTITY OptSelectingText.label "Lors d'une sélection de texte">
 <!ENTITY OptfillSelectedText.label "Remplir la barre avec le texte sélectionné">
 <!ENTITY OptfillSelectedText.tooltip.a "Chaque fois qu'un mot est sélectionné dans la page Web, il sera automatiquement copié dans la barre pour être utilisé en tant que requête de recherche.">
-<!ENTITY OptfillSelectedText.tooltip.b "Si « Tout surligner par défaut » est activé, sélectionner du texte dans une page Web surlignera automatiquement toutes les occurrences de la sélection.">
+<!ENTITY OptfillSelectedText.tooltip.b "Si « Surligner toutes les occurrences par défaut » est activé, sélectionner du texte dans une page Web surlignera automatiquement toutes les occurrences de la sélection.">
 <!ENTITY OptemptySelectedText.label "Vider la barre lorsqu'aucun texte n'est sélectionné">
 <!ENTITY OptemptySelectedText.tooltip "De même que ci-dessus, si vous cliquez n'importe où dans la page Web afin de supprimer une sélection de texte, la barre sera vidée et le surlignage sera retiré de toutes les occurrences.">
 <!ENTITY OptfillTextFromEditable.label "Fill with text selected in editable elements">

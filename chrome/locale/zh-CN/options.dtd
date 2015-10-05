@@ -41,7 +41,7 @@
 <!ENTITY OptcolorReset.label "(重置)">
 <!ENTITY OptcolorKeepOSdefault.label "保持默认的对比颜色（推荐）">
 <!ENTITY OptcolorKeepOSdefault.tooltip.a "对比颜色，这取决于网页背景色，或者文本的颜色（在当前选中颜色也被用作其背景色时），或者相反色。它是取决于上述所选颜色的一种白色或黑色。">
-<!ENTITY OptcolorKeepOSdefault.tooltip.b "上述颜色设置仅对“查找”操作的当前匹配项起作用，其对比色不能也不会更改所有文本选中的对比色。谨慎禁用此功能，这可能使文本选中变得难以察觉！">
+<!ENTITY OptcolorKeepOSdefault.tooltip.b "上述颜色设置仅对“查找”操作的当前匹配项起作用，其对比色不能也不会更改所有文本选中的对比色。">
 <!ENTITY OptcolorKeepOSdefault.tooltip.c "谨慎禁用此功能，这可能使文本选中变得难以察觉！">
 <!ENTITY OpthighlightOnFindAgain.label "“查找下一个”(F3)时也作出高亮">
 <!ENTITY OpthighlightOnFindAgain.tooltip "如果“高亮所有”按钮已选中，按 F3 或点击上一个/下一个按钮进行的查找也将高亮所有匹配项（如果还没被高亮）。">

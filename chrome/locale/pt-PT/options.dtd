@@ -41,7 +41,7 @@
 <!ENTITY OptcolorReset.label "(reset)">
 <!ENTITY OptcolorKeepOSdefault.label "Manter a cor de contraste do sistema (recomendado)">
 <!ENTITY OptcolorKeepOSdefault.tooltip.a "A cor de contraste pode ser, dependendo do fundo da página, ou a cor do texto quando a cor do resultado atual é usado como o seu fundo, ou vice versa. Ou é preto ou branco, dependendo da cor escolhida acima.">
-<!ENTITY OptcolorKeepOSdefault.tooltip.b "Embora a definição da cor acima afecta apenas o resultado atual em operações de procura, a sua cor de contraste não pode ser alterada sem alterar também a cor de contraste de todas as seleções de text.">
+<!ENTITY OptcolorKeepOSdefault.tooltip.b "Embora a definição da cor acima afecta apenas o resultado atual em operações de procura, a sua cor de contraste não pode ser alterada sem alterar também a cor de contraste de todas as seleções de texto.">
 <!ENTITY OptcolorKeepOSdefault.tooltip.c "Desativa esta opção com precaução, para não tornares seleções de texto ilegíveis!">
 <!ENTITY OpthighlightOnFindAgain.label "Também marcar todas as ocorrências ao &quot;Procurar outra vez&quot; (F3)">
 <!ENTITY OpthighlightOnFindAgain.tooltip "Se o botão de Realçar Todos estive ativo, ao correr entre os resultados premindo F3 ou um dos botões anterior/próximo irá realçar todos os resultados, se já não estiverem.">

@@ -41,7 +41,7 @@
 <!ENTITY OptcolorReset.label "(リセット)">
 <!ENTITY OptcolorKeepOSdefault.label "標準のコントラストカラーを維持 (推奨)">
 <!ENTITY OptcolorKeepOSdefault.tooltip.a "コントラストカラーは Webページの背景に応じて、現在のヒットカラーのテキストの色又はその逆背景のどちらかが使用されます。これは、上記で選択した色に応じて、白または黒のどちらかです。">
-<!ENTITY OptcolorKeepOSdefault.tooltip.b "上記の色設定は、検索操作の現在のヒットにのみ影響しますが、そのコントラストの色は、すべての選択したテキストのコントラストを変えずに、変更することはできません。選択したテキストが読めなくならないように、使用するときには注意してください！">
+<!ENTITY OptcolorKeepOSdefault.tooltip.b "上記の色設定は、検索操作の現在のヒットにのみ影響しますが、そのコントラストの色は、すべての選択したテキストのコントラストを変えずに、変更することはできません。">
 <!ENTITY OptcolorKeepOSdefault.tooltip.c "選択したテキストが読めなくならないように、警告して無効にします！">
 <!ENTITY OpthighlightOnFindAgain.label "「再検索」(F3) の時にもハイライト">
 <!ENTITY OpthighlightOnFindAgain.tooltip "「すべてのタブで検索」ボタンがチェックされているとき、F3 キーを押すか、またはまだハイライトになっていないときは、[次]／[前] ボタンを押すことで同様になります。">

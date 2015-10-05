@@ -41,7 +41,7 @@
 <!ENTITY OptcolorReset.label "(resetuj)">
 <!ENTITY OptcolorKeepOSdefault.label "Zachowaj domyślny kolor kontrastu (zalecane)">
 <!ENTITY OptcolorKeepOSdefault.tooltip.a "Kontrast koloru jest, w zależności od tła strony internetowej, albo kolorem tekstu, gdy kolor bieżącego wystąpienia jest wykorzystywany jako tło, lub vice versa. W zależności od koloru wybranego powyżej jest albo biały, albo czarny.">
-<!ENTITY OptcolorKeepOSdefault.tooltip.b "Chociaż powyższe ustawienie koloru dotyczy tylko bieżącego wystąpienia w operacji Znajdź, jego kontrast kolorów nie może być zmieniony bez zmiany kontrastu wszystkich zaznaczeń tekstu. Wyłącz to ostrożnie, aby nie uczynić zaznaczonego tekstu nieczytelnym!">
+<!ENTITY OptcolorKeepOSdefault.tooltip.b "Chociaż powyższe ustawienie koloru dotyczy tylko bieżącego wystąpienia w operacji Znajdź, jego kontrast kolorów nie może być zmieniony bez zmiany kontrastu wszystkich zaznaczeń tekstu.">
 <!ENTITY OptcolorKeepOSdefault.tooltip.c "Wyłącz z ostrożnością, aby nie uczynić zaznaczonego tekstu nieczytelnym!">
 <!ENTITY OpthighlightOnFindAgain.label "Podświetlaj także przy &quot;Znajdź następne&quot; (F3)">
 <!ENTITY OpthighlightOnFindAgain.tooltip "Jeżeli przycisk Wyróżnij wszystkie jest zaznaczony, przeglądanie dopasowań po nacisnięciu klawisza F3 lub wciśnięciu przycisku poprzedni/następny także wyróżni wszystkie dopsaowania, jeśli do tej pory nie były.">

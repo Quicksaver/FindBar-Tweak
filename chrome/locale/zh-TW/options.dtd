@@ -3,7 +3,7 @@
 <!ENTITY OptGeneral.label "一般">
 <!ENTITY OptAppearance.label "外觀">
 <!ENTITY Opttweaks.label "調整">
-<!ENTITY OptFindAll.label "Find All">
+<!ENTITY OptFindAll.label "搜尋所有">
 <!ENTITY Optgen.label "搜尋欄選項">
 <!ENTITY Optdisplay.label "搜尋欄位置">
 <!ENTITY OptButtonAndLabels.label "按鍵及說明">
@@ -16,23 +16,23 @@
 <!ENTITY OptgridInScrollbar.tooltip "所以已強調之結果的相對位置將會顯示於捲軸上。">
 <!ENTITY OptuseCounter.label "於搜尋欄顯示相配數字">
 <!ENTITY OptuseCounter.tooltip "每次搜尋後，相配項的數量將顯示於搜尋欄最尾。">
-<!ENTITY OptfindAll.label "Enable Find All">
+<!ENTITY OptfindAll.label "啟用搜尋所有">
 <!ENTITY OptfindAll.tooltip "List all the found matches in all your opened tabs and windows.">
-<!ENTITY OptfindInTabsAction.caption "Pressing the Find All button...">
-<!ENTITY OptfindInTabsAction.sidebar.label "toggles the Find All sidebar">
+<!ENTITY OptfindInTabsAction.caption "按下「搜尋所有」按鈕時">
+<!ENTITY OptfindInTabsAction.sidebar.label "開關搜尋所有側邊欄">
 <!ENTITY OptfindInTabsAction.sidebar.tooltip.a "Shows the list in a sidebar next to the webpage, containing all the matches found in the page. You can also see matches from other tabs in the same window, and switch to them from within the sidebar.">
 <!ENTITY OptfindInTabsAction.sidebar.tooltip.b "Remember that for as long as this sidebar is open, the Findbar will act as a single global Findbar, even if you don't have that preference enabled!">
-<!ENTITY OptfindInTabsAction.full.label "opens the Find in All Tabs window">
+<!ENTITY OptfindInTabsAction.full.label "開啟搜尋所有分頁頁面">
 <!ENTITY OptfindInTabsAction.full.tooltip "Use a separate window to find matches in all opened tabs and windows.">
-<!ENTITY OptfindInTabsSidebar.caption "Find All sidebar">
-<!ENTITY OptautoShowHideFIT.label "Show and hide with the Findbar">
+<!ENTITY OptfindInTabsSidebar.caption "搜尋所有側邊欄">
+<!ENTITY OptautoShowHideFIT.label "開啟或隱藏搜尋欄">
 <!ENTITY OptautoShowHideFIT.tooltip "The sidebar lists appear and hide automatically when you open and close the Findbar, so that you don't have to press the Find All button.">
-<!ENTITY OptgetOSB.description "You can further control the position and behavior of the Find All sidebar with my other add-on, OmniSidebar. Click here to get it!">
+<!ENTITY OptgetOSB.description "你可以使用我另一個附加元件，OmniSidebar，以進一步控制搜尋所有側邊欄的位置及作用。按此取得！">
 <!ENTITY OpthasOSB.description "Configure your OmniSidebar's preferences to further control the position and behavior of the Find All sidebar. For instance, remember that the preference below only works if the Twin Sidebar itself is enabled.">
-<!ENTITY OpttwinFITSidebar.label "Open in the Twin Sidebar">
+<!ENTITY OpttwinFITSidebar.label "於雙重側邊欄開啟">
 <!ENTITY OpttwinFITSidebar.tooltip "The Find All sidebar will always open in the Twin Sidebar, on the opposite side of the window from the main sidebar, so that you can keep your bookmarks or history open at the same time.">
-<!ENTITY OptfindInTabsFull.caption "Find in All Tabs window">
-<!ENTITY OptmultipleFITFull.label.b "Allow multiple instances">
+<!ENTITY OptfindInTabsFull.caption "搜尋所有分頁頁面">
+<!ENTITY OptmultipleFITFull.label.b "容許多重實例">
 <!ENTITY OptmultipleFITFull.tooltip.b "Open a new window each time the Find in All Tabs button is pressed, otherwise it will reuse any already opened window.">
 <!ENTITY Optcolor.label "強調標示顏色">
 <!ENTITY Optcolor.tooltip "更改用於強調結果的顏色。">
@@ -41,7 +41,7 @@
 <!ENTITY OptcolorReset.label "（重設）">
 <!ENTITY OptcolorKeepOSdefault.label "使用預設對比顏色（推薦）">
 <!ENTITY OptcolorKeepOSdefault.tooltip.a "The contrast color is, depending on the webpage background, either the color of the text when the current hit color is used as its background, or vice versa. It is either white or black, depending on the color chosen above.">
-<!ENTITY OptcolorKeepOSdefault.tooltip.b "While the above color setting affects only the current hit in Find operations, its contrast color can't be changed without also changing the contrast of all text selections. Disable this with caution, to not make text selections unreadable!">
+<!ENTITY OptcolorKeepOSdefault.tooltip.b "While the above color setting affects only the current hit in Find operations, its contrast color can't be changed without also changing the contrast of all text selections.">
 <!ENTITY OptcolorKeepOSdefault.tooltip.c "Disable this with caution, to not make text selections unreadable!">
 <!ENTITY OpthighlightOnFindAgain.label "「搜尋下一筆」（F3）時亦強調顯示">
 <!ENTITY OpthighlightOnFindAgain.tooltip "If the Highlight All button is checked, running through the matches by pressing F3 or hitting the previous/next buttons will also highlight all the matches, if they aren't already.">
@@ -79,7 +79,7 @@
 <!ENTITY OpthideLabels.label "顯示按鍵圖示而非文字">
 <!ENTITY OpthideLabels.tooltip "By default the toolbar buttons have a text label. This changes them to images, making them more visibly distinguishable and also more compact.">
 <!ENTITY OpthideClose.label "隱藏搜尋欄關閉按鍵">
-<!ENTITY OpthideClose.tooltip "The Findbar's close button will not be available to close it.">
+<!ENTITY OpthideClose.tooltip "搜尋欄的關閉按鈕將無法作用。">
 <!ENTITY OptmovetoTop.label "移至瀏覽器頂部">
 <!ENTITY OptmovetoTop.tooltip "A slimmer Findbar will be placed at the top of the webpage, in a corner above it.">
 <!ENTITY OptmovetoRight.label "移至網頁右方">
@@ -121,7 +121,7 @@
 <!ENTITY OptfillSelectedText.tooltip.b "若「預設強調全部」已啟用，將會立刻強調已選文字於網頁上的所有結果。">
 <!ENTITY OptemptySelectedText.label "沒有選擇文字時清空搜尋欄">
 <!ENTITY OptemptySelectedText.tooltip "類似前項，當你點擊網頁以取消選擇文字時，搜尋欄將清空並取消所有強調效果。">
-<!ENTITY OptfillTextFromEditable.label "Fill with text selected in editable elements">
+<!ENTITY OptfillTextFromEditable.label "於可編寫元件中填入已選擇之文字">
 <!ENTITY OptfillTextFromEditable.tooltip "Choose whether you want selections in text boxes or input fields to also fill the Findbar.">
 <!ENTITY OptfillSelectedOpenFindbar.label "選擇文字時開啟並填入快速搜尋欄">
 <!ENTITY OptfillSelectedOpenFindbar.tooltip "當搜尋欄填入已選文字時，其將短暫開啟以顯示文字已填入。">

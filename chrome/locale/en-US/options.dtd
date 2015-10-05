@@ -45,7 +45,7 @@
 <!ENTITY OptcolorReset.label "(reset)">
 <!ENTITY OptcolorKeepOSdefault.label "Keep default contrast color (recommended)">
 <!ENTITY OptcolorKeepOSdefault.tooltip.a "The contrast color is, depending on the webpage background, either the color of the text when the current hit color is used as its background, or vice versa. It is either white or black, depending on the color chosen above.">
-<!ENTITY OptcolorKeepOSdefault.tooltip.b "While the above color setting affects only the current hit in Find operations, its contrast color can't be changed without also changing the contrast of all text selections. Disable this with caution, to not make text selections unreadable!">
+<!ENTITY OptcolorKeepOSdefault.tooltip.b "While the above color setting affects only the current hit in Find operations, its contrast color can't be changed without also changing the contrast of all text selections.">
 <!ENTITY OptcolorKeepOSdefault.tooltip.c "Disable this with caution, to not make text selections unreadable!">
 
 <!ENTITY OpthighlightOnFindAgain.label "Also highlight on 'Find Again' (F3)">

@@ -1,6 +1,22 @@
 {
-	"current":"2.1",
+	"current":"2.1.1",
 	"releases": {
+		"2.1.1":{
+			"date":"October 5, 2015",
+			"notes":[
+				["changed","Entries in the Find All lists should have enhanced (more) context text around the matches"],
+				["updated","Minor improvements to multiline string concatenation code, as suggested by AMO reviewer"],
+				["updated","Navigating the Find All lists in the sidebar with the keyboard should be smoother and much less jumpy"],
+				["updated","fr and zh-TW locales"],
+				["updated","Share icons in the add-on's About pane"],
+				["bugfix","Setting the Find All sidebar to show and hide with the findbar would make it impossible to use the quick findbar"],
+				["bugfix","Finding next/previous through (Shift+)F3 with the Find All sidebar open could skip a few matches, and sometimes show the sights animation twice on the same match"],
+				["bugfix","(Firefox 44) pressing Ctrl+Shift+J in the Find in All Tabs dialog wouldn't work"],
+				["bugfix","Selecting matches from frames in the Find All lists could fail sometimes"],
+				["bugfix","Matches counter wasn't working in PDF documents"],
+				["bugfix","The Find in All Tabs window could sometimes get stuck in an endless loop of opening and closing the tab filters with each mouse click anywhere in it"]
+			]
+		},
 		"2.1":{
 			"date":"September 28, 2015",
 			"notes":[

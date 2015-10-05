@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.1';
+Modules.VERSION = '1.0.2';
 Modules.UTILS = true;
 
 // DnDprefs -	this is an adaptation of the browser's gCustomizeMode - http://mxr.mozilla.org/mozilla-central/source/browser/components/customizableui/CustomizeMode.jsm
@@ -21,13 +21,14 @@ Modules.UTILS = true;
 //	aHandler -	(object) or (function) preference listener (see Prefs.jsm for implementation) where aData will already take the constructed object form defined above.
 // removeHandler(aPref, aHandler) - unregister a listener for changes to a DnD preference
 //	see addHandler()
-// addWidget(aPref, aId, aInstance, aLabel, aDescription) - initializes a widget instance to be recorded and handled as part of a DnD preference
+// addWidget(aPref, aId, aInstance, aLabel, aDescription, aDependsOn) - initializes a widget instance to be recorded and handled as part of a DnD preference
 //	aPref - (string) which preference should handle this widget
 //	aId -	(string) widget/feature id to be initialized. The draggable node in the preferences area region will take the id "objName-DnDpref-aId".
 //		Ideally, a CSS stylesheet should accompany this, to style its image node (class selector: ".DnDpref-icon") to give it an icon.
 //	aInstance - widget instance that has been initialized, preferably a DOM node or an object, but can be anything really
 //	aLabel - (string) will be displayed in the draggable node in the preference areas, below the corresponding image (class selector ".DnDpref-label").
 //	aDescription - (string) short description to be shown in the helptext of the area node
+//	(optional) aDependsOn - (string) conditional to disable the widget's checkbox in the preference, following the rules of the dependsOn object (preferencesUtils.jsm)
 // removeWidget(aPref, aId, aInstance) - deinitialies a widget instance.
 //	see addWidget()
 this.DnDprefs = {
@@ -58,7 +59,7 @@ this.DnDprefs = {
 		this.deinitPref(aPref);
 	},
 	
-	addWidget: function(aPref, aId, aInstance, aLabel, aDescription) {
+	addWidget: function(aPref, aId, aInstance, aLabel, aDescription, aDependsOn) {
 		let pref = this.initPref(aPref);
 		let widget = pref.active.get(aId);
 		
@@ -67,6 +68,7 @@ this.DnDprefs = {
 				id: aId,
 				label: aLabel || aId,
 				description: aDescription || '',
+				dependson: aDependsOn || '',
 				instances: new Set()
 			};
 			pref.active.set(aId, widget);
@@ -244,7 +246,7 @@ this.DnDprefs = {
 		// don't add an item if it already exists
 		if(doc.getElementById(id)) { return; }
 		
-		let item = this.createWidgetItem(doc, widget.label);
+		let item = this.createWidgetItem(doc, widget.label, widget.dependson);
 		item.id = id;
 		item._widgetId = widget.id;
 		
@@ -261,6 +263,16 @@ this.DnDprefs = {
 		
 		item.addEventListener("mousedown", this);
 		item.addEventListener("mouseup", this);
+		
+		if(widget.dependson) {
+			// I don't see a reason for why this should ever fail, but in case it does it's a minimal side-effect,
+			// so it shouldn't block the rest of the code
+			try {
+				let win = doc.defaultView;
+				win[objName].dependsOn.updateElement(item._enable);
+			}
+			catch(ex) { Cu.reportError(ex); }
+		}
 		
 		// append the widget description to the helpbox if one was provided
 		if(widget.description && area._descriptions) {
@@ -299,7 +311,7 @@ this.DnDprefs = {
 		}
 	},
 	
-	createWidgetItem: function(doc, aLabel) {
+	createWidgetItem: function(doc, aLabel, aDependsOn) {
 		let item = doc.createElement('box');
 		item.classList.add('DnDpref-item-container');
 		
@@ -313,6 +325,7 @@ this.DnDprefs = {
 		
 		let enable = doc.createElement('checkbox');
 		enable.classList.add('DnDpref-enable');
+		toggleAttribute(enable, 'dependson', aDependsOn, aDependsOn);
 		
 		let box = doc.createElement('box');
 		box.classList.add('DnDpref-enable-container');

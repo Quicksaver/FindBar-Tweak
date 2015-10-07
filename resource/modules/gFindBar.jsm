@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.8';
+Modules.VERSION = '1.1.9';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return FITFull || viewSource || window.gFindBarInitialized; });
@@ -412,21 +412,25 @@ this.restoreFindBarState = function(bar, state) {
 // afterwards we recreate the find bar and apply its previous state, so that for the user it will seem like nothing actually happened to it
 this.tabRemotenessChanged = function(e) {
 	if(gBrowser.isFindBarInitialized(e.target)) {
-		saveFindBarState(e.target);
 		destroyFindBar(e.target);
 		gBrowser.getFindBar(e.target);
 	}
 };
 
-this.destroyFindBar = function(tab) {
-	var bar = tab._findBar;
-	if(!bar) { return; }
+this.destroyFindBar = function(tab, skipState) {
+	let state = null;
+	if(!skipState) {
+		state = saveFindBarState(tab);
+	}
+	
+	let bar = tab._findBar;
+	if(!bar) { return state; }
 	
 	bar._destroying = true;
 	
 	if(bar[objName+'_initialized'] && bar[objName+'_initialized'].length > 0) {
 		// we have to uninitialize from last to first!
-		var routines = [];
+		let routines = [];
 		for(let r in initRoutines) {
 			routines.unshift(r);
 		}
@@ -459,6 +463,8 @@ this.destroyFindBar = function(tab) {
 	bar.destroy();
 	bar.remove();
 	tab._findBar = null;
+	
+	return state;
 };
 
 Modules.LOADMODULE = function() {

@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.2';
+Modules.VERSION = '1.0.3';
 
 this.__defineGetter__('InstantFox', function() { return window.InstantFox; });
 
@@ -32,8 +32,7 @@ this.instantFox = {
 			if(gFindBarInitialized && !gFindBar.hidden) {
 				let tab = gBrowser.mCurrentTab;
 				// the swap causes the tab to lose the state property (binding reset?), so we have to keep a reference to it here
-				this.state = saveFindBarState(tab);
-				destroyFindBar(tab);
+				this.state = destroyFindBar(tab);
 			}
 		}, Piggyback.MODE_AFTER);
 		

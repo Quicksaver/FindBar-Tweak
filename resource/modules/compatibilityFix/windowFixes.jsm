@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.18';
+Modules.VERSION = '1.1.19';
 
 Modules.LOADMODULE = function() {
 	if(!viewSource && !FITFull) {
@@ -26,6 +26,10 @@ Modules.LOADMODULE = function() {
 			Modules.loadIf('compatibilityFix/UnloadTab', (addon && addon.isActive));
 		});
 		
+		AddonManager.getAddonByID("{d3c46ca0-999d-11da-a72b-0800200c9a66}", function(addon) {
+			Modules.loadIf('compatibilityFix/autoUnloadTab', (addon && addon.isActive));
+		});
+		
 		Modules.load('compatibilityFix/InstantFox');
 	}
 	
@@ -42,6 +46,7 @@ Modules.UNLOADMODULE = function() {
 	Modules.unload('compatibilityFix/findlist');
 	Modules.unload('compatibilityFix/ClearFields');
 	
+	Modules.unload('compatibilityFix/autoUnloadTab');
 	Modules.unload('compatibilityFix/UnloadTab');
 	Modules.unload('compatibilityFix/S3');
 	Modules.unload('compatibilityFix/UpdateScanner');

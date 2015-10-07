@@ -1,8 +1,7 @@
-Modules.VERSION = '1.0.1';
+Modules.VERSION = '1.0.2';
 
 Modules.LOADMODULE = function() {
 	Piggyback.add('UnloadTab', window.unloadTabObj, 'tabUnload', function(aTab, params) {
-		saveFindBarState(aTab);
 		destroyFindBar(aTab);
 		
 		// we're completely replacing the method, so we need to make sure we still call the original

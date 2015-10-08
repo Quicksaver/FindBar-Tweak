@@ -1,4 +1,4 @@
-Modules.VERSION = '1.2.0';
+Modules.VERSION = '1.2.1';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return FITFull || viewSource || window.gFindBarInitialized; });
@@ -303,6 +303,17 @@ this.findbar = {
 	handleEvent: function(e) {
 		switch(e.type) {
 			case 'TabSelect':
+				// if we're switching to a tab that has a findbar saved state, we probably want to restore it as soon as we access this tab,
+				// so it seems like the findbar was never destroyed in the first place
+				if(e.target._findBar_state) {
+					// initialize it if it wasn't yet
+					gFindBar;
+					if(this.restoreState(gFindBar, e.target._findBar_state)) {
+						delete e.target._findBar_state;
+					}
+				}
+				
+				// some methods need to know from which tab we are coming, for instance to carry the state of one tab's findbar to another
 				dispatch(gBrowser.tabContainer, { type: 'TabSelectPrevious', cancelable: false });
 				this.getCurrentTab();
 				break;

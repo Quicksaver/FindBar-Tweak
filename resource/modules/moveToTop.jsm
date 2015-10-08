@@ -1,4 +1,4 @@
-Modules.VERSION = '3.0.0';
+Modules.VERSION = '3.0.1';
 
 this.__defineGetter__('DevEdition', function() { return window.DevEdition; });
 
@@ -166,8 +166,13 @@ this.moveToTop = {
 		let boxObject = gBrowser.getNotificationBox(gFindBar.browser).boxObject;
 		
 		let fullWidth = browserPanel.clientWidth;
-		let offsetY = -boxObject.y +1;
 		let borderStart = (barStyle.direction == 'ltr') ? parseInt(barStyle.borderLeftWidth) : parseInt(barStyle.borderRightWidth);
+		
+		let offsetY = -boxObject.y +1;
+		// don't overlap if Tile Tabs is enabled, we can't show the findbar above the navigator toolbox anyway
+		if(!window.tileTabs) {
+			offsetY += 1;
+		}
 		
 		let offsetX;
 		let offsetSide;

@@ -132,6 +132,11 @@ findbar[movetotop] {
 	background-image: none;
 }
 
+/* compatibility with Tile Tabs, don't need to overlap since we can't show the findbar above the navigator toolbox anyway */
+window[tiletabs-ffversion] findbar[movetotop]:not([inPDFJS]) {
+	top: 0;
+}
+
 findbar[movetotop]:not([movetoright]) {
 	left: 0;
 }

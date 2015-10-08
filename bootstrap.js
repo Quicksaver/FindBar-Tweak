@@ -1,4 +1,4 @@
-// VERSION = '1.8.2';
+// VERSION = '1.8.3';
 
 // This looks for file defaults.js in resource folder, expects:
 //	objName - (string) main object name for the add-on, to be added to window element
@@ -37,27 +37,27 @@
 //	(optional) beforeComplete - (bool) if true, aCallback will be called on aSubject immediately, regardless of its readyState value; defaults to false.
 // disable() - disables the add-on, in general the add-on disabling itself is a bad idea so I shouldn't use it
 
-let UNLOADED = false;
-let STARTED = false;
-let Addon = {};
-let AddonData = null;
-let onceListeners = [];
-let alwaysRunOnShutdown = [];
-let MessengerLoaded = false;
-let isChrome = true;
+var UNLOADED = false;
+var STARTED = false;
+var Addon = {};
+var AddonData = null;
+var onceListeners = [];
+var alwaysRunOnShutdown = [];
+var MessengerLoaded = false;
+var isChrome = true;
 
 // Globals - lets me use objects that I can share through all the windows
-let Globals = {};
+var Globals = {};
 
 // actual add-on data, to be overriden by defaults.js
-let objName = null;
-let objPathString = null;
-let prefList = null;
-let paneList = null;
-let addonUUID = null;
+var objName = null;
+var objPathString = null;
+var prefList = null;
+var paneList = null;
+var addonUUID = null;
 
 // add-on relevant links, to be overriden by defaults.js
-let addonUris = {
+var addonUris = {
 	homepage: '',
 	support: '',
 	fullchangelog: '',
@@ -90,9 +90,9 @@ XPCOMUtils.defineLazyServiceGetter(Services, "navigator", "@mozilla.org/network/
 XPCOMUtils.defineLazyServiceGetter(Services, "stylesheet", "@mozilla.org/content/style-sheet-service;1", "nsIStyleSheetService");
 
 // I check these pretty much everywhere, so might as well keep a single reference to them
-let WINNT = Services.appinfo.OS == 'WINNT';
-let DARWIN = Services.appinfo.OS == 'Darwin';
-let LINUX = Services.appinfo.OS != 'WINNT' && Services.appinfo.OS != 'Darwin';
+var WINNT = Services.appinfo.OS == 'WINNT';
+var DARWIN = Services.appinfo.OS == 'Darwin';
+var LINUX = Services.appinfo.OS != 'WINNT' && Services.appinfo.OS != 'Darwin';
 
 function handleDeadObject(ex) {
 	if(ex.message == "can't access dead object") {

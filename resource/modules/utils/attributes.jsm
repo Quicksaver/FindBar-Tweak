@@ -1,4 +1,4 @@
-Modules.VERSION = '2.2.1';
+Modules.VERSION = '2.2.2';
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -27,14 +27,12 @@ this.toggleAttribute = function(obj, attr, condition, trueval, falseval) {
 	if(!obj || !obj.setAttribute || !obj.removeAttribute) { return; }
 	
 	if(condition) {
-		if(!trueval) { trueval = 'true'; }
+		if(trueval === undefined) { trueval = 'true'; }
 		obj.setAttribute(attr, trueval);
+	} else if(falseval !== undefined) {
+		obj.setAttribute(attr, falseval);
 	} else {
-		if(!falseval) {
-			obj.removeAttribute(attr);
-		} else {
-			obj.setAttribute(attr, falseval);
-		}
+		obj.removeAttribute(attr);
 	}
 };
 

@@ -1,4 +1,4 @@
-Modules.VERSION = '2.6.2';
+Modules.VERSION = '2.6.3';
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -59,36 +59,18 @@ this.Watchers = {
 				
 				var oldVal = propHandler.value;
 				for(let h of propHandler.handlers) {
-					if(h.capture) {
-						var continueHandlers = true;
-						
-						try {
-							if(h.handler.propWatcher) {
-								continueHandlers = h.handler.propWatcher(this, prop, oldVal, newVal);
-							} else {
-								continueHandlers = h.handler(this, prop, oldVal, newVal);
-							}
-						}
-						catch(ex) { Cu.reportError(ex); }
-						
-						if(continueHandlers === false) {
-							propHandler.handling = false;
-							return propHandler.value;
-						}
+					if(!h.capture) { continue; }
+					
+					if(Watchers.safeCallHandler(h.handler, 'prop', this, prop, oldVal, newVal) === false) {
+						propHandler.handling = false;
+						return propHandler.value;
 					}
 				}
 				propHandler.value = newVal;
 				for(let h of propHandler.handlers) {
-					if(!h.capture) {
-						try {
-							if(h.handler.propWatcher) {
-								h.handler.propWatcher(this, prop, oldVal, newVal);
-							} else {
-								h.handler(this, prop, oldVal, newVal);
-							}
-						}
-						catch(ex) { Cu.reportError(ex); }
-					}
+					if(h.capture) { continue; }
+					
+					Watchers.safeCallHandler(h.handler, 'prop', this, prop, oldVal, newVal);
 				}
 				
 				propHandler.handling = false;
@@ -136,33 +118,37 @@ this.Watchers = {
 		capture = (capture) ? true : false;
 		iterateAll = (capture || iterateAll) ? true : false;
 		
-		if(!obj[this._obj].attributes[attr]) {
+		let handlers = obj[this._obj].attributes.get(attr);
+		if(!handlers) {
+			handlers = new Set();
+			
 			obj[this._obj].disconnect();
-			obj[this._obj].attributes[attr] = new Set();
+			obj[this._obj].attributes.set(attr, handlers);
 			obj[this._obj].reconnect();
 		}
 		else {
-			for(let a of obj[this._obj].attributes[attr]) {
+			for(let a of handlers) {
 				if(a.handler == handler && a.capture == capture && a.iterateAll == iterateAll) { return true; }
 			}
 		}
 		
-		obj[this._obj].attributes[attr].add({ handler: handler, capture: capture, iterateAll: iterateAll });
+		handlers.add({ handler: handler, capture: capture, iterateAll: iterateAll });
 		obj[this._obj].setters++;
 		return true;
 	},
 	
 	removeAttributeWatcher: function(obj, attr, handler, capture, iterateAll) {
-		if(!obj || !obj[this._obj] || !obj[this._obj].attributes[attr]) { return false; }
+		if(!obj || !obj[this._obj] || !obj[this._obj].attributes.has(attr)) { return false; }
 		capture = (capture) ? true : false;
 		iterateAll = (capture || iterateAll) ? true : false;
 		
-		for(let stored of obj[this._obj].attributes[attr]) {
+		let handlers = obj[this._obj].attributes.get(attr);
+		for(let stored of handlers) {
 			if(stored.handler == handler && stored.capture == capture && stored.iterateAll == iterateAll) {
-				obj[this._obj].attributes[attr].delete(stored);
-				if(obj[this._obj].attributes[attr].length == 0) {
+				handlers.delete(stored);
+				if(!handlers.size) {
 					obj[this._obj].disconnect();
-					delete obj[this._obj].attributes[attr];
+					obj[this._obj].attributes.delete(attr);
 					obj[this._obj].reconnect();
 				}
 				
@@ -179,7 +165,7 @@ this.Watchers = {
 		if(!obj || typeof(obj) != 'object') { return false; }
 		if(obj[this._obj]) { return true; }
 		
-		var handler = {
+		let handler = {
 			setters: 0,
 			properties: {}
 		};
@@ -187,21 +173,20 @@ this.Watchers = {
 		
 		if(!obj.ownerDocument) { return true; }
 		
-		handler.attributes = {};
+		handler.attributes = new Map();
 		handler.mutations = [];
 		handler.scheduler = null;
 		handler.reconnect = function() {
-			var attrList = [];
-			for(let a in this.attributes) {
+			let attrList = [];
+			for(let a of this.attributes.keys()) {
 				attrList.push(a);
 			}
 			if(attrList.length > 0) {
-				var observerProperties = {
+				this.mutationObserver.observe(obj, {
 					attributes: true,
 					attributeOldValue: true,
 					attributeFilter: attrList
-				};
-				this.mutationObserver.observe(obj, observerProperties);
+				});
 			}
 		};
 		handler.disconnect = function() {
@@ -223,19 +208,19 @@ this.Watchers = {
 		};
 		handler.callAttrWatchers = function() {
 			this.disconnect();
-			var muts = this.mutations;
+			let muts = this.mutations;
 			this.mutations = [];
 			
-			for(let attr in this.attributes) {
-				var changes = 0;
-				var oldValue = false;
-				var newValue = obj.hasAttribute(attr) ? obj.getAttribute(attr) : null;
-				captureMutations_loop: for(var m=0; m<muts.length; m++) {
+			for(let [ attr, handlers ] of this.attributes) {
+				let changes = 0;
+				let oldValue = false;
+				let newValue = obj.hasAttribute(attr) ? obj.getAttribute(attr) : null;
+				captureMutations_loop: for(let m = 0; m < muts.length; m++) {
 					if(muts[m].attributeName != attr) { continue; }
 					
 					oldValue = typeof(muts[m].realOldValue) != 'undefined' ? muts[m].realOldValue : muts[m].oldValue;
 					newValue = false;
-					for(var n=m+1; n<muts.length; n++) {
+					for(let n = m+1; n < muts.length; n++) {
 						if(muts[n].attributeName == attr) {
 							newValue = typeof(muts[n].realOldValue) != 'undefined' ? muts[n].realOldValue : muts[n].oldValue;
 							break;
@@ -252,31 +237,20 @@ this.Watchers = {
 						continue captureMutations_loop;
 					}
 					
-					for(let a of this.attributes[attr]) {
-						if(a.capture) {
-							var continueHandlers = true;
-							
-							try {
-								if(a.handler.attrWatcher) {
-									continueHandlers = a.handler.attrWatcher(obj, attr, oldValue, newValue);
-								} else {
-									continueHandlers = a.handler(obj, attr, oldValue, newValue);
+					for(let a of handlers) {
+						if(!a.capture) { continue; }
+						
+						if(Watchers.safeCallHandler(a.handler, 'attr', this, attr, oldValue, newValue) === false) {
+							for(let n = m+1; n < muts.length; n++) {
+								if(muts[n].attributeName == attr) {
+									muts[n].realOldValue = oldValue;
+									break;
 								}
 							}
-							catch(ex) { Cu.reportError(ex); }
-							
-							if(continueHandlers === false) {
-								for(var n=m+1; n<muts.length; n++) {
-									if(muts[n].attributeName == attr) {
-										muts[n].realOldValue = oldValue;
-										break;
-									}
-								}
-								newValue = oldValue;
-								muts.splice(m, 1);
-								m--;
-								continue captureMutations_loop;
-							}
+							newValue = oldValue;
+							muts.splice(m, 1);
+							m--;
+							continue captureMutations_loop;
 						}
 					}
 					
@@ -286,13 +260,13 @@ this.Watchers = {
 				toggleAttribute(obj, attr, newValue !== null, newValue);
 				
 				if(changes > 0) {
-					var firstOldValue = typeof(muts[0].realOldValue) != 'undefined' ? muts[0].realOldValue : muts[0].oldValue;
-					for(var m=0; m<muts.length; m++) {
+					let firstOldValue = typeof(muts[0].realOldValue) != 'undefined' ? muts[0].realOldValue : muts[0].oldValue;
+					for(let m = 0; m < muts.length; m++) {
 						if(muts[m].attributeName != attr) { continue; }
 						
 						oldValue = typeof(muts[m].realOldValue) != 'undefined' ? muts[m].realOldValue : muts[m].oldValue;
 						newValue = false;
-						for(var n=m+1; n<muts.length; n++) {
+						for(let n = m+1; n < muts.length; n++) {
 							if(muts[n].attributeName == attr) {
 								newValue = typeof(muts[n].realOldValue) != 'undefined' ? muts[n].realOldValue : muts[n].oldValue;
 								break;
@@ -302,28 +276,14 @@ this.Watchers = {
 							newValue = obj.hasAttribute(attr) ? obj.getAttribute(attr) : null;
 						}
 						
-						for(let a of this.attributes[attr]) {
-							if(!a.capture) {
-								if(a.iterateAll) {
-									try {
-										if(a.handler.attrWatcher) {
-											a.handler.attrWatcher(obj, attr, oldValue, newValue);
-										} else {
-											a.handler(obj, attr, oldValue, newValue);
-										}
-									}
-									catch(ex) { Cu.reportError(ex); }
-								}
-								else if(m == muts.length -1) {
-									try {
-										if(a.handler.attrWatcher) {
-											a.handler.attrWatcher(obj, attr, firstOldValue, newValue);
-										} else {
-											a.handler(obj, attr, firstOldValue, newValue);
-										}
-									}
-									catch(ex) { Cu.reportError(ex); }
-								}
+						for(let a of handlers) {
+							if(a.capture) { continue; }
+							
+							if(a.iterateAll) {
+								Watchers.safeCallHandler(a.handler, 'attr', this, attr, oldValue, newValue);
+							}
+							else if(m == muts.length -1) {
+								Watchers.safeCallHandler(a.handler, 'attr', this, attr, firstOldValue, newValue);
 							}
 						}
 					}
@@ -343,5 +303,19 @@ this.Watchers = {
 		obj[this._obj].disconnect();
 		delete obj[this._obj];
 		return true;
+	},
+	
+	safeCallHandler: function(handler, method, obj, prop, oldValue, newValue) {
+		try {
+			if(handler[method+'Watcher']) {
+				return handler[method+'Watcher'](obj, prop, oldValue, newValue);
+			} else {
+				return handler(obj, prop, oldValue, newValue);
+			}
+		}
+		catch(ex) {
+			Cu.reportError(ex);
+			return true;
+		}
 	}
 };

@@ -1,4 +1,4 @@
-Modules.VERSION = '2.2.3';
+Modules.VERSION = '2.2.4';
 
 this.SIGHTS_SIZE_FOCUS = 400;
 this.SIGHTS_SIZE_CIRCLE = 100;
@@ -318,7 +318,7 @@ Modules.LOADMODULE = function() {
 		Listeners.add(viewSource, 'resize', sights);
 	}
 	
-	initFindBar('sights',
+	findbar.init('sights',
 		function(bar) {
 			bar.__defineGetter__('sights', function() { return sights.get(bar); });
 			
@@ -383,7 +383,7 @@ Modules.UNLOADMODULE = function() {
 	Prefs.unlisten('sightsCurrent', sights);
 	Prefs.unlisten('sightsHighlights', sights);
 	
-	deinitFindBar('sights');
+	findbar.deinit('sights');
 	
 	if(UNLOADED || (!Prefs.sightsCurrent && !Prefs.sightsHighlights)) {
 		Styles.unload('sights', 'sights');

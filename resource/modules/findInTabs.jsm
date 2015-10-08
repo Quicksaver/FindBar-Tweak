@@ -1,4 +1,4 @@
-Modules.VERSION = '2.3.11';
+Modules.VERSION = '2.3.12';
 
 this.__defineGetter__('FITdeferred', function() { return window.FITdeferred; });
 this.__defineGetter__('FITinitialized', function() { return FITdeferred.promise; });
@@ -1144,7 +1144,7 @@ this.FIT = {
 };
 
 Modules.LOADMODULE = function() {
-	initFindBar('findInTabs',
+	findbar.init('findInTabs',
 		function(bar) {
 			let container = bar.getElement("findbar-container");
 			let sibling = bar.getElement('find-case-sensitive').nextSibling;
@@ -1231,7 +1231,7 @@ Modules.LOADMODULE = function() {
 };
 
 Modules.UNLOADMODULE = function() {
-	deinitFindBar('findInTabs');
+	findbar.deinit('findInTabs');
 	
 	Listeners.remove(window, 'WillFindFindBar', FIT, true);
 	

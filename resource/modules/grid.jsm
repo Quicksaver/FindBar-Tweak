@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.5';
+Modules.VERSION = '2.1.6';
 
 this.grids = {
 	template: null,
@@ -252,7 +252,7 @@ Modules.LOADMODULE = function() {
 		Listeners.add(viewSource, 'resize', grids);
 	}
 	
-	initFindBar('grid',
+	findbar.init('grid',
 		function(bar) {
 			bar.__defineGetter__('grid', function() { return grids.get(bar); });
 			
@@ -348,7 +348,7 @@ Modules.UNLOADMODULE = function() {
 	Styles.unload('adjustGrid_'+_UUID);
 	Styles.unload('adjustFrameGrid_'+_UUID);
 	
-	deinitFindBar('grid');
+	findbar.deinit('grid');
 	
 	grids.removeAll();
 	if(!viewSource) {

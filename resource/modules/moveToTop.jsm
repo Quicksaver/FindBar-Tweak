@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.12';
+Modules.VERSION = '2.0.13';
 
 this.__defineGetter__('gBrowserBox', function() { return $('browser'); });
 this.__defineGetter__('gAppContent', function() { return $('appcontent'); });
@@ -219,7 +219,7 @@ this.stylePersonaFindBar = function() {
 	}
 	
 	if(DevEdition && DevEdition.isThemeCurrentlyApplied) {
-		initFindBar('DevEdition',
+		findbar.init('DevEdition',
 			function(bar) {
 				setAttribute(bar, 'DevEdition', 'true');
 			},
@@ -229,7 +229,7 @@ this.stylePersonaFindBar = function() {
 		);
 	}
 	else {
-		deinitFindBar('DevEdition');
+		findbar.deinit('DevEdition');
 	}
 	
 	// Unload current stylesheet if it's been loaded
@@ -335,7 +335,7 @@ this.setOnTop = function(e) {
 		height += parseInt(barStyle.paddingBottom) + parseInt(barStyle.paddingTop);
 		height += parseInt(barStyle.borderBottomWidth) + parseInt(barStyle.borderTopWidth);
 		
-		initFindBar('movetotop',
+		findbar.init('movetotop',
 			function(bar) {
 				setAttribute(bar, 'movetotop', 'true');
 				bar.style.maxHeight = height+'px';
@@ -436,7 +436,7 @@ Modules.LOADMODULE = function() {
 	Listeners.add(window, "resize", delayMoveTop);
 	
 	if(!viewSource) {
-		initFindBar('moveToTopContent',
+		findbar.init('moveToTopContent',
 			function(bar) {
 				Messenger.loadInBrowser(bar.browser, 'moveToTop');
 				bar.browser.finder.addResultListener(finderTopListener);
@@ -456,7 +456,7 @@ Modules.LOADMODULE = function() {
 	
 	// To fix the findbar's close button being outside the container of the rest of its buttons.
 	// This will probably need to be changed/remove once https://bugzilla.mozilla.org/show_bug.cgi?id=939523 is addressed
-	initFindBar('fixCloseButtonTop',
+	findbar.init('fixCloseButtonTop',
 		function(bar) {
 			bar._mainCloseButton = bar.getElement('find-closebutton');
 			bar._topCloseButton = bar.getElement('findbar-container').appendChild(bar._mainCloseButton.cloneNode(true));
@@ -477,7 +477,7 @@ Modules.LOADMODULE = function() {
 	
 	if(!viewSource) {
 		// we just init this so we can easily remove the collapsed state and others later when disabling the module if necessary
-		initFindBar('resetTopState',
+		findbar.init('resetTopState',
 			function(bar) {},
 			function(bar) {
 				if(bar._destroying) { return; }
@@ -500,9 +500,9 @@ Modules.UNLOADMODULE = function() {
 		
 		Styles.unload('inNotification_'+_UUID);
 		
-		deinitFindBar('resetTopState');
-		deinitFindBar('moveToTopContent');
-		deinitFindBar('DevEdition');
+		findbar.deinit('resetTopState');
+		findbar.deinit('moveToTopContent');
+		findbar.deinit('DevEdition');
 	}
 	
 	Listeners.remove(window, "resize", delayMoveTop);
@@ -512,8 +512,8 @@ Modules.UNLOADMODULE = function() {
 	Listeners.remove(window, "UpdatedStatusFindBar", moveTopAsNeeded);
 	Listeners.remove(window, 'TabSelect', moveTopAsNeeded);
 	
-	deinitFindBar('movetotop');
-	deinitFindBar('fixCloseButtonTop');
+	findbar.deinit('movetotop');
+	findbar.deinit('fixCloseButtonTop');
 	
 	Prefs.unlisten('movetoRight', moveTop);
 	

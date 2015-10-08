@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.4';
+Modules.VERSION = '2.0.5';
 
 this.textboxResizers = {
 	resizing: false,
@@ -58,7 +58,7 @@ this.textboxResizers = {
 	},
 	
 	widthChanged: function() {
-		initFindBar('textboxWidth',
+		findbar.init('textboxWidth',
 			function(bar) {
 				setAttribute(bar._findField, 'width', Prefs.findFieldWidth);
 			},
@@ -118,7 +118,7 @@ this.textboxResizers = {
 Modules.LOADMODULE = function() {
 	// in FITFull we use flex to always extend the findField, so none of the rest is needed
 	if(FITFull) {
-		initFindBar('textboxFITFull',
+		findbar.init('textboxFITFull',
 			function(bar) {
 				setAttribute(bar._findField, 'flex', '1');
 				setAttribute(bar._findField.parentNode, 'flex', '1');
@@ -135,7 +135,7 @@ Modules.LOADMODULE = function() {
 	
 	textboxResizers.widthChanged();
 	
-	initFindBar('textboxResizers',
+	findbar.init('textboxResizers',
 		function(bar) {
 			bar._findField.id = objName+'-find-textbox';
 			if(!viewSource) {
@@ -182,7 +182,7 @@ Modules.LOADMODULE = function() {
 
 Modules.UNLOADMODULE = function() {
 	if(FITFull) {
-		deinitFindBar('textboxFITFull');
+		findbar.deinit('textboxFITFull');
 		return;
 	}
 	
@@ -193,6 +193,6 @@ Modules.UNLOADMODULE = function() {
 	Listeners.remove(window, 'FindBarMaybeMoveTop', textboxResizers);
 	Listeners.remove(window, 'FindBarMovedTop', textboxResizers);
 	
-	deinitFindBar('textboxResizers');
-	deinitFindBar('textboxWidth');
+	findbar.deinit('textboxResizers');
+	findbar.deinit('textboxWidth');
 };

@@ -1,8 +1,8 @@
-Modules.VERSION = '1.0.0';
+Modules.VERSION = '1.0.1';
 
 Modules.LOADMODULE = function() {
 	Piggyback.add('autoUnloadTab', gBrowser.autoUnloadTab, 'unloadTab', function(aTab) {
-		destroyFindBar(aTab);
+		findbar.destroy(aTab);
 		return true;
 	}, Piggyback.MODE_BEFORE);
 };

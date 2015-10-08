@@ -1,10 +1,10 @@
-Modules.VERSION = '1.0.1';
+Modules.VERSION = '1.0.2';
 
 Modules.LOADMODULE = function() {
 	// define when we're in a PDF file
 	RemoteFinder.prototype.isPDFJS = null;
 	
-	initFindBar('PDFJS',
+	findbar.init('PDFJS',
 		function(bar) {
 			Messenger.loadInBrowser(bar.browser, 'PDFJS');
 			
@@ -75,7 +75,7 @@ Modules.LOADMODULE = function() {
 };
 
 Modules.UNLOADMODULE = function() {
-	deinitFindBar('PDFJS');
+	findbar.deinit('PDFJS');
 	
 	delete RemoteFinder.prototype.isPDFJS;
 };

@@ -1,4 +1,4 @@
-Modules.VERSION = '1.7.12';
+Modules.VERSION = '1.7.13';
 
 this.__defineGetter__('findButton', function() {
 	var node = $('find-button');
@@ -140,7 +140,7 @@ this.setButtonListener = {
 };
 
 this.toggleClose = function() {
-	initFindBar('toggleClose',
+	findbar.init('toggleClose',
 		function(bar) {
 			toggleAttribute(bar, 'noClose', Prefs.hideClose);
 			triggerUIChange(bar);
@@ -168,7 +168,7 @@ this.buttonLabels = {
 	},
 	
 	toggle: function() {
-		initFindBar('toggleLabels',
+		findbar.init('toggleLabels',
 			(bar) => {
 				toggleAttribute(bar, 'hideLabels', Prefs.hideLabels);
 				this.iconsAsText(bar, Prefs.hideLabels);
@@ -209,7 +209,7 @@ this.toggleMoveToTop = function() {
 };
 
 this.toggleMoveToRight = function(startup) {
-	initFindBar('toggleMoveToRight',
+	findbar.init('toggleMoveToRight',
 		function(bar) {
 			toggleAttribute(bar, 'movetoright', Prefs.movetoRight);
 		},
@@ -223,7 +223,7 @@ this.toggleMoveToRight = function(startup) {
 };
 
 this.toggleKeepButtons = function(startup) {
-	initFindBar('toggleKeepButtons',
+	findbar.init('toggleKeepButtons',
 		function(bar) {
 			toggleAttribute(bar, 'keepButtons', Prefs.keepButtons);
 		},
@@ -265,7 +265,7 @@ Modules.LOADMODULE = function() {
 			}
 		}
 		
-		initFindBar('FindBarUI',
+		findbar.init('FindBarUI',
 			function(bar) {
 				setAttribute(bar, 'context', objPathString+'_findbarMenu');
 				
@@ -333,7 +333,7 @@ Modules.UNLOADMODULE = function() {
 		Modules.unload('moveToTop');
 		Modules.unload('ctrlF');
 		
-		deinitFindBar('toggleKeepButtons');
+		findbar.deinit('toggleKeepButtons');
 		
 		Listeners.remove(window, 'WillOpenFindBar', alwaysFindNormal, true);
 		Listeners.remove(window, 'OpenedFindBar', toggleButtonState);
@@ -343,7 +343,7 @@ Modules.UNLOADMODULE = function() {
 			Listeners.remove(gBrowser.tabContainer, "TabSelect", toggleButtonState);
 		}
 		
-		deinitFindBar('FindBarUI');
+		findbar.deinit('FindBarUI');
 	
 		if(!viewSource) {
 			Listeners.remove(window, 'beforecustomization', unsetFindButton);
@@ -360,9 +360,9 @@ Modules.UNLOADMODULE = function() {
 	
 	Modules.unload('resizeTextbox');
 	
-	deinitFindBar('toggleClose');
-	deinitFindBar('toggleLabels');
-	deinitFindBar('toggleMoveToRight');
+	findbar.deinit('toggleClose');
+	findbar.deinit('toggleLabels');
+	findbar.deinit('toggleMoveToRight');
 	
 	if(UNLOADED) {
 		Overlays.removeOverlayURI('chrome://browser/content/browser.xul', 'findbar');

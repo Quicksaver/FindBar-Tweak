@@ -1,9 +1,11 @@
-Modules.VERSION = '2.0.0';
+Modules.VERSION = '2.1.0';
 
-this.findBarOpen = false;
-this.findQuery = '';
+this.__defineGetter__('findQuery', function() { return gFindBar.query; });
 
 this.gFindBar = {
+	open: false,
+	query: '',
+	
 	MESSAGES: [
 		'FindBar:State',
 		'FindBar:Query'
@@ -14,11 +16,11 @@ this.gFindBar = {
 		
 		switch(name) {
 			case 'FindBar:State':
-				findBarOpen = m.data;
+				this.open = m.data;
 				break;
 			
 			case 'FindBar:Query':
-				findQuery = m.data;
+				this.query = m.data;
 				break;
 		}
 	}

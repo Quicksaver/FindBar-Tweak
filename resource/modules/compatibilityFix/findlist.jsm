@@ -1,8 +1,8 @@
-Modules.VERSION = '1.0.2';
+Modules.VERSION = '1.0.3';
 
 this.overrideFindlistWidth = function() {
 	Prefs.fieldWidth = Prefs.findFieldWidth;
-	initFindBar('findlistFix',
+	findbar.init('findlistFix',
 		function(bar) {
 			bar.getElement('findbar-textbox').style.width = Prefs.fieldWidth+'px';
 		},
@@ -25,5 +25,5 @@ Modules.LOADMODULE = function() {
 Modules.UNLOADMODULE = function() {
 	Prefs.unlisten('findFieldWidth', overrideFindlistWidth);
 	
-	deinitFindbar('findlistFix');
+	findbar.deinit('findlistFix');
 };

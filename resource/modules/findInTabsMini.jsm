@@ -1,4 +1,4 @@
-Modules.VERSION = '2.2.4';
+Modules.VERSION = '2.2.5';
 
 this.FITMini = {
 	get broadcaster() { return $(FITSandbox.kBroadcasterId); },
@@ -234,7 +234,7 @@ this.FITMini = {
 			this.autoShowSidebar();
 		}
 		
-		initFindBar('findInTabsMini',
+		findbar.init('findInTabsMini',
 			(bar) => {
 				let toggleButton = document.createElement('toolbarbutton');
 				setAttribute(toggleButton, 'anonid', objName+'-find-tabs');
@@ -286,7 +286,7 @@ this.FITMini = {
 			FITSandbox.commandSidebar(window, false);
 		}
 		
-		deinitFindBar('findInTabsMini');
+		findbar.deinit('findInTabsMini');
 		
 		Observers.remove(this, 'FIT:Load');
 		Observers.remove(this, 'FIT:Unoad');

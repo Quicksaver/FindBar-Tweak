@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.3';
+Modules.VERSION = '2.0.4';
 
 this.perTab = {	
 	handleEvent: function(e) {
@@ -38,14 +38,14 @@ Modules.LOADMODULE = function() {
 	// If we are hitting F3 and the find bar is closed, it should use the last globally used value
 	Listeners.add(window, 'WillFindAgainCommand', perTab);
 	
-	initFindBar('perTab',
+	findbar.init('perTab',
 		function(bar) { bar.browser.finder.addResultListener(perTab); },
 		function(bar) { if(!bar._destroying) { bar.browser.finder.removeResultListener(perTab); } }
 	);
 };
 
 Modules.UNLOADMODULE = function() {
-	deinitFindBar('perTab');
+	findbar.deinit('perTab');
 	Listeners.remove(window, 'WillOpenFindBar', perTab);
 	Listeners.remove(window, 'WillFindAgainCommand', perTab);
 };

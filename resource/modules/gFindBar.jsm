@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.9';
+Modules.VERSION = '1.2.0';
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return FITFull || viewSource || window.gFindBarInitialized; });
@@ -8,11 +8,7 @@ this.__defineGetter__('browserPanel', function() { return $('browser-panel') || 
 this.__defineGetter__('findQuery', function() { return gFindBar._findField.value; });
 this.__defineSetter__('findQuery', function(v) { return gFindBar._findField.value = v; });
 
-this.currentTab = null;
-this.tabSelectBaseListener = function() {
-	dispatch(gBrowser.tabContainer, { type: 'TabSelectPrevious', cancelable: false });
-	currentTab = gBrowser.mCurrentTab;
-};
+this.__defineGetter__('currentTab', function() { return findbar.currentTab; });
 
 this.baseInit = function(bar) {
 	// Since in-content we can't know it's a view-source browser before it's actually loaded, and the scripts are loaded before the browser does,
@@ -300,192 +296,199 @@ this.baseDeinit = function(bar) {
 	Messenger.unloadFromBrowser(bar.browser, 'viewSource');
 };
 
-// Support for per-tab findbar introduced in FF25.
-this.initRoutines = {};
-
-this.initFindBar = function(name, init, deinit, force) {
-	if(!force && initRoutines[name]) { return; }
-	initRoutines[name] = { init: init, deinit: deinit };
+this.findbar = {
+	routines: new Map(),
+	currentTab: null,
 	
-	if(FITFull || viewSource) {
-		initFindBarRoutine(gFindBar, name, init, force);
-	} else {
-		for(let tab of gBrowser.tabs) {
-			if(gBrowser.isFindBarInitialized(tab)) {
-				let bar = gBrowser.getFindBar(tab);
-				initFindBarRoutine(bar, name, init, force);
+	handleEvent: function(e) {
+		switch(e.type) {
+			case 'TabSelect':
+				dispatch(gBrowser.tabContainer, { type: 'TabSelectPrevious', cancelable: false });
+				this.getCurrentTab();
+				break;
+			
+			case 'TabFindInitialized': {
+				let bar = e.target._findBar;
+				if(!bar) { break; }
+				
+				for(let [ name, routine ] of this.routines) {
+					this.initRoutine(bar, name, routine.init);
+				}
+				
+				// in case we want to recycle the state from the findbar saved on that same tab,
+				// don't forget to delete the state property, otherwise we can end up with ZCs
+				if(this.restoreState(bar, e.target._findBar_state)) {
+					delete e.target._findBar_state;
+				}
+				
+				break;
+			}
+			
+			// when a browser's content goes from remote to non-remote or vice-versa, its Finder will lose all its active references,
+			// so we destroy the findbar and recreate it to ensure everything is properly re-initialized
+			// (anything destroyed/removed is also properly deinitialized in this way),
+			// afterwards we recreate the find bar and apply its previous state, so that for the user it will seem like nothing actually happened to it
+			case 'TabRemotenessChange':
+				if(gBrowser.isFindBarInitialized(e.target)) {
+					this.destroy(e.target);
+					gBrowser.getFindBar(e.target);
+				}
+				break;
+		}
+	},
+	
+	getCurrentTab: function() {
+		this.currentTab = gBrowser.selectedTab;
+	},
+	
+	init: function(name, init, deinit, force) {
+		if(!force && this.routines.has(name)) { return; }
+		this.routines.set(name, { init: init, deinit: deinit });
+		
+		if(FITFull || viewSource) {
+			this.initRoutine(gFindBar, name, init, force);
+		} else {
+			for(let tab of gBrowser.tabs) {
+				if(gBrowser.isFindBarInitialized(tab)) {
+					let bar = gBrowser.getFindBar(tab);
+					this.initRoutine(bar, name, init, force);
+				}
 			}
 		}
-	}
-};
-
-this.initFindBarRoutine = function(bar, name, init, force) {
-	if(force || !bar[objName+'_initialized'] || !bar[objName+'_initialized'][name]) {
+	},
+	
+	initRoutine: function(bar, name, init, force) {
+		if(!force && bar[objName+'_initialized'] && bar[objName+'_initialized'].has(name)) { return; }
+		
 		if(!bar[objName+'_initialized']) {
-			bar[objName+'_initialized'] = { length: 0 };
+			bar[objName+'_initialized'] = new Set();
 		}
 		init(bar);
-		if(!bar[objName+'_initialized'][name]) {
-			bar[objName+'_initialized'].length++;
-		}
-		bar[objName+'_initialized'][name] = true;
-	}
-};
-
-this.deinitFindBar = function(name) {
-	if(!initRoutines[name]) { return; }
-	var deinit = initRoutines[name].deinit;
-	delete initRoutines[name];
+		bar[objName+'_initialized'].add(name);
+	},
 	
-	if(FITFull || viewSource) {
-		deinitFindBarRoutine(gFindBar, name, deinit);
-	} else {
-		for(let tab of gBrowser.tabs) {
-			if(gBrowser.isFindBarInitialized(tab)) {
-				let bar = gBrowser.getFindBar(tab);
-				deinitFindBarRoutine(bar, name, deinit);
+	deinit: function(name) {
+		if(!this.routines.has(name)) { return; }
+		let deinit = this.routines.get(name).deinit;
+		this.routines.delete(name);
+		
+		if(FITFull || viewSource) {
+			this.deinitRoutine(gFindBar, name, deinit);
+		} else {
+			for(let tab of gBrowser.tabs) {
+				if(gBrowser.isFindBarInitialized(tab)) {
+					let bar = gBrowser.getFindBar(tab);
+					this.deinitRoutine(bar, name, deinit);
+				}
 			}
 		}
-	}
-};
-
-this.deinitFindBarRoutine = function(bar, name, deinit) {
-	if(bar[objName+'_initialized'] && bar[objName+'_initialized'][name]) {
+	},
+	
+	deinitRoutine: function(bar, name, deinit) {
+		if(!bar[objName+'_initialized'] || !bar[objName+'_initialized'].has(name)) { return; }
+		
 		deinit(bar);
-		delete bar[objName+'_initialized'][name];
-		bar[objName+'_initialized'].length--;
-		if(!bar[objName+'_initialized'].length) {
+		bar[objName+'_initialized'].delete(name);
+		if(!bar[objName+'_initialized'].size) {
 			delete bar[objName+'_initialized'];
 		}
-	}
-};
-
-this.initializeListener = function(e) {
-	let bar = e.target._findBar;
-	if(!bar) { return; }
+	},
 	
-	bar[objName+'_initialized'] = { length: 0 };
-	for(let r in initRoutines) {
-		initRoutines[r].init(bar);
-		bar[objName+'_initialized'][r] = true;
-		bar[objName+'_initialized'].length++;
-	}
-	
-	// in case we want to recycle the state from the findbar saved on that same tab,
-	// don't forget to delete the state property, otherwise we can end up with ZCs
-	if(restoreFindBarState(bar, e.target._findBar_state)) {
-		delete e.target._findBar_state;
-	}
-};
-
-this.saveFindBarState = function(tab) {
-	let bar = tab._findBar;
-	
-	// nothing to save if there's no findbar
-	// only save the state if the findbar is opened and if it's not any of the quick modes
-	if(bar && !bar.hidden && bar._findMode == bar.FIND_NORMAL) {
-		tab._findBar_state = {
-			value: bar._findField.value,
-			highlight: bar.getElement('highlight').checked,
-			caseSensitive: bar.getElement('find-case-sensitive').checked
-		};
-		return tab._findBar_state;
-	}
-	
-	return tab._findBar_state || null;
-};
-
-// restores the state from saveFindBarState
-this.restoreFindBarState = function(bar, state) {
-	if(!state) { return false; }
-	
-	bar._findField.value = state.value;
-	bar.getElement('highlight').checked = state.highlight;
-	bar.getElement('find-case-sensitive').checked = state.caseSensitive;
-	bar.open();
-	
-	return true;
-};
-
-// when a browser's content goes from remote to non-remote or vice-versa, its Finder will lose all its active references,
-// so we destroy the findbar and recreate it to ensure everything is properly re-initialized (anything destroyed/removed is also properly deinitialized in this way),
-// afterwards we recreate the find bar and apply its previous state, so that for the user it will seem like nothing actually happened to it
-this.tabRemotenessChanged = function(e) {
-	if(gBrowser.isFindBarInitialized(e.target)) {
-		destroyFindBar(e.target);
-		gBrowser.getFindBar(e.target);
-	}
-};
-
-this.destroyFindBar = function(tab, skipState) {
-	let state = null;
-	if(!skipState) {
-		state = saveFindBarState(tab);
-	}
-	
-	let bar = tab._findBar;
-	if(!bar) { return state; }
-	
-	bar._destroying = true;
-	
-	if(bar[objName+'_initialized'] && bar[objName+'_initialized'].length > 0) {
-		// we have to uninitialize from last to first!
-		let routines = [];
-		for(let r in initRoutines) {
-			routines.unshift(r);
+	saveState: function(tab) {
+		let bar = tab._findBar;
+		
+		// nothing to save if there's no findbar
+		// only save the state if the findbar is opened and if it's not any of the quick modes
+		if(bar && !bar.hidden && bar._findMode == bar.FIND_NORMAL) {
+			tab._findBar_state = {
+				value: bar._findField.value,
+				highlight: bar.getElement('highlight').checked,
+				caseSensitive: bar.getElement('find-case-sensitive').checked
+			};
+			return tab._findBar_state;
 		}
-		for(let r of routines) {
-			if(bar[objName+'_initialized'][r]) {
-				initRoutines[r].deinit(bar);
-				delete bar[objName+'_initialized'][r];
-				bar[objName+'_initialized'].length--;
+		
+		return tab._findBar_state || null;
+	},
+	
+	// restores the state saved above
+	restoreState: function(bar, state) {
+		if(!state) { return false; }
+		
+		bar._findField.value = state.value;
+		bar.getElement('highlight').checked = state.highlight;
+		bar.getElement('find-case-sensitive').checked = state.caseSensitive;
+		bar.open();
+		
+		return true;
+	},
+	
+	destroy: function(tab, skipState) {
+		let state = null;
+		if(!skipState) {
+			state = this.saveState(tab);
+		}
+		
+		let bar = tab._findBar;
+		if(!bar) { return state; }
+		
+		bar._destroying = true;
+		
+		if(bar[objName+'_initialized']) {
+			// we have to uninitialize from last to first!
+			let routines = [];
+			for(let name of this.routines.keys()) {
+				routines.unshift(name);
+			}
+			for(let name of routines) {
+				this.deinitRoutine(bar, name, this.routines.get(name).deinit);
 			}
 		}
-	}
-	
-	try {
-		// not really sure if this is needed since we're physically destroying the findbar later, but making sure either way
-		if(bar._browser && bar._browser.messageManager) {
-			bar._browser.messageManager.sendAsyncMessage("Findbar:Disconnect");
-			bar._browser.messageManager.removeMessageListener("Findbar:Keypress", bar);
-			bar._browser.messageManager.removeMessageListener("Findbar:Mouseup", bar);
+		
+		try {
+			// not really sure if this is needed since we're physically destroying the findbar later, but making sure either way
+			if(bar._browser && bar._browser.messageManager) {
+				bar._browser.messageManager.sendAsyncMessage("Findbar:Disconnect");
+				bar._browser.messageManager.removeMessageListener("Findbar:Keypress", bar);
+				bar._browser.messageManager.removeMessageListener("Findbar:Mouseup", bar);
+			}
 		}
+		catch(ex) {} // don't really care if this fails
+		
+		// also deinitialize the Finder object
+		if(bar.browser.isRemoteBrowser) {
+			bar.browser._remoteFinder = null;
+		} else {
+			bar.browser._finder = null;
+		}
+		
+		bar.destroy();
+		bar.remove();
+		tab._findBar = null;
+		
+		return state;
 	}
-	catch(ex) {} // don't really care if this fails
-	
-	// also deinitialize the Finder object
-	if(bar.browser.isRemoteBrowser) {
-		bar.browser._remoteFinder = null;
-	} else {
-		bar.browser._finder = null;
-	}
-	
-	bar.destroy();
-	bar.remove();
-	tab._findBar = null;
-	
-	return state;
 };
 
 Modules.LOADMODULE = function() {
 	if(!FITFull && !viewSource) {
-		Listeners.add(gBrowser.tabContainer, "TabSelect", tabSelectBaseListener);
-		tabSelectBaseListener();
+		Listeners.add(gBrowser.tabContainer, "TabSelect", findbar);
+		findbar.getCurrentTab();
 		
-		Listeners.add(window, 'TabFindInitialized', initializeListener);
-		Listeners.add(window, 'TabRemotenessChange', tabRemotenessChanged);
+		Listeners.add(window, 'TabFindInitialized', findbar);
+		Listeners.add(window, 'TabRemotenessChange', findbar);
 	}
 	
-	initFindBar('gFindBar', baseInit, baseDeinit);
+	findbar.init('gFindBar', baseInit, baseDeinit);
 };
 
 Modules.UNLOADMODULE = function() {
-	deinitFindBar('gFindBar');
+	findbar.deinit('gFindBar');
 	
 	if(!FITFull && !viewSource) {
-		Listeners.remove(gBrowser.tabContainer, "TabSelect", tabSelectBaseListener);
-		Listeners.remove(window, 'TabFindInitialized', initializeListener);
-		Listeners.remove(window, 'TabRemotenessChange', tabRemotenessChanged);
+		Listeners.remove(gBrowser.tabContainer, "TabSelect", findbar);
+		Listeners.remove(window, 'TabFindInitialized', findbar);
+		Listeners.remove(window, 'TabRemotenessChange', findbar);
 	}
 	
 	/* Prevent a ZC */

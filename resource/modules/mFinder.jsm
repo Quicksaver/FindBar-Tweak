@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.8';
+Modules.VERSION = '1.0.9';
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -340,7 +340,7 @@ this.getLinkElement = function(aNode) {
 };
 
 Modules.LOADMODULE = function() {
-	initFindBar('mFinder',
+	findbar.init('mFinder',
 		function(bar) {
 			// load our ._remoteFinder now to prevent the original from loading (it still exists and is fully functional, we just don't want it to be used)
 			Messenger.loadInBrowser(bar.browser, 'mFinder');
@@ -405,5 +405,5 @@ Modules.LOADMODULE = function() {
 Modules.UNLOADMODULE = function() {
 	Modules.unload('PDFJS');
 	
-	deinitFindBar('mFinder');
+	findbar.deinit('mFinder');
 };

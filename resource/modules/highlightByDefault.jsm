@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.4';
+Modules.VERSION = '2.1.5';
 
 this.highlightByDefault = {
 	apply: function(bar) {
@@ -29,7 +29,7 @@ this.highlightByDefault = {
 };
 
 Modules.LOADMODULE = function() {
-	initFindBar('highlightByDefault',
+	findbar.init('highlightByDefault',
 		function(bar) {
 			bar.browser.finder.addMessage('HighlightByDefault', () => {
 				highlightByDefault.apply(bar);
@@ -89,7 +89,7 @@ Modules.LOADMODULE = function() {
 };
 
 Modules.UNLOADMODULE = function() {
-	deinitFindBar('highlightByDefault');
+	findbar.deinit('highlightByDefault');
 	
 	Listeners.remove(window, 'WillOpenFindBar', highlightByDefault);
 	Listeners.remove(window, 'WillOpenFindBarBackground', highlightByDefault);

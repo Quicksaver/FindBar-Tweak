@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.3';
+Modules.VERSION = '2.1.4';
 
 this.counter = {
 	heldStatus: null,
@@ -23,7 +23,7 @@ this.counter = {
 Modules.LOADMODULE = function() {
 	Listeners.add(window, 'WillUpdateStatusFindBar', counter, true);
 	
-	initFindBar('counter',
+	findbar.init('counter',
 		function(bar) {
 			bar.browser.finder.addMessage('Counter:Result', data => {
 				if(data.heldStatus) {
@@ -83,7 +83,7 @@ Modules.LOADMODULE = function() {
 Modules.UNLOADMODULE = function() {
 	Listeners.remove(window, 'WillUpdateStatusFindBar', counter, true);
 	
-	deinitFindBar('counter');
+	findbar.deinit('counter');
 	
 	if(!UNLOADED && !window.closed && !window.willClose) {
 		Observers.notify('ReHighlightAll');

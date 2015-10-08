@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.7';
+Modules.VERSION = '2.1.8';
 
 this.highlights = {
 	observe: function(aSubject, aTopic) {
@@ -264,7 +264,7 @@ this.toggleFillSelectedText = function() {
 };
 
 Modules.LOADMODULE = function() {
-	initFindBar('highlights',
+	findbar.init('highlights',
 		function(bar) {
 			Piggyback.add('highlights', bar, '_setHighlightTimeout', function() {
 				// don't trigger re-highlights when selecting hits from the FIT window
@@ -412,5 +412,5 @@ Modules.UNLOADMODULE = function() {
 	Listeners.remove(window, 'FindModeChange', highlights);
 	Listeners.remove(window, 'SelectedFITHit', highlights);
 	
-	deinitFindBar('highlights');
+	findbar.deinit('highlights');
 };

@@ -1,4 +1,4 @@
-Modules.VERSION = '2.3.12';
+// VERSION 2.3.12
 
 this.__defineGetter__('FITdeferred', function() { return window.FITdeferred; });
 this.__defineGetter__('FITinitialized', function() { return FITdeferred.promise; });

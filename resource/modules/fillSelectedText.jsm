@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.4';
+// VERSION 2.0.4
 
 this.fillSelectedText = function(m) {
 	var selText = m.data;

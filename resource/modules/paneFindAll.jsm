@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.0';
+// VERSION 1.0.0
 
 this.getOSB = {
 	get getBox() { return $('paneFindAll-getOSB'); },

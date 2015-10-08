@@ -1,4 +1,4 @@
-Modules.VERSION = '1.2.3';
+// VERSION 1.2.3
 
 this.FIT = {
 	// this keeps a list of all hits in a page, mapped to an id that can be used to keep things sync'ed up with the chrome process

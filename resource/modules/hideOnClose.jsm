@@ -1,4 +1,4 @@
-Modules.VERSION = '1.2.4';
+// VERSION 1.2.4
 
 this.hideTabSelected = function() {
 	if(gFindBarInitialized) {

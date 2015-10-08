@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.3';
+// VERSION 1.0.3
 
 Modules.LOADMODULE = function() {
 	Piggyback.add('UnloadTab', window.unloadTabObj, 'tabUnload', function(aTab, params) {

@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.20';
+// VERSION 1.1.20
 
 Modules.LOADMODULE = function() {
 	if(!viewSource && !FITFull) {

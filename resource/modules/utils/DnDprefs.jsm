@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.2';
+// VERSION 1.0.2
 Modules.UTILS = true;
 
 // DnDprefs -	this is an adaptation of the browser's gCustomizeMode - http://mxr.mozilla.org/mozilla-central/source/browser/components/customizableui/CustomizeMode.jsm

@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.5';
+// VERSION 1.0.5
 
 this.counter = {
 	redoing: false,

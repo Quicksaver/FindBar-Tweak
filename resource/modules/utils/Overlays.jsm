@@ -1,4 +1,4 @@
-Modules.VERSION = '2.15.10';
+// VERSION 2.15.10
 Modules.UTILS = true;
 
 // Overlays - to use overlays in my bootstraped add-ons. The behavior is as similar to what is described in https://developer.mozilla.org/en/XUL_Tutorial/Overlays as I could manage.

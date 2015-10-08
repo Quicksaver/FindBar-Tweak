@@ -1,4 +1,4 @@
-Modules.VERSION = '3.2.2';
+// VERSION 3.2.2
 Modules.UTILS = true;
 
 // PrivateBrowsing - Aid object for private browsing mode

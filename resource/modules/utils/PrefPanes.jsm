@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.10';
+// VERSION 1.0.10
 Modules.UTILS = true;
 
 // PrefPanes - handles the preferences tab and all its contents for the add-on

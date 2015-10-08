@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.16';
+// VERSION 1.0.16
 
 this.__defineGetter__('isPDFJS', function() { return Finder.isPDFJS; });
 

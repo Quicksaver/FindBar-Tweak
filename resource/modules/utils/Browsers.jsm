@@ -1,4 +1,4 @@
-Modules.VERSION = '2.5.1';
+// VERSION 2.5.1
 Modules.UTILS = true;
 
 // Browsers - Aid object to track and perform tasks on all document browsers across the windows.

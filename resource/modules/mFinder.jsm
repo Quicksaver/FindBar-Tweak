@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.9';
+// VERSION 1.0.9
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;

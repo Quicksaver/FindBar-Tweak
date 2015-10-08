@@ -1,4 +1,4 @@
-// VERSION = '1.8.3';
+// VERSION 1.8.3
 
 // This looks for file defaults.js in resource folder, expects:
 //	objName - (string) main object name for the add-on, to be added to window element

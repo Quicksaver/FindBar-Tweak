@@ -1,4 +1,4 @@
-Modules.VERSION = '2.3.3';
+// VERSION 2.3.3
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 

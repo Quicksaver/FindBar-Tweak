@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.6';
+// VERSION 2.1.6
 
 this.grids = {
 	template: null,

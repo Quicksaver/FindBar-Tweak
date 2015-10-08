@@ -1,4 +1,4 @@
-// VERSION = '1.0.7'
+// VERSION 1.0.7
 
 // Prefs - Object to contain and manage all preferences related to the add-on (and others if necessary)
 this.__defineGetter__('Prefs', function() { delete this.Prefs; Modules.load('utils/Prefs'); return Prefs; });

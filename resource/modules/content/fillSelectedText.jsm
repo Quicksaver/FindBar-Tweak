@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.6';
+// VERSION 2.0.6
 
 this.selectedText = {
 	handleEvent: function(e) {

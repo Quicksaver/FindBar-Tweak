@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.6';
+// VERSION 1.0.6
 
 this.PDFJS = {
 	// We need this to access protected properties, hidden from privileged code

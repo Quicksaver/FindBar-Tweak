@@ -1,4 +1,4 @@
-// VERSION = '1.5.3';
+// VERSION 1.5.3
 
 // This script should be loaded by defaultsContent.js, which is in turn loaded directly by the Messenger module.
 // defaultsContent.js should set this object's objName and objPathString properties and call its .init() method.

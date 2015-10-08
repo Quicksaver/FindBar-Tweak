@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.4';
+// VERSION 1.0.4
 
 this.__defineGetter__('InstantFox', function() { return window.InstantFox; });
 

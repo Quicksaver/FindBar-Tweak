@@ -1,4 +1,4 @@
-// VERSION = '1.0.1'
+// VERSION 1.0.1
 
 // Listeners - Object to aid in setting and removing all kinds of event listeners to an object;
 this.__defineGetter__('Listeners', function() { delete this.Listeners; Modules.load('utils/Listeners'); return Listeners; });

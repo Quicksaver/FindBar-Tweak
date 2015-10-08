@@ -1,4 +1,4 @@
-Modules.VERSION = '2.4.5';
+// VERSION 2.4.5
 Modules.UTILS = true;
 
 // dependsOn - object that adds a dependson attribute functionality to xul preference elements.

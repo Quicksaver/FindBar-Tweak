@@ -1,4 +1,4 @@
-Modules.VERSION = '3.0.1';
+// VERSION 3.0.1
 
 this.__defineGetter__('DevEdition', function() { return window.DevEdition; });
 

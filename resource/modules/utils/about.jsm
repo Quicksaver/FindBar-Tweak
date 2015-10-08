@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.3';
+// VERSION 1.1.3
 
 this.about = {
 	kNS: 'http://www.w3.org/1999/xhtml',

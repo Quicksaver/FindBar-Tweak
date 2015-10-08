@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.8';
+// VERSION 2.1.8
 
 this.highlights = {
 	observe: function(aSubject, aTopic) {

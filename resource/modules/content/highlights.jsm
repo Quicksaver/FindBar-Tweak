@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.3';
+// VERSION 1.1.3
 
 this.getDocProperty = function(doc, prop, min) {
 	try {

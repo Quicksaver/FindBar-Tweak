@@ -1,4 +1,4 @@
-Modules.VERSION = '2.0.1';
+// VERSION 2.0.1
 
 this.blurCloses = {
 	handleEvent: function(e) {

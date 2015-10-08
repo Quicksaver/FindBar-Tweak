@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.7';
+// VERSION 1.1.7
 
 this.sights = {
 	noCurrent: false,

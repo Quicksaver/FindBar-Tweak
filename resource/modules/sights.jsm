@@ -1,4 +1,4 @@
-Modules.VERSION = '2.2.4';
+// VERSION 2.2.4
 
 this.SIGHTS_SIZE_FOCUS = 400;
 this.SIGHTS_SIZE_CIRCLE = 100;

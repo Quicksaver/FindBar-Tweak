@@ -1,4 +1,4 @@
-Modules.VERSION = '2.2.1';
+// VERSION 2.2.1
 
 this.FITSandbox = {
 	kBroadcasterId: objName+'-findInTabs-broadcaster',

@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.5';
+// VERSION 2.1.5
 
 this.highlightByDefault = {
 	apply: function(bar) {

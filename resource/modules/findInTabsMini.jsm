@@ -1,4 +1,4 @@
-Modules.VERSION = '2.2.5';
+// VERSION 2.2.5
 
 this.FITMini = {
 	get broadcaster() { return $(FITSandbox.kBroadcasterId); },

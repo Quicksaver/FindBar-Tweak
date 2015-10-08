@@ -1,4 +1,4 @@
-Modules.VERSION = '1.1.1';
+// VERSION 1.1.1
 
 // there's no point in fixing this for e10s, since AutoPager doesn't work at all there
 

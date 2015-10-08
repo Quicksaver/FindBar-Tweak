@@ -1,3 +1,5 @@
+// VERSION 2.7.0
+
 // Many times I can't use 'this' to refer to the owning var's context, so I'm setting 'this' as 'self', 
 // I can use 'self' from within functions, timers and listeners easily and to bind those functions to it as well
 this.self = this;
@@ -16,8 +18,6 @@ this.self = this;
 // loaded(aModule) - returns (int) with corresponding module index in modules[] if aModule has been loaded, returns (bool) false otherwise
 //	see load()
 // subscript modules are run in the context of self, all objects should be set using this.whateverObject so they can be deleted on unload, Modules optionally expects these:
-//	Modules.VERSION - (string) module version
-//	Modules.VARSLIST - (array) list with all the objects the module inserts into the object when loaded, for easy unloading. If not set, it will be automatically compiled.
 //	Modules.LOADMODULE - (function) to be executed on module loading
 //	Modules.UNLOADMODULE - (function) to be executed on module unloading
 //	Modules.UTILS - (bool) vital modules that should be the last ones to be unloaded (like the utils) should have this set to true; should only be used in backbone modules
@@ -25,7 +25,6 @@ this.self = this;
 //				so that they only unload on the very end; like above, should only be used in backbone modules
 //	Modules.CLEAN - (bool) if false, this module won't be removed by clean(); defaults to true
 this.Modules = {
-	version: '2.6.2',
 	modules: new Set(),
 	moduleVars: {},
 	
@@ -59,8 +58,6 @@ this.Modules = {
 			path: path,
 			load: this.LOADMODULE || null,
 			unload: this.UNLOADMODULE || null,
-			vars: this.VARSLIST || null,
-			version: this.VERSION || null,
 			utils: this.UTILS || false,
 			baseutils: this.BASEUTILS || false,
 			clean: (this.CLEAN !== undefined) ? this.CLEAN : true,
@@ -72,36 +69,33 @@ this.Modules = {
 		delete this.VARSLIST;
 		delete this.LOADMODULE;
 		delete this.UNLOADMODULE;
-		delete this.VERSION;
 		delete this.UTILS;
 		delete this.BASEUTILS;
 		delete this.CLEAN;
 		
-		if(!module.vars) {
-			if(!Globals.moduleCache[aModule]) {
-				let tempScope = {
-					Modules: {},
-					$: function() { return null; },
-					$$: function() { return null; },
-					$ª: function() { return null; }
-				};
-				try { Services.scriptloader.loadSubScript(path, tempScope); }
-				catch(ex) {
-					Cu.reportError(ex);
-					return false;
-				}
-				delete tempScope.Modules;
-				delete tempScope.$;
-				delete tempScope.$$;
-				delete tempScope.$ª;
-				
-				Globals.moduleCache[aModule] = [];
-				for(let v in tempScope) {
-					Globals.moduleCache[aModule].push(v);
-				}
+		if(!Globals.moduleCache[aModule]) {
+			let tempScope = {
+				Modules: {},
+				$: function() { return null; },
+				$$: function() { return null; },
+				$ª: function() { return null; }
+			};
+			try { Services.scriptloader.loadSubScript(path, tempScope); }
+			catch(ex) {
+				Cu.reportError(ex);
+				return false;
 			}
-			module.vars = Globals.moduleCache[aModule];
+			delete tempScope.Modules;
+			delete tempScope.$;
+			delete tempScope.$$;
+			delete tempScope.$ª;
+			
+			Globals.moduleCache[aModule] = [];
+			for(let v in tempScope) {
+				Globals.moduleCache[aModule].push(v);
+			}
 		}
+		module.vars = Globals.moduleCache[aModule];
 		
 		try { this.createVars(module.vars); }
 		catch(ex) {

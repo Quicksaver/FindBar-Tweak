@@ -1,4 +1,4 @@
-Modules.VERSION = '1.0.1';
+// VERSION 1.0.1
 
 this.api = {
 	onDOMContentLoaded: function(e) {

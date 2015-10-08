@@ -1,4 +1,4 @@
-Modules.VERSION = '1.2.1';
+// VERSION 1.2.1
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return FITFull || viewSource || window.gFindBarInitialized; });

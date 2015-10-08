@@ -1,4 +1,4 @@
-Modules.VERSION = '2.1.2';
+// VERSION 2.1.2
 
 this.ctrlF = function() {
 	// See if the findbar should only be closed when it's focused

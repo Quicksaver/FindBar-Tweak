@@ -116,16 +116,36 @@ findbar[movetotop]:not([movetoright]):-moz-locale-dir(rtl) toolbarbutton[anonid=
 
 /* small findbar at the top */
 
+.browserContainer[findbarontop],
+#appcontent[findbarontop] {
+	position: relative;
+}
+
 findbar[movetotop] {
-	position: fixed;
-	overflow: hidden;
+	position: absolute;
+	top: -1px;
+	margin-left: 22px;
+	margin-right: 22px;
+	max-width: calc(100% - 22px - 22px); /* margins */
 	border-top: none;
 	border-radius: 0 0 8px 8px;
 	background-image: none;
 }
 
-findbar[movetotop] spacer {
-	min-width: 15px;
+findbar[movetotop]:not([movetoright]) {
+	left: 0;
+}
+findbar[movetotop][movetoright] {
+	right: 0;
+}
+
+findbar[movetotop] .findbar-container {
+	overflow: hidden;
+}
+
+findbar[movetotop]:not([inPDFJS]):-moz-lwtheme {
+	background-repeat: repeat;
+	background-size: auto auto;
 }
 
 /* Rounded inner corners */
@@ -137,7 +157,17 @@ findbar[movetotop]:after {
 	height: 16px;
 	border-radius: 8px;
 	background: transparent;
-	position: fixed;
+	position: absolute;
+}
+
+findbar[movetotop]:before {
+	-moz-margin-start: -16px;
+}
+
+/* There's just no way I can have rounded corners with personas */
+findbar[movetotop]:not([inPDFJS]):-moz-lwtheme:before,
+findbar[movetotop]:not([inPDFJS]):-moz-lwtheme:after {
+	display: none;
 }
 
 /* Find Toolbar styled for PDF.JS documents */
@@ -169,6 +199,20 @@ findbar[movetotop][inPDFJS] {
 	                rgba(255,255,255,0.05) 0px -1px 0px 0px inset,
 	                rgba(0,0,0,0.15) 0px 1px 0px 0px,
 	                rgba(0,0,0,0.1) 0px 1px 1px 0px;
+	
+	/* toolbar height, hardcoded in http://mxr.mozilla.org/mozilla-central/source/browser/extensions/pdfjs/content/web/viewer.css, - 1px to overlap */
+	top: 31px;
+}
+
+findbar[movetotop][inPDFJS][loadingBar] {
+	/* toolbar + loadingbar height, hardcoded, don't overlap as above */
+	top: 36px;
+}
+
+findbar[movetotop][inPDFJS][sidebarOpen] {
+	/* the above margins + sidebar width, hardcoded */
+	margin-left: 222px;
+	max-width: calc(100% - 222px - 22px);
 }
 
 findbar[movetotop][inPDFJS] toolbarbutton:not([disabled="true"]),

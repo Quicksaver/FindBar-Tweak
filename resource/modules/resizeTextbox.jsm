@@ -1,11 +1,30 @@
-Modules.VERSION = '2.0.5';
+Modules.VERSION = '2.1.0';
 
 this.textboxResizers = {
 	resizing: false,
 	overflow: null,
 	
 	get findBarOverflow() {
-		return Math.max(0, gFindBar.scrollWidth -((Prefs.movetoTop && typeof(moveTopStyle) != 'undefined' && moveTopStyle) ? moveTopStyle.maxWidth : gFindBar.clientWidth));
+		let fullwidth = gFindBar.clientWidth;
+		
+		// if the findbar is at the top, we don't want its actual width, but the available space it can occupy
+		if(Prefs.movetoTop) {
+			let barStyle = getComputedStyle(gFindBar);
+			fullwidth = gFindBar.parentNode.clientWidth -barStyle.marginLeft -barStyle.marginRight;
+		}
+		
+		// we should make sure we leave enough space for the status description
+		let statusText = gFindBar._findStatusDesc.textContent;
+		let statusHidden = gFindBar._findStatusDesc.hidden;
+		gFindBar._findStatusDesc.textContent = (Prefs.useCounter) ? gFindBar._notFoundStr : gFindBar._wrappedToBottomStr;
+		gFindBar._findStatusDesc.hidden = false;
+		
+		let scrollWidth = gFindBar.scrollWidth;
+		
+		gFindBar._findStatusDesc.textContent = statusText;
+		gFindBar._findStatusDesc.hidden = statusHidden;
+		
+		return Math.max(0, scrollWidth -fullwidth);
 	},
 	
 	handleEvent: function(e) {
@@ -15,12 +34,12 @@ this.textboxResizers = {
 				break;
 			
 			case 'OpenedFindBar':
-			case 'FindBarMovedTop':
+			case 'mousedown':
 				this.maxWidth();
 				break;
 			
-			case 'FindBarMaybeMoveTop':
-				this.noMaxWidth();
+			case 'dblclick':
+				this.dblClick(e);
 				break;
 		}
 	},
@@ -49,10 +68,6 @@ this.textboxResizers = {
 		Prefs.findFieldWidth = parseInt(gFindBar._findField.getAttribute('width'));
 		this.delayMaxWidth();
 		this.widthChanged();
-		
-		if(Prefs.movetoTop && typeof(moveTop) != 'undefined') {
-			moveTop();
-		}
 		
 		this.resizing = false;
 	},
@@ -144,14 +159,17 @@ Modules.LOADMODULE = function() {
 			
 			Watchers.addAttributeWatcher(bar._findField, 'width', textboxResizers);
 			
-			var leftResizer = document.createElement('resizer');
+			let leftResizer = document.createElement('resizer');
 			setAttribute(leftResizer, 'class', 'find-textbox-resizer');
 			setAttribute(leftResizer, 'anonid', 'find-left-resizer');
 			setAttribute(leftResizer, 'element', bar._findField.id);
-			setAttribute(leftResizer, 'ondblclick', objName+'.textboxResizers.dblClick(event);');
+			Listeners.add(leftResizer, 'dblclick', textboxResizers);
+			Listeners.add(leftResizer, 'mousedown', textboxResizers);
 			
-			var rightResizer = leftResizer.cloneNode(true);
+			let rightResizer = leftResizer.cloneNode(true);
 			setAttribute(rightResizer, 'anonid', 'find-right-resizer');
+			Listeners.add(rightResizer, 'dblclick', textboxResizers);
+			Listeners.add(rightResizer, 'mousedown', textboxResizers);
 			
 			// RTL layouts are completely reversed
 			setAttribute(leftResizer, 'dir', (RTL ? 'right' : 'left'));
@@ -161,6 +179,14 @@ Modules.LOADMODULE = function() {
 			bar._findField.parentNode.insertBefore(rightResizer, bar._findField.nextSibling);
 		},
 		function(bar) {
+			let leftResizer = bar.getElement("find-left-resizer");
+			let rightResizer = bar.getElement("find-right-resizer");
+			
+			Listeners.remove(leftResizer, 'dblclick', textboxResizers);
+			Listeners.remove(leftResizer, 'mousedown', textboxResizers);
+			Listeners.remove(rightResizer, 'dblclick', textboxResizers);
+			Listeners.remove(rightResizer, 'mousedown', textboxResizers);
+			
 			if(bar._destroying) { return; }
 			
 			Watchers.removeAttributeWatcher(bar._findField, 'width', textboxResizers);
@@ -174,8 +200,6 @@ Modules.LOADMODULE = function() {
 	
 	Listeners.add(window, 'resize', textboxResizers);
 	Listeners.add(window, 'OpenedFindBar', textboxResizers);
-	Listeners.add(window, 'FindBarMaybeMoveTop', textboxResizers);
-	Listeners.add(window, 'FindBarMovedTop', textboxResizers);
 	
 	textboxResizers.maxWidth();
 };
@@ -190,8 +214,6 @@ Modules.UNLOADMODULE = function() {
 	
 	Listeners.remove(window, 'resize', textboxResizers);
 	Listeners.remove(window, 'OpenedFindBar', textboxResizers);
-	Listeners.remove(window, 'FindBarMaybeMoveTop', textboxResizers);
-	Listeners.remove(window, 'FindBarMovedTop', textboxResizers);
 	
 	findbar.deinit('textboxResizers');
 	findbar.deinit('textboxWidth');

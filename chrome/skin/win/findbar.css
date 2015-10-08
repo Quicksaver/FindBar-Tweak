@@ -1,11 +1,5 @@
 @namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
 
-/* findbar appearance */
-
-findbar[noClose] {
-	-moz-padding-end: 10px;
-}
-
 /* Find in All Tabs */
 
 findbar toolbarbutton[anonid="findbartweak-find-tabs"],

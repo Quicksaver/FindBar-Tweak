@@ -1,9 +1,9 @@
-Modules.VERSION = '2.1.1';
+Modules.VERSION = '2.1.2';
 
 this.ctrlF = function() {
 	// See if the findbar should only be closed when it's focused
 	if(Prefs.ctrlFClosesOnFocused && !gFindBar.hidden && !isAncestor(document.commandDispatcher.focusedElement, gFindBar)) {
-		openFindBar();
+		findbarUI.open();
 		return;
 	}
 	
@@ -12,9 +12,9 @@ this.ctrlF = function() {
 	
 this.ctrlFToggles = function() {
 	if(Prefs.ctrlFCloses) {
-		toggleFindBar();
+		findbarUI.toggle();
 	} else {
-		openFindBar();
+		findbarUI.open();
 	}
 };
 

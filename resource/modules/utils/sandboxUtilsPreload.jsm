@@ -1,10 +1,13 @@
-// VERSION = '1.0.6'
+// VERSION = '1.0.7'
 
 // Prefs - Object to contain and manage all preferences related to the add-on (and others if necessary)
 this.__defineGetter__('Prefs', function() { delete this.Prefs; Modules.load('utils/Prefs'); return Prefs; });
 
 // Strings - use for getting strings out of bundles from .properties locale files
 this.__defineGetter__('Strings', function() { delete this.Strings; Modules.load('utils/Strings'); return Strings; });
+
+// Watchers - This acts as a replacement for the event DOM Attribute Modified, works for both attributes and object properties
+this.__defineGetter__('Watchers', function() { delete this.Watchers; Modules.load('utils/Watchers'); return Watchers; });
 
 // xmlHttpRequest() - aid for quickly using the nsIXMLHttpRequest interface
 this.xmlHttpRequest = function(url, callback, method) { loadSandboxTools(); return xmlHttpRequest(url, callback, method); };

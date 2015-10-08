@@ -1,4 +1,4 @@
-Modules.VERSION = '2.4.2';
+Modules.VERSION = '2.4.3';
 Modules.UTILS = true;
 Modules.CLEAN = false;
 
@@ -25,9 +25,6 @@ this.__defineGetter__('Observers', function() { delete this.Observers; Modules.l
 
 // Overlays - to use overlays in my bootstraped add-ons
 this.__defineGetter__('Overlays', function() { Browsers; Observers; Piggyback; delete this.Overlays; Modules.load('utils/Overlays'); return Overlays; });
-
-// Watchers - This acts as a replacement for the event DOM Attribute Modified, works for both attributes and object properties
-this.__defineGetter__('Watchers', function() { delete this.Watchers; Modules.load('utils/Watchers'); return Watchers; });
 
 // Keysets - handles editable keysets for the add-on
 this.__defineGetter__('Keysets', function() { Windows; delete this.Keysets; Modules.load('utils/Keysets'); return Keysets; });

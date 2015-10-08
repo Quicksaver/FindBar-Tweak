@@ -1,4 +1,4 @@
-Modules.VERSION = '2.6.3';
+Modules.VERSION = '2.6.4';
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -27,7 +27,7 @@ Modules.BASEUTILS = true;
 //	newVal - the new value of prop
 // Note: deleting a watched property does not trigger the watchers, so don't do it! Set it to undefined instead if you wish to delete it after removing the watchers.
 this.Watchers = {
-	_obj: '_WATCHERS_'+objName,
+	_obj: '_WATCHERS_'+this.objName,
 	
 	// Properties part, works by replacing the get and set accessor methods of a property with custom ones
 	addPropertyWatcher: function(obj, prop, handler, capture) {

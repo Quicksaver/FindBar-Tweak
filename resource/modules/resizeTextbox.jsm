@@ -1,30 +1,36 @@
-// VERSION 2.1.0
+// VERSION 2.2.0
 
 this.textboxResizers = {
 	resizing: false,
-	overflow: null,
 	
-	get findBarOverflow() {
-		let fullwidth = gFindBar.clientWidth;
-		
-		// if the findbar is at the top, we don't want its actual width, but the available space it can occupy
-		if(Prefs.movetoTop) {
-			let barStyle = getComputedStyle(gFindBar);
-			fullwidth = gFindBar.parentNode.clientWidth -barStyle.marginLeft -barStyle.marginRight;
-		}
-		
+	get findFieldMaxWidth() {
 		// we should make sure we leave enough space for the status description
 		let statusText = gFindBar._findStatusDesc.textContent;
 		let statusHidden = gFindBar._findStatusDesc.hidden;
 		gFindBar._findStatusDesc.textContent = (Prefs.useCounter) ? gFindBar._notFoundStr : gFindBar._wrappedToBottomStr;
 		gFindBar._findStatusDesc.hidden = false;
 		
-		let scrollWidth = gFindBar.scrollWidth;
+		// if the findbar is at the top, we don't want its actual width, but the available space it can occupy,
+		// so we force it to extend to that width
+		if(Prefs.movetoTop) {
+			setAttribute(gFindBar, 'extend', 'true');
+		}
 		
+		// trick to make the findField extend to all its available width, we then take its width at that point as its maximum width possible
+		setAttribute(gFindBar._findField, 'flex', '1');
+		setAttribute(gFindBar._findField.parentNode, 'flex', '1');
+		
+		let fullWidth = gFindBar._findField.clientWidth;
+		
+		removeAttribute(gFindBar._findField, 'flex');
+		removeAttribute(gFindBar._findField.parentNode, 'flex');
+		if(Prefs.movetoTop) {
+			removeAttribute(gFindBar, 'extend');
+		}
 		gFindBar._findStatusDesc.textContent = statusText;
 		gFindBar._findStatusDesc.hidden = statusHidden;
 		
-		return Math.max(0, scrollWidth -fullwidth);
+		return fullWidth;
 	},
 	
 	handleEvent: function(e) {
@@ -36,6 +42,13 @@ this.textboxResizers = {
 			case 'OpenedFindBar':
 			case 'mousedown':
 				this.maxWidth();
+				gFindBar._findField._dragging = true;
+				Listeners.add(e.target, 'mouseup', this);
+				break;
+			
+			case 'mouseup':
+				Listeners.remove(e.target, 'mouseup', this);
+				gFindBar._findField._dragging = false;
 				break;
 			
 			case 'dblclick':
@@ -48,18 +61,11 @@ this.textboxResizers = {
 		if(this.resizing || oldVal == newVal) { return; }
 		this.resizing = true;
 		
-		var width = parseInt(gFindBar._findField.getAttribute('width'));
-		var max = 4000;
+		let width = parseInt(gFindBar._findField.getAttribute('width'));
+		let max = 4000;
 		
 		if(width < minTextboxWidth || width > max) {
 			Prefs.findFieldWidth = (width < minTextboxWidth) ? minTextboxWidth : max;
-			this.widthChanged();
-			this.resizing = false;
-			return;
-		}
-		
-		if(this.overflow && width >= this.overflow) {
-			Prefs.findFieldWidth = this.overflow;
 			this.widthChanged();
 			this.resizing = false;
 			return;
@@ -109,24 +115,21 @@ this.textboxResizers = {
 	},
 	
 	maxWidth: function() {
-		this.noMaxWidth();
-		
-		if((!viewSource && !gFindBarInitialized) || gFindBar.hidden
+		if((!viewSource && !gFindBarInitialized) || gFindBar.hidden || gFindBar._findField._dragging
 		|| Prefs.findFieldWidth <= minTextboxWidth) { return; }
 		
-		this.overflow = null;
-		var overflow = this.findBarOverflow;
-		if(overflow > 0) {
-			this.overflow = Math.max(0, Prefs.findFieldWidth -overflow);
-			
-			let sscode = '\
-				@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n\
-				@-moz-document url("'+document.baseURI+'") {\n\
-					window['+objName+'_UUID="'+_UUID+'"] .findbar-textbox { max-width: '+this.overflow+'px; }\n\
-				}';
-			
-			Styles.load('findFieldMaxWidth_'+_UUID, sscode, true);
-		}
+		// we can't have previous max-widths affecting this value
+		this.noMaxWidth();
+		
+		let maxWidth = this.findFieldMaxWidth;
+		
+		let sscode = '\
+			@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n\
+			@-moz-document url("'+document.baseURI+'") {\n\
+				window['+objName+'_UUID="'+_UUID+'"] .findbar-textbox { max-width: '+maxWidth+'px; }\n\
+			}';
+		
+		Styles.load('findFieldMaxWidth_'+_UUID, sscode, true);
 	}
 };
 
@@ -152,6 +155,7 @@ Modules.LOADMODULE = function() {
 	
 	findbar.init('textboxResizers',
 		function(bar) {
+			bar._findField._dragging = false;
 			bar._findField.id = objName+'-find-textbox';
 			if(!viewSource) {
 				bar._findField.id += '-'+gBrowser.getNotificationBox(bar.browser).id;
@@ -195,6 +199,7 @@ Modules.LOADMODULE = function() {
 			bar.getElement("find-right-resizer").remove();
 			
 			bar._findField.id = '';
+			delete bar._findField._dragging;
 		}
 	);
 	

@@ -282,3 +282,11 @@ findbar[movetoright] resizer[anonid="find-right-resizer"]:-moz-locale-dir(ltr),
 findbar:not([movetoright]) resizer[anonid="find-right-resizer"]:-moz-locale-dir(rtl) {
 	display: none;
 }
+
+/* tricks necessary to use the textbox resizers with the findbar on top */
+findbar[movetotop][extend] {
+	min-width: calc(100% - 22px - 22px); /* same as defined above for max-width */
+}
+findbar[movetotop][extend] .findbar-container {
+	width: 100%;
+}

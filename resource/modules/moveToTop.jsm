@@ -1,4 +1,4 @@
-// VERSION 3.0.1
+// VERSION 3.0.2
 
 this.__defineGetter__('DevEdition', function() { return window.DevEdition; });
 
@@ -42,6 +42,7 @@ this.moveToTop = {
 			case 'lightweight-theme-styling-update':
 				Timers.init('personaChanged', () => {
 					this.stylePersona();
+					this.placePersona();
 				}, 0);
 				break;
 		}
@@ -110,21 +111,7 @@ this.moveToTop = {
 	},
 	
 	stylePersona: function() {
-		let windowStyle = getComputedStyle(document.documentElement);
-		
-		if(!trueAttribute(document.documentElement, 'lwtheme')) {
-			this.lwtheme.bgImage = '';
-			this.lwtheme.color = '';
-			this.lwtheme.bgColor = '';
-		}
-		else {
-			if(this.lwtheme.bgImage != windowStyle.backgroundImage && windowStyle.backgroundImage != 'none') {
-				this.lwtheme.bgImage = windowStyle.backgroundImage;
-				this.lwtheme.color = windowStyle.color;
-				this.lwtheme.bgColor = windowStyle.backgroundColor;
-			}
-		}
-		
+		// although technically it is a lightweight theme like the others, none of this process is necessary for the DevEdition theme
 		if(DevEdition && DevEdition.isThemeCurrentlyApplied) {
 			findbar.init('DevEdition',
 				function(bar) {
@@ -134,9 +121,24 @@ this.moveToTop = {
 					removeAttribute(bar, 'DevEdition');
 				}
 			);
+			Styles.unload('stylePersona_'+_UUID);
+			Styles.unload('placePersona_'+_UUID);
+			return;
+		}
+		findbar.deinit('DevEdition');
+		
+		if(!trueAttribute(document.documentElement, 'lwtheme')) {
+			this.lwtheme.bgImage = '';
+			this.lwtheme.color = '';
+			this.lwtheme.bgColor = '';
 		}
 		else {
-			findbar.deinit('DevEdition');
+			let windowStyle = getComputedStyle(document.documentElement);
+			if(this.lwtheme.bgImage != windowStyle.backgroundImage && windowStyle.backgroundImage != 'none') {
+				this.lwtheme.bgImage = windowStyle.backgroundImage;
+				this.lwtheme.color = windowStyle.color;
+				this.lwtheme.bgColor = windowStyle.backgroundColor;
+			}
 		}
 		
 		// Unload current stylesheet if it's been loaded

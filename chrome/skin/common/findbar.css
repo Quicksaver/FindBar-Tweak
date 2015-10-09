@@ -170,8 +170,8 @@ findbar[movetotop]:before {
 }
 
 /* There's just no way I can have rounded corners with personas */
-findbar[movetotop]:not([inPDFJS]):-moz-lwtheme:before,
-findbar[movetotop]:not([inPDFJS]):-moz-lwtheme:after {
+findbar[movetotop]:not([DevEdition]):not([inPDFJS]):-moz-lwtheme:before,
+findbar[movetotop]:not([DevEdition]):not([inPDFJS]):-moz-lwtheme:after {
 	display: none;
 }
 
@@ -227,44 +227,46 @@ findbar[movetotop][inPDFJS] .findbar-find-status {
 
 /* tweaks for the Developer Edition theme */
 
-#main-window[devtoolstheme="dark"] findbar[movetotop][DevEdition]:not([inPDFJS]) {
-	background-color: #39424D;
-	-moz-border-bottom-colors: rgba(0,0,0,.2);
-	-moz-border-right-colors: rgba(0,0,0,.2);
-	-moz-border-left-colors: rgba(0,0,0,.2);
+findbar[movetotop][DevEdition]:not([inPDFJS]) {
+	background-color: var(--chrome-secondary-background-color) !important;
 }
 
-#main-window[devtoolstheme="dark"] findbar[movetotop][DevEdition]:not([inPDFJS]):-moz-locale-dir(ltr):before,
-#main-window[devtoolstheme="dark"] findbar[movetotop][DevEdition]:not([inPDFJS]):-moz-locale-dir(rtl):after {
-	box-shadow: 	2px -2px 0 -2px rgba(0,0,0,.2),
-	                7px -4px 0px -4px #39424D,
-	                6px -4px 0px -4px #39424D;
-}
-#main-window[devtoolstheme="dark"] findbar[movetotop][DevEdition]:not([inPDFJS]):-moz-locale-dir(ltr):after,
-#main-window[devtoolstheme="dark"] findbar[movetotop][DevEdition]:not([inPDFJS]):-moz-locale-dir(rtl):before {
-	box-shadow: 	-2px -2px 0 -2px rgba(0,0,0,.2),
-	                -7px -4px 0px -4px #39424D,
-	                -6px -4px 0px -4px #39424D;
+window[devtoolstheme="dark"] findbar[movetotop][DevEdition]:not([inPDFJS]) {
+	border-left: 1px solid var(--chrome-background-color) !important;
+	border-right: 1px solid var(--chrome-background-color) !important;
+	border-bottom: 1px solid var(--chrome-background-color) !important;
 }
 
-#main-window[devtoolstheme="light"] findbar[movetotop][DevEdition]:not([inPDFJS]) {
-	background-color: #f5f6f7;
-	-moz-border-bottom-colors: #cccccc;
-	-moz-border-right-colors: #cccccc;
-	-moz-border-left-colors: #cccccc;
+window[devtoolstheme="dark"] findbar[movetotop][DevEdition]:not([inPDFJS]):-moz-locale-dir(ltr):before,
+window[devtoolstheme="dark"] findbar[movetotop][DevEdition]:not([inPDFJS]):-moz-locale-dir(rtl):after {
+	box-shadow: 	2px -2px 0 -2px var(--chrome-background-color),
+	                7px -4px 0px -4px var(--chrome-secondary-background-color),
+	                6px -4px 0px -4px var(--chrome-secondary-background-color) !important;
+}
+window[devtoolstheme="dark"] findbar[movetotop][DevEdition]:not([inPDFJS]):-moz-locale-dir(ltr):after,
+window[devtoolstheme="dark"] findbar[movetotop][DevEdition]:not([inPDFJS]):-moz-locale-dir(rtl):before {
+	box-shadow: 	-2px -2px 0 -2px var(--chrome-background-color),
+	                -7px -4px 0px -4px var(--chrome-secondary-background-color),
+	                -6px -4px 0px -4px var(--chrome-secondary-background-color) !important;
 }
 
-#main-window[devtoolstheme="light"] findbar[movetotop][DevEdition]:not([inPDFJS]):-moz-locale-dir(ltr):before,
-#main-window[devtoolstheme="light"] findbar[movetotop][DevEdition]:not([inPDFJS]):-moz-locale-dir(rtl):after {
-	box-shadow: 	2px -2px 0 -2px #cccccc,
-	                7px -4px 0px -4px #f5f6f7,
-	                6px -4px 0px -4px #f5f6f7;
+window[devtoolstheme="light"] findbar[movetotop][DevEdition]:not([inPDFJS]) {
+	border-left: 1px solid #aaa !important;
+	border-right: 1px solid #aaa !important;
+	border-bottom: 1px solid #aaa !important;
 }
-#main-window[devtoolstheme="light"] findbar[movetotop][DevEdition]:not([inPDFJS]):-moz-locale-dir(ltr):after,
-#main-window[devtoolstheme="light"] findbar[movetotop][DevEdition]:not([inPDFJS]):-moz-locale-dir(rtl):before {
-	box-shadow: 	-2px -2px 0 -2px #cccccc,
-	                -7px -4px 0px -4px #f5f6f7,
-	                -6px -4px 0px -4px #f5f6f7;
+
+window[devtoolstheme="light"] findbar[movetotop][DevEdition]:not([inPDFJS]):-moz-locale-dir(ltr):before,
+window[devtoolstheme="light"] findbar[movetotop][DevEdition]:not([inPDFJS]):-moz-locale-dir(rtl):after {
+	box-shadow: 	2px -2px 0 -2px #aaa,
+	                7px -4px 0px -4px var(--chrome-secondary-background-color),
+	                6px -4px 0px -4px var(--chrome-secondary-background-color) !important;
+}
+window[devtoolstheme="light"] findbar[movetotop][DevEdition]:not([inPDFJS]):-moz-locale-dir(ltr):after,
+window[devtoolstheme="light"] findbar[movetotop][DevEdition]:not([inPDFJS]):-moz-locale-dir(rtl):before {
+	box-shadow: 	-2px -2px 0 -2px #aaa,
+	                -7px -4px 0px -4px var(--chrome-secondary-background-color),
+	                -6px -4px 0px -4px var(--chrome-secondary-background-color) !important;
 }
 
 /* Textbox resizers */

@@ -87,31 +87,31 @@ findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
 }
 
 
-/* Using The Fox, Only Better, the bottom color of the slimmer isn't the same, so we (try to) apply the same style as the nav-bar */
-/* needs to follow includeNavBar preference */
-/*#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]) .findbar-container:not(:-moz-lwtheme) {
+/* Using Beyond Australis, the bottom color of the slimmer isn't the same, so we (try to) apply the same style as the nav-bar */
+
+#navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]) .findbar-container:not(:-moz-lwtheme) {
 	background-image: linear-gradient(hsl(0,0%,91%), hsl(0,0%,83%));
 	background-size: auto auto;
 	background-repeat: repeat;
 	background-clip: padding-box;
 }
 
-#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
-#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
+#navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
+#navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
 	box-shadow: 	2px -2px 0 -2px #ababab,
 	                7px -4px 0px -4px hsl(0,0%,90%),
 	                6px -4px 0px -4px hsl(0,0%,90%),
 	                7px -4px 0px -4px hsl(0,0%,83%),
 	                6px -4px 0px -4px hsl(0,0%,83%);
 }
-#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
-#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
+#navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
+#navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
 	box-shadow: 	-2px -2px 0 -2px #ababab,
 	                -7px -4px 0px -4px hsl(0,0%,90%),
 	                -6px -4px 0px -4px hsl(0,0%,90%),
 	                -7px -4px 0px -4px hsl(0,0%,83%),
 	                -6px -4px 0px -4px hsl(0,0%,83%);
-}*/
+}
 
 /* Textbox resizers */
 

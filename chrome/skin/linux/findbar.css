@@ -19,6 +19,12 @@ findbar[movetotop]:not([inPDFJS]) {
 	-moz-border-left-colors: ThreeDShadow;
 }
 
+#main-window[findbartweak-FF43] findbar[movetotop]:not([inPDFJS]):-moz-lwtheme {
+	-moz-border-bottom-colors: rgba(0,0,0,.3);
+	-moz-border-right-colors: rgba(0,0,0,.3);
+	-moz-border-left-colors: rgba(0,0,0,.3);
+}
+
 findbar[movetotop] .findbar-container {
 	padding-top: 1px;
 	padding-bottom: 1px;
@@ -64,6 +70,19 @@ findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
 	                -6px -4px 0px -4px -moz-dialog;
 }
 
+#main-window[findbartweak-FF43] findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):-moz-lwtheme:before,
+#main-window[findbartweak-FF43] findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):-moz-lwtheme:after {
+	box-shadow: 	2px -2px 0 -2px rgba(0,0,0,.3),
+	                7px -4px 0px -4px -moz-dialog,
+	                6px -4px 0px -4px -moz-dialog;
+}
+#main-window[findbartweak-FF43] findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):-moz-lwtheme:after,
+#main-window[findbartweak-FF43] findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):-moz-lwtheme:before {
+	box-shadow: 	-2px -2px 0 -2px rgba(0,0,0,.3),
+	                -7px -4px 0px -4px -moz-dialog,
+	                -6px -4px 0px -4px -moz-dialog;
+}
+
 /* Using The Fox, Only Better, the bottom color of the slimmer isn't the same, so we (try to) apply the same style as the nav-bar */
 /* needs to follow includeNavBar preference */
 /*#navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]) .findbar-container {
@@ -84,6 +103,23 @@ findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
 #navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
 #navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
 	box-shadow: 	-2px -2px 0 -2px ThreeDShadow,
+	                -7px -4px 0px -4px rgba(255,255,255,0.2),
+	                -6px -4px 0px -4px rgba(255,255,255,0.2),
+	                -7px -4px 0px -4px -moz-dialog,
+	                -6px -4px 0px -4px -moz-dialog;
+}
+
+#main-window[findbartweak-FF43] #navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):-moz-lwtheme:before,
+#main-window[findbartweak-FF43] #navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):-moz-lwtheme:after {
+	box-shadow: 	2px -2px 0 -2px rgba(0,0,0,.3),
+	                7px -4px 0px -4px rgba(255,255,255,0.2),
+	                6px -4px 0px -4px rgba(255,255,255,0.2),
+	                7px -4px 0px -4px -moz-dialog,
+	                6px -4px 0px -4px -moz-dialog;
+}
+#main-window[findbartweak-FF43] #navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):-moz-lwtheme:after,
+#main-window[findbartweak-FF43] #navigator-toolbox[slimChrome] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):-moz-lwtheme:before {
+	box-shadow: 	-2px -2px 0 -2px rgba(0,0,0,.3),
 	                -7px -4px 0px -4px rgba(255,255,255,0.2),
 	                -6px -4px 0px -4px rgba(255,255,255,0.2),
 	                -7px -4px 0px -4px -moz-dialog,

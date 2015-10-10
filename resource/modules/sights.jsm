@@ -1,4 +1,4 @@
-// VERSION 2.2.4
+// VERSION 2.2.5
 
 this.SIGHTS_SIZE_FOCUS = 400;
 this.SIGHTS_SIZE_CIRCLE = 100;
@@ -9,7 +9,7 @@ this.sights = {
 	handleEvent: function(e) {
 		switch(e.type) {
 			case 'resize':
-				Timers.init('resizeViewSource', () => { this.resizeViewSource(); }, 0);
+				Timers.init('sightsResizeViewSource', () => { this.resizeViewSource(); }, 0);
 				break;
 		}
 	},
@@ -241,9 +241,9 @@ this.sights = {
 	},
 	
 	resizeViewSource: function() {
-		var contentPos = gFindBar.browser.getBoundingClientRect();
-		gFindBar.sights.style.top = contentPos.top+'px';
-		gFindBar.sights.style.height = contentPos.height+'px';
+		let boxObject = gFindBar.browser.boxObject;
+		gFindBar.sights.parentNode.style.top = boxObject.top+'px';
+		gFindBar.sights.parentNode.style.height = boxObject.height+'px';
 	},
 	
 	color: function() {
@@ -315,7 +315,7 @@ Modules.LOADMODULE = function() {
 	if(preferencesDialog) { return; }
 	
 	if(viewSource) {
-		Listeners.add(viewSource, 'resize', sights);
+		Listeners.add(window, 'resize', sights, true);
 	}
 	
 	findbar.init('sights',
@@ -378,7 +378,7 @@ Modules.UNLOADMODULE = function() {
 	if(preferencesDialog) { return; }
 	
 	if(viewSource) {
-		Listeners.remove(viewSource, 'resize', sights);
+		Listeners.remove(window, 'resize', sights, true);
 	}
 	Prefs.unlisten('sightsCurrent', sights);
 	Prefs.unlisten('sightsHighlights', sights);

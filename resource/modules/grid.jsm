@@ -1,4 +1,4 @@
-// VERSION 2.1.6
+// VERSION 2.1.7
 
 this.grids = {
 	template: null,
@@ -14,7 +14,7 @@ this.grids = {
 				break;
 			
 			case 'resize':
-				Timers.init('resizeViewSource', () => { this.resizeViewSource(); }, 0);
+				Timers.init('gridResizeViewSource', () => { this.resizeViewSource(); }, 0);
 				break;
 		}
 	},
@@ -201,9 +201,9 @@ this.grids = {
 	},
 	
 	resizeViewSource: function() {
-		var contentPos = gFindBar.browser.getBoundingClientRect();
-		gFindBar.grid.parentNode.style.top = contentPos.top+'px';
-		gFindBar.grid.parentNode.style.height = contentPos.height+'px';
+		let boxObject = gFindBar.browser.boxObject;
+		gFindBar.grid.parentNode.style.top = boxObject.top+'px';
+		gFindBar.grid.parentNode.style.height = boxObject.height+'px';
 	},
 	
 	reposition: function(delay) {
@@ -249,7 +249,7 @@ Modules.LOADMODULE = function() {
 		Listeners.add(window, 'MozScrolledAreaChanged', grids, true);
 		Listeners.add(gBrowser.tabContainer, 'TabSelect', grids);
 	} else {
-		Listeners.add(viewSource, 'resize', grids);
+		Listeners.add(window, 'resize', grids, true);
 	}
 	
 	findbar.init('grid',
@@ -356,7 +356,7 @@ Modules.UNLOADMODULE = function() {
 		Listeners.remove(window, 'MozScrolledAreaChanged', grids, true);
 		Listeners.remove(gBrowser.tabContainer, 'TabSelect', grids);
 	} else {
-		Listeners.remove(viewSource, 'resize', grids);
+		Listeners.remove(window, 'resize', grids, true);
 	}
 	
 	if(UNLOADED || !Prefs.useGrid) {

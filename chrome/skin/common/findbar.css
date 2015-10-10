@@ -116,17 +116,12 @@ findbar[movetotop]:not([movetoright]):-moz-locale-dir(rtl) toolbarbutton[anonid=
 
 /* small findbar at the top */
 
-.browserContainer[findbarontop],
-#appcontent[findbarontop] {
-	position: relative;
-}
-
 findbar[movetotop] {
-	position: absolute;
-	top: -1px;
+	-moz-box-ordinal-group: 0;
+	position: fixed;
+	margin-top: -1px;
 	margin-left: 22px;
 	margin-right: 22px;
-	max-width: calc(100% - 22px - 22px); /* margins */
 	border-top: none;
 	border-radius: 0 0 8px 8px;
 	background-image: none;
@@ -134,14 +129,7 @@ findbar[movetotop] {
 
 /* compatibility with Tile Tabs, don't need to overlap since we can't show the findbar above the navigator toolbox anyway */
 window[tiletabs-ffversion] findbar[movetotop]:not([inPDFJS]) {
-	top: 0;
-}
-
-findbar[movetotop]:not([movetoright]) {
-	left: 0;
-}
-findbar[movetotop][movetoright] {
-	right: 0;
+	margin-top: 0;
 }
 
 findbar[movetotop] .findbar-container {
@@ -151,6 +139,18 @@ findbar[movetotop] .findbar-container {
 findbar[movetotop]:not([inPDFJS]):-moz-lwtheme {
 	background-repeat: repeat;
 	background-size: auto auto;
+}
+
+/* we can't use positions relative/absolute anywhere in here, it would cause the tabbrowser to be shown above other position:fixed nodes
+   (undocked sidebar from OmniSidebar, corner puzzle bar from Puzzle Bars, etc),
+   the only way around that would be a complete set of "layer" attributes all around, but they can be very unpredictable, so I find it best to avoid them */
+vbox:-moz-any(.browserContainer,#appcontent)[findbarontop]:not([findbaronright]):-moz-locale-dir(rtl),
+vbox:-moz-any(.browserContainer,#appcontent)[findbarontop][findbaronright]:-moz-locale-dir(ltr) > * {
+	direction: ltr;
+}
+vbox:-moz-any(.browserContainer,#appcontent)[findbarontop][findbaronright]:-moz-locale-dir(ltr),
+vbox:-moz-any(.browserContainer,#appcontent)[findbarontop]:not([findbaronright]):-moz-locale-dir(rtl) > * {
+	direction: rtl;
 }
 
 /* Rounded inner corners */
@@ -206,18 +206,17 @@ findbar[movetotop][inPDFJS] {
 	                rgba(0,0,0,0.1) 0px 1px 1px 0px;
 	
 	/* toolbar height, hardcoded in http://mxr.mozilla.org/mozilla-central/source/browser/extensions/pdfjs/content/web/viewer.css, - 1px to overlap */
-	top: 31px;
+	margin-top: 31px;
 }
 
 findbar[movetotop][inPDFJS][loadingBar] {
 	/* toolbar + loadingbar height, hardcoded, don't overlap as above */
-	top: 36px;
+	margin-top: 36px;
 }
 
 findbar[movetotop][inPDFJS][sidebarOpen] {
 	/* the above margins + sidebar width, hardcoded */
 	margin-left: 222px;
-	max-width: calc(100% - 222px - 22px);
 }
 
 findbar[movetotop][inPDFJS] toolbarbutton:not([disabled="true"]),
@@ -284,9 +283,6 @@ findbar:not([movetoright]) resizer[anonid="find-right-resizer"]:-moz-locale-dir(
 }
 
 /* tricks necessary to use the textbox resizers with the findbar on top */
-findbar[movetotop][extend] {
-	min-width: calc(100% - 22px - 22px); /* same as defined above for max-width */
-}
 findbar[movetotop][extend] .findbar-container {
 	width: 100%;
 }

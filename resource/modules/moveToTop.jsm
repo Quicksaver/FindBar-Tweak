@@ -1,12 +1,17 @@
-// VERSION 3.0.2
+// VERSION 3.1.0
 
 this.__defineGetter__('DevEdition', function() { return window.DevEdition; });
+this.__defineGetter__('SidebarUI', function() { return window.SidebarUI; });
 
 this.moveToTop = {
+	kSheetId: 'maxWidthOnTop_'+this._UUID,
+	
 	// these margins should reflect the values in the stylesheets!
 	kMinLeft: 22,
 	kMinRight: 22,
+	kPDFJSSidebarWidth: 200,
 	
+	maxWidthSheets: new Set(),
 	maxHeight: 0,
 	lwtheme: {
 		bgImage: '',
@@ -16,19 +21,28 @@ this.moveToTop = {
 	
 	handleEvent: function(e) {
 		switch(e.type) {
-			case 'FindBarUIChanged':
 			case 'OpenedFindBar':
+			case 'endToggleSidebar':
 				this.update();
 				break;
 			
 			case 'WillOpenFindBar':
-				this.apply();
+				this.apply(e);
 				break;
 			
 			case 'resize':
-			case 'UpdatedStatusFindBar':
 			case 'TabSelect':
 				this.delay();
+				break;
+			
+			case 'TabClose':
+				if(gBrowser.isFindBarInitialized(e.target)) {
+					let sheetId = this.kSheetId+'-'+gBrowser.getFindBar(e.target).id;
+					if(this.maxWidthSheets.has(sheetId)) {
+						Styles.unload(sheetId);
+						this.maxWidthSheets.delete(sheetId);
+					}
+				}
 				break;
 		}
 	},
@@ -48,20 +62,41 @@ this.moveToTop = {
 		}
 	},
 	
+	onOSBToggled: function() {
+		if(osb.enabled) {
+			Watchers.removeAttributeWatcher(SidebarUI._box, 'hidden', this);
+			Listeners.add(window, 'endToggleSidebar', this);
+		} else {
+			Watchers.addAttributeWatcher(SidebarUI._box, 'hidden', this);
+			Listeners.remove(window, 'endToggleSidebar', this);
+		}
+	},
+	
+	attrWatcher: function(obj, attr, oldVal, newVal) {
+		this.delay();
+	},
+	
 	init: function() {
 		Prefs.listen('movetoRight', this);
 		
 		Listeners.add(window, 'WillOpenFindBar', this);
 		Listeners.add(window, 'OpenedFindBar', this);
-		Listeners.add(window, "UpdatedStatusFindBar", this);
-		Listeners.add(window, 'FindBarUIChanged', this);
-		Listeners.add(window, 'TabSelect', this);
 		
-		// Reposition the persona background when the window resizes
+		// Reposition the persona background and recalc maxWidths when the window resizes
 		Listeners.add(window, "resize", this);
 		
 		if(!viewSource) {
+			Listeners.add(gBrowser.tabContainer, 'TabSelect', this);
+			
+			// with Tile Tabs enabled, we won't want to keep maxWidth sheets loaded for tabs that don't exist anymore
+			if(window.tileTabs) {
+				Listeners.add(gBrowser.tabContainer, 'TabClose', this);
+			}
+			
 			Observers.add(this, "lightweight-theme-styling-update");
+			
+			osb.add(this);
+			this.onOSBToggled();
 		}
 		
 		// apply basic persona background if one exists
@@ -69,29 +104,38 @@ this.moveToTop = {
 		
 		// Doing it aSync prevents the window elements from jumping at startup (stylesheet not loaded yet)
 		aSync(() => {
-			this.update();
+			if(!this.update()) {
+				this.apply();
+			}
 		});
 	},
 	
 	deinit: function() {
 		if(!viewSource) {
+			osb.remove(this);
+			Listeners.remove(window, 'endToggleSidebar', this);
+			Watchers.removeAttributeWatcher(SidebarUI._box, 'hidden', this);
+			
+			Listeners.remove(gBrowser.tabContainer, 'TabSelect', this);
+			Listeners.remove(gBrowser.tabContainer, 'TabClose', this);
 			Observers.remove(this, "lightweight-theme-styling-update");
 			
 			findbar.deinit('DevEdition');
 		}
 		
 		Listeners.remove(window, 'WillOpenFindBar', this);
-		Listeners.remove(window, "resize", this);
-		Listeners.remove(window, 'FindBarUIChanged', this);
 		Listeners.remove(window, 'OpenedFindBar', this);
-		Listeners.remove(window, "UpdatedStatusFindBar", this);
-		Listeners.remove(window, 'TabSelect', this);
+		Listeners.remove(window, "resize", this);
 		
 		Prefs.unlisten('movetoRight', this);
 		
 		Timers.cancel('personaChanged');
 		Styles.unload('stylePersona_'+_UUID);
 		Styles.unload('placePersona_'+_UUID);
+		for(let sheetId of this.maxWidthSheets) {
+			Styles.unload(sheetId);
+		}
+		this.maxWidthSheets.clear();
 		
 		findbar.deinit('movetotop');
 	},
@@ -103,11 +147,17 @@ this.moveToTop = {
 	},
 	
 	update: function() {
+		Timers.cancel('delayApply');
+		
+		if((!viewSource && !gFindBarInitialized) || gFindBar.hidden) { return false; }
+		
 		if(!viewSource) {
 			this.placePersona();
 		}
-		
+		this.maxWidth();
 		this.apply();
+		
+		return true;
 	},
 	
 	stylePersona: function() {
@@ -197,7 +247,43 @@ this.moveToTop = {
 		Styles.load('placePersona_'+_UUID, sscode, true);
 	},
 	
-	apply: function(e) {
+	// the stylesheet(s) won't be re-applied if the contents are the same (if the widths haven't changed),
+	// so no need to check for that here
+	maxWidth: function() {
+		let maxWidth = gFindBar.parentNode.clientWidth -this.kMinLeft -this.kMinRight;
+		let pdfMaxWidth = maxWidth -this.kPDFJSSidebarWidth;
+		
+		let sheetId = this.kSheetId;
+		let selector = '';
+		
+		// Tile Tabs requires maxWidths for individual findbars, as not all tabs will have the same width
+		if(window.tileTabs) {
+			selector += "#"+gFindBar.id;
+			sheetId += '-'+gFindBar.id;
+		}
+		
+		let sscode = '\
+			@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n\
+			@-moz-document url("'+document.baseURI+'") {\n\
+				window['+objName+'_UUID="'+_UUID+'"] findbar'+selector+'[movetotop] {\n\
+					max-width: '+maxWidth+'px;\n\
+				}\n\
+				window['+objName+'_UUID="'+_UUID+'"] findbar'+selector+'[movetotop][extend] {\n\
+					min-width: '+maxWidth+'px;\n\
+				}\n\
+				window['+objName+'_UUID="'+_UUID+'"] findbar'+selector+'[movetotop][inPDFJS][sidebarOpen] {\n\
+					max-width: '+pdfMaxWidth+'px;\n\
+				}\n\
+				window['+objName+'_UUID="'+_UUID+'"] findbar'+selector+'[movetotop][inPDFJS][sidebarOpen][extend] {\n\
+					min-width: '+pdfMaxWidth+'px;\n\
+				}\n\
+			}';
+		
+		Styles.load(sheetId, sscode, true);
+		this.maxWidthSheets.add(sheetId);
+	},
+	
+	apply: function(e) { 
 		if(e && e.defaultPrevented) { return; }
 		
 		// Bugfix: in windows 8 the findbar's bottom border will jump clicking a button if we are showing the icons instead of the labels.
@@ -221,6 +307,10 @@ this.moveToTop = {
 		
 		findbar.init('movetotop',
 			function(bar) {
+				// necessary for the Tile Tabs compatibility fix in .maxWidths() above
+				if(window.tileTabs) {
+					bar.id = 'FindToolbar-'+gBrowser.getNotificationBox(bar.browser).id;
+				}
 				setAttribute(bar.parentNode, 'findbarontop', 'true');
 				setAttribute(bar, 'movetotop', 'true');
 				bar.style.maxHeight = height+'px';
@@ -231,6 +321,10 @@ this.moveToTop = {
 				removeAttribute(bar, 'movetotop');
 				removeAttribute(bar.parentNode, 'findbarontop');
 				bar.style.maxHeight = '';
+				
+				if(window.tileTabs) {
+					bar.id = '';
+				}
 			},
 			true
 		);

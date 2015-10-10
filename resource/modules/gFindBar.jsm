@@ -1,9 +1,10 @@
-// VERSION 1.2.1
+// VERSION 1.2.2
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return FITFull || viewSource || window.gFindBarInitialized; });
 this.__defineGetter__('gBrowser', function() { return window.gBrowser; });
 this.__defineGetter__('browserPanel', function() { return $('browser-panel') || viewSource || FITFull; });
+this.__defineGetter__('viewSourceChrome', function() { return viewSource && window.viewSourceChrome; });
 
 this.__defineGetter__('findQuery', function() { return gFindBar._findField.value; });
 this.__defineSetter__('findQuery', function(v) { return gFindBar._findField.value = v; });
@@ -322,9 +323,7 @@ this.findbar = {
 				let bar = e.target._findBar;
 				if(!bar) { break; }
 				
-				for(let [ name, routine ] of this.routines) {
-					this.initRoutine(bar, name, routine.init);
-				}
+				this.newBar(bar);
 				
 				// in case we want to recycle the state from the findbar saved on that same tab,
 				// don't forget to delete the state property, otherwise we can end up with ZCs
@@ -350,6 +349,12 @@ this.findbar = {
 	
 	getCurrentTab: function() {
 		this.currentTab = gBrowser.selectedTab;
+	},
+	
+	newBar: function(bar) {
+		for(let [ name, routine ] of this.routines) {
+			this.initRoutine(bar, name, routine.init);
+		}
 	},
 	
 	init: function(name, init, deinit, force) {
@@ -489,6 +494,33 @@ Modules.LOADMODULE = function() {
 		Listeners.add(window, 'TabFindInitialized', findbar);
 		Listeners.add(window, 'TabRemotenessChange', findbar);
 	}
+	else if(viewSource) {
+		// in e10s viewSource windows change from non-remote to remote _after_ we initialize its findbar, destroying our finder and other things
+		// so we need to know when this happens so we can initialize the findbar again
+		Piggyback.add('gFindBar', viewSourceChrome, 'updateBrowserRemoteness', function(shouldBeRemote) {
+			// there's no point, and the original method would no-op as well
+			if(this.browser.isRemoteBrowser == shouldBeRemote) { return; }
+			
+			// call the original method to actual do the remoteness change
+			this._updateBrowserRemoteness(shouldBeRemote);
+			
+			let parent = gFindBar.parentNode;
+			let sibling = gFindBar.nextSibling;
+			let state = findbar.destroy({ _findBar: gFindBar });
+			
+			// findbar.destroy() removes the findbar from the DOM; we don't want to reappend it,
+			// it's better to trash the old findbar and all its handlers and begin with a fresh one
+			let bar = document.createElement("findbar");
+			bar.id = "FindToolbar";
+			bar.setAttribute('browserid', 'content');
+			parent.appendChild(bar);
+			
+			findbar.newBar(bar);
+			aSync(function() {
+				findbar.restoreState(bar, state);
+			});
+		});
+	}
 	
 	findbar.init('gFindBar', baseInit, baseDeinit);
 };
@@ -500,6 +532,9 @@ Modules.UNLOADMODULE = function() {
 		Listeners.remove(gBrowser.tabContainer, "TabSelect", findbar);
 		Listeners.remove(window, 'TabFindInitialized', findbar);
 		Listeners.remove(window, 'TabRemotenessChange', findbar);
+	}
+	else if(viewSource) {
+		Piggyback.revert('gFindBar', viewSourceChrome, 'updateBrowserRemoteness');
 	}
 	
 	/* Prevent a ZC */

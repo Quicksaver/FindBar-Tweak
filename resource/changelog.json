@@ -1,6 +1,22 @@
 {
-	"current":"2.1.1",
+	"current":"2.1.2",
 	"releases": {
+		"2.1.2":{
+			"date":"October 12, 2015",
+			"notes":[
+				["updated","Rewrote findbar on top module, bringing a great improvement to performance and responsiveness when using this feature"],
+				["updated","Also rewrote the module for resizing the findbar textbox, to bring similar benefits as above"],
+				["bugfix","Compatibility with <a=https://addons.mozilla.org/firefox/addon/auto-unload-tab/>Auto Unload Tab</a>: findbar would stop working in any tabs that had been unloaded before (<a=https://github.com/Quicksaver/FindBar-Tweak/issues/216>issue #216</a>)"],
+				["bugfix","(Firefox 44) the add-on would fail to start in the latest Nightly builds"],
+				["bugfix","Compatibility with <a=https://addons.mozilla.org/firefox/addon/tile-tabs/>Tile Tabs</a>: findbar on top would be impossible to use"],
+				["bugfix","Improved integration with the Developer Edition theme"],
+				["bugfix","(Firefox 43) some appearance tweaks to the findbar on top"],
+				["bugfix","Compatibility with <a=https://addons.mozilla.org/firefox/addon/the-fox-only-better/>Beyond Australis</a>: fix the background for the findbar on top when the navigation bar is hidden with Slim Chrome"],
+				["bugfix","(e10s) findbar would not work in view-source windows"],
+				["bugfix","Highlights grid in the scrollbar wouldn't work correctly in view-source windows"],
+				["","Other minor fixes and improvements"]
+			]
+		},
 		"2.1.1":{
 			"date":"October 5, 2015",
 			"notes":[

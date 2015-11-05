@@ -1,4 +1,4 @@
-// VERSION 1.8.1
+// VERSION 1.8.2
 
 this.findbarUI = {
 	get button() {
@@ -336,13 +336,11 @@ this.toggleMoveToRight = function(startup) {
 	findbar.init('toggleMoveToRight',
 		function(bar) {
 			toggleAttribute(bar, 'movetoright', Prefs.movetoRight);
-			toggleAttribute(bar.parentNode, 'findbaronright', Prefs.movetoRight);
 		},
 		function(bar) {
 			if(bar._destroying) { return; }
 			
 			removeAttribute(bar, 'movetoright');
-			removeAttribute(bar.parentNode, 'findbaronright');
 		},
 		true
 	);

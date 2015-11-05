@@ -144,18 +144,6 @@ findbar[movetotop]:not([inPDFJS]):-moz-lwtheme {
 	background-size: auto auto;
 }
 
-/* we can't use positions relative/absolute anywhere in here, it would cause the tabbrowser to be shown above other position:fixed nodes
-   (undocked sidebar from OmniSidebar, corner puzzle bar from Puzzle Bars, etc),
-   the only way around that would be a complete set of "layer" attributes all around, but they can be very unpredictable, so I find it best to avoid them */
-vbox:-moz-any(.browserContainer,#appcontent)[findbarontop]:not([findbaronright]):-moz-locale-dir(rtl),
-vbox:-moz-any(.browserContainer,#appcontent)[findbarontop][findbaronright]:-moz-locale-dir(ltr) > * {
-	direction: ltr;
-}
-vbox:-moz-any(.browserContainer,#appcontent)[findbarontop][findbaronright]:-moz-locale-dir(ltr),
-vbox:-moz-any(.browserContainer,#appcontent)[findbarontop]:not([findbaronright]):-moz-locale-dir(rtl) > * {
-	direction: rtl;
-}
-
 /* Rounded inner corners */
 
 findbar[movetotop]:before,
@@ -219,7 +207,7 @@ findbar[movetotop][inPDFJS][loadingBar] {
 
 findbar[movetotop][inPDFJS][sidebarOpen] {
 	/* the above margins + sidebar width, hardcoded */
-	margin-left: 222px;
+	-moz-margin-start: 222px;
 }
 
 findbar[movetotop][inPDFJS] toolbarbutton:not([disabled="true"]),

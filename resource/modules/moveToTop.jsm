@@ -1,17 +1,17 @@
-// VERSION 3.1.2
+// VERSION 3.1.3
 
 this.__defineGetter__('DevEdition', function() { return window.DevEdition; });
 this.__defineGetter__('SidebarUI', function() { return window.SidebarUI; });
 
 this.moveToTop = {
-	kSheetId: 'maxWidthOnTop_'+this._UUID,
+	kSheetId: 'onTop_'+this._UUID,
 	
 	// these margins should reflect the values in the stylesheets!
 	kMinLeft: 22,
 	kMinRight: 22,
 	kPDFJSSidebarWidth: 200,
 	
-	maxWidthSheets: new Set(),
+	onTopSheets: new Set(),
 	maxHeight: 0,
 	lwtheme: {
 		bgImage: '',
@@ -38,9 +38,9 @@ this.moveToTop = {
 			case 'TabClose':
 				if(gBrowser.isFindBarInitialized(e.target)) {
 					let sheetId = this.kSheetId+'-'+gBrowser.getFindBar(e.target).id;
-					if(this.maxWidthSheets.has(sheetId)) {
+					if(this.onTopSheets.has(sheetId)) {
 						Styles.unload(sheetId);
-						this.maxWidthSheets.delete(sheetId);
+						this.onTopSheets.delete(sheetId);
 					}
 				}
 				break;
@@ -88,7 +88,7 @@ this.moveToTop = {
 		if(!viewSource) {
 			Listeners.add(gBrowser.tabContainer, 'TabSelect', this);
 			
-			// with Tile Tabs enabled, we won't want to keep maxWidth sheets loaded for tabs that don't exist anymore
+			// with Tile Tabs enabled, we won't want to keep onTop sheets loaded for tabs that don't exist anymore
 			if(window.tileTabs) {
 				Listeners.add(gBrowser.tabContainer, 'TabClose', this);
 			}
@@ -132,10 +132,10 @@ this.moveToTop = {
 		Timers.cancel('personaChanged');
 		Styles.unload('stylePersona_'+_UUID);
 		Styles.unload('placePersona_'+_UUID);
-		for(let sheetId of this.maxWidthSheets) {
+		for(let sheetId of this.onTopSheets) {
 			Styles.unload(sheetId);
 		}
-		this.maxWidthSheets.clear();
+		this.onTopSheets.clear();
 		
 		findbar.deinit('movetotop');
 	},
@@ -154,7 +154,7 @@ this.moveToTop = {
 		if(!viewSource) {
 			this.placePersona();
 		}
-		this.maxWidth();
+		this.calc();
 		this.apply();
 		
 		return true;
@@ -247,9 +247,12 @@ this.moveToTop = {
 		Styles.load('placePersona_'+_UUID, sscode, true);
 	},
 	
-	// the stylesheet(s) won't be re-applied if the contents are the same (if the widths haven't changed),
-	// so no need to check for that here
-	maxWidth: function() {
+	// The stylesheet(s) won't be re-applied if the contents are the same (if the widths haven't changed), so no need to check for that here.
+	// We can't use positions relative/absolute to move to the right, it would cause the tabbrowser to be shown above other position:fixed nodes
+	// (udocked sidebar from OmniSidebar, corner puzzle bar from Puzzle Bars, etc),
+	// the only way around that would be a complete set of "layer" attributes all around, but they can be very unpredictable, so I find it best to avoid them.
+	// It's also better not to use the direction property on the findbar's parent node, as it will cause its siblings to move as well (issue #229).
+	calc: function() {
 		let maxWidth = gFindBar.parentNode.clientWidth -this.kMinLeft -this.kMinRight;
 		let pdfMaxWidth = maxWidth -this.kPDFJSSidebarWidth;
 		
@@ -277,10 +280,23 @@ this.moveToTop = {
 				window['+objName+'_UUID="'+_UUID+'"] findbar'+selector+'[movetotop][inPDFJS][sidebarOpen][extend] {\n\
 					min-width: '+pdfMaxWidth+'px;\n\
 				}\n\
+				\n\
+				window['+objName+'_UUID="'+_UUID+'"] findbar'+selector+'[movetotop][movetoright]:-moz-locale-dir(ltr) {\n\
+					transform: translateX(calc('+maxWidth+'px - 100%));\n\
+				}\n\
+				window['+objName+'_UUID="'+_UUID+'"] findbar'+selector+'[movetotop]:not([movetoright]):-moz-locale-dir(rtl) {\n\
+					transform: translateX(calc(100% - '+maxWidth+'px));\n\
+				}\n\
+				window['+objName+'_UUID="'+_UUID+'"] findbar'+selector+'[movetotop][movetoright][inPDFJS][sidebarOpen]:-moz-locale-dir(ltr) {\n\
+					transform: translateX(calc('+pdfMaxWidth+'px - 100%));\n\
+				}\n\
+				window['+objName+'_UUID="'+_UUID+'"] findbar'+selector+'[movetotop]:not([movetoright])[inPDFJS][sidebarOpen]:-moz-locale-dir(rtl) {\n\
+					transform: translateX(calc(100% - '+pdfMaxWidth+'px));\n\
+				}\n\
 			}';
 		
 		Styles.load(sheetId, sscode, true);
-		this.maxWidthSheets.add(sheetId);
+		this.onTopSheets.add(sheetId);
 	},
 	
 	apply: function(e) { 
@@ -310,11 +326,10 @@ this.moveToTop = {
 		
 		findbar.init('movetotop',
 			function(bar) {
-				// necessary for the Tile Tabs compatibility fix in .maxWidths() above
+				// necessary for the Tile Tabs compatibility fix in .calc() above
 				if(window.tileTabs) {
 					bar.id = 'FindToolbar-'+gBrowser.getNotificationBox(bar.browser).id;
 				}
-				setAttribute(bar.parentNode, 'findbarontop', 'true');
 				setAttribute(bar, 'movetotop', 'true');
 				bar.style.maxHeight = height+'px';
 			},
@@ -322,7 +337,6 @@ this.moveToTop = {
 				if(bar._destroying) { return; }
 				
 				removeAttribute(bar, 'movetotop');
-				removeAttribute(bar.parentNode, 'findbarontop');
 				bar.style.maxHeight = '';
 				
 				if(window.tileTabs) {

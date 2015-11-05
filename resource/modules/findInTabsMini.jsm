@@ -1,4 +1,4 @@
-// VERSION 2.2.5
+// VERSION 2.2.6
 
 this.FITMini = {
 	get broadcaster() { return $(FITSandbox.kBroadcasterId); },
@@ -174,8 +174,7 @@ this.FITMini = {
 			state.lastBrowser = gBrowser.mCurrentBrowser;
 		}
 		
-		if((FITFull || viewSource || gFindBarInitialized)
-		&& ((!gFindBar.hidden && findQuery) || forceEmpty)) {
+		if(gFindBarInitialized && ((!gFindBar.hidden && findQuery) || forceEmpty)) {
 			state.query = findQuery;
 			state.caseSensitive = gFindBar.getElement("find-case-sensitive").checked;
 		}

@@ -1,4 +1,4 @@
-// VERSION 2.2.0
+// VERSION 2.2.1
 
 this.textboxResizers = {
 	resizing: false,
@@ -115,7 +115,7 @@ this.textboxResizers = {
 	},
 	
 	maxWidth: function() {
-		if((!viewSource && !gFindBarInitialized) || gFindBar.hidden || gFindBar._findField._dragging
+		if(!gFindBarInitialized || gFindBar.hidden || gFindBar._findField._dragging
 		|| Prefs.findFieldWidth <= minTextboxWidth) { return; }
 		
 		// we can't have previous max-widths affecting this value

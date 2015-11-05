@@ -1,4 +1,4 @@
-// VERSION 3.1.1
+// VERSION 3.1.2
 
 this.__defineGetter__('DevEdition', function() { return window.DevEdition; });
 this.__defineGetter__('SidebarUI', function() { return window.SidebarUI; });
@@ -149,7 +149,7 @@ this.moveToTop = {
 	update: function() {
 		Timers.cancel('delayApply');
 		
-		if((!viewSource && !gFindBarInitialized) || gFindBar.hidden) { return false; }
+		if(!gFindBarInitialized || gFindBar.hidden) { return false; }
 		
 		if(!viewSource) {
 			this.placePersona();

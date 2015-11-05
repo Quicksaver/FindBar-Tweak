@@ -67,7 +67,7 @@ findbar[movetotop]:not([inPDFJS]) {
 	-moz-border-bottom-colors: #ababab;
 }
 
-findbar[movetotop]:not([inPDFJS]) .findbar-container:-moz-lwtheme {
+findbar[movetotop]:not([inPDFJS]):not([DevEdition]) .findbar-container:-moz-lwtheme {
 	background-color: rgba(253,253,253,0.45);
 }
 
@@ -91,9 +91,6 @@ findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
 
 #navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]) .findbar-container:not(:-moz-lwtheme) {
 	background-image: linear-gradient(hsl(0,0%,91%), hsl(0,0%,83%));
-	background-size: auto auto;
-	background-repeat: repeat;
-	background-clip: padding-box;
 }
 
 #navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,

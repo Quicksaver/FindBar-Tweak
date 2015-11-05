@@ -134,6 +134,9 @@ window[tiletabs-ffversion] findbar[movetotop]:not([inPDFJS]) {
 
 findbar[movetotop] .findbar-container {
 	overflow: hidden;
+	background-size: auto auto;
+	background-repeat: repeat;
+	background-clip: padding-box;
 }
 
 findbar[movetotop]:not([inPDFJS]):-moz-lwtheme {

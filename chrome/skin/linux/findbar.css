@@ -25,6 +25,10 @@ findbar[movetotop]:not([inPDFJS]) {
 	-moz-border-left-colors: rgba(0,0,0,.3);
 }
 
+window[findbartweak-FF44] findbar[movetotop]:not([inPDFJS]):not([DevEdition]) .findbar-container {
+	background-image: linear-gradient(rgba(255,255,255,.4), rgba(255,255,255,.4));
+}
+
 findbar[movetotop] .findbar-container {
 	padding-top: 1px;
 	padding-bottom: 1px;
@@ -57,15 +61,30 @@ findbar[movetotop] textbox {
 
 /* Rounded inner corners */
 
-findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
-findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
+window:not([findbartweak-FF44]) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
+window:not([findbartweak-FF44]) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
 	box-shadow: 	2px -2px 0 -2px ThreeDShadow,
 	                7px -4px 0px -4px -moz-dialog,
 	                6px -4px 0px -4px -moz-dialog;
 }
-findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
-findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
+window:not([findbartweak-FF44]) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
+window:not([findbartweak-FF44]) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
 	box-shadow: 	-2px -2px 0 -2px ThreeDShadow,
+	                -7px -4px 0px -4px -moz-dialog,
+	                -6px -4px 0px -4px -moz-dialog;
+}
+
+window[findbartweak-FF44] findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
+window[findbartweak-FF44] findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
+	box-shadow: 	2px -2px 0 -2px ThreeDShadow,
+	                7px -4px 0px -4px rgba(255,255,255,.4),
+	                7px -4px 0px -4px -moz-dialog,
+	                6px -4px 0px -4px -moz-dialog;
+}
+window[findbartweak-FF44] findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
+window[findbartweak-FF44] findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
+	box-shadow: 	-2px -2px 0 -2px ThreeDShadow,
+	                -7px -4px 0px -4px rgba(255,255,255,.4),
 	                -7px -4px 0px -4px -moz-dialog,
 	                -6px -4px 0px -4px -moz-dialog;
 }
@@ -85,26 +104,21 @@ findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
 
 /* Using Beyond Australis, the bottom color of the slimmer isn't the same, so we (try to) apply the same style as the nav-bar */
 
-#navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]) .findbar-container {
+window:not([findbartweak-FF44]) #navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):not([DevEdition]) .findbar-container {
 	background-image: linear-gradient(rgba(255,255,255,.25), rgba(255,255,255,0));
-	background-size: auto auto;
-	background-repeat: repeat;
-	background-clip: padding-box;
 }
 
-#navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
-#navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
+window:not([findbartweak-FF44]) #navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
+window:not([findbartweak-FF44]) #navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
 	box-shadow: 	2px -2px 0 -2px ThreeDShadow,
-	                7px -4px 0px -4px rgba(255,255,255,0.2),
-	                6px -4px 0px -4px rgba(255,255,255,0.2),
+	                7px -4px 0px -4px rgba(255,255,255,0.25),
 	                7px -4px 0px -4px -moz-dialog,
 	                6px -4px 0px -4px -moz-dialog;
 }
-#navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
-#navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
+window:not([findbartweak-FF44]) #navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
+window:not([findbartweak-FF44]) #navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
 	box-shadow: 	-2px -2px 0 -2px ThreeDShadow,
-	                -7px -4px 0px -4px rgba(255,255,255,0.2),
-	                -6px -4px 0px -4px rgba(255,255,255,0.2),
+	                -7px -4px 0px -4px rgba(255,255,255,0.25),
 	                -7px -4px 0px -4px -moz-dialog,
 	                -6px -4px 0px -4px -moz-dialog;
 }

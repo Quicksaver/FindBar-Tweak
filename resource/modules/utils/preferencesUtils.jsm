@@ -132,7 +132,7 @@ this.dependsOn = {
 
 // delayPreferences -	every node pointing to a preference should be properly initialized with a "delayPreference" attribute instead of a "preference" attribute.
 //			The native handler is very jumpy, for example a scale is very sluggish to move. Instead, we use a more aSynchronous process, so the UI doesn't stutter.
-//			This is similar to the dealyPreference attribute in the native handler, the biggest is the delay is different, and that is only present in FF41+;
+//			This is similar to the delayprefsave attribute in the native handler, except the delay is different;
 //			see http://mxr.mozilla.org/mozilla-central/source/toolkit/content/widgets/preferences.xml or https://bugzilla.mozilla.org/show_bug.cgi?id=1008169
 this.delayPreferences = {
 	handleEvent: function(e) {

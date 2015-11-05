@@ -1,4 +1,4 @@
-// VERSION 3.1.0
+// VERSION 3.1.1
 
 this.__defineGetter__('DevEdition', function() { return window.DevEdition; });
 this.__defineGetter__('SidebarUI', function() { return window.SidebarUI; });
@@ -285,6 +285,9 @@ this.moveToTop = {
 	
 	apply: function(e) { 
 		if(e && e.defaultPrevented) { return; }
+		
+		// if the findbar isn't visible, there's no point in doing any of this, as we wouldn't have its real dimensions anyway
+		if(!gFindBarInitialized || gFindBar.hidden) { return; }
 		
 		// Bugfix: in windows 8 the findbar's bottom border will jump clicking a button if we are showing the icons instead of the labels.
 		// I have no idea why this happens as none of its children elements increase heights or margins.

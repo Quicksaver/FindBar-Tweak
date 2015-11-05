@@ -1,4 +1,4 @@
-// VERSION 1.0.9
+// VERSION 1.0.10
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -339,26 +339,35 @@ this.getLinkElement = function(aNode) {
 	return null;
 };
 
+this.deinitializeNativeFinder = function(bar) {
+	if(bar.browser.isRemoteBrowser) {
+		if(bar.browser._remoteFinder && !bar.browser._remoteFinder[objName]) {
+			bar.browser._remoteFinder._messageManager.removeMessageListener("Finder:Result", bar.browser._remoteFinder);
+			bar.browser._remoteFinder._messageManager.removeMessageListener("Finder:MatchesResult", bar.browser._remoteFinder);
+			bar.browser._remoteFinder._messageManager.removeMessageListener("Finder:CurrentSelectionResult", bar.browser._remoteFinder);
+			bar.browser._remoteFinder.removeResultListener(bar);
+			bar.browser._remoteFinder = null;
+		}
+	}
+	else {
+		if(bar.browser._finder) {
+			bar.browser._finder.removeResultListener(bar);
+		}
+		bar.browser._finder = null;
+	}
+};
+
 Modules.LOADMODULE = function() {
 	findbar.init('mFinder',
 		function(bar) {
 			// load our ._remoteFinder now to prevent the original from loading (it still exists and is fully functional, we just don't want it to be used)
 			Messenger.loadInBrowser(bar.browser, 'mFinder');
 			
+			deinitializeNativeFinder(bar);
+			
 			if(bar.browser.isRemoteBrowser) {
-				if(bar.browser._remoteFinder && !bar.browser._remoteFinder[objName]) {
-					bar.browser._remoteFinder._messageManager.removeMessageListener("Finder:Result", bar.browser._remoteFinder);
-					bar.browser._remoteFinder._messageManager.removeMessageListener("Finder:MatchesResult", bar.browser._remoteFinder);
-					bar.browser._remoteFinder._messageManager.removeMessageListener("Finder:CurrentSelectionResult", bar.browser._remoteFinder);
-					bar.browser._remoteFinder.removeResultListener(bar);
-					bar.browser._remoteFinder = null;
-				}
 				bar.browser._remoteFinder = new RemoteFinder(bar.browser);
-			}
-			else {
-				if(bar.browser._finder) {
-					bar.browser._finder.removeResultListener(bar);
-				}
+			} else {
 				bar.browser._finder = new RemoteFinder(bar.browser);
 			}
 			
@@ -382,12 +391,23 @@ Modules.LOADMODULE = function() {
 			Messenger.unloadFromBrowser(bar.browser, 'mFinder');
 			
 			if(bar.browser._remoteFinder || bar.browser._finder) {
-				bar.browser.finder.deinit();
-			}
-			if(bar.browser.isRemoteBrowser) {
-				bar.browser._remoteFinder = null;
-			} else {
-				bar.browser._finder = null;
+				// bug 1140512 resets the .browser property of the findbar on each TabRemotenessChange, which causes the browser's finder to be reset as well.
+				// Because of that, when deinitializing our own mFinder module, it would think the Finder in it came from us,
+				// but instead it is the native Finder.jsm that's in place.
+				// In that case, we need to remove this findbar (which will be destroyed) form the native Finder.
+				if(!bar.browser.finder[objName]) {
+					deinitializeNativeFinder(bar);
+				}
+				// Otherwise, deinitialize our module's Finder as usual.
+				else {
+					bar.browser.finder.deinit();
+					
+					if(bar.browser.isRemoteBrowser) {
+						bar.browser._remoteFinder = null;
+					} else {
+						bar.browser._finder = null;
+					}
+				}
 			}
 			
 			if(bar._destroying) { return; }

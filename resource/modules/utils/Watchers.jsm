@@ -1,4 +1,4 @@
-// VERSION 2.6.4
+// VERSION 2.6.5
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -240,7 +240,7 @@ this.Watchers = {
 					for(let a of handlers) {
 						if(!a.capture) { continue; }
 						
-						if(Watchers.safeCallHandler(a.handler, 'attr', this, attr, oldValue, newValue) === false) {
+						if(Watchers.safeCallHandler(a.handler, 'attr', obj, attr, oldValue, newValue) === false) {
 							for(let n = m+1; n < muts.length; n++) {
 								if(muts[n].attributeName == attr) {
 									muts[n].realOldValue = oldValue;
@@ -280,10 +280,10 @@ this.Watchers = {
 							if(a.capture) { continue; }
 							
 							if(a.iterateAll) {
-								Watchers.safeCallHandler(a.handler, 'attr', this, attr, oldValue, newValue);
+								Watchers.safeCallHandler(a.handler, 'attr', obj, attr, oldValue, newValue);
 							}
 							else if(m == muts.length -1) {
-								Watchers.safeCallHandler(a.handler, 'attr', this, attr, firstOldValue, newValue);
+								Watchers.safeCallHandler(a.handler, 'attr', obj, attr, firstOldValue, newValue);
 							}
 						}
 					}

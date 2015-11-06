@@ -1,4 +1,4 @@
-// VERSION 1.0.10
+// VERSION 1.0.11
 Modules.UTILS = true;
 
 // PrefPanes - handles the preferences tab and all its contents for the add-on
@@ -78,7 +78,7 @@ this.PrefPanes = {
 						chan.originalURI = aURI;
 						return chan;
 					},
-					getURIFlags: function(aURI) 0
+					getURIFlags: function(aURI) { return 0; }
 				},
 				
 				load: function() {

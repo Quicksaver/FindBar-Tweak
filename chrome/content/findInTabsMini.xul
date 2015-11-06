@@ -11,6 +11,10 @@
 			oncommand="objName.FITMini.toggle();" />
 	</broadcasterset>
 	
+	<menupopup id="viewSidebarMenu">
+		<menuitem id="objName-findInTabs-menuitem" observes="objName-findInTabs-broadcaster" />
+	</menupopup>
+	
 	<!-- The view source window doesn't have the mainBroadcasterSet -->
 	<window id="viewSource">
 		<broadcasterset id="objName-findInTabs-broadcasterSet">

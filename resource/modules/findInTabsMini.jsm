@@ -1,7 +1,8 @@
-// VERSION 2.2.6
+// VERSION 2.2.7
 
 this.FITMini = {
 	get broadcaster() { return $(FITSandbox.kBroadcasterId); },
+	get menuitem() { return $(objName+'-findInTabs-menuitem'); },
 	
 	sidebar: null,
 	
@@ -215,6 +216,8 @@ this.FITMini = {
 		setAttribute(broadcaster, 'tooltiptext', tooltip);
 		setAttribute(broadcaster, 'accesskey', accesskey);
 		setAttribute(broadcaster, 'sidebartitle', Strings.get('findInTabs', 'findAllButtonLabel'));
+		
+		toggleAttribute(this.menuitem, 'collapsed', Prefs.findInTabsAction != 'sidebar');
 	},
 	
 	onLoad: function() {

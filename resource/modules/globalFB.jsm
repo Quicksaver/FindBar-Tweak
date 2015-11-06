@@ -1,4 +1,4 @@
-// VERSION 2.0.6
+// VERSION 2.0.7
 
 this.globalFB = {
 	hidden: true,
@@ -30,12 +30,22 @@ this.globalFB = {
 				
 				// Copy the values of the findField from one tab to another
 				if(currentTab && currentTab._findBar) {
-					findQuery = currentTab._findBar._findField.value;
+					let word = currentTab._findBar._findField.value;
+					let caseSensitive = currentTab._findBar.getElement('find-case-sensitive').checked;
+					let highlightAll = currentTab._findBar.getElement('highlight').checked;
+					
+					// make sure the status is reset when the query is changed
+					if(findQuery != word || gFindBar.getElement('find-case-sensitive').checked != caseSensitive) {
+						gFindBar.__updateStatusUI(gFindBar.nsITypeAheadFind.FIND_FOUND);
+					}
+					
+					// carry over the values from the previous tab to the current one, so that it seems the find bar is still the same
+					findQuery = word;
 					gFindBar._findField.selectionStart = currentTab._findBar._findField.selectionStart;
 					gFindBar._findField.selectionEnd = currentTab._findBar._findField.selectionEnd;
-					gFindBar.getElement('highlight').checked = currentTab._findBar.getElement('highlight').checked;
-					gFindBar.getElement('find-case-sensitive').checked = currentTab._findBar.getElement('find-case-sensitive').checked;
-					gFindBar._enableFindButtons(findQuery);
+					gFindBar.getElement('highlight').checked = highlightAll;
+					gFindBar.getElement('find-case-sensitive').checked = caseSensitive;
+					gFindBar._enableFindButtons(word);
 					
 					// try to mimic the focused status from one findbar to another.
 					// I'm not sure why aSync is needed, but when sync the findbars are never focused when switching tabs
@@ -55,7 +65,7 @@ this.globalFB = {
 					}
 					
 					// remove highlights from a previous search query
-					if(documentHighlighted && highlightedWord && highlightedWord != findQuery) {
+					if(documentHighlighted && highlightedWord && highlightedWord != word) {
 						highlights.off();
 					}
 				}

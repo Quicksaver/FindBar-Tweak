@@ -41,6 +41,14 @@
 		</em:localized>
 		<em:localized>
 			<Description>
+				<em:locale>el</em:locale>
+				<em:name>FindBar Tweak</em:name>
+				<em:description>Μεταξύ απλών πειραγμάτων, όπως η τοποθέτηση της γραμμής εύρεσης στην επάνω γωνία, έως και το ισχυρό εργαλείο «Εύρεση σε όλες τις καρτέλες», η επέκταση έχει τα πάντα για να κάνει την εργαλειοθήκη εύρεσης ένα ισχυρό και προσιτό εργαλείο έρευνας!</em:description>
+				<em:translator>George Malamas</em:translator>
+			</Description>
+		</em:localized>
+		<em:localized>
+			<Description>
 				<em:locale>es</em:locale>
 				<em:name>FindBar Tweak</em:name>
 				<em:description>Desde simples ajustes como situar la barra de búsqueda en una esquina superior, a la potente herramienta "Buscar en todas las pestañas", ¡lo tiene todo para hacer de la barra de búsqueda una herramientas de indagación potente y accesible!</em:description>

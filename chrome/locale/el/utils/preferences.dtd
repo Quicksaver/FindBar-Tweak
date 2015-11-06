@@ -1,0 +1,13 @@
+<!ENTITY preferences.button "Προτιμήσεις">
+<!ENTITY preferences.undo.label "Αναίρεση">
+<!ENTITY preferences.redo.label "Επανάληψη">
+<!ENTITY preferences.undoredo.tooltip "Επαναφέρετε γρήγορα οποιαδήποτε αλλαγή γίνει στις προτιμήσεις της επέκτασης, συμπεριλαμβανομένων εισαγωγής από αρχείο και επαναφοράς προεπιλογών.">
+<!ENTITY preferences.import.label "Εισαγωγή από αρχείο…">
+<!ENTITY preferences.import.tooltip "Φορτώστε προτιμήσεις για την επέκταση από ένα προηγουμένως εξαχθέν αρχείο στον υπολογιστή σας.">
+<!ENTITY preferences.export.label "Εξαγωγή σε αρχείο…">
+<!ENTITY preferences.export.tooltip "Αποθηκεύστε τις προτιμήσεις της επέκτασής σας σε ένα εξωτερικό αρχείο για διαφύλαξή τους.">
+<!ENTITY preferences.reset.label "Επαναφορά προεπιλογών">
+<!ENTITY preferences.reset.tooltip.a "Όλες οι προτιμήσεις επαναφέρονται στις προεπιλεγμένες τιμές τους, σαν να πρόκειται για αρχική εγκατάσταση της επέκτασης.">
+<!ENTITY preferences.reset.tooltip.b "Οι τοποθετήσεις κουμπιών στις εργαλειοθήκες δεν επηρεάζονται. Για επαναφορά αυτών, μπορείτε να χρησιμοποιήσετε το κουμπί «Επαναφορά προεπιλογών» στη λειτουργία προσαρμογής.">
+<!ENTITY preferences.jumpto.label "Μετάβαση σε προτίμηση…">
+<!ENTITY preferences.jumpto.tooltip "Πληκτρολογήστε μια λέξη και θα μεταβείτε στην πρώτη προτίμηση που την περιέχει.">

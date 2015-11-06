@@ -4,6 +4,7 @@ resource  findbartweak                    resource/
 locale    findbartweak-en   en-US         chrome/locale/en-US/
 locale    findbartweak      en-US         chrome/locale/en-US/
 locale    findbartweak      de            chrome/locale/de/
+locale    findbartweak      el            chrome/locale/el/
 locale    findbartweak      es            chrome/locale/es/
 locale    findbartweak      fr            chrome/locale/fr/
 locale    findbartweak      ja-JP         chrome/locale/ja-JP/

@@ -1,4 +1,4 @@
-// VERSION 1.0.10
+// VERSION 1.0.11
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -285,12 +285,11 @@ this.RemoteFinder.prototype = {
 	_documentHighlighted: false,
 	_documentReHighlight: false,
 	_highlightedWord: '',
-	_highlightedText: '',
+	highlightedText: '',
 	
 	get documentHighlighted() { return this._documentHighlighted; },
 	get documentReHighlight() { return this._documentReHighlight; },
 	get highlightedWord() { return this._highlightedWord; },
-	get highlightedText() { return this._highlightedText; },
 	
 	set documentHighlighted(v) {
 		this._documentHighlighted = v;
@@ -302,10 +301,6 @@ this.RemoteFinder.prototype = {
 	},
 	set highlightedWord(v) {
 		this._highlightedWord = v;
-		this.highlightsInfo();
-	},
-	set highlightedText(v) {
-		this._highlightedText = v;
 		this.highlightsInfo();
 	},
 	
@@ -322,8 +317,7 @@ this.RemoteFinder.prototype = {
 			Messenger.messageBrowser(this._browser, 'Highlights:Info', {
 				documentHighlighted: this.documentHighlighted,
 				documentReHighlight: this.documentReHighlight,
-				highlightedWord: this.highlightedWord,
-				highlightedText: this.highlightedText
+				highlightedWord: this.highlightedWord
 			});
 		});
 	}

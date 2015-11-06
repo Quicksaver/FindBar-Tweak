@@ -1,16 +1,14 @@
-// VERSION 1.0.16
+// VERSION 1.0.17
 
 this.__defineGetter__('isPDFJS', function() { return Finder.isPDFJS; });
 
 this.__defineGetter__('documentHighlighted', function() { return Finder.documentHighlighted; });
 this.__defineGetter__('documentReHighlight', function() { return Finder.documentReHighlight; });
 this.__defineGetter__('highlightedWord', function() { return Finder.highlightedWord; });
-this.__defineGetter__('highlightedText', function() { return Finder.highlightedText; });
 
 this.__defineSetter__('documentHighlighted', function(v) { return Finder.documentHighlighted = v; });
 this.__defineSetter__('documentReHighlight', function(v) { return Finder.documentReHighlight = v; });
 this.__defineSetter__('highlightedWord', function(v) { return Finder.highlightedWord = v; });
-this.__defineSetter__('highlightedText', function(v) { return Finder.highlightedText = v; });
 
 // Because I can't access Finder.jsm in its active context (for some reason), I need to completely replace it.
 // A lot of the code here is based on http://mxr.mozilla.org/mozilla-central/source/toolkit/modules/Finder.jsm
@@ -512,7 +510,7 @@ this.Finder = {
 			// we always construct this object if the counter, grid or sights are being used, they all fetch from here instead of each having their own lists or arrays
 			this._highlights = null;
 			
-			if(this.buildHighlights.size > 0) {
+			if(this.buildHighlights.size) {
 				this._highlights = {
 					wins: new Map()
 				};
@@ -548,7 +546,7 @@ this.Finder = {
 				// No need to do any of this if all we're looking for is the found status
 				if(aHighlight || this._highlights) {
 					// instead of doubling the checks, let's just reuse the first results
-					let editableNode = this._getEditableNode(aRange.startContainer)
+					let editableNode = this._getEditableNode(aRange.startContainer);
 					
 					if(aHighlight) {
 						this._highlightRange(aRange, controller, editableNode);
@@ -565,7 +563,8 @@ this.Finder = {
 			// no point in setting the array if no matches were found
 			if(!found) {
 				this._highlights = null;
-			} else {
+			}
+			else if(this._highlights) {
 				this._highlights.all = [];
 				for(let [mWin, mHighlights] of this._highlights.wins) {
 					if(mHighlights.length == 0) {
@@ -1136,7 +1135,6 @@ this.Finder = {
 	
 	// other information about the current highlights
 	highlightedWord: '',
-	highlightedText: '',
 	
 	highlightsInfo: function(data) {
 		// don't trigger the normal routines, because this comes from chrome and we don't need to send the data back, as chrome updates itself in this case

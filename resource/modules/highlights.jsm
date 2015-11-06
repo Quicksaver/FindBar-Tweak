@@ -1,4 +1,4 @@
-// VERSION 2.1.8
+// VERSION 2.1.9
 
 this.highlights = {
 	observe: function(aSubject, aTopic) {
@@ -36,30 +36,6 @@ this.highlights = {
 				Timers.cancel('delayHighlight');
 				break;
 			
-			case 'WillToggleHighlight':
-				var aHighlight = e.detail;
-				
-				// Bugfix: sometimes when hitting F3 on a new value (i.e. globalFB, input one value in one tab, switch tab, hit F3 to use the same value)
-				// it would highlight all, we should make sure it doesn't.
-				if(!aHighlight && documentHighlighted && highlightedWord && highlightedWord == findQuery) {
-					gFindBar._highlightAnyway = true;
-				}
-				if(aHighlight) {
-					if(!Prefs.highlightOnFindAgain && gFindBar.hidden && !documentHighlighted && !gFindBar._highlightAnyway) {
-						aHighlight = false;
-						e.preventDefault();
-					}
-					gFindBar._highlightAnyway = false;
-				}
-				
-				documentHighlighted = aHighlight;
-				documentReHighlight = false;
-				highlightedWord = (aHighlight) ? findQuery : '';
-				
-				// Make sure we cancel any highlight timer that might be running
-				Timers.cancel('delayHighlight');
-				break;
-			
 			case 'WillFindAgain':
 				// ReDo highlights when hitting FindAgain if necessary (should rarely be triggered actually)
 				if(documentReHighlight) {
@@ -68,9 +44,14 @@ this.highlights = {
 				break;
 			
 			case 'FoundAgain':
-				// Trigger highlights when hitting Find Again
-				if(!Prefs.highlightOnFindAgain || isPDFJS || (documentHighlighted && highlightedWord && highlightedWord == findQuery)) { return; }
-				if(gFindBar.hidden && Prefs.hideWhenFinderHidden) { return; } // Don't highlight if it's not supposed to when the findbar is hidden
+				// Trigger highlights when hitting Find Again only when needed
+				if(!Prefs.highlightOnFindAgain || isPDFJS || !gFindBar.getElement("highlight").checked
+				|| (documentHighlighted && highlightedWord && highlightedWord == findQuery)) {
+					return;
+				}
+				
+				// Don't highlight if it's not supposed to when the findbar is hidden
+				if(gFindBar.hidden && Prefs.hideWhenFinderHidden) { return; }
 				
 				gFindBar._setHighlightTimeout();
 				break;
@@ -300,21 +281,43 @@ Modules.LOADMODULE = function() {
 				// Bugfix: with PDF.JS find would not work because it would hang when checking for PDFView.pdfDocument.numPages when PDFView.pdfDocument was still null.
 				if(isPDFJS && isPDFJS.readyState != 'complete') { return; }
 				
-				var suffix = (!viewSource && this.browser != gBrowser.mCurrentBrowser) ? 'Background' : '';
+				// Make sure we cancel any highlight timer that might be running
+				Timers.cancel('delayHighlight');
 				
-				if(dispatch(this, { type: 'WillToggleHighlight'+suffix, detail: aHighlight })) {
-					var word = this._findField.value;
-					
-					if((!this._dispatchFindEvent("highlightallchange"))
-					// Bug 429723. Don't attempt to highlight ""
-					|| (aHighlight && !word)) {
-						highlights.onHighlights(this.browser, aHighlight);
+				this.browser.finder.documentReHighlight = false;
+				let word = this._findField.value;
+				
+				// Bugfix: sometimes when hitting F3 on a new value (i.e. globalFB, input one value in one tab, switch tab, hit F3 to use the same value)
+				// it would highlight all, we should make sure it doesn't.
+				if(!aHighlight && word
+				&& this.browser.finder.documentHighlighted
+				&& this.browser.finder.highlightedWord == word) {
+					this._highlightAnyway = true;
+				}
+				if(aHighlight) {
+					if(!Prefs.highlightOnFindAgain
+					&& this.hidden
+					&& !this.browser.finder.documentHighlighted
+					&& !this._highlightAnyway) {
+						this.browser.finder.documentHighlighted = false;
+						this.browser.finder.highlightedWord = '';
 						return;
 					}
-					
-					this.browser._lastSearchHighlight = aHighlight;
-					this.browser.finder.highlight(aHighlight, word, this._findMode == this.FIND_LINKS);
+					this._highlightAnyway = false;
 				}
+				
+				this.browser.finder.documentHighlighted = aHighlight;
+				this.browser.finder.highlightedWord = (aHighlight) ? word : '';
+				
+				if((!this._dispatchFindEvent("highlightallchange"))
+				// Bug 429723. Don't attempt to highlight ""
+				|| (aHighlight && !word)) {
+					highlights.onHighlights(this.browser, aHighlight);
+					return;
+				}
+				
+				this.browser._lastSearchHighlight = aHighlight;
+				this.browser.finder.highlight(aHighlight, word, this._findMode == this.FIND_LINKS);
 			});
 			
 			bar.browser.finder.addResultListener(highlights);
@@ -355,7 +358,6 @@ Modules.LOADMODULE = function() {
 	Listeners.add(window, 'WillUpdateStatusFindBar', highlights, true);
 	Listeners.add(window, 'ClosedFindBar', highlights);
 	Listeners.add(window, 'ClosedFindBarBackground', highlights);
-	Listeners.add(window, 'WillToggleHighlight', highlights);
 	Listeners.add(window, 'WillFindAgain', highlights);
 	Listeners.add(window, 'FoundAgain', highlights);
 	Listeners.add(window, 'FindModeChange', highlights);
@@ -406,7 +408,6 @@ Modules.UNLOADMODULE = function() {
 	Listeners.remove(window, 'WillUpdateStatusFindBar', highlights, true);
 	Listeners.remove(window, 'ClosedFindBar', highlights);
 	Listeners.remove(window, 'ClosedFindBarBackground', highlights);
-	Listeners.remove(window, 'WillToggleHighlight', highlights);
 	Listeners.remove(window, 'WillFindAgain', highlights);
 	Listeners.remove(window, 'FoundAgain', highlights);
 	Listeners.remove(window, 'FindModeChange', highlights);

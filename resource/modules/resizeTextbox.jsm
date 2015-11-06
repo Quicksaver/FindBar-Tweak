@@ -1,4 +1,4 @@
-// VERSION 2.2.1
+// VERSION 2.2.2
 
 this.textboxResizers = {
 	resizing: false,
@@ -40,6 +40,9 @@ this.textboxResizers = {
 				break;
 			
 			case 'OpenedFindBar':
+				this.maxWidth();
+				break;
+			
 			case 'mousedown':
 				this.maxWidth();
 				gFindBar._findField._dragging = true;

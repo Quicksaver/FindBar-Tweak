@@ -1,4 +1,4 @@
-// VERSION 1.0.11
+// VERSION 1.0.12
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -334,21 +334,39 @@ this.getLinkElement = function(aNode) {
 };
 
 this.deinitializeNativeFinder = function(bar) {
+	delete bar.browser._backupFinder;
+	
 	if(bar.browser.isRemoteBrowser) {
 		if(bar.browser._remoteFinder && !bar.browser._remoteFinder[objName]) {
+			bar.browser._backupFinder = bar.browser._remoteFinder;
 			bar.browser._remoteFinder._messageManager.removeMessageListener("Finder:Result", bar.browser._remoteFinder);
 			bar.browser._remoteFinder._messageManager.removeMessageListener("Finder:MatchesResult", bar.browser._remoteFinder);
 			bar.browser._remoteFinder._messageManager.removeMessageListener("Finder:CurrentSelectionResult", bar.browser._remoteFinder);
 			bar.browser._remoteFinder.removeResultListener(bar);
 			bar.browser._remoteFinder = null;
 		}
+		
+		return;
 	}
-	else {
-		if(bar.browser._finder) {
-			bar.browser._finder.removeResultListener(bar);
-		}
+	
+	if(bar.browser._finder) {
+		bar.browser._backupFinder = bar.browser._finder;
+		bar.browser._finder.removeResultListener(bar);
 		bar.browser._finder = null;
 	}
+};
+
+// remember this expects our Finder to be deinitialized already!
+this.reinitializeNativeFinder = function(bar) {
+	if(!bar.browser._backupFinder) { return; }
+	
+	if(bar.browser.isRemoteBrowser) {
+		bar.browser._remoteFinder = bar.browser._backupFinder;
+		bar.browser._remoteFinder.swapBrowser(bar.browser);
+	} else {
+		bar.browser._finder = bar.browser._backupFinder;
+	}
+	delete bar.browser._backupFinder;
 };
 
 Modules.LOADMODULE = function() {
@@ -388,7 +406,7 @@ Modules.LOADMODULE = function() {
 				// bug 1140512 resets the .browser property of the findbar on each TabRemotenessChange, which causes the browser's finder to be reset as well.
 				// Because of that, when deinitializing our own mFinder module, it would think the Finder in it came from us,
 				// but instead it is the native Finder.jsm that's in place.
-				// In that case, we need to remove this findbar (which will be destroyed) form the native Finder.
+				// In that case, we need to remove this findbar (which will be destroyed) from the native Finder.
 				if(!bar.browser.finder[objName]) {
 					deinitializeNativeFinder(bar);
 				}
@@ -403,6 +421,9 @@ Modules.LOADMODULE = function() {
 					}
 				}
 			}
+			
+			// try to reinstate the native Finder, to prevent issues with several instances initialized in-content
+			reinitializeNativeFinder(bar);
 			
 			if(bar._destroying) { return; }
 			

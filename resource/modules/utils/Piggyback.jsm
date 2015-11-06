@@ -1,4 +1,4 @@
-// VERSION 1.2.2
+// VERSION 1.2.3
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -129,7 +129,7 @@ this.Piggyback = {
 				if(ids.length > 0) {
 					aObj.__PiggybackIds = ids.join(' ');
 				} else {
-					delete aObj.__Piggybackids;
+					delete aObj.__PiggybackIds;
 				}
 			}
 		}

@@ -1,6 +1,19 @@
 {
-	"current":"2.1.2",
+	"current":"2.1.3",
 	"releases": {
+		"2.1.3":{
+			"date":"November 18, 2015",
+			"notes":[
+				["new","el (greek) locale"],
+				["updated","(Firefox 45) some fixes in the add-on have been incorporated into Firefox's native findbar, so they are no longer needed here"],
+				["bugfix","(Firefox 44) findbar completely unusable (<a=https://github.com/Quicksaver/FindBar-Tweak/issues/228>issue #228</a>)"],
+				["bugfix","Some appearance fixes for the findbar on top"],
+				["bugfix","Placing the findbar on top and on the right would cause the url preview tooltip and other elements to appear on the opposite side as well (<a=https://github.com/Quicksaver/FindBar-Tweak/issues/229>issue #229</a>)"],
+				["bugfix","Slight performance improvements when finding without highlights; unchecking the Highlight All button in large pages could even make it run slower than leaving it checked"],
+				["bugfix","Find All sidebar menu item was missing from View - Sidebar menu, and from all related <a=https://addons.mozilla.org/firefox/addon/omnisidebar/>OmniSidebar</a> menus"],
+				["bugfix","When switching between tabs with the global findbar open, the status text / matches counter should reset when the previous search in that tab was for another query"]
+			]
+		},
 		"2.1.2":{
 			"date":"October 12, 2015",
 			"notes":[

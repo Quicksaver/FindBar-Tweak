@@ -1,4 +1,4 @@
-// VERSION 2.4.5
+// VERSION 2.4.6
 Modules.UTILS = true;
 
 // dependsOn - object that adds a dependson attribute functionality to xul preference elements.
@@ -272,7 +272,7 @@ this.keys = {
 	all: [],
 	
 	handleEvent: function(e) {
-		this.fillKeyCodes();
+		this.fillKeycodes();
 	},
 	
 	init: function() {
@@ -309,6 +309,8 @@ this.keys = {
 			Listeners.add(key.shiftBox, 'command', this);
 			Listeners.add(key.altBox, 'command', this);
 		}
+		
+		this.fillKeycodes();
 	},
 	
 	uninit: function() {

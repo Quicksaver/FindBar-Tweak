@@ -57,7 +57,6 @@
 <!ENTITY OptadjustGridWidth.labela "Breite des Musters anpassen:">
 <!ENTITY OptadjustGridWidth.labelb "Pixel">
 <!ENTITY OptadjustGridWidth.tooltip "Die Breite der Markierungen im Hervorhebungsbalkens, falls nötig, anpassen, um besser zu Themes zu passen, die das Aussehen der Bildlaufleiste ändern.">
-<!ENTITY Optsights.label "Fundstellenhervorhebung">
 <!ENTITY OptsightsCurrentHit.label "Aktueller Treffer">
 <!ENTITY OptsightsAllHighlights.label "Alle Hervorhebungen">
 <!ENTITY OptsightsCurrent.label "Aktuellen Suchtreffer kurzzeitig ringförmig hervorheben">
@@ -90,7 +89,6 @@
 <!ENTITY OptglobalFB.tooltip "Sobald Sie die Suchleiste in einem Tab öffnen und dann zu einem anderen Tab wechseln, sollten Sie die Suchleiste auch im neuen Tab geöffnet vorfinden.">
 <!ENTITY OptonStartup.label "Den Zustand der Such-Symbolleiste (eingeblendet/ausgeblendet) beim Start wiederherstellen">
 <!ENTITY OptonStartup.tooltip "Wenn Sie den Browser schließen, während die Suchleiste noch geöffnet ist, wird sie beim nächsten Start des Browsers direkt wieder geöffnet.">
-<!ENTITY OptopenFindbar.label "Beim Öffnen der Suchleiste">
 <!ENTITY OptquickFindOptions.label "Schnellsuchleiste">
 <!ENTITY OptkeepButtons.label "Schaltflächen in der Suchleiste anzeigen">
 <!ENTITY OptkeepButtons.tooltip "Standardmäßig hat die Schnellsuchleiste keine Schaltflächen, sie ist nur das Eingabefeld für schnelle Suchaktionen. Mit dieser Option können Sie dabei weiterhin die Funktionen „Alle hervorheben“ und „Groß-/Kleinschreibung beachten“ verwenden.">

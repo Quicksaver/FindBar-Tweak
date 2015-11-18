@@ -57,7 +57,6 @@
 <!ENTITY OptadjustGridWidth.labela "調整網格寬度：">
 <!ENTITY OptadjustGridWidth.labelb "像素">
 <!ENTITY OptadjustGridWidth.tooltip "Adjust the width of the marks in the highlights grid if needed, to better fit themes that change the appearance of the scrollbar.">
-<!ENTITY Optsights.label "聚焦">
 <!ENTITY OptsightsCurrentHit.label "目前相配">
 <!ENTITY OptsightsAllHighlights.label "全部強調">
 <!ENTITY OptsightsCurrent.label "於目前搜尋項顯示聚焦">
@@ -90,7 +89,6 @@
 <!ENTITY OptglobalFB.tooltip "When you open the Findbar in one tab, then switch to another tab, you should see the Findbar still open in the new tab.">
 <!ENTITY OptonStartup.label "啟動時恢復上次的打開狀態">
 <!ENTITY OptonStartup.tooltip "If you close the browser with the Findbar still open, the next time you start the browser it will be already opened.">
-<!ENTITY OptopenFindbar.label "開啟搜尋欄時">
 <!ENTITY OptquickFindOptions.label "快速搜尋欄">
 <!ENTITY OptkeepButtons.label "在快速搜尋欄上顯示按鍵">
 <!ENTITY OptkeepButtons.tooltip "By default, the Quick Findbar doesn't have any buttons, it is just the input box for quick find operations. With this you can still access the Highlight All and Match Case functions when using it.">

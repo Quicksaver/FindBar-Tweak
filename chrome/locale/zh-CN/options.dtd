@@ -57,7 +57,6 @@
 <!ENTITY OptadjustGridWidth.labela "调整网格宽度:">
 <!ENTITY OptadjustGridWidth.labelb "像素">
 <!ENTITY OptadjustGridWidth.tooltip "如果需要，调整高亮网格的宽度，以更好的适应主题改变的滚动条外观。">
-<!ENTITY Optsights.label "聚焦视点">
 <!ENTITY OptsightsCurrentHit.label "当前匹配">
 <!ENTITY OptsightsAllHighlights.label "所有高亮">
 <!ENTITY OptsightsCurrent.label "在当前搜索项上显示聚焦视点">
@@ -90,7 +89,6 @@
 <!ENTITY OptglobalFB.tooltip "如果您在某个标签页中打开查找栏，然后切换到另一个标签页，您仍然会看到打开的查找栏并且它在新的标签页中。">
 <!ENTITY OptonStartup.label "启动时恢复查找栏的打开状态">
 <!ENTITY OptonStartup.tooltip "如果您在查找栏仍然打开时关闭浏览器，下次打开该浏览器时，它仍然会处在打开状态。">
-<!ENTITY OptopenFindbar.label "打开查找栏时">
 <!ENTITY OptquickFindOptions.label "快速查找栏">
 <!ENTITY OptkeepButtons.label "在快速查找栏上显示按钮">
 <!ENTITY OptkeepButtons.tooltip "默认情况下，快速查找栏没有任何按钮，它只有一个进行快速查找操作的输入框。启用此项后，您将可以在它里面访问“高亮所有”和“区分大小写”的功能。">

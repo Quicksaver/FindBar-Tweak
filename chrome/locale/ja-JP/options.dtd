@@ -57,7 +57,6 @@
 <!ENTITY OptadjustGridWidth.labela "グリッドの幅を調整:">
 <!ENTITY OptadjustGridWidth.labelb "ピクセル">
 <!ENTITY OptadjustGridWidth.tooltip "もしスクロールバーの外観を変更する適当なテーマを改良するために必要ならば、ハイライトグリッドのマークの幅を調整してください。">
-<!ENTITY Optsights.label "フォーカスの視覚効果">
 <!ENTITY OptsightsCurrentHit.label "ヒットした文字列">
 <!ENTITY OptsightsAllHighlights.label "すべてハイライト">
 <!ENTITY OptsightsCurrent.label "ヒットした文字列に視覚効果を適用">
@@ -90,7 +89,6 @@
 <!ENTITY OptglobalFB.tooltip "あるタブで検索バーを開き、その後別の新しいタブを開いて切り替えたとき、先ほど開いた検索バーが表示されます。">
 <!ENTITY OptonStartup.label "ブラウザ起動時に検索バーの表示/非表示の状態を復帰">
 <!ENTITY OptonStartup.tooltip "検索バーを開いたままブラウザを閉じたとき、次回ブラウザを起動したとき検索バーも開かれた状態になります。">
-<!ENTITY OptopenFindbar.label "検索バーを開いた時の動作">
 <!ENTITY OptquickFindOptions.label "クイック検索バー">
 <!ENTITY OptkeepButtons.label "クイック検索バーにボタンを表示">
 <!ENTITY OptkeepButtons.tooltip "デフォルトでは、クイック検索はそれの操作のためだけの入力ボックスだけで、任意のボタンを持っていません。それを使用する際に初めて、「すべてハイライト」と「大／小文字を区別」の機能にアクセスすることができます。">

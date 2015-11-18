@@ -57,7 +57,6 @@
 <!ENTITY OptadjustGridWidth.labela "Ajuster la largeur des repères :">
 <!ENTITY OptadjustGridWidth.labelb "pixel(s)">
 <!ENTITY OptadjustGridWidth.tooltip "Ajuste la largeur des repères si besoin, pour mieux s'harmoniser avec les thèmes qui modifient l'apparence de la barre de défilement.">
-<!ENTITY Optsights.label "Mire de focus">
 <!ENTITY OptsightsCurrentHit.label "Occurrence actuelle">
 <!ENTITY OptsightsAllHighlights.label "Tous les éléments surlignés">
 <!ENTITY OptsightsCurrent.label "Afficher une mire sur l'occurrence actuelle">
@@ -90,7 +89,6 @@
 <!ENTITY OptglobalFB.tooltip "Lorsque vous ouvrez la barre dans un onglet, puis allez dans un autre onglet, vous devriez voir la barre toujours ouverte dans ce nouvel onglet.">
 <!ENTITY OptonStartup.label "Au démarrage, se souvenir de l'état ouvert/fermé de la barre">
 <!ENTITY OptonStartup.tooltip "Si vous fermez le navigateur avec la barre toujours ouverte, la prochaine fois que vous démarrerez le navigateur elle sera déjà ouverte.">
-<!ENTITY OptopenFindbar.label "Lors de l'ouverture de la barre">
 <!ENTITY OptquickFindOptions.label "Barre rapide">
 <!ENTITY OptkeepButtons.label "Afficher les boutons dans la barre rapide">
 <!ENTITY OptkeepButtons.tooltip "Par défaut, la barre rapide n'a pas de bouton, seul le champ de saisie s'affiche pour des opérations de recherche rapide. Avec ceci vous pouvez toujours accéder aux fonctions « Tout surligner » et « Respecter la casse » lorsque vous l'utilisez.">

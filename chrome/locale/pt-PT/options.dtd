@@ -57,7 +57,6 @@
 <!ENTITY OptadjustGridWidth.labela "Ajustar a largura da grelha:">
 <!ENTITY OptadjustGridWidth.labelb "píxeis">
 <!ENTITY OptadjustGridWidth.tooltip "Ajudar a largura das marcas na grelha de realces se for necessário, para encaixar melhor em temas que mudam o aspeto da barra de rolamento.">
-<!ENTITY Optsights.label "Miras de Localização">
 <!ENTITY OptsightsCurrentHit.label "Ocorrência Atual">
 <!ENTITY OptsightsAllHighlights.label "Todas as Ocorrências">
 <!ENTITY OptsightsCurrent.label "Mostra mira na ocorrência atual">
@@ -90,7 +89,6 @@
 <!ENTITY OptglobalFB.tooltip "Ao abrires a barra de proucra num separador, e depois mudares para outro separador, a barra de procura deverá manter-se aberta nesse novo separador.">
 <!ENTITY OptonStartup.label "Lembrar o estado aberto/fechado da barra de procura ao iniciar">
 <!ENTITY OptonStartup.tooltip "Se fechares o navegador com a barra de procura ainda aberta, da próxima vez que iniciares o navegador ela já estará aberta.">
-<!ENTITY OptopenFindbar.label "Ao abrir a Barra de Procura">
 <!ENTITY OptquickFindOptions.label "Barra de Procura Rápida">
 <!ENTITY OptkeepButtons.label "Mostrar botões na barra de procura rápida">
 <!ENTITY OptkeepButtons.tooltip "Por defeito, a Barra de Procura Rápida não mostra quaisquer botões, apenas a caixa de texto para procuras rápidas. Com isto podes aceder às funções de Realçar Todos e Sensível a Maiúsculas ao utilizá-la.">

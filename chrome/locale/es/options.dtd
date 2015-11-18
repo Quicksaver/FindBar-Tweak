@@ -57,7 +57,6 @@
 <!ENTITY OptadjustGridWidth.labela "Ajustar anchura de la parrilla:">
 <!ENTITY OptadjustGridWidth.labelb "píxeles">
 <!ENTITY OptadjustGridWidth.tooltip "Si es necesario, ajusta la anchura de las marcas en la parrilla de resaltados para ajustar mejor los temas decorativos que cambian la apariencia de la barra de desplazamiento.">
-<!ENTITY Optsights.label "Miras">
 <!ENTITY OptsightsCurrentHit.label "Coincidencia actual">
 <!ENTITY OptsightsAllHighlights.label "Todos los resaltados">
 <!ENTITY OptsightsCurrent.label "Mostrar miras sobre la coincidencia actual de la búsqueda">
@@ -90,7 +89,6 @@
 <!ENTITY OptglobalFB.tooltip "Cuando abra la barra de búsqueda en una pestaña y luego cambie a otra pestaña, debe ver la barra de búsqueda aún abierta en la nueva pestaña.">
 <!ENTITY OptonStartup.label "Recordar el estado abierto/cerrado de la barra de búsqueda al iniciar">
 <!ENTITY OptonStartup.tooltip "Si cierra el navegador con la barra de búsqueda aún abierta, la próxima vez que inicie el navegador seguirá abierta.">
-<!ENTITY OptopenFindbar.label "Al abrir la barra de búsqueda">
 <!ENTITY OptquickFindOptions.label "Barra de búsqueda rápida">
 <!ENTITY OptkeepButtons.label "Mostrar botones en la barra de búsqueda rápida">
 <!ENTITY OptkeepButtons.tooltip "Por defecto, la barra de búsqueda rápida no tiene ningún botón, sólo lleva el campo de entrada para operaciones rápidas de búsqueda. Con esta opción aún puede acceder a las funciones 'Resaltar todo' y 'Coincidencia de mayúsculas/minúsculas' al usarla.">

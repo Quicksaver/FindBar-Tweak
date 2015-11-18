@@ -57,7 +57,6 @@
 <!ENTITY OptadjustGridWidth.labela "Dostosuj szerokość znaczników:">
 <!ENTITY OptadjustGridWidth.labelb "pikseli">
 <!ENTITY OptadjustGridWidth.tooltip "Wyreguluj szerokość znaczników na pasku przewijania, jeżeli potrzeba, aby lepiej dopasować do motywu, który zmienia wygląd paska przewijania.">
-<!ENTITY Optsights.label "Sygnalizuj wyniki">
 <!ENTITY OptsightsCurrentHit.label "Aktualne wystąpienie">
 <!ENTITY OptsightsAllHighlights.label "Wszystkie wyróżnienia">
 <!ENTITY OptsightsCurrent.label "Wskazuj efektem graficznym lokalizację aktualnego wystąpienia">
@@ -90,7 +89,6 @@
 <!ENTITY OptglobalFB.tooltip "Jeżeli otworzysz pasek wyszukiwania w jednej karcie, a następnie przełączysz na następną, powinieneś zobaczyć nadal otwarty pasek wyszukiwania w nowej karcie.">
 <!ENTITY OptonStartup.label "Pamiętaj stan pokazania/schowania paska przy starcie">
 <!ENTITY OptonStartup.tooltip "Jeżeli zamkniesz przeglądarkę z otwartym paskiem wyszukiwania, po następnym uruchomieniu przeglądarki będzie on już otwarty.">
-<!ENTITY OptopenFindbar.label "Przy otwieraniu paska wyszukiwania">
 <!ENTITY OptquickFindOptions.label "Pasek szybkiego wyszukiwania">
 <!ENTITY OptkeepButtons.label "Pokazuj przyciski na pasku szybkiego wyszukiwania">
 <!ENTITY OptkeepButtons.tooltip "Domyślnie pasek szybkiego wyszukiwania nie ma żadnych przycisków, zawiera jedynie pole wprowadzania dla operacji szybkiego wyszukiwania. Z tym możesz nadal mieć dostęp do funkcji Wyróżnij wszystko oraz Uwzględnij wielkość liter podczas korzystania z niego.">

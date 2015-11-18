@@ -63,7 +63,6 @@
 <!ENTITY OptadjustGridWidth.labelb "pixels">
 <!ENTITY OptadjustGridWidth.tooltip "Adjust the width of the marks in the highlights grid if needed, to better fit themes that change the appearance of the scrollbar.">
 
-<!ENTITY Optsights.label "Focus Sights">
 <!ENTITY OptsightsCurrentHit.label "Current Hit">
 <!ENTITY OptsightsAllHighlights.label "All Highlights">
 <!ENTITY OptsightsCurrent.label "Show sights on the current search hit">
@@ -98,7 +97,6 @@
 <!ENTITY OptonStartup.label "Remember Findbar opened/closed state on startup">
 <!ENTITY OptonStartup.tooltip "If you close the browser with the Findbar still open, the next time you start the browser it will be already opened.">
 
-<!ENTITY OptopenFindbar.label "When opening the Findbar">
 <!ENTITY OptquickFindOptions.label "Quick Findbar">
 <!ENTITY OptkeepButtons.label "Show buttons in the Quick Findbar">
 <!ENTITY OptkeepButtons.tooltip "By default, the Quick Findbar doesn't have any buttons, it is just the input box for quick find operations. With this you can still access the Highlight All and Match Case functions when using it.">

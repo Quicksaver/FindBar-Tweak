@@ -1,4 +1,4 @@
-// VERSION 1.0.17
+// VERSION 1.0.18
 
 this.__defineGetter__('isPDFJS', function() { return Finder.isPDFJS; });
 
@@ -1071,8 +1071,12 @@ this.Finder = {
 					text = '';
 				}
 				else {		
-					var body = (document instanceof Ci.nsIDOMHTMLDocument && document.body) ? document.body : document.documentElement;
-					text = innerText(body);
+					let body = (document instanceof Ci.nsIDOMHTMLDocument && document.body) ? document.body : document.documentElement;
+					if(Services.vc.compare(Services.appinfo.version, "45.0a1") >= 0) {
+						text = body.innerText;
+					} else {
+						text = innerText(body);
+					}
 				}
 				resolve(text);
 			});
@@ -1099,12 +1103,16 @@ this.Finder = {
 	},
 	
 	getInnerTextFrames: function(aWindow) {
-		var text = '';
+		let text = '';
 		for(var i=0; aWindow.frames && i<aWindow.frames.length; i++) {
-			var doc = (aWindow.frames[i]) ? aWindow.frames[i].document : null;
+			let doc = (aWindow.frames[i]) ? aWindow.frames[i].document : null;
 			if(!doc) { continue; }
-			var body = (doc instanceof Ci.nsIDOMHTMLDocument && doc.body) ? doc.body : doc.documentElement;
-			text += innerText(body);
+			let body = (doc instanceof Ci.nsIDOMHTMLDocument && doc.body) ? doc.body : doc.documentElement;
+			if(Services.vc.compare(Services.appinfo.version, "45.0a1") >= 0) {
+				text += body.innerText;
+			} else {
+				text += innerText(body);
+			}
 			text += this.getInnerTextFrames(aWindow.frames[i]);
 		}
 		return text;

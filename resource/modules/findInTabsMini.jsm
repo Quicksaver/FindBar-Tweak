@@ -1,4 +1,4 @@
-// VERSION 2.2.7
+// VERSION 2.2.8
 
 this.FITMini = {
 	get broadcaster() { return $(FITSandbox.kBroadcasterId); },
@@ -266,6 +266,12 @@ this.FITMini = {
 			Listeners.add(gBrowser.tabContainer, 'TabSelect', this);
 			Listeners.add(gBrowser.tabContainer, 'TabOpen', this);
 			Listeners.add(gBrowser.tabContainer, 'TabRemotenessChange', this);
+			
+			Piggyback.add('FITmini', gBrowser, 'showOnlyTheseTabs', () => {
+				if(this.sidebar) {
+					this.sidebar[objName].FIT.shouldFindAll();
+				}
+			}, Piggyback.MODE_AFTER);
 		}
 		Listeners.add(window, 'WillFindFindBar', this);
 		
@@ -294,6 +300,8 @@ this.FITMini = {
 		Observers.remove(this, 'FIT:Unoad');
 		
 		if(!viewSource) {
+			Piggyback.revert('FITmini', gBrowser, 'showOnlyTheseTabs');
+			
 			Listeners.remove(gBrowser.tabContainer, 'TabClose', this);
 			Listeners.remove(gBrowser.tabContainer, 'TabSelect', this);
 			Listeners.remove(gBrowser.tabContainer, 'TabOpen', this);

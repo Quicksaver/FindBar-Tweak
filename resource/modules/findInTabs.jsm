@@ -1,4 +1,4 @@
-// VERSION 2.3.12
+// VERSION 2.3.13
 
 this.__defineGetter__('FITdeferred', function() { return window.FITdeferred; });
 this.__defineGetter__('FITinitialized', function() { return FITdeferred.promise; });
@@ -119,10 +119,10 @@ this.FIT = {
 					let win = this.getWindowForBrowser(m.target);
 					let tab = this.getTabForBrowser(m.target);
 					
-					if(owner != win
-					|| (!tab.pinned && (!tab._tabViewTabItem || !tab._tabViewTabItem.parent || tab._tabViewTabItem.parent != this.tabs._selectedGroup))) {
-						break;
-					}
+					if(owner != win) { break; }
+					
+					if(win.TabView && !tab.pinned
+					&& (!tab._tabViewTabItem || !tab._tabViewTabItem.parent || tab._tabViewTabItem.parent != this.tabs._selectedGroup)) { break; }
 				}
 				else if(this.tabs._selectedGroupI) {
 					let win = this.getWindowForBrowser(m.target);
@@ -137,7 +137,10 @@ this.FIT = {
 						}
 						
 						// Does it belong to our filtered group
-						else if(!tab._tabViewTabItem || !tab._tabViewTabItem.parent || tab._tabViewTabItem.parent != this.tabs._selectedGroup) { break; }
+						else if(win.TabView) {
+							if(!tab._tabViewTabItem || !tab._tabViewTabItem.parent || tab._tabViewTabItem.parent != this.tabs._selectedGroup) { break; }
+						}
+						else if(win != this.tabs._selectedGroup) { break; }
 					}
 				}
 				
@@ -425,10 +428,10 @@ this.FIT = {
 			return false;
 		}
 		
-		var group = this.tabsGroups.selectedItem;
+		let item = this.tabsGroups.selectedItem;
 		if(this.tabsGroups.selectedIndex > this.filterList.length -1) {
 			try {
-				if(!group || !group.linkedGroup) {
+				if(!item || !item.linkedGroup) {
 					this.shouldFindAll();
 					return true;
 				}
@@ -438,10 +441,14 @@ this.FIT = {
 			}
 		}
 		
-		if(group) {
-			this.tabs._selectedGroup = group.linkedGroup;
+		if(item) {
+			if(item.linkedGroup && item.linkedGroup.linkedWindow && !item.linkedGroup.linkedWindow.TabView) {
+				this.tabs._selectedGroup = item.linkedGroup.linkedWindow;
+			} else {
+				this.tabs._selectedGroup = item.linkedGroup;
+			}
 			this.tabs._selectedGroupI = this.tabsGroups.selectedIndex;
-			this.tabs._selectedGroupTitle = group.childNodes[0].getAttribute('value');
+			this.tabs._selectedGroupTitle = item.childNodes[0].getAttribute('value');
 			return true;
 		}
 		
@@ -514,7 +521,7 @@ this.FIT = {
 			
 			// We need all tab groups initialized in all windows, wait until all's ok
 			for(let win of FITSandbox.navigators) {
-				if(!win.TabView._window) {
+				if(win.TabView && !win.TabView._window) {
 					win.TabView._initFrame(() => { this.shouldFindAll(); });
 					return;
 				}
@@ -523,7 +530,7 @@ this.FIT = {
 		else {
 			// the FITSidebar only needs tab groups initialized in its owner window
 			let win = FITSandbox.getWindowForSidebar(window);
-			if(!win.TabView._window) {
+			if(win.TabView && !win.TabView._window) {
 				win.TabView._initFrame(() => { this.shouldFindAll(); });
 				return;
 			}
@@ -608,17 +615,29 @@ this.FIT = {
 		groupTabs.appendChild(newHeader);
 		
 		for(let filter of this.filterList) {
-			this.createGroupItem(null, groupTabs, filter);
+			this.createGroupItem(groupTabs, null, filter);
 		}
 		let itemCount = this.filterList.length -1;
 		
 		for(let win of FITSandbox.navigators) {
-			for(let groupItem of win.TabView._window.GroupItems.groupItems) {
-				if(groupItem.hidden) { continue; }
-				
-				this.createGroupItem(groupItem, groupTabs);
+			if(win.TabView) {
+				for(let groupItem of win.TabView._window.GroupItems.groupItems) {
+					if(groupItem.hidden) { continue; }
+					
+					groupItem.linkedWindow = win;
+					this.createGroupItem(groupTabs, groupItem);
+					itemCount++;
+					if(this.tabs._selectedGroup == groupItem) {
+						this.tabs._selectedGroupI = itemCount;
+					}
+				}
+			}
+			
+			// if there are no tab groups, we simulate a group that contains all the window's tabs
+			else {
+				this.createGroupItem(groupTabs, { linkedWindow: win });
 				itemCount++;
-				if(this.tabs._selectedGroup == groupItem) {
+				if(this.tabs._selectedGroup == win) {
 					this.tabs._selectedGroupI = itemCount;
 				}
 			}
@@ -649,15 +668,15 @@ this.FIT = {
 			// we're sure it will be either pinned or in the visible group, otherwise it couldn't be the current tab,
 			// for that reason we also use it to set _selectedGroup property, i.e. the selected tab surely belongs to the selected tab group
 			let selectedTab = win.gBrowser.selectedTab;
-			this.tabs._selectedGroup = selectedTab._tabViewTabItem.parent;
+			this.tabs._selectedGroup = (win.TabView) ? selectedTab._tabViewTabItem.parent : win;
 			this.setTabEntry(win.gBrowser.selectedTab.linkedBrowser);
 			
 			// do all the other tabs now, only pinned tabs or those from the visible tab group
 			for(let tab of win.gBrowser.tabs) {
-				if(tab == selectedTab
-				|| (!tab.pinned && (!tab._tabViewTabItem || !tab._tabViewTabItem.parent || tab._tabViewTabItem.parent != this.tabs._selectedGroup))) {
-					continue;
-				}
+				if(tab == selectedTab) { continue; }
+				
+				if(win.TabView && !tab.pinned
+				&& (!tab._tabViewTabItem || !tab._tabViewTabItem.parent || tab._tabViewTabItem.parent != this.tabs._selectedGroup)) { continue; }
 				
 				this.setTabEntry(tab.linkedBrowser);
 			}
@@ -674,7 +693,10 @@ this.FIT = {
 						}
 						
 						// Does it belong to our filtered group
-						else if(!tab._tabViewTabItem || !tab._tabViewTabItem.parent || tab._tabViewTabItem.parent != this.tabs._selectedGroup) { continue; }
+						else if(win.TabView) {
+							if(!tab._tabViewTabItem || !tab._tabViewTabItem.parent || tab._tabViewTabItem.parent != this.tabs._selectedGroup) { continue; }
+						}
+						else if(win != this.tabs._selectedGroup) { continue; }
 					}
 					
 					this.setTabEntry(tab.linkedBrowser);
@@ -730,7 +752,7 @@ this.FIT = {
 		return newItem;
 	},
 	
-	createGroupItem: function(aGroup, groupTabs, aName) {
+	createGroupItem: function(groupTabs, aGroup, aName) {
 		let newItem = document.createElement('richlistitem');
 		newItem.setAttribute('align', 'center');
 		newItem.linkedGroup = aGroup;
@@ -745,7 +767,7 @@ this.FIT = {
 		itemLabel.setAttribute('crop', 'end');
 		newItem.appendChild(itemLabel);
 		
-		if(aGroup && !aName) {
+		if(!aName) { // implies |aGroup|
 			aName = this.getTabGroupName(aGroup);
 		}
 		
@@ -757,23 +779,39 @@ this.FIT = {
 	},
 	
 	getTabGroupName: function(aGroup) {
-		// This is a copy of what happens in TabView._createGroupMenuItem()
-		var aName = aGroup.getTitle();
-		if(!aName.trim()) {
-			var topChildLabel = aGroup.getTopChild().tab.label;
-			var childNum = aGroup.getChildren().length;
-			
-			if(childNum > 1) {
-				var mostRecent = Services.wm.getMostRecentWindow('navigator:browser');
-				var num = childNum -1;
-				aName = mostRecent.gNavigatorBundle.getString("tabview.moveToUnnamedGroup.label");
-				aName = mostRecent.PluralForm.get(num, aName).replace("#1", topChildLabel).replace("#2", num);
-			} else {
-				aName = topChildLabel;
+		if(aGroup.linkedWindow.TabView) {
+			// Tab Groups add-on provides an easy way to get the group title
+			if(aGroup.linkedWindow.TabView.getGroupTitle) {
+				return aGroup.linkedWindow.TabView.getGroupTitle(aGroup);
 			}
+			
+			// This is a copy of what happens in TabView._createGroupMenuItem()
+			// can be removed in FF45
+			let name = aGroup.getTitle();
+			if(!name.trim()) {
+				let topChildLabel = aGroup.getTopChild().tab.label;
+				let childNum = aGroup.getChildren().length;
+				
+				if(childNum > 1) {
+					Windows.callOnMostRecent(function(win) {
+						let num = childNum -1;
+						name = win.gNavigatorBundle.getString("tabview.moveToUnnamedGroup.label");
+						name = win.PluralForm.get(num, name).replace("#1", topChildLabel).replace("#2", num);
+					}, 'navigator:browser');
+				} else {
+					name = topChildLabel;
+				}
+			}
+			return name;
 		}
 		
-		return aName;
+		// Tab Groups are gone, so we make up our own "group" name, which represents the full window
+		let name = aGroup.linkedWindow.gBrowser.selectedTab.getAttribute('visibleLabel');
+		let num = aGroup.linkedWindow.gBrowser.tabs.length;
+		if(num > 1) {
+			name += ' +'+(num -1);
+		}
+		return name;
 	},
 	
 	resetTabHits: function(item) {

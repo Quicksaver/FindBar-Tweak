@@ -1,4 +1,4 @@
-// VERSION 1.8.2
+// VERSION 1.8.3
 
 this.findbarUI = {
 	get button() {
@@ -147,6 +147,27 @@ this.findbarUI = {
 			
 			if(!customizing) {
 				this.setButton();
+				
+				// on first use, move the find button to the main toolbar, for users unfamiliar with the feature
+				if(!Prefs.findButtonMoved) {
+					Prefs.findButtonMoved = true;
+					
+					// current users updating shouldn't be affected, they know what they're doing otherwise they wouldn't have kept the add-on
+					if(STARTED == ADDON_ENABLE || STARTED == ADDON_INSTALL) {
+						let placement = CustomizableUI.getPlacementOfWidget('find-button');
+						// default placement is in the menu panel, that's very hidden away for users unfamiliar with the find toolbar
+						if(placement && placement.area == CustomizableUI.AREA_PANEL) {
+							// try to reuse a previous position if the user had disabled the add-on before,
+							// so the button shows up at (roughly) the same place as where it was last time
+							let position;
+							if(Prefs.findButtonOriginalPos != -1) {
+								position = Prefs.findButtonOriginalPos;
+							}
+							Prefs.findButtonOriginalPos = placement.position;
+							CustomizableUI.addWidgetToArea('find-button', CustomizableUI.AREA_NAVBAR, position);
+						}
+					}
+				}
 			}
 			
 			this.stylePDFJS();
@@ -169,6 +190,17 @@ this.findbarUI = {
 			findbar.deinit('resetTopState');
 			
 			this.unsetButton();
+			
+			// the user has explicitely disabled the add-on, so move back the find button to its default place if necessary
+			if(UNLOADED && (UNLOADED == ADDON_DISABLE || UNLOADED == ADDON_UNINSTALL)
+			&& Prefs.findButtonMoved && Prefs.findButtonOriginalPos != -1) {
+				let placement = CustomizableUI.getPlacementOfWidget('find-button');
+				if(placement && placement.area == CustomizableUI.AREA_NAVBAR) {
+					CustomizableUI.addWidgetToArea('find-button', CustomizableUI.AREA_PANEL, Prefs.findButtonOriginalPos);
+					Prefs.findButtonOriginalPos = placement.position;
+					Prefs.findButtonMoved = false;
+				}
+			}		
 		}
 	},
 	

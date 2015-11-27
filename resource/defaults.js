@@ -1,4 +1,4 @@
-// VERSION 1.3.12
+// VERSION 1.3.13
 
 objName = 'findbartweak';
 objPathString = 'findbartweak';
@@ -92,7 +92,11 @@ prefList = {
 	keepButtons: false,
 	FAYTmode: 'quick',
 	
-	/* to revert the builtin preferences */
+	// for internal use
+	findButtonMoved: false,
+	findButtonOriginalPos: -1,
+	
+	// to revert the builtin preferences
 	FAYTtimeout: defaultBranch.getIntPref('accessibility.typeaheadfind.timeout'),
 	FAYTenabled: defaultBranch.getBoolPref('accessibility.typeaheadfind'),
 	FAYTprefill: defaultBranch.getBoolPref('accessibility.typeaheadfind.prefillwithselection'),

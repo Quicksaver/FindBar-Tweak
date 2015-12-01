@@ -1,0 +1,134 @@
+<!ENTITY OptHighlights.label "Poudarki">
+<!ENTITY OptSightsTab.label "Pogledi">
+<!ENTITY OptGeneral.label "Splošno">
+<!ENTITY OptAppearance.label "Videz">
+<!ENTITY Opttweaks.label "Prilagoditve">
+<!ENTITY OptFindAll.label "Najdi vse">
+<!ENTITY Optgen.label "Možnosti iskalne vrstice">
+<!ENTITY Optdisplay.label "Položaj iskalne vrstice">
+<!ENTITY OptButtonAndLabels.label "Gumbi in oznake">
+<!ENTITY Optgrid.label "Mreža poudarkov">
+<!ENTITY OpthighlightByDefault.label "Privzeto poudari vse zadetke">
+<!ENTITY OpthighlightByDefault.tooltip "Ob odpiranju iskalne vrstice bo gumb 'Poudari vse' že označen, tako da ko zaženete opravilo iskanja, vam bo od začetka prikazal vse zadetke.">
+<!ENTITY OpthideWhenFinderHidden.label "Odstrani poudarke, ko je iskalna vrstica zaprta">
+<!ENTITY OpthideWhenFinderHidden.tooltip "V kratkem, če iskalna vrstica ni odprta, se tudi zadetki ne bodo prikazali. To vključuje vrstico za hitro iskanje! Takoj, ko zaprete iskalno vrstico, se bodo vsi zadetki odstranili iz strani.">
+<!ENTITY OptgridInScrollbar.label "Prikaži mrežo poudarkov v drsniku">
+<!ENTITY OptgridInScrollbar.tooltip "V drsniku bo prikazan relativni položaj vsakega poudarjenega zadetka na spletni strani.">
+<!ENTITY OptuseCounter.label "Prikaži števec zadetkov v iskalni vrstici">
+<!ENTITY OptuseCounter.tooltip "Ob vsakem opravilu iskanja bo na koncu iskalne vrstice prikazano število zadetkov na strani.">
+<!ENTITY OptfindAll.label "Omogoči 'Najdi vse'">
+<!ENTITY OptfindAll.tooltip "Navedi vse najdene zadetke v vseh odprtih zavihkih in oknih.">
+<!ENTITY OptfindInTabsAction.caption "Pritisk na gumb 'Najdi vse' …">
+<!ENTITY OptfindInTabsAction.sidebar.label "preklopi stransko vrstico 'Najdi vse'">
+<!ENTITY OptfindInTabsAction.sidebar.tooltip.a "Prikaže seznam v stranski vrstici z vsemi zadetki na strani. V istem oknu lahko vidite tudi zadetke iz ostalih zavihkov in iz stranske vrstice v njih preklopite.">
+<!ENTITY OptfindInTabsAction.sidebar.tooltip.b "Upoštevajte, da dokler je stranska vrstica odprta, bo iskalna vrstica delovala kot ena splošna, tudi če to možnost nimate omogočeno!">
+<!ENTITY OptfindInTabsAction.full.label "odpre okno 'Najdi v vseh zavihkih'">
+<!ENTITY OptfindInTabsAction.full.tooltip "Uporabi ločeno okno za iskanje zadetkov v vseh odprtih zavihkih in oknih.">
+<!ENTITY OptfindInTabsSidebar.caption "Stranska vrstica 'Najdi vse'">
+<!ENTITY OptautoShowHideFIT.label "Prikaži in skrij s iskalno vrstico">
+<!ENTITY OptautoShowHideFIT.tooltip "Seznami stranske vrstice se samodejno skrijejo, ko odprete in zaprete iskalno vrstico, tako da vam ni treba pritisniti gumba 'Najdi vse'.">
+<!ENTITY OptgetOSB.description "Položaj in vedenje stranske vrstice 'Najdi vse' lahko nadalje nadzirate z mojim drugim dodatkom OmniSidebar. Kliknite tukaj, da ga prejmete!">
+<!ENTITY OpthasOSB.description "Nastavite možnosti OmniSidebar, da nadalje nadzirate položaj in vedenje stranske vrstice 'Najdi vse'. Na primer upoštevajte, da spodnja možnost deluje samo, če je omogočena dvojna stranska vrstica.">
+<!ENTITY OpttwinFITSidebar.label "Odpri v dvojni stranski vrstici">
+<!ENTITY OpttwinFITSidebar.tooltip "Stranska vrstica 'Najdi vse' se bo vedno odprla v dvojni stranski vrstici na nasprotni strani, da imate lahko ob enem odprte zaznamke in zgodovino.">
+<!ENTITY OptfindInTabsFull.caption "Okno 'Najdi v vseh zavihkih'">
+<!ENTITY OptmultipleFITFull.label.b "Dovoli več primerkov">
+<!ENTITY OptmultipleFITFull.tooltip.b "Odpri novo okno vsakič, ko je pritisnjen gumb 'Najdi v vseh zavihkih' ali pa bo uporabljeno odprto okno.">
+<!ENTITY Optcolor.label "Barva poudarkov">
+<!ENTITY Optcolor.tooltip "Spremeni barvo, ki se uporabi za poudarjanje zadetkov na strani.">
+<!ENTITY OptselectColor.label "Barva trenutnega zadetka">
+<!ENTITY OptselectColor.tooltip "Ko najprej zaženete opravilo iskanja, ali pritisnete F3 ali gumb Naprej/Nazaj za pomik po zadetkih, se bo trenutni zadetek prikazal v drugi barvi, da ga razločite.">
+<!ENTITY OptcolorReset.label "(ponastavi)">
+<!ENTITY OptcolorKeepOSdefault.label "Obdrži privzeto barvo kontrasta (priporočljivo)">
+<!ENTITY OptcolorKeepOSdefault.tooltip.a "Barva kontrasta je, odvisno od ozadja strani, barva besedila, kadar se kot njegovo ozadje uporablja trenutna barva zadetka ali obratno. Je bela ali črna, odvisno od zgoraj izbrane barve.">
+<!ENTITY OptcolorKeepOSdefault.tooltip.b "Medtem ko zgornja nastavitev barve vpliva samo na trenutni zadetek v opravilih iskanja, se njegove barve kontrasta ne da spremeniti brez spreminjanja kontrasta vseh izbir besedila.">
+<!ENTITY OptcolorKeepOSdefault.tooltip.c "Bodite previdni pri onemogočanju tega, da izbire besedila ne postanejo neberljive!">
+<!ENTITY OpthighlightOnFindAgain.label "Poudari tudi ob 'Najdi znova' (F3)">
+<!ENTITY OpthighlightOnFindAgain.tooltip "Če je označen gumb 'Poudari vse', bo pomik po zadetkih z F3 ali pritiskom na gumb Naprej/Nazaj poudaril tudi vse zadetke, če še niso.">
+<!ENTITY OptgridLimit.labela "Ne uporabi mreže, če presega">
+<!ENTITY OptgridLimit.labelb "poudarkov">
+<!ENTITY OptgridLimit.tooltip "To je samo za mrežo poudarkov v drsniku! Če obstaja preveč rezultatov, kar lahko upočasni brskalnik, se mreža poudarkov ne bo uporabila.">
+<!ENTITY OptminNoDelay.labela "Zakasni poudarke, če je iskalni niz krajši od">
+<!ENTITY OptminNoDelay.labelb "znakov">
+<!ENTITY OptminNoDelay.tooltip "Ko najprej začnete tipkati v iskalno vrstico, je malo verjetno, da iščete besedo z enim ali dvema vtipkanima znakoma. Ta zakasni opravilo iskanja pri kratkih besedah za 1,5 s, da imate dovolj časa za tipkanje preostanka poizvedbe. Upoštevajte, da bodo zadetki s kratkimi besedami še vedno najdeni, če pustite, da ta čas poteče.">
+<!ENTITY OptadjustGridPadding.labela "Prilagodi razdaljo med mrežo in robom:">
+<!ENTITY OptadjustGridPadding.labelb "sl. točk">
+<!ENTITY OptadjustGridPadding.tooltip "Prilagodi relativno razdaljo mreže poudarkov, da se bolje prilagodi temam, ki spremenijo videz drsnika.">
+<!ENTITY OptadjustGridWidth.labela "Prilagodi širino mreže:">
+<!ENTITY OptadjustGridWidth.labelb "sl. točk">
+<!ENTITY OptadjustGridWidth.tooltip "Prilagodi širino oznak v mreži poudarkov, da se bolje prilagodi temam, ki spremenijo videz drsnika.">
+<!ENTITY OptsightsCurrentHit.label "Trenutni zadetek">
+<!ENTITY OptsightsAllHighlights.label "Vsi poudarki">
+<!ENTITY OptsightsCurrent.label "Prikaži poglede na trenutnem zadetku">
+<!ENTITY OptsightsCurrent.tooltip "Ko najdete besedo ali ko se pomikate po zadetkih z F3 ali pritiskom na gumb Naprej/Nazaj, se bo okoli trenutnega zadetka pokazala tarča, da ga enostavno vidite, brez da ga bi pogledali.">
+<!ENTITY OptsightsHighlights.label "Prikaži poglede na vseh poudarjenih zadetkih">
+<!ENTITY OptsightsHighlights.tooltip "Umesti tarčo okoli vseh vidnih zadetkov na strani. Ko se pomikate po strani, se bo prikazalo več tarč, ko se pojavi več poudarkov.">
+<!ENTITY OptsightsHighlights.warning "Opozorilo: to je lahko zelo potratno z viri! Izris in pomikanje po strani lahko postane počasno!">
+<!ENTITY OptsightsStyle.label "Slog pogledov (kliknite za predogled)">
+<!ENTITY OptsightsStyle.focus "Položaj žarišča">
+<!ENTITY OptsightsStyle.circle "Položaj kroga">
+<!ENTITY OptsightsRepeat.label "Ponavljanje animacije:">
+<!ENTITY OptsightsColor.tooltip "Nastavite barvo pogledov.">
+<!ENTITY OptsightsSameColor.label "Uporabi barvo poudarkov">
+<!ENTITY OptsightsSameColor.tooltip "Barva pogledov bo enaka barvi za poudarjanje zadetkov na strani (podokno poudarkov).">
+<!ENTITY OptsightsSameColorCurrent.label "Uporabi barvo trenutnega zadetka">
+<!ENTITY OptsightsSameColorCurrent.tooltip "Barva pogledov bo enaka barvi za poudarjanje trenutnega zadetka (podokno videza).">
+<!ENTITY OptsightsLimit.label "Največje število pogledov na zaslonu:">
+<!ENTITY OptsightsLimit.tooltip "Ta značilnost je lahko zelo potratna z viri. Bolje je omejiti največje število vidnih pogledov na količino, ki ob njihovem izrisu ne povzroči zakasnitve brskalnika.">
+<!ENTITY OpthideLabels.label "Prikaži ikone gumbov namesto oznak">
+<!ENTITY OpthideLabels.tooltip "Privzeto imajo gumbi orodne vrstice besedilno oznako. To jih spremeni v slike, kar jih naredi bolj prepoznavne in strnjene.">
+<!ENTITY OpthideClose.label "Skrij gumb za zapiranje iskalne vrstice">
+<!ENTITY OpthideClose.tooltip "Gumb za zapiranje iskalne vrstice ne bo na voljo.">
+<!ENTITY OptmovetoTop.label "Premakni na vrh brskalnika">
+<!ENTITY OptmovetoTop.tooltip "V kot na vrhu strani bo umeščena tanjša iskalna vrstica.">
+<!ENTITY OptmovetoRight.label "Umesti na desno">
+<!ENTITY OptmovetoRight.tooltip "Vnosno polje in gumbi iskalne vrstice bodo obrnjeni in poravnani na desno. Če iskalno vrstico premaknete na vrh, se bo pojavila v zgornjem desnem kotu namesto v levem.">
+<!ENTITY OptblurCloses.label "Zapri iskalno vrstico, ko izgubi žarišče">
+<!ENTITY OptblurCloses.tooltip "Takoj, ko kliknete kjerkoli na strani ali premaknete kazalec na drugo mesto (npr. naslovno vrstico), se bo iskalna vrstica samodejno zaprla.">
+<!ENTITY OptglobalFB.label "Uporabi eno splošno iskalno vrstico za vse zavihke">
+<!ENTITY OptglobalFB.tooltip "Ko odprete iskalno vrstico v enem zavihku in preklopite na drugega, bo iskalna vrstica ostala odprta.">
+<!ENTITY OptonStartup.label "Zapomni si stanje odpiranja/zapiranja iskalne vrstice ob zagonu">
+<!ENTITY OptonStartup.tooltip "Če brskalnik zaprete z odprto iskalno vrstico, bo ob naslednejm zagonu brskalnika ostala odprta.">
+<!ENTITY OptquickFindOptions.label "Vrstica za hitro iskanje">
+<!ENTITY OptkeepButtons.label "Prikaži gumbe v vrstici za hitro iskanje">
+<!ENTITY OptkeepButtons.tooltip "Privzeto vrstica za hitro iskanje nima gumbov ampak samo vnosno polje za hitra opravila. S to možnostjo lahko dostopate do opravil 'Poudari vse' in 'Razlikuj velike/male črke'.">
+<!ENTITY OptFAYT.label "Ko začnem tipkati, začni iskati">
+<!ENTITY OptFAYT.tooltip "Pritisnite na katerokoli tipko, ko brskate po strani in pojavila se bo iskalna vrstica, da najdete to besedo. Vanj bo umeščen kazalec, da lahko nadaljujete s tipkanjem in spremenite poizvedbo.">
+<!ENTITY OptFAYTTimeout.beforeLabel "Samodejno zapri po">
+<!ENTITY OptFAYTTimeout.afterLabel "s">
+<!ENTITY OptFAYTTimeout.tooltip "Iskalna vrstica za hitro iskanje se bo samodejno zaprla po obdobju nedejavnosti. Upoštevajte, da se bo zaprla tudi, če premaknete žarišče, npr. s klikom na stran.">
+<!ENTITY OptFAYTmode.caption "Način iskalne vrstice">
+<!ENTITY OptFAYTmode.quickFind.label "Uporabi vrstico za hitro iskanje, ko začnem tipkati za iskanje besedila">
+<!ENTITY OptFAYTmode.quickFind.tooltip "Privzeti način. Vrstica za hitro iskanje se uporablja za tipkanje kjerkoli na spletni strani, medtem ko morate za dostop do običajne iskalne vrstice uporabiti tipkovno bližnjico ali pritisniti na gumb orodne vrstice.">
+<!ENTITY OptFAYTmode.normalFind.label "Vedno uporabi običajno iskalno vrstico">
+<!ENTITY OptFAYTmode.normalFind.tooltip "Običajna iskalna vrstica se uporablja tudi za tipkanje kjerkoli na spletni strani in se ne bo samodejno zaprla ob zakasnitvi, ko izgubi žarišče (razen če to možnost zgoraj omogočite).">
+<!ENTITY OptFAYTmode.alwaysQuick.label "Vedno uporabi vrstico za hitro iskanje">
+<!ENTITY OptFAYTmode.alwaysQuick.tooltip "Vrstica za hitro iskanje se uporabi tudi, ko uporabite tipkovno bližnjico in se bo vedno samodejno zaprla po zakasnitvi ali ko izgubi žarišče.">
+<!ENTITY OptkeyboardShortcut.label "Tipkovna bližnjica">
+<!ENTITY OptctrlFCloses.win "Ctrl+F zapre tudi iskalno vrstico">
+<!ENTITY OptctrlFCloses.mac "Command+F zapre tudi iskalno vrstico">
+<!ENTITY OptctrlFCloses.tooltip "Iskalno vrstico lahko preko iste tipkovne bližnjice odprete in potem zaprete, ko je ne potrebujete več.">
+<!ENTITY OptctrlFprefill.label "Izpolni iskalno vrstico z izbranim besedilom ob njenim odpiranjem">
+<!ENTITY OptctrlFprefill.tooltip.a "Če je na strani izbrano besedilo, ko je iskalna vrstica odprta, bo to besedilo samodejno kopirano v njo.">
+<!ENTITY OptctrlFprefill.tooltip.b "Če je omogočeno 'Privzeto poudari vse zadetke', bo takoj našlo vse pojavitve izbranega besedila.">
+<!ENTITY OptctrlFOnFocused.label "Zapri samo, če je že v žarišču">
+<!ENTITY OptctrlFOnFocused.tooltip "Tipkovna bližnjica bo vedno najprej umestila kazalec v iskalno vrstico in vanjo kopirala izbrano besedilo, če je zgornja možnost omogočena. Iskalno vrstico bo samo zaprla, če se v njej že nahaja kazalec.">
+<!ENTITY OptSelectingText.label "Ob izbiri besedila">
+<!ENTITY OptfillSelectedText.label "Izpolni iskalno vrstico z izbranim besedilom">
+<!ENTITY OptfillSelectedText.tooltip.a "Vsakič, ko je na strani izbrana beseda, bo samodejno kopirana v iskalno vrstico.">
+<!ENTITY OptfillSelectedText.tooltip.b "Če je omogočeno 'Privzeto poudari vse zadetke', bo izbira besedila na strani takoj poudarila vse pojavitve izbire.">
+<!ENTITY OptemptySelectedText.label "Izprazni iskalno vrstico, ko ni izbrano nobeno besedilo">
+<!ENTITY OptemptySelectedText.tooltip "Tako kot zgoraj; če kliknete kjerkoli na strani, da odstranite izbiro besedila, bo iskalna vrstica počiščena in odstranjeni bodo tudi poudarki.">
+<!ENTITY OptfillTextFromEditable.label "Izpolni z besedilom, izbranim v predmetih za urejanje">
+<!ENTITY OptfillTextFromEditable.tooltip "Izberite, ali želite, da izbire v besedilnih ali vnosnih poljih izpolnijo tudi iskalno vrstico.">
+<!ENTITY OptfillSelectedOpenFindbar.label "Prikaži vrstico za hitro iskanje, ki je uporabljeno izbrano besedilo">
+<!ENTITY OptfillSelectedOpenFindbar.tooltip "Ko je iskalna vrstica izpolnjena z izbranim besedilom, se bo za kratek čas pojavila, da prikaže dogodek.">
+<!ENTITY OptglobalBehavior.warning "Opozorilo: naslednje možnosti niso značilne za iskalno vrstico in splošno vplivajo na brskalnik, kot npr. na straneh, naslovni vrstici ali katerimkoli drugem mestu, kjer je mogoče izbrati besedilo. Bodite pazljivi pri spreminjanju le-teh!">
+<!ENTITY OptdblClickEatSpaces.label "Dvojni klik na besedo izbere tudi naslednji presledek">
+<!ENTITY OptdblClickStopAtPunctuation.label "Dvojni klik na besedo ustavi izbiro ob ločilu">
+<!ENTITY OptNativePrefs.label "Firefoxove izvirne nastavitve">
+<!ENTITY OptNativePrefs.description "Nekatere nastavitve, kot so barve poudarkov ali nastavitve vrstice za hitro iskanje v Firefoxu že obstajajo in so tu prikazane za lažji dostop in prilagoditev. Dodatek jih samodejno obdela, tako da te nastavitve uporabite samo, če jih res potrebujete!">
+<!ENTITY OptResetNativeOnDisabled.label "Ponastavi vse spremenjene izbirne možnosti ob onemogočanju dodatka">
+<!ENTITY OptResetNativeOnDisabled.tooltip "Če spremembe ostanejo - npr. barva poudarka se ne nastavi na privzeto, ko dodatke onemogočite - to omogočite, da zagotovite njihovo ponastavitev.">
+<!ENTITY OptResetNativeNow.label "Ponastavi vse spremembe izvirnih možnosti">
+<!ENTITY OptResetNativeNow.tooltip "Ponastavi jih na njihove privzete vrednosti zdaj.">

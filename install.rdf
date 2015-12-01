@@ -89,6 +89,14 @@
 		</em:localized>
 		<em:localized>
 			<Description>
+				<em:locale>sl</em:locale>
+				<em:name>FindBar Tweak</em:name>
+				<em:description>Od preprostih prilagajanj, kot je umestitev iskalne vrstice v zgornji kot, do zmogljivega orodja "Najdi v vseh zavihkih" ima orodna vrstica iskanja vse, da jo naredi zmogljivo in dostopno orodje!</em:description>
+				<em:translator>Peter Klofutar</em:translator>
+			</Description>
+		</em:localized>
+		<em:localized>
+			<Description>
 				<em:locale>zh-CN</em:locale>
 				<em:name>FindBar Tweak</em:name>
 				<em:description>诸多简单实用的改进，从简单的调整查找栏到右上角，到强大的“查找所有标签页”工具等。一切都是为了将您的“查找工具栏”变成一个强大又易于使用的搜索工具！</em:description>

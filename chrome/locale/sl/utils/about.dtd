@@ -1,0 +1,23 @@
+<!ENTITY about.paneTitle "O dodatku">
+<!ENTITY about.version "Različica {v}">
+<!ENTITY about.versionDivider " - ">
+<!ENTITY about.uptodate "posodobljen, čestitke!">
+<!ENTITY about.needsupdate "posodobitev je na voljo!">
+<!ENTITY about.description "Spodaj preverite &quot;Opombe ob izdaji&quot; in &quot;Znane težave&quot; za to različico. Obvestite me o kakršnikoli težavi, ki jo najdete ali vprašanjih za prihodnje izdaje.">
+<!ENTITY about.descriptionB "Ta dodatek je brezplačen, vendar dodajanje novih značilnosti in zagotovitev, da vse deluje z novimi izdajami Firefoxa, zahteva veliko dela in je včasih lahko težavno. Če vam je dodatek všeč, prosim podprite njegov nadaljnji razvoj. Kot pravi povezava, &quot;lahko pomagate&quot;!">
+<!ENTITY about.allVersions "Prikaži opombe vseh prejšnjih različic">
+<!ENTITY about.notifyOnUpdates "Prikaži ta zavihek ob naslednji posodobitvi">
+<!ENTITY about.development "Stanje razvoja">
+<!ENTITY about.helpdevelopment "LAHKO POMAGATE">
+<!ENTITY about.information "Več podatkov">
+<!ENTITY about.home "Domača stran dodatka">
+<!ENTITY about.fullchangelog "Dnevnik vseh sprememb">
+<!ENTITY about.problems "Imate težave?">
+<!ENTITY about.tech "Odprite vprašanje na strani za podporo z opisom težave">
+<!ENTITY about.email "Ali mi o zadevi pošljite e-pošto">
+<!ENTITY about.author "Več od avtorja">
+<!ENTITY about.trymore "Poskusite enega od mojih drugih dodatkov za še boljšo izkušnjo Firefoxa!">
+<!ENTITY about.profile "Poiščite jih v mojem profilu">
+<!ENTITY about.share "Deli!">
+<!ENTITY about.friends "Ne bodite edini z odličnim brskalnikom. Povabite prijatelje v nepozabno izkušnjo!">
+<!ENTITY about.moreshare "Druge storitve …">

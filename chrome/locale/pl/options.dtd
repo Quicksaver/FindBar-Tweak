@@ -67,13 +67,13 @@
 <!ENTITY OptsightsStyle.label "Styl sygnalizowania (kliknij, aby zobaczyć)">
 <!ENTITY OptsightsStyle.focus "Miejsce uaktywnienia">
 <!ENTITY OptsightsStyle.circle "Okrąg">
-<!ENTITY OptsightsRepeat.label "Ilość powtarzań animacji:">
+<!ENTITY OptsightsRepeat.label "Liczba powtórzeń animacji:">
 <!ENTITY OptsightsColor.tooltip "Skonfiguruj kolor używany przez te widoki.">
 <!ENTITY OptsightsSameColor.label "Użyj tego samego koloru co wyróżnienia">
 <!ENTITY OptsightsSameColor.tooltip "Kolor użyty dla tych widoków będzie taki sam, jak kolor użyty do wyróżnienia wszystkich dopasowań na stronie internetowej (panel Wyróżnienia).">
 <!ENTITY OptsightsSameColorCurrent.label "Użyj tego samego koloru co bieżące wystąpienie">
 <!ENTITY OptsightsSameColorCurrent.tooltip "Kolor użyty dla tych widoków będzie taki sam, jak kolor użyty do rozróżnienia bieżącego dopasowania (panel Wygląd).">
-<!ENTITY OptsightsLimit.label "Maks. ilość sygnalizatorów na ekranie:">
+<!ENTITY OptsightsLimit.label "Maks. liczba sygnalizatorów na ekranie:">
 <!ENTITY OptsightsLimit.tooltip "Funkcja ta może wymagać wielu zasobów. Lepiej ograniczyć maksymalną liczbę ukazanych widoków do liczby, która nie spowolni przeglądarki przy ich wyświetlaniu.">
 <!ENTITY OpthideLabels.label "Pokaż ikony przycisków zamiast etykiet">
 <!ENTITY OpthideLabels.tooltip "Domyślne przyciski paska narzędzi mają etykiety tekstowe. To ustawienie zamienia je na obrazy, czyni je łatwiejszymi do odróżnienia, a także bardziej zwartymi.">

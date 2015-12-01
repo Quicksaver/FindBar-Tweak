@@ -1,4 +1,4 @@
-// VERSION 2.3.13
+// VERSION 2.3.14
 
 this.__defineGetter__('FITdeferred', function() { return window.FITdeferred; });
 this.__defineGetter__('FITinitialized', function() { return FITdeferred.promise; });
@@ -56,8 +56,7 @@ this.FIT = {
 	],
 	
 	receiveMessage: function(m) {
-		// +1 is for the ':' after objName
-		let name = m.name.substr(objName.length +1);
+		let name = Messenger.messageName(m);
 		let item = this.tabItems.get(m.target);
 		
 		switch(name) {

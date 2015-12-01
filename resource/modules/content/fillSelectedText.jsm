@@ -1,4 +1,4 @@
-// VERSION 2.0.6
+// VERSION 2.0.7
 
 this.selectedText = {
 	handleEvent: function(e) {
@@ -29,8 +29,7 @@ this.selectedText = {
 	},
 	
 	receiveMessage: function(m) {
-		// +1 is for the ':' after objName
-		let name = m.name.substr(objName.length +1);
+		let name = messageName(m);
 		
 		switch(name) {
 			case 'FillSelectedTextFinished':

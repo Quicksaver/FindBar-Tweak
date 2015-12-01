@@ -1,4 +1,4 @@
-// VERSION 1.0.18
+// VERSION 1.0.19
 
 this.__defineGetter__('isPDFJS', function() { return Finder.isPDFJS; });
 
@@ -1279,8 +1279,7 @@ this.RemoteFinderListener = {
 	},
 	
 	receiveMessage: function(m) {
-		// +1 is for the ':' after objName
-		var name = m.name.substr(objName.length +1);
+		let name = messageName(m);
 		
 		if(this._messages.has(name)) {
 			this._messages.get(name)(m.data);

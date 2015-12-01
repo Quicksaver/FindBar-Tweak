@@ -1,4 +1,4 @@
-// VERSION 1.0.12
+// VERSION 1.0.13
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -129,8 +129,7 @@ this.RemoteFinder.prototype = {
 	},
 	
 	receiveMessage: function(m) {
-		// +1 is for the ':' after objName
-		let name = m.name.substr(objName.length +1);
+		let name = Messenger.messageName(m);
 		
 		if(this._messages.has(name)) {
 			let { callback, params } = this._messages.get(name)(m.data) || {};

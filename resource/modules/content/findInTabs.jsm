@@ -1,4 +1,4 @@
-// VERSION 1.2.3
+// VERSION 1.2.4
 
 this.FIT = {
 	// this keeps a list of all hits in a page, mapped to an id that can be used to keep things sync'ed up with the chrome process
@@ -31,8 +31,7 @@ this.FIT = {
 	],
 	
 	receiveMessage: function(m) {
-		// +1 is for the ':' after objName
-		let name = m.name.substr(objName.length +1);
+		let name = messageName(m);
 		
 		switch(name) {
 			case 'FIT:SelectHit':

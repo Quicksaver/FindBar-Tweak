@@ -1,4 +1,4 @@
-content   findbartweak                    chrome/content/   contentaccessible=yes
+content   findbartweak                    chrome/content/
 resource  findbartweak                    resource/
 
 locale    findbartweak-en   en-US         chrome/locale/en-US/

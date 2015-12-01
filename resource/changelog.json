@@ -1,6 +1,18 @@
 {
-	"current":"2.1.3",
+	"current":"2.1.4",
 	"releases": {
+		"2.1.4":{
+			"date":"December 1, 2015",
+			"notes":[
+				["new","sl locale"],
+				["changed","When the add-on is first installed, the Find button is moved to the navigation bar if it was still in its default menu panel placement; this should only affect new users installing the add-on for the first time, existing users should see no difference"],
+				["updated","pl locale"],
+				["updated","(Firefox 45) use the new native support for innerText, which should bring a noticeable performance improvement overall"],
+				["updated","Simplified share icons in about page"],
+				["bugfix","(Firefox 45) compatibility with removal of Tab Groups from Firefox and with using <a=https://addons.mozilla.org/firefox/addon/tab-groups-panorama/>Tab Groups</a> as a replacement"],
+				["bugfix","The Find All sidebar should update accordingly when switching between tab groups"]
+			]
+		},
 		"2.1.3":{
 			"date":"November 18, 2015",
 			"notes":[

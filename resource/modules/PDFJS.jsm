@@ -3,11 +3,11 @@
 Modules.LOADMODULE = function() {
 	// define when we're in a PDF file
 	RemoteFinder.prototype.isPDFJS = null;
-	
+
 	findbar.init('PDFJS',
 		function(bar) {
 			Messenger.loadInBrowser(bar.browser, 'PDFJS');
-			
+
 			bar.browser.finder.addMessage("PDFJS:Result", function(data) {
 				// only update the data (and send a data updated event) if there is something to update
 				var updateData = (data && !this.isPDFJS) || (!data && this.isPDFJS);
@@ -20,16 +20,16 @@ Modules.LOADMODULE = function() {
 					}
 				}
 				if(!updateData) { return null; }
-				
+
 				this.isPDFJS = data;
 				return { callback: "onPDFJS", params: [ this._browser ] };
 			}.bind(bar.browser.finder));
-			
+
 			bar.browser.finder.addMessage("PDFJS:State", function(data) {
 				bar.updateControlState(data.state, data.previous);
 				return { callback: "onPDFJSState", params: [ bar.browser ] };
 			});
-			
+
 			Piggyback.add('PDFJS', bar, '_dispatchFindEvent', function(aType, aFindPrevious) {
 				if(this.browser.finder.isPDFJS) {
 					// don't trigger unnecessary multiple calls if we're selecting a hit from the FIT window,
@@ -37,14 +37,14 @@ Modules.LOADMODULE = function() {
 					if(this.browser.finder.workAroundFind && aType) {
 						return;
 					}
-					
+
 					let delay = SHORT_DELAY;
 					if(!this.browser.finder.workAroundFind
 					&& this._findField.value
 					&& Prefs.minNoDelay > 0 && this._findField.value.length < Prefs.minNoDelay) {
 						delay = LONG_DELAY;
 					}
-					
+
 					Messenger.messageBrowser(this.browser, 'PDFJS:Event', {
 						type: 'find'+aType,
 						query: this._findField.value,
@@ -58,17 +58,17 @@ Modules.LOADMODULE = function() {
 				}
 				return true;
 			});
-			
+
 			// ensure we get the current PDFJS state
 		},
 		function(bar) {
 			if(!bar._destroying) {
 				Piggyback.revert('PDFJS', bar, '_dispatchFindEvent');
-				
+
 				bar.browser.finder.removeMessage("PDFJS:Result");
 				bar.browser.finder.removeMessage("PDFJS:State");
 			}
-			
+
 			Messenger.unloadFromBrowser(bar.browser, 'PDFJS');
 		}
 	);
@@ -76,6 +76,6 @@ Modules.LOADMODULE = function() {
 
 Modules.UNLOADMODULE = function() {
 	findbar.deinit('PDFJS');
-	
+
 	delete RemoteFinder.prototype.isPDFJS;
 };

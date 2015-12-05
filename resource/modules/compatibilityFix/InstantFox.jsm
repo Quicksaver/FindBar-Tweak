@@ -4,29 +4,29 @@ this.__defineGetter__('InstantFox', function() { return window.InstantFox; });
 
 this.instantFox = {
 	id: 'searchy@searchy',
-	
+
 	onEnabled: function(addon) {
 		if(addon.id == this.id) { this.enable(); }
 	},
-	
+
 	onDisabled: function(addon) {
 		if(addon.id == this.id) { this.disable(); }
 	},
-	
+
 	listen: function() {
 		AddonManager.addAddonListener(this);
 		AddonManager.getAddonByID(this.id, (addon) => {
 			if(addon && addon.isActive) { this.enable(); }
 		});
 	},
-	
+
 	unlisten: function() {
 		AddonManager.removeAddonListener(this);
 		this.disable();
 	},
-	
+
 	state: null,
-	
+
 	enable: function() {
 		Piggyback.add('findbartweak', InstantFox.pageLoader, 'beforeSwap', () => {
 			if(gFindBarInitialized && !gFindBar.hidden) {
@@ -35,7 +35,7 @@ this.instantFox = {
 				this.state = findbar.destroy(tab);
 			}
 		}, Piggyback.MODE_AFTER);
-		
+
 		Piggyback.add('findbartweak', InstantFox.pageLoader, 'afterSwap', () => {
 			if(this.state) {
 				findbar.restoreState(gFindBar, this.state);
@@ -43,7 +43,7 @@ this.instantFox = {
 			}
 		}, Piggyback.MODE_AFTER);
 	},
-	
+
 	disable: function() {
 		if(InstantFox) {
 			Piggyback.revert('findbartweak', InstantFox.pageLoader, 'beforeSwap');

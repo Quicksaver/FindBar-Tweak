@@ -17,7 +17,7 @@ div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"],
 div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"] > div {
 	display: flex;
 	flex-direction: column;
-	
+
 	/* make sure websites don't mess with the grid's layout */
 	position: relative;
 }
@@ -25,7 +25,7 @@ div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"] > div {
 div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"] > div > div:not([highlight]) {
 	display: none;
 }
-	
+
 div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"] div[highlight] {
 	position: absolute;
 	width: 100%;
@@ -42,7 +42,7 @@ div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"] div[flex="1"] 
 div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"] div[pattern] {
 	background-image: url("chrome://findbartweak/skin/pattern.gif");
 }
-	
+
 div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"] div[highlight]:not([pattern]):not([current]):not([hover]) { z-index: 100; }
 div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"] div[pattern]:not([current]):not([hover]) { z-index: 200; }
 div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"] div[current] { z-index: 300; }

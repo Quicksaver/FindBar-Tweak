@@ -8,7 +8,7 @@ this.overrideFindlistWidth = function() {
 		},
 		function(bar) {
 			if(bar._destroying) { return; }
-			
+
 			bar.getElement('findbar-textbox').style.width = '';
 		},
 		true
@@ -17,13 +17,13 @@ this.overrideFindlistWidth = function() {
 
 Modules.LOADMODULE = function() {
 	Prefs.setDefaults({ fieldWidth: 150 }, 'findlist');
-	
+
 	Prefs.listen('findFieldWidth', overrideFindlistWidth);
 	overrideFindlistWidth();
 };
 
 Modules.UNLOADMODULE = function() {
 	Prefs.unlisten('findFieldWidth', overrideFindlistWidth);
-	
+
 	findbar.deinit('findlistFix');
 };

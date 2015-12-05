@@ -14,16 +14,16 @@ this.blurCloses = {
 					}
 				}, 0);
 				break;
-			
+
 			case 'OpenedFindBar':
 				Listeners.add(window, 'focus', this, true);
 				break;
-			
+
 			case 'ClosedFindBar':
 			case 'ClosedFindBarBackground':
 				Listeners.remove(window, 'focus', this, true);
 				break;
-			
+
 			case 'TabSelectPrevious':
 				if(currentTab && currentTab._findBar) {
 					currentTab._findBar.close();
@@ -44,11 +44,11 @@ Modules.LOADMODULE = function() {
 			}
 		}
 	}
-	
+
 	Listeners.add(window, 'OpenedFindBar', blurCloses);
 	Listeners.add(window, 'ClosedFindBar', blurCloses);
 	Listeners.add(window, 'ClosedFindBarBackground', blurCloses);
-	
+
 	if(!viewSource) {
 		Listeners.add(gBrowser.tabContainer, "TabSelectPrevious", blurCloses);
 	}
@@ -59,7 +59,7 @@ Modules.UNLOADMODULE = function() {
 	Listeners.remove(window, 'ClosedFindBar', blurCloses);
 	Listeners.remove(window, 'ClosedFindBarBackground', blurCloses);
 	Listeners.remove(window, 'focus', blurCloses, true);
-	
+
 	if(!viewSource) {
 		Listeners.remove(gBrowser.tabContainer, "TabSelectPrevious", blurCloses);
 	}

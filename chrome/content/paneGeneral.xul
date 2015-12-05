@@ -2,7 +2,7 @@
 <?xml-stylesheet href="chrome://findbartweak/skin/options.css"?>
 <!DOCTYPE options SYSTEM "chrome://findbartweak/locale/options.dtd">
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-			
+
 	<richlistbox id="categories">
 		<richlistitem id="category-general"
 			class="category"
@@ -10,12 +10,12 @@
 			tooltiptext="&OptGeneral.label;"
 			position="1"
 			align="center">
-			
+
 			<image class="category-icon"/>
 			<label class="category-name" flex="1" value="&OptGeneral.label;"/>
 		</richlistitem>
 	</richlistbox>
-	
+
 	<prefpane id="mainPrefPane">
 		<preferences>
 			<preference id="pref-blurCloses" name="extensions.findbartweak.blurCloses" type="bool"/>
@@ -26,11 +26,11 @@
 			<preference id="pref-timeout" name="extensions.findbartweak.FAYTtimeout" type="int"/>
 			<preference id="pref-typeaheadfind" name="extensions.findbartweak.FAYTenabled" type="bool"/>
 		</preferences>
-		
+
 		<hbox id="header-general" class="header" collapsed="true" data-category="paneGeneral">
 			<label class="header-name">&OptGeneral.label;</label>
 		</hbox>
-		
+
 		<groupbox align="start" id="paneGeneral-main" collapsed="true" data-category="paneGeneral">
 			<caption label="&Optgen.label;"/>
 			<checkbox label="&OptglobalFB.label;"
@@ -48,7 +48,7 @@
 				jump="onStartup"
 				delayPreference="pref-onStartup"/>
 		</groupbox>
-		
+
 		<groupbox align="start" id="paneGeneral-fayt" collapsed="true" data-category="paneGeneral">
 			<caption label="&OptquickFindOptions.label;"/>
 			<checkbox label="&OptFAYT.label;"
@@ -61,23 +61,23 @@
 				delayPreference="pref-keepButtons"
 				dependson="pref-FAYTmode:alwaysquick;!pref-FAYTmode:normal,pref-typeaheadfind"/>
 			<hbox align="center"
-				dependson="pref-FAYTmode:alwaysquick;!pref-FAYTmode:normal,pref-typeaheadfind" 
+				dependson="pref-FAYTmode:alwaysquick;!pref-FAYTmode:normal,pref-typeaheadfind"
 				helptext="&OptFAYTTimeout.tooltip;"
 				jump="timeout">
 				<label dependson="pref-FAYTmode:alwaysquick;!pref-FAYTmode:normal,pref-typeaheadfind" value="&OptFAYTTimeout.beforeLabel;"/>
 				<textbox id="timeoutTextbox"
-					dependson="pref-FAYTmode:alwaysquick;!pref-FAYTmode:normal,pref-typeaheadfind" 
+					dependson="pref-FAYTmode:alwaysquick;!pref-FAYTmode:normal,pref-typeaheadfind"
 					type="number"
 					size="3"
 					min="1"
 					max="999"
 					delayPreference="pref-timeout"
-					onsyncfrompreference="return document.getElementById('pref-timeout').value / 1000;" 
+					onsyncfrompreference="return document.getElementById('pref-timeout').value / 1000;"
 					onsynctopreference="return parseInt(document.getElementById('timeoutTextbox').value || 0) * 1000;"/>
 	            <label dependson="pref-FAYTmode:alwaysquick;!pref-FAYTmode:normal,pref-typeaheadfind" value="&OptFAYTTimeout.afterLabel;"/>
 	        </hbox>
         </groupbox>
-        
+
 		<groupbox align="start" id="paneGeneral-mode" collapsed="true" data-category="paneGeneral">
 			<caption label="&OptFAYTmode.caption;"/>
 			<radiogroup align="start"
@@ -106,5 +106,5 @@
 			</vbox>
         </groupbox>
 	</prefpane>
-	
+
 </overlay>

@@ -8,7 +8,7 @@ this.handleNativePref = function(nPref, cPref) {
 		revertValue: Prefs[nPref],
 		changedNative: function() {
 			nativePrefs[nPref].revertValue = Prefs[nPref];
-			
+
 			Prefs.unlisten(cPref, nativePrefs[nPref].changedCustom);
 			Prefs[cPref] = Prefs[nPref];
 			Prefs.listen(cPref, nativePrefs[nPref].changedCustom);
@@ -19,9 +19,9 @@ this.handleNativePref = function(nPref, cPref) {
 			Prefs.listen(nPref, nativePrefs[nPref].changedNative);
 		}
 	};
-	
+
 	Prefs.listen(cPref, nativePrefs[nPref].changedCustom);
-	
+
 	nativePrefs[nPref].changedCustom();
 };
 
@@ -30,7 +30,7 @@ this.resetNativePrefs = function() {
 		Prefs.unlisten(nativePrefs[x].cPref, nativePrefs[x].changedCustom);
 		Prefs.unlisten(x, nativePrefs[x].changedNative);
 	}
-	
+
 	if(!Prefs.resetNative) {
 		for(let x in nativePrefs) {
 			Prefs[x] = nativePrefs[x].revertValue;
@@ -46,13 +46,13 @@ Modules.LOADMODULE = function() {
 	Prefs.setDefaults({ timeout: 5000, prefillwithselection: true }, 'typeaheadfind', 'accessibility');
 	Prefs.setDefaults({ typeaheadfind: false }, 'accessibility', '');
 	Prefs.setDefaults({ eat_space_to_next_word: true, stop_at_punctuation: true }, 'word_select', 'layout');
-	
+
 	handleNativePref('timeout', 'FAYTtimeout');
 	handleNativePref('typeaheadfind', 'FAYTenabled');
 	handleNativePref('prefillwithselection', 'FAYTprefill');
 	handleNativePref('eat_space_to_next_word', 'layoutEatSpaces');
 	handleNativePref('stop_at_punctuation', 'layoutStopAtPunctuation');
-	
+
 	alwaysRunOnShutdown.push(resetNativePrefs);
 };
 

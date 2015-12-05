@@ -4,7 +4,7 @@
 	url("chrome://global/content/viewSource.xul"),
 	url("chrome://global/content/viewPartialSource.xul"),
 	url-prefix("chrome://updatescan/") {
-	
+
 	/* Grid button spacers heights, these don't take into account OS zoom settings! */
 	vbox[anonid="findGrid"]:not([gridSpacers="none"]) vbox.topSpacer[flex="0"],
 	vbox[anonid="findGrid"][gridSpacers="single"] vbox.bottomSpacer[flex="0"] {
@@ -13,7 +13,7 @@
 	vbox[anonid="findGrid"][gridSpacers="double"] vbox.bottomSpacer[flex="0"] {
 		height: 34px;
 	}
-	
+
 	@media not all and (-moz-windows-classic) {
 		@media (-moz-windows-default-theme) {
 			vbox[anonid="findGrid"]:not([gridSpacers="none"]) vbox.topSpacer[flex="0"],
@@ -25,5 +25,5 @@
 			}
 		}
 	}
-	
+
 }

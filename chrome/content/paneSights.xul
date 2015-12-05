@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE options SYSTEM "chrome://findbartweak/locale/options.dtd">
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-			
+
 	<richlistbox id="categories">
 		<richlistitem id="category-sights"
 			class="category"
@@ -9,12 +9,12 @@
 			tooltiptext="&OptSightsTab.label;"
 			position="4"
 			align="center">
-			
+
 			<image class="category-icon"/>
 			<label class="category-name" flex="1" value="&OptSightsTab.label;"/>
 		</richlistitem>
 	</richlistbox>
-	
+
 	<prefpane id="mainPrefPane">
 		<preferences>
 			<preference id="pref-sightsCurrent" name="extensions.findbartweak.sightsCurrent" type="bool"/>
@@ -28,11 +28,11 @@
 			<preference id="pref-sightsAllColor" name="extensions.findbartweak.sightsAllColor" type="string"/>
 			<preference id="pref-sightsLimit" name="extensions.findbartweak.sightsLimit" type="int"/>
 		</preferences>
-		
+
 		<hbox id="header-sights" class="header" collapsed="true" data-category="paneSights">
 			<label class="header-name">&OptSightsTab.label;</label>
 		</hbox>
-		
+
 		<groupbox align="start" id="paneSights-current" collapsed="true" data-category="paneSights">
 			<caption label="&OptsightsCurrentHit.label;"/>
 			<checkbox label="&OptsightsCurrent.label;"
@@ -75,7 +75,7 @@
 				<description>&OptsightsSameColor.tooltip;</description>
 			</vbox>
 		</groupbox>
-		
+
 		<groupbox align="start" id="paneSights-highlights" collapsed="true" data-category="paneSights">
 			<caption label="&OptsightsAllHighlights.label;"/>
 			<description>&OptsightsHighlights.warning;</description>
@@ -125,7 +125,7 @@
 				<description>&OptsightsSameColor.tooltip;</description>
 			</vbox>
 		</groupbox>
-		
+
 		<groupbox align="start" id="paneSights-style" collapsed="true" data-category="paneSights">
 			<caption label="&OptsightsStyle.label;"/>
 			<vbox align="center">
@@ -153,8 +153,8 @@
 				</hbox>
 			</vbox>
 		</groupbox>
-		
+
 		<hbox id="paneSights-findSights" collapsed="true" data-category="paneSights" anonid="findSights" />
 	</prefpane>
-	
+
 </overlay>

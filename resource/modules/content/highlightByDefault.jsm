@@ -4,7 +4,7 @@ this.highlightByDefault = {
 	hook: function() {
 		message('HighlightByDefault');
 	},
-	
+
 	onDOMContentLoaded: function(e) {
 		// this is the content document of the loaded page.
 		var doc = e.originalTarget;
@@ -14,13 +14,13 @@ this.highlightByDefault = {
 			while(doc.defaultView.frameElement) {
 				doc = doc.defaultView.frameElement.ownerDocument;
 			}
-			
+
 			if(doc == document) {
 				this.hook();
 			}
 		}
 	},
-	
+
 	// Commands a reHighlight if needed, triggered from history navigation as well
 	onLocationChange: function(aWebProgress, aRequest, aLocation) {
 		// Frames don't need to trigger this

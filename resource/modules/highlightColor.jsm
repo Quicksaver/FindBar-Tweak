@@ -4,7 +4,7 @@ this.uiBackup = {};
 
 this.handleUIHighlightBackground = function() {
 	uiBackup.textHighlightBackground = Prefs.textHighlightBackground;
-	
+
 	// This triggers a re-color
 	var original = Prefs.highlightColor;
 	if(Prefs.textHighlightBackground) {
@@ -25,7 +25,7 @@ this.handleUIHighlightForeground = function() {
 
 this.handleUISelectBackground = function() {
 	uiBackup.textSelectBackgroundAttention = Prefs.textSelectBackgroundAttention;
-	
+
 	// This triggers a re-color
 	var original = Prefs.selectColor;
 	if(Prefs.textSelectBackgroundAttention) {
@@ -69,19 +69,19 @@ this.changeHighlightColor = function() {
 	var m = Prefs.highlightColor.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
 	if(!m) { return; }
 	var rgb = getRGBfromString(m);
-	
+
 	// Have to remove the listeners and add them back after, so the backups aren't overwritten with our values
 	Prefs.unlisten('textHighlightBackground', handleUIHighlightBackground);
 	Prefs.unlisten('textHighlightForeground', handleUIHighlightForeground);
-	
+
 	Prefs.textHighlightBackground = Prefs.highlightColor;
 	Prefs.textHighlightForeground = (darkBackgroundRGB(rgb)) ? '#FFFFFF' : '#000000';
-	
+
 	Prefs.listen('textHighlightBackground', handleUIHighlightBackground);
 	Prefs.listen('textHighlightForeground', handleUIHighlightForeground);
-	
+
 	setHighlightColorStyleSheet(rgb);
-	
+
 	Observers.notify('ReHighlightAll');
 };
 
@@ -96,20 +96,20 @@ this.setHighlightColorStyleSheet = function(rgb) {
 					background-color: '+Prefs.highlightColor+';\n\
 				}\n\
 		}';
-	
+
 	Styles.load('highlightColorStyleSheet', sscode, true);
-	
+
 	sscode = '\
 		@namespace url(http://www.w3.org/1999/xhtml);\n' +
-		
+
 		// For PDF.JS
 		'body #outerContainer #mainContainer #viewerContainer .textLayer .highlight:not(.selected) { background-color: rgb('+rgb.r+','+rgb.g+','+rgb.b+'); }\n' +
-		
+
 		// For grids in frames
 		'div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"] div[highlight]:not([current]):not([hover]) {\n\
 			background-color: '+Prefs.highlightColor+';\n\
 		}\n' +
-		
+
 		// color the matches in the FIT lists
 		'@-moz-document url("chrome://'+objPathString+'/content/findInTabsFull.xul") {\n\
 			.findInTabs-match:not([current]):not(:hover) {\n\
@@ -117,7 +117,7 @@ this.setHighlightColorStyleSheet = function(rgb) {
 				color: '+((darkBackgroundRGB(rgb)) ? '#FFFFFF' : '#000000')+';\n\
 			}\n\
 		}';
-	
+
 	Styles.load('otherHighlightColorStyleSheet', sscode, true);
 };
 
@@ -125,22 +125,22 @@ this.changeSelectColor = function() {
 	var m = Prefs.selectColor.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
 	if(!m) { return; }
 	var rgb = getRGBfromString(m);
-	
+
 	// Have to remove the listeners and add them back after, so the backups aren't overwritten with our values
 	Prefs.unlisten('textSelectBackgroundAttention', handleUISelectBackground);
 	Prefs.unlisten('textSelectForeground', handleUISelectForeground);
-	
+
 	Prefs.textSelectBackgroundAttention = Prefs.selectColor;
-	
+
 	if(!Prefs.keepSelectContrast) { Prefs.textSelectForeground = (darkBackgroundRGB(rgb)) ? '#FFFFFF' : '#000000'; }
 	else if(uiBackup.textSelectForeground) { Prefs.textSelectForeground = uiBackup.textSelectForeground; }
 	else { Prefs.reset('textSelectForeground'); }
-	
+
 	Prefs.listen('textSelectBackgroundAttention', handleUISelectBackground);
 	Prefs.listen('textSelectForeground', handleUISelectForeground);
-	
+
 	setSelectColorStyleSheet(rgb);
-	
+
 	Observers.notify('ReHighlightAll');
 };
 
@@ -163,21 +163,21 @@ this.setSelectColorStyleSheet = function(rgb) {
 					background-color: '+Prefs.selectColor+';\n\
 				}\n\
 		}';
-	
+
 	Styles.load('selectColorStyleSheet', sscode, true);
-	
+
 	sscode = '\
 		@namespace url(http://www.w3.org/1999/xhtml);\n' +
-		
+
 		// For PDF.JS
 		'body #outerContainer #mainContainer #viewerContainer .textLayer .highlight.selected { background-color: rgb('+rgb.r+','+rgb.g+','+rgb.b+'); }\n' +
-		
+
 		// For grids in frames
 		'div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"] div[highlight][current],\n\
 		div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"] div[highlight][hover] {\n\
 			background-color: '+Prefs.selectColor+';\n\
 		}\n' +
-		
+
 		// color the matches in the FIT lists
 		'@-moz-document url("chrome://'+objPathString+'/content/findInTabsFull.xul") {\n\
 			.findInTabs-match[current],\n\
@@ -186,7 +186,7 @@ this.setSelectColorStyleSheet = function(rgb) {
 				color: '+((darkBackgroundRGB(rgb)) ? '#FFFFFF' : '#000000')+';\n\
 			}\n\
 		}';
-	
+
 	Styles.load('otherSelectColorStyleSheet', sscode, true);
 };
 
@@ -195,12 +195,12 @@ this.resetColorPrefs = function() {
 	Prefs.unlisten('textHighlightForeground', handleUIHighlightForeground);
 	Prefs.unlisten('textSelectBackgroundAttention', handleUISelectBackground);
 	Prefs.unlisten('textSelectForeground', handleUISelectForeground);
-	
+
 	if(!Prefs.resetNative && uiBackup.textHighlightBackground) { Prefs.textHighlightBackground = uiBackup.textHighlightBackground; }
 	else { Prefs.reset('textHighlightBackground'); }
 	if(!Prefs.resetNative && uiBackup.textHighlightForeground) { Prefs.textHighlightForeground = uiBackup.textHighlightForeground; }
 	else { Prefs.reset('textHighlightForeground'); }
-	
+
 	if(!Prefs.resetNative && uiBackup.textSelectBackgroundAttention) { Prefs.textSelectBackgroundAttention = uiBackup.textSelectBackgroundAttention; }
 	else { Prefs.reset('textSelectBackgroundAttention'); }
 	if(!Prefs.resetNative && uiBackup.textSelectForeground) { Prefs.textSelectForeground = uiBackup.textSelectForeground; }
@@ -214,20 +214,20 @@ Modules.LOADMODULE = function() {
 		textSelectBackgroundAttention: '',
 		textSelectForeground: '',
 	}, 'ui', '');
-	
+
 	uiBackup = {
 		textHighlightBackground: Prefs.textHighlightBackground,
 		textHighlightForeground: Prefs.textHighlightForeground,
 		textSelectBackgroundAttention: Prefs.textSelectBackgroundAttention,
 		textSelectForeground: Prefs.textSelectForeground
 	};
-	
+
 	Prefs.listen('highlightColor', changeHighlightColor);
 	Prefs.listen('selectColor', changeSelectColor);
 	Prefs.listen('keepSelectContrast', changeSelectColor);
-	
+
 	alwaysRunOnShutdown.push(resetColorPrefs);
-	
+
 	changeHighlightColor();
 	changeSelectColor();
 };
@@ -237,10 +237,10 @@ Modules.UNLOADMODULE = function() {
 	Styles.unload('otherHighlightColorStyleSheet');
 	Styles.unload('selectColorStyleSheet');
 	Styles.unload('otherSelectColorStyleSheet');
-	
+
 	Prefs.unlisten('highlightColor', changeHighlightColor);
 	Prefs.unlisten('selectColor', changeSelectColor);
 	Prefs.unlisten('keepSelectContrast', changeSelectColor);
-	
+
 	resetColorPrefs();
 };

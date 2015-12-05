@@ -5,11 +5,11 @@
 	url("chrome://global/content/viewPartialSource.xul"),
 	url-prefix("chrome://findbartweak/content/utils/preferences.xul"),
 	url-prefix("about:findbartweak") {
-	
+
 	window[inDOMFullscreen] hbox[anonid="findSights"] {
 		display: none;
 	}
-	
+
 	hbox[anonid="findSights"] {
 		pointer-events: none;
 		width: 100%;
@@ -17,20 +17,20 @@
 		top: 0px;
 		left: 0px;
 	}
-	
+
 	#main-window hbox[anonid="findSights"] {
 		position: relative !important;
 	}
-	
+
 	box[anonid="highlightSights"] {
 		position: absolute;
 	}
-	
+
 	box[anonid="highlightSights"][sightsStyle="focus"] {
 		border-radius: 50%;
 		border: 8px solid transparent;
 	}
-	
+
 	box[anonid="highlightSights"][sightsStyle="circle"] box[innerContainer] box {
 		width: 100px;
 		height: 100px;
@@ -38,16 +38,16 @@
 		border: 8px solid transparent;
 		position: absolute;
 	}
-	
+
 	box[anonid="highlightSights"][sightsStyle="circle"][gt180] box[innerContainer].otherHalf box,
 	box[anonid="highlightSights"][sightsStyle="circle"][gt360] box[innerContainer].otherHalf box {
 		transform: rotate(180deg);
 	}
-	
+
 	box[anonid="highlightSights"][sightsStyle="circle"] box[innerContainer] {
 		position: absolute;
 	}
-	
+
 	box[anonid="highlightSights"][sightsStyle="circle"][gt0] box[innerContainer] box,
 	box[anonid="highlightSights"][sightsStyle="circle"][gt180] box[innerContainer] box {
 		clip: rect(0,50px,100px,0);
@@ -56,7 +56,7 @@
 	box[anonid="highlightSights"][sightsStyle="circle"][gt540] box[innerContainer] box {
 		clip: rect(0,100px,100px,50px);
 	}
-	
+
 	box[anonid="highlightSights"][sightsStyle="circle"][gt0] box[innerContainer]:not(.otherHalf),
 	box[anonid="highlightSights"][sightsStyle="circle"][gt360] box[innerContainer]:not(.otherHalf) {
 		clip: rect(0,100px,100px,50px);
@@ -73,13 +73,13 @@
 	box[anonid="highlightSights"][sightsStyle="circle"][gt360] box[innerContainer].otherHalf {
 		clip: rect(0,100px,100px,0);
 	}
-	
+
 	/* for the View Source window */
 	#viewSource hbox[anonid="findSights"] {
 		position: fixed !important;
 		top: 0px;
 	}
-	
+
 	/* for the preferences dialog */
 	prefpane hbox[anonid="findSights"] {
 		position: fixed !important;

@@ -30,7 +30,7 @@ Modules.LOADMODULE = function() {
 	Listeners.add(window, 'WillReHighlight', hideReHighlighting, true);
 	Listeners.add(window, 'ClosedFindBar', hideFindBarClosed);
 	Listeners.add(window, 'ClosedFindBarBackground', hideFindBarClosedBackground);
-	
+
 	if(!viewSource) {
 		Listeners.add(gBrowser.tabContainer, "TabSelect", hideFindBarClosed);
 	}
@@ -40,7 +40,7 @@ Modules.UNLOADMODULE = function() {
 	Listeners.remove(window, 'WillReHighlight', hideReHighlighting, true);
 	Listeners.remove(window, 'ClosedFindBar', hideFindBarClosed);
 	Listeners.remove(window, 'ClosedFindBarBackground', hideFindBarClosedBackground);
-	
+
 	if(!viewSource) {
 		Listeners.remove(gBrowser.tabContainer, "TabSelect", hideFindBarClosed);
 	}

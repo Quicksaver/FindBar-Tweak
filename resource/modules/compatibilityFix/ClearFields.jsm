@@ -6,13 +6,13 @@ this.clearFields = {
 			case 'OpenedFindBar':
 				this.setup();
 				break;
-			
+
 			case 'click':
 				gFindBar._find();
 				break;
 		}
 	},
-	
+
 	setup: function() {
 		// ClearFields doesn't distinguish types of clicks (left, middle, right) so I can't either
 		Listeners.add($('ClearFields-in-find'), 'click', this);
@@ -21,7 +21,7 @@ this.clearFields = {
 
 Modules.LOADMODULE = function() {
 	clearFields.setup();
-	
+
 	// This is put here because the clear field button isn't added at startup
 	Listeners.add(window, 'OpenedFindBar', clearFields);
 };

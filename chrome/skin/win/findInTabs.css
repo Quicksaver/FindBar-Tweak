@@ -17,7 +17,7 @@ findbar.findInTabs-bar {
 @media (-moz-windows-default-theme) {
 	@media	(-moz-os-version: windows-vista),
 		(-moz-os-version: windows-win7) {
-		
+
 		window:not([FITSidebar]) #contentBox {
 			background-color: hsl(210,75%,92%);
 		}
@@ -29,7 +29,7 @@ findbar.findInTabs-bar {
 @media (-moz-windows-default-theme) {
 	@media	(-moz-os-version: windows-vista),
 		(-moz-os-version: windows-win7) {
-		
+
 		window[FITSidebar] #contentBox {
 			background-color: #EEF3FA;
 		}

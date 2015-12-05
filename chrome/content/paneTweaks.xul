@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE options SYSTEM "chrome://findbartweak/locale/options.dtd">
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-			
+
 	<richlistbox id="categories">
 		<richlistitem id="category-tweaks"
 			class="category"
@@ -9,12 +9,12 @@
 			tooltiptext="&Opttweaks.label;"
 			position="6"
 			align="center">
-			
+
 			<image class="category-icon"/>
 			<label class="category-name" flex="1" value="&Opttweaks.label;"/>
 		</richlistitem>
 	</richlistbox>
-	
+
 	<prefpane id="mainPrefPane">
 		<preferences>
 			<preference id="pref-ctrlFCloses" name="extensions.findbartweak.ctrlFCloses" type="bool"/>
@@ -28,11 +28,11 @@
 			<preference id="pref-layoutStopAtPunctuation" name="extensions.findbartweak.layoutStopAtPunctuation" type="bool"/>
 			<preference id="pref-resetNative" name="extensions.findbartweak.resetNative" type="bool"/>
 		</preferences>
-		
+
 		<hbox id="header-tweaks" class="header" collapsed="true" data-category="paneTweaks">
 			<label class="header-name">&Opttweaks.label;</label>
 		</hbox>
-		
+
 		<groupbox align="start" id="paneTweaks-shortcut" collapsed="true" data-category="paneTweaks">
 			<caption label="&OptkeyboardShortcut.label;"/>
 			<checkbox label="&OptctrlFprefill.label;"
@@ -60,7 +60,7 @@
 				<description>&OptctrlFOnFocused.tooltip;</description>
 			</vbox>
 		</groupbox>
-		
+
 		<groupbox align="start" id="paneTweaks-text" collapsed="true" data-category="paneTweaks">
 			<caption label="&OptSelectingText.label;"/>
 			<checkbox label="&OptfillSelectedText.label;"
@@ -97,7 +97,7 @@
 				<description>&OptfillSelectedOpenFindbar.tooltip;</description>
 			</vbox>
 		</groupbox>
-		
+
 		<groupbox align="start" id="paneTweaks-dblClick" collapsed="true" data-category="paneTweaks">
 			<description>&OptglobalBehavior.warning;</description>
 			<checkbox label="&OptdblClickEatSpaces.label;"
@@ -107,7 +107,7 @@
 				jump="layoutStopAtPunctuation"
 				delayPreference="pref-layoutStopAtPunctuation"/>
 		</groupbox>
-		
+
 		<groupbox align="start" id="paneTweaks-natives" collapsed="true" data-category="paneTweaks">
 			<caption label="&OptNativePrefs.label;"/>
 			<description>&OptNativePrefs.description;</description>
@@ -123,5 +123,5 @@
 			</vbox>
 		</groupbox>
 	</prefpane>
-	
+
 </overlay>

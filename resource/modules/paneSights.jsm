@@ -5,10 +5,10 @@ this.inPreferences = true;
 this.previewSights = function(box, style) {
 	var bSights = sights.get();
 	if(!bSights.groups) { bSights.groups = new Map(); }
-	
+
 	// Hide the current sights
 	sights.remove(bSights, 0);
-	
+
 	var dimensions = box.getBoundingClientRect();
 	sights.build(
 		{ sights: bSights },

@@ -6,73 +6,73 @@
 	url("chrome://global/content/viewSource.xul"),
 	url("chrome://global/content/viewPartialSource.xul"),
 	url-prefix("chrome://updatescan/") {
-	
+
 	window[inDOMFullscreen] hbox[anonid="gridBox"] {
 		display: none;
 	}
-	
+
 	hbox[anonid="gridBox"] {
 		pointer-events: none;
 		width: 100%;
 		height: 100%;
 	}
-	
+
 	vbox[anonid="findGrid"] {
 		opacity: 0.7;
 	}
-	
+
 	vbox[anonid="findGrid"] > vbox:not(.topSpacer):not(.bottomSpacer) {
 		position: relative;
 	}
-	
+
 	vbox[anonid="findGrid"] > vbox > vbox:not([highlight]) {
 		display: none;
 	}
-	
+
 	vbox[anonid="findGrid"] vbox[highlight] {
 		position: absolute;
 		width: 100%;
 		min-height: 2px !important;
 	}
-	
+
 	vbox[anonid="findGrid"][gridSpacers="none"] vbox[flex="0"] {
 		height: 0px;
 	}
-	
+
 	vbox[anonid="findGrid"] vbox[pattern] {
 		background-image: url("chrome://findbartweak/skin/pattern.gif");
 	}
-	
+
 	vbox[anonid="findGrid"] vbox[highlight]:not([pattern]):not([current]):not([hover]) { z-index: 100; }
 	vbox[anonid="findGrid"] vbox[pattern]:not([current]):not([hover]) { z-index: 200; }
 	vbox[anonid="findGrid"] vbox[current] { z-index: 300; }
 	vbox[anonid="findGrid"] vbox[hover] { z-index: 400; }
-	
+
 	/* For HBox frame grids */
-	
+
 	hbox[anonid="gridBox"][ownedbyfindbartweak],
 	hbox[anonid="gridBox"][ownedbyfindbartweak] vbox[anonid="findGrid"] {
 		display: flex;
 	}
-	
+
 	hbox[anonid="gridBox"][ownedbyfindbartweak] vbox[anonid="findGrid"] {
 		flex-direction: column;
 	}
-	
+
 	hbox[anonid="gridBox"][ownedbyfindbartweak] vbox[anonid="findGrid"] > vbox:not(.topSpacer):not(.bottomSpacer) {
 		height: 100%;
 	}
-	
+
 	/* Grid for the View Source window */
-	
+
 	#viewSource hbox[anonid="gridBox"] {
 		position: fixed !important;
 	}
-	
+
 	#viewSource vbox[anonid="findGrid"] {
 		height: 100%;
 		position: relative;
 		top: -13px; /* I have no idea why this happens... */
 	}
-	
+
 }

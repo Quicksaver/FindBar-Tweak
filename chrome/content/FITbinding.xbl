@@ -3,7 +3,7 @@
 	xmlns="http://www.mozilla.org/xbl"
 	xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	xmlns:xbl="http://www.mozilla.org/xbl">
-	
+
 	<!-- Private binding -->
 	<binding id="FIT-textbox" extends="chrome://global/content/bindings/textbox.xml#textbox">
 		<implementation>
@@ -14,7 +14,7 @@
 				</getter>
 			</property>
 		</implementation>
-		
+
 		<handlers>
 			<handler event="input"><![CDATA[
 				// We should do nothing during composition.  E.g., composing string
@@ -27,7 +27,7 @@
 				}
 				this.findbar._find(this.value);
 			]]></handler>
-			
+
 			<handler event="keypress"><![CDATA[
 				switch(event.keyCode) {
 					case KeyEvent.DOM_VK_RETURN:
@@ -36,12 +36,12 @@
 						break;
 				}
 			]]></handler>
-			
+
 			<handler event="dragover"><![CDATA[
 				if(event.dataTransfer.types.contains("text/plain"))
 					event.preventDefault();
 			]]></handler>
-			
+
 			<handler event="drop"><![CDATA[
 				var value = event.dataTransfer.getData("text/plain");
 				this.value = value;

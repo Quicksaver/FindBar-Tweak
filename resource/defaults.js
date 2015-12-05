@@ -43,19 +43,19 @@ prefList = {
 	minNoDelay: 3,
 	highlightColor: "#EF0FFF",
 	useCounter: true,
-	
+
 	findInTabs: true,
 	findInTabsAction: 'sidebar',
 	autoShowHideFIT: false,
 	multipleFITFull: false,
 	showTabsInFITSidebar: false,
 	twinFITSidebar: true,
-	
+
 	useGrid: true,
 	gridLimit: 100,
 	gridAdjustPadding: 0,
 	gridAdjustWidth: 0,
-	
+
 	sightsCurrent: true,
 	sightsHighlights: false,
 	sightsStyle: 'focus',
@@ -66,12 +66,12 @@ prefList = {
 	sightsAllColor: '#EF0FFF',
 	sightsAllSameColor: true,
 	sightsLimit: 10,
-	
+
 	blurCloses: false,
 	globalFB: false,
 	onStartup: false,
 	findbarHidden: true,
-	
+
 	movetoTop: false,
 	movetoRight: false,
 	hideClose: false,
@@ -79,23 +79,23 @@ prefList = {
 	findFieldWidth: (LINUX) ? 240 : minTextboxWidth,
 	selectColor: '#38d878',
 	keepSelectContrast: true,
-	
+
 	fillSelectedText: false,
 	emptySelectedText: true,
 	fillTextShowFindBar: true,
 	fillTextFromEditable: false,
 	layoutEatSpaces: defaultBranch.getBoolPref('layout.word_select.eat_space_to_next_word'),
 	layoutStopAtPunctuation: defaultBranch.getBoolPref('layout.word_select.stop_at_punctuation'),
-	
+
 	ctrlFCloses: true,
 	ctrlFClosesOnFocused: true,
 	keepButtons: false,
 	FAYTmode: 'quick',
-	
+
 	// for internal use
 	findButtonMoved: false,
 	findButtonOriginalPos: -1,
-	
+
 	// to revert the builtin preferences
 	FAYTtimeout: defaultBranch.getIntPref('accessibility.typeaheadfind.timeout'),
 	FAYTenabled: defaultBranch.getBoolPref('accessibility.typeaheadfind'),
@@ -117,11 +117,11 @@ function onStartup(aReason) {
 	Modules.load('highlightColor');
 	Modules.load('findInTabsSandbox');
 	Modules.load('compatibilityFix/sandboxFixes');
-	
+
 	// Apply the add-on to every window opened and to be opened
 	Windows.callOnAll(startAddon, 'navigator:browser');
 	Windows.register(startAddon, 'domwindowopened', 'navigator:browser');
-	
+
 	// Apply the add-on to every window opened and to be opened
 	Windows.callOnAll(startAddon, 'navigator:view-source');
 	Windows.register(startAddon, 'domwindowopened', 'navigator:view-source');
@@ -130,7 +130,7 @@ function onStartup(aReason) {
 function onShutdown(aReason) {
 	// remove the add-on from all windows
 	Windows.callOnAll(stopAddon, null, null, true);
-	
+
 	Modules.unload('compatibilityFix/sandboxFixes');
 	Modules.unload('findInTabsSandbox');
 	Modules.unload('highlightColor');

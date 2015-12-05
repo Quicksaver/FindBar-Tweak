@@ -8,7 +8,7 @@ this.rememberStartup = {
 					Prefs.findbarHidden = gFindBar.hidden;
 				}
 				break;
-			
+
 			case 'ClosedFindBar':
 				Prefs.findbarHidden = gFindBar.hidden;
 				break;
@@ -19,11 +19,11 @@ this.rememberStartup = {
 Modules.LOADMODULE = function() {
 	Listeners.add(window, 'OpenedFindBar', rememberStartup);
 	Listeners.add(window, 'ClosedFindBar', rememberStartup);
-	
+
 	if(STARTED == APP_STARTUP && !Prefs.findbarHidden && gFindBar.hidden) {
 		gFindBar.onFindCommand();
 	}
-	
+
 	if(Prefs.findbarHidden && gFindBarInitialized && !gFindBar.hidden && gFindBar._findMode == gFindBar.FIND_NORMAL) {
 		Prefs.findbarHidden = false;
 	}
@@ -32,7 +32,7 @@ Modules.LOADMODULE = function() {
 Modules.UNLOADMODULE = function() {
 	Listeners.remove(window, 'OpenedFindBar', rememberStartup);
 	Listeners.remove(window, 'ClosedFindBar', rememberStartup);
-	
+
 	if((UNLOADED && UNLOADED != APP_SHUTDOWN) || !Prefs.onStartup) {
 		Prefs.findbarHidden = true;
 	}

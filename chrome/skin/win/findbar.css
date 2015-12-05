@@ -32,7 +32,7 @@ window[findbartweak-FF44] findbar[movetotop]:not([inPDFJS]):not([DevEdition]) .f
 @media (-moz-windows-default-theme) {
 	@media	(-moz-os-version: windows-vista),
 		(-moz-os-version: windows-win7) {
-		
+
 		window:not(#viewSource):not([findbartweak-FF43]) findbar[movetotop]:not([inPDFJS]),
 		window:not(#viewSource)[findbartweak-FF43] findbar[movetotop]:not([inPDFJS]):not(:-moz-lwtheme) {
 			background-color: hsl(210,75%,92%);
@@ -119,11 +119,11 @@ window[findbartweak-FF44] findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl)
 @media	(-moz-os-version: windows-xp),
 	(-moz-os-version: windows-vista),
 	(-moz-os-version: windows-win7) {
-	
+
 	window[findbartweak-FF44] findbar[movetotop]:not([inPDFJS]):not([DevEdition]) .findbar-container {
 		background-image: none;
 	}
-	
+
 	window[findbartweak-FF44] findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
 	window[findbartweak-FF44] findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
 		box-shadow: 	2px -2px 0 -2px ThreeDShadow,
@@ -141,7 +141,7 @@ window[findbartweak-FF44] findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl)
 @media (-moz-windows-default-theme) {
 	@media	(-moz-os-version: windows-vista),
 		(-moz-os-version: windows-win7) {
-		
+
 		window:not(#viewSource):not([findbartweak-FF43]) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
 		window:not(#viewSource):not([findbartweak-FF43]) findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after,
 		window:not(#viewSource)[findbartweak-FF43] findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):not(:-moz-lwtheme):before,
@@ -220,11 +220,11 @@ window[findbartweak-FF44] #navigator-toolbox[slimChromeNavBar] ~ #content-deck f
 @media	(-moz-os-version: windows-xp),
 	(-moz-os-version: windows-vista),
 	(-moz-os-version: windows-win7) {
-	
+
 	window[findbartweak-FF44] #navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):not([DevEdition]) .findbar-container {
 		background-image: linear-gradient(rgba(255,255,255,.35), rgba(255,255,255,0));
 	}
-	
+
 	window[findbartweak-FF44] #navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
 	window[findbartweak-FF44] #navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
 		box-shadow: 	2px -2px 0 -2px ThreeDShadow,
@@ -242,7 +242,7 @@ window[findbartweak-FF44] #navigator-toolbox[slimChromeNavBar] ~ #content-deck f
 @media (-moz-windows-default-theme) {
 	@media	(-moz-os-version: windows-vista),
 		(-moz-os-version: windows-win7) {
-		
+
 		#main-window:not([findbartweak-FF43]) #navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
 		#main-window:not([findbartweak-FF43]) #navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after,
 		#main-window[findbartweak-FF43] #navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):not(:-moz-lwtheme):before,

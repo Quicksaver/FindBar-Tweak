@@ -6,7 +6,7 @@
 <?xml-stylesheet href="chrome://findbartweak/skin/findInTabs.css" type="text/css"?>
 <?xml-stylesheet href="chrome://findbartweak-os/skin/findInTabs.css" type="text/css"?>
 <!DOCTYPE overlay SYSTEM "chrome://findbartweak/locale/findbar.dtd">
-<window 
+<window
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	id="findbartweak-findInTabs"
 	title="&FITFull.label;"
@@ -14,20 +14,20 @@
 	height="350"
 	width="800"
 	persist="width height screenX screenY sizemode">
-	
+
 	<broadcasterset id="mainBroadcasterSet">
 		<broadcaster id="objName-findInTabs-broadcaster"
 			type="checkbox"
 			autoCheck="false"
 			oncommand="objName.FITMini.goToFITFull();" />
 	</broadcasterset>
-	
+
 	<popupset id="mainPopupSet">
 		<menupopup id="objName_findbarMenu">
 			<menuitem label="&MenuOptions.label;" oncommand="objName.openOptions();" />
 		</menupopup>
 	</popupset>
-	
+
 	<keyset id="objName-findInTabs-keyset">
 		<key id="cmd_find"
 			key="F"
@@ -41,7 +41,7 @@
 			modifiers="accel,shift"
 			oncommand="objName.FIT.console();" />
 	</keyset>
-	
+
 	<vbox id="contentBox" flex="1">
 		<findbar id="FindToolbar"
 			class="findInTabs-bar"
@@ -51,7 +51,7 @@
 			insertafter="FindToolbar"
 			position="1"
 			flex="1">
-			
+
 			<box id="findbartweak-findInTabs-tabs" class="findInTabs-list" flex="1" width="300" height="300" persist="width height" />
 			<vbox id="findbartweak-findInTabs-filterBox" flex="0">
 				<image id="objName-findInTabs-filter" onclick="objName.FIT.toggleGroups();"/>
@@ -60,5 +60,5 @@
 			<box id="findbartweak-findInTabs-hits" class="findInTabs-list" flex="1" width="500" height="500" persist="width height" />
 		</hbox>
 	</vbox>
-	
+
 </window>

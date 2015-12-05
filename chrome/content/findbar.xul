@@ -3,18 +3,18 @@
 <?xml-stylesheet href="chrome://findbartweak-os/skin/findbar.css" type="text/css"?>
 <!DOCTYPE overlay SYSTEM "chrome://findbartweak/locale/findbar.dtd">
 <overlay id="findbarUI_overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-	
+
 	<popupset id="mainPopupSet">
 		<menupopup id="objPathString_findbarMenu">
 			<menuitem label="&MenuOptions.label;" oncommand="objName.openOptions();" />
 		</menupopup>
 	</popupset>
-	
+
 	<!-- for the View Source window -->
 	<window id="viewSource">
 		<menupopup id="objPathString_findbarMenu">
 			<menuitem label="&MenuOptions.label;" oncommand="objName.openOptions();" />
 		</menupopup>
 	</window>
-	
+
 </overlay>

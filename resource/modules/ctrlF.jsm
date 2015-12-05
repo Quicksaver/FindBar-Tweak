@@ -6,10 +6,10 @@ this.ctrlF = function() {
 		findbarUI.open();
 		return;
 	}
-	
+
 	ctrlFToggles();
 };
-	
+
 this.ctrlFToggles = function() {
 	if(Prefs.ctrlFCloses) {
 		findbarUI.toggle();

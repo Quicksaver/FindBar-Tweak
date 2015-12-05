@@ -1,4 +1,4 @@
-// VERSION 1.8.3
+// VERSION 1.8.4
 
 this.findbarUI = {
 	get button() {
@@ -332,7 +332,7 @@ this.buttonLabels = {
 		for(let btnID of this.btns) {
 			let btn = bar.getElement(btnID);
 			if(btn) {
-				let icon = $ª(btn, (enable) ? 'toolbarbutton-icon' : 'toolbarbutton-icon toolbarbutton-text', 'class');
+				let icon = $Âª(btn, (enable) ? 'toolbarbutton-icon' : 'toolbarbutton-icon toolbarbutton-text', 'class');
 				if(icon) {
 					if(enable) {
 						icon.classList.add('toolbarbutton-text');

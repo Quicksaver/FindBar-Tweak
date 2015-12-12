@@ -1,4 +1,4 @@
-// VERSION 1.1.7
+// VERSION 1.1.8
 
 this.sights = {
 	noCurrent: false,
@@ -19,8 +19,8 @@ this.sights = {
 		}
 	},
 
-	onPDFResult: function(aAction) {
-		if(Prefs.sightsCurrent && aAction != 'findhighlightallchange') {
+	onPDFResult: function(aAction, aCurrentPage) {
+		if(Prefs.sightsCurrent && aAction != 'findhighlightallchange' && aCurrentPage) {
 			Timers.init('sightsOnPDFState', () => { this.current(); }, 50);
 		}
 

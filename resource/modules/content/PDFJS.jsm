@@ -1,4 +1,4 @@
-// VERSION 1.0.6
+// VERSION 1.0.7
 
 this.PDFJS = {
 	// We need this to access protected properties, hidden from privileged code
@@ -67,10 +67,10 @@ this.PDFJS = {
 		});
 	},
 
-	callOnPDFResults: function(aAction) {
+	callOnPDFResults: function(aAction, aCurrentPage) {
 		for(let l of Finder._listeners) {
 			if(l.onPDFResult) {
-				try { l.onPDFResult(aAction); }
+				try { l.onPDFResult(aAction, aCurrentPage); }
 				catch(ex) { Cu.reportError(ex); }
 			}
 		}
@@ -142,9 +142,11 @@ this.PDFJS = {
 					});
 				}
 
-				for(let extractPromise of this.extractTextPromises) {
+				for(let pageIdx = 0; pageIdx < this.extractTextPromises.length; pageIdx++) {
+					let extractPromise = this.extractTextPromises[pageIdx];
 					extractPromise.then(() => {
-						PDFJS.callOnPDFResults(aAction);
+						let currentPage = this.selected.pageIdx == pageIdx;
+						PDFJS.callOnPDFResults(aAction, currentPage);
 					});
 				}
 			};

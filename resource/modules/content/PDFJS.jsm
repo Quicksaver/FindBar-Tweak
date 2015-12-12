@@ -1,4 +1,4 @@
-// VERSION 1.0.7
+// VERSION 1.0.8
 
 this.PDFJS = {
 	// We need this to access protected properties, hidden from privileged code
@@ -114,6 +114,20 @@ this.PDFJS = {
 				}
 			});
 
+			Piggyback.add('PDFJS', this.findController, 'updateMatchPosition', function(pageIndex, index, elements, beginIdx, endIdx) {
+				// Only scroll matches into view when a find actually runs, and not when the document is scrolled (rendering pages triggers this as well)
+				if(!this.showCurrentMatch) { return; }
+
+				if(this.selected.matchIdx === index && this.selected.pageIdx === pageIndex) {
+					let spot = Cu.cloneInto({
+						top: -50, // FIND_SCROLL_OFFSET_TOP
+						left: -400 // FIND_SCROLL_OFFSET_LEFT
+					}, PDFJS.unWrap);
+					PDFJS.unWrap.scrollIntoView(elements[beginIdx], spot, true);
+					this.showCurrentMatch = false;
+				}
+			});
+
 			// The best place to report a "finished" PDF.JS find operation, so we can properly react to the found matches,
 			// seems to be after each page's extractTextPromise(s) finishes, and also after the method reacting to it set by PDFFindController.nextMatch itself.
 			// Don't use Piggyback, we can't send privileged JS objects (arguments) into untrusted methods
@@ -131,6 +145,7 @@ this.PDFJS = {
 					}
 				}
 
+				this.showCurrentMatch = true;
 				this._nextMatch();
 
 				// in case FIT wants a specific match found, make sure the new find operation run doesn't override it
@@ -169,6 +184,8 @@ this.PDFJS = {
 		delete this.viewerApplication._supportsIntegratedFind;
 
 		Piggyback.revert('PDFJS', this.findController, 'updateUIState');
+		Piggyback.revert('PDFJS', this.findController, 'updateMatchPosition');
+		delete this.findController.showCurrentMatch;
 
 		this.findController.nextMatch = this.findController._nextMatch;
 		delete this.findController._nextMatch;

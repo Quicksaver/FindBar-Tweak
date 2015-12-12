@@ -1,4 +1,4 @@
-// VERSION 1.1.0
+// VERSION 1.1.1
 
 this.PDFJS = {
 	// We need this to access protected properties, hidden from privileged code
@@ -187,18 +187,21 @@ this.PDFJS = {
 			});
 
 			Piggyback.add('PDFJS', this.findController, 'updatePage', function(index) {
-				if(this.selected.pageIdx === index) {
+				let page = PDFJS.getPageView(index);
+
+				if(this.selected.pageIdx === index && this.showCurrentMatch) {
 					// Only scroll to the page if it isn't already in view.
-					let pageId = index +1;
-					let div = $('pageContainer'+pageId);
-					if(!PDFJS.isElementInView(div, true)) {
+					if(!page || !page.div || !PDFJS.isElementInView(page.div, true)) {
 						// If the page is selected, scroll the page into view, which triggers rendering the page, which adds the textLayer.
 						// Once the textLayer is build, it will scroll onto the selected match.
-						PDFJS.pdfViewer.scrollPageIntoView(pageId);
+						PDFJS.pdfViewer.scrollPageIntoView(index +1);
+
+						if(!page || !page.div) {
+							page = PDFJS.getPageView(index);
+						}
 					}
 				}
 
-				let page = PDFJS.getPageView(index);
 				if(page.textLayer) {
 					page.textLayer.updateMatches();
 				}
@@ -224,7 +227,9 @@ this.PDFJS = {
 				if(this.state.type != 'findagain') {
 					PDFJS.callOnPDFReset();
 				}
-				this.showCurrentMatch = true;
+				if(this.state.type != 'findhighlightallchange') {
+					this.showCurrentMatch = true;
+				}
 				this._nextMatch();
 
 				// in case FIT wants a specific match found, make sure the new find operation run doesn't override it

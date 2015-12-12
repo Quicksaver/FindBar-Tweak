@@ -1,4 +1,4 @@
-// VERSION 1.1.9
+// VERSION 1.1.10
 
 this.sights = {
 	noCurrent: false,
@@ -19,12 +19,12 @@ this.sights = {
 		}
 	},
 
-	onPDFResult: function(aAction, aCurrentPage) {
-		if(Prefs.sightsCurrent && aAction != 'findhighlightallchange' && aCurrentPage) {
+	onPDFResult: function(aAction, pIdx) {
+		if(Prefs.sightsCurrent && aAction != 'findhighlightallchange' && pIdx == PDFJS.findController.selected.pageIdx) {
 			Timers.init('sightsOnPDFState', () => { this.current(); }, 50);
 		}
 
-		// don't do this immediately, let onPDFMatches take over if it can, as there's no need to repeat
+		// don't do this immediately, let onPDFPageTextExtracted take over if it can, as there's no need to repeat
 		if(Prefs.sightsHighlights
 		&& (documentHighlighted != PDFJS.findController.state.highlightAll || Finder.highlightedWord != PDFJS.findController.state.query)) {
 			this._pdfMatches = new Map();
@@ -32,8 +32,8 @@ this.sights = {
 		}
 	},
 
-	onPDFMatches: function(newMatches) {
-		if(Prefs.sightsHighlights && newMatches) {
+	onPDFPageTextExtracted: function() {
+		if(Prefs.sightsHighlights) {
 			Timers.cancel('sightsOnHighlightsOnPDFState');
 			this._pdfMatches = new Map();
 			this.highlights();
@@ -297,7 +297,7 @@ this.sights = {
 
 	highlights: function() {
 		if(isPDFJS) {
-			if(Finder.matchesPDF == 0 || !PDFJS.findController.state.query || !documentHighlighted) { return; }
+			if(!PDFJS.matches || !PDFJS.findController.state.query || !documentHighlighted) { return; }
 
 			// We should wait until the visible pages have finished rendering
 			var visible = PDFJS.pdfViewer._getVisiblePages();

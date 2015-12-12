@@ -1,4 +1,4 @@
-// VERSION 1.1.4
+// VERSION 1.2.0
 
 this.getDocProperty = function(doc, prop, min) {
 	try {
@@ -17,9 +17,19 @@ this.getDocProperty = function(doc, prop, min) {
 };
 
 this.highlights = {
-	onPDFResult: function() {
-		// there's no point in calling trackPDFMatches for every page, we can stack them up
-		Timers.init('trackPDFMatches', () => { this.trackPDFMatches(); }, 50);
+	pagesTextsExtracted: new Set(),
+
+	onPDFResult: function(aAction, pIdx) {
+		if(!this.pagesTextsExtracted.has(pIdx)) {
+			PDFJS.matches += PDFJS.findController.pageMatches[pIdx].length;
+			this.pagesTextsExtracted.add(pIdx);
+			this.pageTextExtracted(pIdx);
+		}
+	},
+
+	onPDFReset: function() {
+		PDFJS.matches = 0;
+		this.pagesTextsExtracted = new Set();
 	},
 
 	MESSAGES: [
@@ -111,20 +121,13 @@ this.highlights = {
 	},
 
 	// Updates our methods when there are new pdf matches (it's an aSync process)
-	trackPDFMatches: function() {
-		// if chrome messages this and it's already running, we don't need to start another timer
-		if(Timers.trackPDFMatches) { return; }
-
-		// duh
-		if(!isPDFJS) { return; }
-
+	pageTextExtracted: function(pIdx) {
 		// This usually means the matches are still being retrieved, however if this isn't true it still doesn't mean it's fully finished.
 		// So later we set a timer to update itself after a while.
 		// Bugfix: https://github.com/Quicksaver/FindBar-Tweak/issues/65 : I used to also check for PDFJS.findController.active, but that caused high CPU sometimes,
 		// as that would never be set if the find bar was empty on load, so it kept setting the timer here.
 		if(!PDFJS.findController || PDFJS.findController.resumeCallback) {
-			Finder.matchesPDF = 0;
-			Timers.init('trackPDFMatches', () => { this.trackPDFMatches(); }, 0);
+			aSync(() => { this.pageTextExtracted(pIdx); }, 0);
 			return;
 		}
 
@@ -133,43 +136,25 @@ this.highlights = {
 
 		documentHighlighted = (PDFJS.findController.state && PDFJS.findController.state.highlightAll);
 
-		// No matches
-		var matches = 0;
-		if(PDFJS.findController.hadMatch) {
-			for(let page of PDFJS.findController.pageMatches) {
-				matches += page.length;
-			}
-		}
-
-		var newMatches = false;
-		if(Finder.highlightedWord != PDFJS.findController.state.query || Finder.matchesPDF !== matches) {
-			Finder.matchesPDF = matches;
+		if(Finder.highlightedWord != PDFJS.findController.state.query) {
 			Finder.highlightedWord = PDFJS.findController.state.query;
-			newMatches = true;
 		}
 
 		for(let l of Finder._listeners) {
-			if(l.onPDFMatches) {
-				try { l.onPDFMatches(newMatches); }
+			if(l.onPDFPageTextExtracted) {
+				try { l.onPDFPageTextExtracted(pIdx); }
 				catch(ex) { Cu.reportError(ex); }
 			}
 		}
 
-		if(newMatches || PDFJS.findController.pageContents.length != PDFJS.viewerApplication.pagesCount) {
-			message('TempPending', true);
-
-			// Because it might still not be finished, we should update later
-			Timers.init('trackPDFMatches', () => { this.trackPDFMatches(); }, 250);
-		} else {
-			message('TempPending', false);
-		}
+		message('TempPending', PDFJS.findController.pageContents.length != PDFJS.viewerApplication.pagesCount);
 	},
 
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIWebProgressListener, Ci.nsISupportsWeakReference])
 };
 
 Modules.LOADMODULE = function() {
-	Finder.matchesPDF = 0;
+	PDFJS.matches = 0;
 	Finder._syncPDFJS.__defineGetter__('readyState', function() { return document.readyState; });
 
 	RemoteFinderListener.addMessage('Highlights:Clean', () => {
@@ -197,7 +182,6 @@ Modules.LOADMODULE = function() {
 Modules.UNLOADMODULE = function() {
 	// these modules might not have loaded at all
 	try {
-		Timers.cancel('trackPDFMatches');
 		Listeners.remove(document, 'keyup', highlights);
 	}
 	catch(ex) {}
@@ -213,5 +197,5 @@ Modules.UNLOADMODULE = function() {
 	RemoteFinderListener.removeMessage('Highlights:Clean');
 
 	delete Finder._syncPDFJS.readyState;
-	delete Finder.matchesPDF;
+	delete PDFJS.matches;
 };

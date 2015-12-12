@@ -1,10 +1,14 @@
-// VERSION 1.0.5
+// VERSION 1.0.6
 
 this.counter = {
 	redoing: false,
 	current: 0,
 
-	onPDFMatches: function() {
+	onPDFResult: function(aAction) {
+		this.fill();
+	},
+
+	onPDFPageTextExtracted: function() {
 		this.fill();
 	},
 
@@ -66,11 +70,11 @@ this.counter = {
 			}
 
 			let str = '';
-			if(Finder.matchesPDF > 0) {
+			if(PDFJS.matches > 0) {
 				if(selected > 0) {
-					str = Strings.get('counter', 'counterFormat', [ ["$hit$", selected], ["$total$", Finder.matchesPDF] ], Finder.matchesPDF);
+					str = Strings.get('counter', 'counterFormat', [ ["$hit$", selected], ["$total$", PDFJS.matches] ], PDFJS.matches);
 				} else {
-					str = Strings.get('counter', 'counterSimple', [ ["$total$", Finder.matchesPDF] ], Finder.matchesPDF);
+					str = Strings.get('counter', 'counterSimple', [ ["$total$", PDFJS.matches] ], PDFJS.matches);
 				}
 			}
 

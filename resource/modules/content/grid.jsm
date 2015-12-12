@@ -1,4 +1,4 @@
-// VERSION 1.1.9
+// VERSION 1.2.0
 
 this.grids = {
 	allHits: new Set(),
@@ -7,6 +7,7 @@ this.grids = {
 	frames: new Set(),
 	pdfPageRows: new Map(),
 	_nextHit: 0,
+	pdfVanilla: false,
 
 	chromeGrid: {
 		_lastUsedRow: 0,
@@ -37,8 +38,10 @@ this.grids = {
 				Timers.init('resizeGridSpacers', () => { this.resizeSpacers(); });
 				break;
 
-			case 'scroll':
-				Timers.init('delayUpdatePDFGrid', () => { this.updatePDFGrid(); }, 50);
+			case 'textlayerrendered':
+				if(isPDFJS) {
+					this.updatePDFGrid(e.detail.pageNumber -1);
+				}
 				break;
 		}
 	},
@@ -61,28 +64,18 @@ this.grids = {
 		this.followCurrent();
 	},
 
-	onPDFMatches: function(newMatches) {
-		if(!newMatches) {
-			var matches = this.allHits.size;
-			for(let page of this.pdfPageRows.values()) {
-				matches += page.matches;
-			}
-
-			if(matches == Finder.matchesPDF) {
-				if(matches > 0 && !PDFJS.findController.state.highlightAll) {
-					this.reset();
-					return;
-				}
-
-				this.followCurrent();
-				return;
-			}
+	onPDFResult: function(aAction) {
+		if(aAction == 'findagain') {
+			this.followCurrent();
 		}
+	},
 
-		this.reset();
-		if(PDFJS.findController.state.highlightAll) {
-			this.fill();
-		}
+	onPDFPageTextExtracted: function(pIdx) {
+		this.fill(pIdx);
+	},
+
+	onPDFReset: function() {
+		this.reset(true);
 	},
 
 	get: function(frame) {
@@ -258,36 +251,47 @@ this.grids = {
 		}
 	},
 
-	fill: function() {
+	fill: function(pIdx) {
 		// For PDF files
 		if(isPDFJS) {
 			// don't fill the grid if there are too many highlights or when it's empty; it will be invisible so we don't need to do anything
-			if(Finder.matchesPDF == 0 || Finder.matchesPDF > Prefs.gridLimit) { return; }
-
-			var pages = PDFJS.findController.pageMatches;
-			var grid = this.get(content);
-
-			for(let pIdx in pages) {
-				if(pages[pIdx].length == 0) { continue; }
-
-				// If the page is rendered, place the actual highlights positions
-				let pageView = PDFJS.getPageView(pIdx);
-				if(pageView.textLayer
-				&& pageView.textLayer.renderingDone
-				&& pageView.renderingState == PDFJS.unWrap.RenderingStates.FINISHED) {
-					this.fillWithPDFPage(grid, pIdx);
-				}
-
-				// If the page isn't rendered yet, use a placeholder for the page with a pattern
-				else {
-					var row = this.placeHighlight(grid, { pIdx: pIdx }, true);
-					// we shouldn't need to send this to chrome, the row can take care of itself
-					new GridPDFPage(pIdx, row, pages[pIdx].length);
-				}
+			if(!PDFJS.matches || PDFJS.matches > Prefs.gridLimit || !PDFJS.findController.state.highlightAll) {
+				this.reset();
+				return;
 			}
 
-			// don't use the Listeners object, so we don't keep references to old nodes in there
-			$('viewerContainer').addEventListener('scroll', this);
+			if(pIdx === undefined) {
+				let pages = PDFJS.findController.pageMatches;
+				for(let pIdx in pages) {
+					this.fill(parseInt(pIdx));
+				}
+				return;
+			}
+
+			let grid = this.get(content);
+			let matches = PDFJS.findController.pageMatches[pIdx].length;
+			if(!matches) { return; }
+
+			if(this.pdfVanilla) {
+				// don't use the Listeners object, so we don't keep references to old nodes in there
+				$('viewerContainer').addEventListener('textlayerrendered', this);
+				this.pdfVanilla = false;
+			}
+
+			// If the page is rendered, place the actual highlights positions
+			let pageView = PDFJS.getPageView(pIdx);
+			if(pageView.textLayer
+			&& pageView.textLayer.renderingDone
+			&& pageView.renderingState == PDFJS.unWrap.RenderingStates.FINISHED) {
+				this.fillWithPDFPage(grid, pIdx);
+			}
+
+			// If the page isn't rendered yet, use a placeholder for the page with a pattern
+			else {
+				let row = this.placeHighlight(grid, { pIdx }, true);
+				// we shouldn't need to send this to chrome, the row can take care of itself
+				new GridPDFPage(pIdx, row, matches);
+			}
 		}
 
 		// For normal HTML pages
@@ -453,36 +457,21 @@ this.grids = {
 		}
 	},
 
-	updatePDFGrid: function() {
-		if(!isPDFJS) { return; }
+	updatePDFGrid: function(pIdx) {
+		let page = this.pdfPageRows.get(pIdx);
+		let view = PDFJS.getPageView(pIdx);
+		if(!page || !view || !view.textLayer) { return; }
 
-		var updatePages = [];
-		for(let [pIdx, page] of this.pdfPageRows) {
-			let pageView = PDFJS.getPageView(pIdx);
-			if(pageView.textLayer
-			&& pageView.textLayer.renderingDone
-			&& pageView.renderingState == PDFJS.unWrap.RenderingStates.FINISHED) {
-				updatePages.push(pIdx);
+		view.textLayer.textLayerRenderTask.promise.then(() => {
+			this.removeHighlight(page.row);
+			this.pdfPageRows.delete(pIdx);
 
-				this.removeHighlight(page.row);
-				this.pdfPageRows.delete(pIdx);
-			}
-		}
+			let grid = this.get(content);
+			this.clearHoverRows();
+			this.fillWithPDFPage(grid, pIdx);
 
-		if(updatePages.length == 0) { return; }
-
-		var grid = this.get(content);
-		this.clearHoverRows();
-
-		var updatedPages = {};
-		for(let page of updatePages) {
-			if(!updatedPages[page]) {
-				this.fillWithPDFPage(grid, page);
-				updatedPages[page] = true;
-			}
-		}
-
-		this.followCurrent();
+			this.followCurrent();
+		});
 	},
 
 	fillWithPDFPage: function(grid, pIdx) {
@@ -628,7 +617,14 @@ this.grids = {
 	},
 
 	// Prepares the grid to be filled with the highlights
-	reset: function() {
+	reset: function(force) {
+		if(isPDFJS) {
+			if(this.pdfVanilla && !force) { return; }
+			this.pdfVanilla = true;
+		} else {
+			this.pdfVanilla = false;
+		}
+
 		this.clean();
 
 		this.chromeGrid.linkedAO = null;
@@ -640,6 +636,8 @@ this.grids = {
 		if(isPDFJS) {
 			var offsetY = $$('div.toolbar')[0].clientHeight;
 			this.chromeGrid.style('paddingTop', offsetY +'px');
+
+			$('viewerContainer').removeEventListener('textlayerrendered', this);
 		}
 		// Special case for GMail
 		else if(document.baseURI.startsWith('https://mail.google.com/mail/')) {
@@ -1013,6 +1011,6 @@ Modules.UNLOADMODULE = function() {
 
 	grids.removeAllGrids();
 	if(isPDFJS) {
-		$('viewerContainer').removeEventListener('scroll', grids);
+		$('viewerContainer').removeEventListener('textlayerrendered', grids);
 	}
 };

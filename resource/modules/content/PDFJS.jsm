@@ -1,4 +1,4 @@
-// VERSION 1.0.9
+// VERSION 1.1.0
 
 this.PDFJS = {
 	// We need this to access protected properties, hidden from privileged code
@@ -26,6 +26,7 @@ this.PDFJS = {
 		this._unWrapped = null;
 		Finder.syncPDFJS();
 		this.hijack();
+		this.callOnPDFReset();
 	},
 
 	forceMatch: function(match) {
@@ -68,10 +69,19 @@ this.PDFJS = {
 		});
 	},
 
-	callOnPDFResults: function(aAction, aCurrentPage) {
+	callOnPDFReset: function() {
+		for(let l of Finder._listeners) {
+			if(l.onPDFReset) {
+				try { l.onPDFReset(); }
+				catch(ex) { Cu.reportError(ex); }
+			}
+		}
+	},
+
+	callOnPDFResults: function(aAction, pIdx) {
 		for(let l of Finder._listeners) {
 			if(l.onPDFResult) {
-				try { l.onPDFResult(aAction, aCurrentPage); }
+				try { l.onPDFResult(aAction, pIdx); }
 				catch(ex) { Cu.reportError(ex); }
 			}
 		}
@@ -211,6 +221,9 @@ this.PDFJS = {
 					}
 				}
 
+				if(this.state.type != 'findagain') {
+					PDFJS.callOnPDFReset();
+				}
 				this.showCurrentMatch = true;
 				this._nextMatch();
 
@@ -226,8 +239,7 @@ this.PDFJS = {
 				for(let pageIdx = 0; pageIdx < this.extractTextPromises.length; pageIdx++) {
 					let extractPromise = this.extractTextPromises[pageIdx];
 					extractPromise.then(() => {
-						let currentPage = this.selected.pageIdx == pageIdx;
-						PDFJS.callOnPDFResults(aAction, currentPage);
+						PDFJS.callOnPDFResults(aAction, pageIdx);
 					});
 				}
 			};

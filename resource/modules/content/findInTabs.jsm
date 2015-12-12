@@ -1,4 +1,4 @@
-// VERSION 1.2.6
+// VERSION 1.2.7
 
 this.FIT = {
 	// this keeps a list of all hits in a page, mapped to an id that can be used to keep things sync'ed up with the chrome process
@@ -131,7 +131,7 @@ this.FIT = {
 			// We don't want to keep re-selecting it.
 			if(PDFJS.findController.selected.pageIdx > -1 && PDFJS.findController.selected.matchIdx > -1) {
 				if(hit.pIdx == PDFJS.findController.selected.pageIdx && hit.mIdx == PDFJS.findController.selected.matchIdx) {
-					PDFJS.callOnPDFResults('find', true);
+					PDFJS.callOnPDFResults('find', hit.pIdx);
 					return;
 				}
 			}
@@ -150,7 +150,7 @@ this.FIT = {
 			}
 			else {
 				PDFJS.forceMatch(hit);
-				PDFJS.callOnPDFResults('find', true);
+				PDFJS.callOnPDFResults('find', hit.pIdx);
 				this.followCurrentHit();
 			}
 

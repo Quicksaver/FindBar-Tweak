@@ -1,6 +1,17 @@
 {
-	"current":"2.1.4",
+	"current":"2.1.5",
 	"releases": {
+		"2.1.5":{
+			"date":"December 12, 2015",
+			"notes":[
+				["updated","Ensure UTF-8 character encoding throughout the code"],
+				["updated","Small code cleanup - trim trailing whitespaces"],
+				["bugfix","(PDF reader) Sometimes it would show sights several times in the current match"],
+				["bugfix","(PDF reader) Sometimes it would jump to the current match while scrolling through the document, reseting the scroll position back to the position of the found match"],
+				["bugfix","(PDF reader) It would scroll the document every time to go to the next match, even if it was already visible"],
+				["bugfix","(PDF reader) The highlights grid in the scrollbar would flicker a lot while being constructed; it should be faster and smoother now as well"]
+			]
+		},
 		"2.1.4":{
 			"date":"December 1, 2015",
 			"notes":[

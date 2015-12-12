@@ -1,4 +1,4 @@
-// VERSION 1.1.8
+// VERSION 1.1.9
 
 this.sights = {
 	noCurrent: false,
@@ -300,7 +300,7 @@ this.sights = {
 			if(Finder.matchesPDF == 0 || !PDFJS.findController.state.query || !documentHighlighted) { return; }
 
 			// We should wait until the visible pages have finished rendering
-			var visible = PDFJS.viewerApplication.pdfViewer._getVisiblePages();
+			var visible = PDFJS.pdfViewer._getVisiblePages();
 			var pages = visible.views;
 			for(let page of pages) {
 				if(!page.view.textLayer

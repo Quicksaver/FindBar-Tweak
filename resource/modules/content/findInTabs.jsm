@@ -1,4 +1,4 @@
-// VERSION 1.2.5
+// VERSION 1.2.6
 
 this.FIT = {
 	// this keeps a list of all hits in a page, mapped to an id that can be used to keep things sync'ed up with the chrome process
@@ -319,7 +319,7 @@ this.FIT = {
 
 				var label = Strings.get('findInTabs', 'loadingPDFJS', [
 					['$partial$', PDFJS.findController.pageContents.length],
-					['$total$', PDFJS.viewerApplication.pdfViewer.pagesCount]
+					['$total$', PDFJS.pdfViewer.pagesCount]
 				]);
 				message('FIT:UnloadedTab', { label: label, doNothing: true });
 

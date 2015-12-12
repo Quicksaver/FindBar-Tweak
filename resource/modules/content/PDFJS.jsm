@@ -1,4 +1,4 @@
-// VERSION 1.0.8
+// VERSION 1.0.9
 
 this.PDFJS = {
 	// We need this to access protected properties, hidden from privileged code
@@ -15,9 +15,10 @@ this.PDFJS = {
 
 	get viewerApplication() { return this.unWrap && this.unWrap.PDFViewerApplication; },
 	get findController() { return this.viewerApplication && this.viewerApplication.findController; },
+	get pdfViewer() { return this.viewerApplication && this.viewerApplication.pdfViewer; },
 
 	getPageView: function(pIdx) {
-		return this.viewerApplication.pdfViewer.getPageView(pIdx);
+		return this.pdfViewer.getPageView(pIdx);
 	},
 
 	// make sure we don't keep old references to previous documents
@@ -76,6 +77,48 @@ this.PDFJS = {
 		}
 	},
 
+	isElementInView: function(element, soft) {
+		let parent = element.offsetParent;
+
+		// discriminating in the same way PDF.JS does
+		if(!parent) {
+			// Original treats this as if it was an error, but I'm coming across a lot of instances where this happens,
+			// and this information doesn't seem useful at all.
+			//Cu.reportError("offsetParent is not set -- cannot scroll");
+			return false;
+		}
+
+		let offsetTop = element.offsetTop +element.clientTop;
+		let offsetLeft = element.offsetLeft +element.clientLeft;
+		while(parent.clientHeight === parent.scrollHeight || getComputedStyle(parent).overflow === 'hidden') {
+			if(parent.dataset && parent.dataset._scaleY) {
+				offsetTop /= parent.dataset._scaleY;
+				offsetLeft /= parent.dataset._scaleX;
+			}
+			offsetTop += parent.offsetTop +parent.clientTop;
+			offsetLeft += parent.offsetLeft +parent.clientLeft;
+			parent = parent.offsetParent;
+			if(!parent) {
+				return; // no need to scroll
+			}
+		}
+		let offsetBottom = offsetTop +element.clientHeight;
+		let offsetRight = offsetLeft +element.clientWidth;
+
+		let scrollTop = parent.scrollTop;
+		let scrollLeft = parent.scrollLeft;
+		let scrollBottom = scrollTop +parent.clientHeight;
+		let scrollRight = scrollLeft +parent.clientWidth;
+
+		if(!soft) {
+			return offsetTop >= scrollTop && offsetLeft >= scrollLeft && offsetBottom <= scrollBottom && offsetRight <= scrollRight;
+		} else {
+			let visibleY = (offsetTop >= scrollTop && offsetTop <= scrollBottom) || (offsetBottom >= scrollTop && offsetBottom <= scrollBottom);
+			let visibleX = (offsetLeft >= scrollLeft && offsetLeft <= scrollRight) || (offsetRight >= scrollLeft && offsetRight <= scrollRight);
+			return visibleY && visibleX;
+		}
+	},
+
 	// We're hijacking PDFJS's findbar, as it is completely embedded in its DOM for remote browsers, so we can't use it with our methods.
 	// Instead, we go around it, so the native (chrome) findbar can be used instead all the time.
 	hijack: function() {
@@ -119,12 +162,35 @@ this.PDFJS = {
 				if(!this.showCurrentMatch) { return; }
 
 				if(this.selected.matchIdx === index && this.selected.pageIdx === pageIndex) {
-					let spot = Cu.cloneInto({
-						top: -50, // FIND_SCROLL_OFFSET_TOP
-						left: -400 // FIND_SCROLL_OFFSET_LEFT
-					}, PDFJS.unWrap);
-					PDFJS.unWrap.scrollIntoView(elements[beginIdx], spot, true);
 					this.showCurrentMatch = false;
+
+					// Check if the match is already in view, no need to scroll if it is.
+					let element = elements[beginIdx];
+					if(PDFJS.isElementInView(element)) { return; }
+
+					let spot = Cu.cloneInto({
+						top: PDFJS.unWrap.FIND_SCROLL_OFFSET_TOP,
+						left: PDFJS.unWrap.FIND_SCROLL_OFFSET_LEFT
+					}, PDFJS.unWrap);
+					PDFJS.unWrap.scrollIntoView(element, spot, true);
+				}
+			});
+
+			Piggyback.add('PDFJS', this.findController, 'updatePage', function(index) {
+				if(this.selected.pageIdx === index) {
+					// Only scroll to the page if it isn't already in view.
+					let pageId = index +1;
+					let div = $('pageContainer'+pageId);
+					if(!PDFJS.isElementInView(div, true)) {
+						// If the page is selected, scroll the page into view, which triggers rendering the page, which adds the textLayer.
+						// Once the textLayer is build, it will scroll onto the selected match.
+						PDFJS.pdfViewer.scrollPageIntoView(pageId);
+					}
+				}
+
+				let page = PDFJS.getPageView(index);
+				if(page.textLayer) {
+					page.textLayer.updateMatches();
 				}
 			});
 
@@ -185,6 +251,7 @@ this.PDFJS = {
 
 		Piggyback.revert('PDFJS', this.findController, 'updateUIState');
 		Piggyback.revert('PDFJS', this.findController, 'updateMatchPosition');
+		Piggyback.revert('PDFJS', this.findController, 'updatePage');
 		delete this.findController.showCurrentMatch;
 
 		this.findController.nextMatch = this.findController._nextMatch;

@@ -1,9 +1,9 @@
-// VERSION 1.1.3
+// VERSION 1.1.4
 
 this.getDocProperty = function(doc, prop, min) {
 	try {
 		if(isPDFJS && PDFJS.viewerApplication) {
-			return PDFJS.viewerApplication.pdfViewer.container[prop];
+			return PDFJS.pdfViewer.container[prop];
 		}
 
 		if(doc instanceof Ci.nsIDOMHTMLDocument && doc.body) {

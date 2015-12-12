@@ -1,4 +1,4 @@
-// VERSION 1.1.1
+// VERSION 1.1.2
 
 this.PDFJS = {
 	// We need this to access protected properties, hidden from privileged code
@@ -30,6 +30,7 @@ this.PDFJS = {
 	},
 
 	forceMatch: function(match) {
+		this.findController.showCurrentMatch = true;
 		this.findController.selected.pageIdx = match.pIdx;
 		this.findController.selected.matchIdx = match.mIdx;
 		this.findController.offset.pageIdx = match.pIdx;

@@ -1,4 +1,4 @@
-// VERSION 1.1.2
+// VERSION 1.1.3
 
 this.PDFJS = {
 	// We need this to access protected properties, hidden from privileged code
@@ -192,14 +192,10 @@ this.PDFJS = {
 
 				if(this.selected.pageIdx === index && this.showCurrentMatch) {
 					// Only scroll to the page if it isn't already in view.
-					if(!page || !page.div || !PDFJS.isElementInView(page.div, true)) {
+					if(!PDFJS.isElementInView(page.div, true)) {
 						// If the page is selected, scroll the page into view, which triggers rendering the page, which adds the textLayer.
 						// Once the textLayer is build, it will scroll onto the selected match.
 						PDFJS.pdfViewer.scrollPageIntoView(index +1);
-
-						if(!page || !page.div) {
-							page = PDFJS.getPageView(index);
-						}
 					}
 				}
 

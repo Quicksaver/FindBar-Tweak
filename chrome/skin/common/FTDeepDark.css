@@ -1,0 +1,46 @@
+@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
+@-moz-document url("chrome://browser/content/browser.xul") {
+
+	/* ideally, this should be included in FTDeepDark itself */
+
+	findbar[movetotop]:not([inPDFJS]) {
+		background-image: linear-gradient(rgb(35,35,35), rgb(24,24,24)) !important;
+		-moz-border-bottom-colors: rgb(0,0,0) !important;
+		-moz-border-left-colors: rgb(0,0,0) !important;
+		-moz-border-right-colors: rgb(0,0,0) !important;
+	}
+
+	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
+	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
+		box-shadow:     2px -2px 0 -2px rgb(0,0,0), /* FindBar's border color */
+				7px -4px 0px -4px rgb(35,35,35), /* FindBar's background color */
+				6px -4px 0px -4px rgb(35,35,35) !important; /* FindBar's background color */
+	}
+	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
+	findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
+		box-shadow:     -2px -2px 0 -2px rgb(0,0,0), /* FindBar's border color */
+				-7px -4px 0px -4px rgb(35,35,35), /* FindBar's background color */
+				-6px -4px 0px -4px rgb(35,35,35) !important; /* FindBar's background color */
+	}
+
+	#navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]) {
+		background-image: linear-gradient(rgb(48,48,48), rgb(35,35,35)) !important;
+	}
+
+	#navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
+	#navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
+		box-shadow:     2px -2px 0 -2px rgb(0,0,0), /* FindBar's border color */
+				7px -4px 0px -4px rgb(48,48,48), /* FindBar's background color */
+				6px -4px 0px -4px rgb(48,48,48) !important; /* FindBar's background color */
+	}
+	#navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
+	#navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
+		box-shadow:     -2px -2px 0 -2px rgb(0,0,0), /* FindBar's border color */
+				-7px -4px 0px -4px rgb(48,48,48), /* FindBar's background color */
+				-6px -4px 0px -4px rgb(48,48,48) !important; /* FindBar's background color */
+	}
+
+	#navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]) .findbar-container {
+		background-image: none !important;
+	}
+}

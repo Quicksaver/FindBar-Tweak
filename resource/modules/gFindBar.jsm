@@ -1,4 +1,4 @@
-// VERSION 1.2.3
+// VERSION 1.2.4
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return FITFull || viewSource || window.gFindBarInitialized; });
@@ -86,7 +86,10 @@ this.baseInit = function(bar) {
 					break;
 
 				case "Findbar:Keypress":
-					return this._onBrowserKeypress(aMessage.data);
+					if(Services.vc.compare(Services.appinfo.version, "46.0a1") < 0) {
+						return this._onBrowserKeypress(aMessage.data);
+					}
+					return this._onBrowserKeypress(aMessage.data.fakeEvent, aMessage.data.shouldFastFind);
 			}
 		});
 	}

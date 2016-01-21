@@ -1,10 +1,7 @@
-// VERSION 1.0.0
+// VERSION 2.0.0
 
-Services.scriptloader.loadSubScript("resource://findbartweak/modules/utils/content.js", this);
-
-this.findbartweak = this.__contentEnvironment;
-delete this.__contentEnvironment;
-
-this.findbartweak.objName = 'findbartweak';
-this.findbartweak.objPathString = 'findbartweak';
-this.findbartweak.init();
+// By using a JSM, we can initialize each individual tab (frame) with our scripts without having to instanciate the same objects with each one.
+(function(frame) {
+	Components.utils.import("resource://findbartweak/modules/content/utils/ModuleInSandbox.jsm");
+	ModuleInSandbox.init('findbartweak', frame);
+})(this);

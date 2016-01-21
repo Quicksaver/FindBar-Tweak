@@ -1,13 +1,14 @@
-// VERSION 1.0.1
+// VERSION 1.0.2
 
 this.highlightByDefault = {
 	hook: function() {
 		message('HighlightByDefault');
 	},
 
-	onDOMContentLoaded: function(e) {
+	handleEvent: function(e) {
+		// We're listening only for DOMContentLoaded here.
 		// this is the content document of the loaded page.
-		var doc = e.originalTarget;
+		let doc = e.originalTarget;
 		if(doc instanceof content.HTMLDocument) {
 			// is this an inner frame?
 			// Find the root document:

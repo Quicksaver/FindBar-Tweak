@@ -1,4 +1,4 @@
-// VERSION 1.0.19
+// VERSION 1.0.20
 
 this.__defineGetter__('isPDFJS', function() { return Finder.isPDFJS; });
 
@@ -875,9 +875,10 @@ this.Finder = {
 
 	// Most of the update work fall either here or in onStateChange events, which seem to be the most reliable to track for;
 	// onLocationChange doesn't always work for dynamically loaded pages (to keep innerText accurate at least).
-	onDOMContentLoaded: function(e) {
+	handleEvent: function(e) {
+		// We're listening only for DOMContentLoaded here.
 		// this is the content document of the loaded page.
-		var doc = e.originalTarget;
+		let doc = e.originalTarget;
 		if(doc instanceof content.HTMLDocument) {
 			this.resetInnerText();
 

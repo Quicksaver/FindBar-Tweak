@@ -1,4 +1,4 @@
-// VERSION 1.3.13
+// VERSION 1.4.0
 
 objName = 'findbartweak';
 objPathString = 'findbartweak';
@@ -14,15 +14,6 @@ addonUris = {
 	development: 'http://fasezero.com/addons/'
 };
 
-paneList = [
-	[ "paneGeneral" ],
-	[ "paneAppearance" ],
-	[ "paneHighlights" ],
-	[ "paneSights", true ],
-	[ "paneFindAll", true ],
-	[ "paneTweaks", true ]
-];
-
 // We define this here so we can use it also as the default value for the preference
 this.__defineGetter__('minTextboxWidth', function() {
 	if(DARWIN) { return 176; }
@@ -34,7 +25,7 @@ this.__defineGetter__('minTextboxWidth', function() {
 });
 
 // Some of our preferences should coincide with firefox defaults that may change with OS
-let defaultBranch = Services.prefs.getDefaultBranch('');
+var defaultBranch = Services.prefs.getDefaultBranch('');
 
 prefList = {
 	highlightByDefault: true,
@@ -102,6 +93,18 @@ prefList = {
 	FAYTprefill: defaultBranch.getBoolPref('accessibility.typeaheadfind.prefillwithselection'),
 	resetNative: false
 };
+
+// If we're initializing in a content process, we don't care about the rest
+if(isContent) { throw 'isContent'; }
+
+paneList = [
+	[ "paneGeneral" ],
+	[ "paneAppearance" ],
+	[ "paneHighlights" ],
+	[ "paneSights", true ],
+	[ "paneFindAll", true ],
+	[ "paneTweaks", true ]
+];
 
 function startAddon(window) {
 	prepareObject(window);

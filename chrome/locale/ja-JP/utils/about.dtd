@@ -1,6 +1,6 @@
 <!ENTITY about.paneTitle "このアドオンについて">
 <!ENTITY about.version "バージョン {v}">
-<!ENTITY about.versionDivider " - ">
+<!ENTITY about.versionDivider "-">
 <!ENTITY about.uptodate "おめでとう！アップデートが完了しました！">
 <!ENTITY about.needsupdate "最新バージョンがあります！">
 <!ENTITY about.description "このバージョンのリリース・ノートを読んで、既知の問題かどうかを確認してください。あなたが見つけた問題点、又は将来のリリースのための提案があれば、私に知らせてください。">

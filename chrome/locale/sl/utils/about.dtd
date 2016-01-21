@@ -1,6 +1,6 @@
 <!ENTITY about.paneTitle "O dodatku">
 <!ENTITY about.version "Različica {v}">
-<!ENTITY about.versionDivider " - ">
+<!ENTITY about.versionDivider "-">
 <!ENTITY about.uptodate "posodobljen, čestitke!">
 <!ENTITY about.needsupdate "posodobitev je na voljo!">
 <!ENTITY about.description "Spodaj preverite &quot;Opombe ob izdaji&quot; in &quot;Znane težave&quot; za to različico. Obvestite me o kakršnikoli težavi, ki jo najdete ali vprašanjih za prihodnje izdaje.">

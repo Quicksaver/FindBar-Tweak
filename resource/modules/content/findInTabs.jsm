@@ -1,4 +1,4 @@
-// VERSION 1.2.7
+// VERSION 1.2.8
 
 this.FIT = {
 	// this keeps a list of all hits in a page, mapped to an id that can be used to keep things sync'ed up with the chrome process
@@ -73,17 +73,21 @@ this.FIT = {
 	},
 
 	handleEvent: function(e) {
-		if(e.target == content) {
-			message('FIT:Update');
-		}
-	},
+		switch(e.type) {
+			case 'focus':
+				if(e.target == content) {
+					message('FIT:Update');
+				}
+				break;
 
-	onDOMContentLoaded: function(e) {
-		// this is the content document of the loaded page.
-		var doc = e.originalTarget;
-		if(doc instanceof content.HTMLDocument) {
-			this.resetHits();
-			message('FIT:Update');
+			case 'DOMContentLoaded':
+				// this is the content document of the loaded page.
+				let doc = e.originalTarget;
+				if(doc instanceof content.HTMLDocument) {
+					this.resetHits();
+					message('FIT:Update');
+				}
+				break;
 		}
 	},
 

@@ -1,4 +1,4 @@
-// VERSION 1.2.0
+// VERSION 1.2.1
 
 this.getDocProperty = function(doc, prop, min) {
 	try {
@@ -51,6 +51,18 @@ this.highlights = {
 			case 'keyup':
 				this.esc(e);
 				break;
+
+			// Commands a reHighlight if needed on any tab, triggered from frames as well
+			// Mainly for back/forward actions
+			case 'DOMContentLoaded':
+				// this is the content document of the loaded page.
+				if(e.originalTarget instanceof content.HTMLDocument) {
+					documentReHighlight = true;
+
+					// Bugfix: don't do immediately! Pages with lots of frames will trigger this each time a frame is loaded, can slowdown page load
+					this.delay();
+				}
+				break;
 		}
 	},
 
@@ -80,18 +92,6 @@ this.highlights = {
 
 	onStateChange: function(aWebProgress, aRequest, aStateFlags, aStatus) {
 		if(!aWebProgress.isLoadingDocument && aWebProgress.DOMWindow == content) {
-			this.delay();
-		}
-	},
-
-	// Commands a reHighlight if needed on any tab, triggered from frames as well
-	// Mainly for back/forward actions
-	onDOMContentLoaded: function(e) {
-		// this is the content document of the loaded page.
-		if(e.originalTarget instanceof content.HTMLDocument) {
-			documentReHighlight = true;
-
-			// Bugfix: don't do immediately! Pages with lots of frames will trigger this each time a frame is loaded, can slowdown page load
 			this.delay();
 		}
 	},

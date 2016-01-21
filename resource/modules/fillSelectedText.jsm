@@ -1,4 +1,4 @@
-// VERSION 2.0.4
+// VERSION 2.0.5
 
 this.fillSelectedText = function(m) {
 	var selText = m.data;
@@ -43,7 +43,7 @@ this.fillSelectedText = function(m) {
 
 Modules.LOADMODULE = function() {
 	Messenger.listenWindow(window, 'FillSelectedText', fillSelectedText);
-	Messenger.loadInWindow(window, 'fillSelectedText');
+	Messenger.loadInWindow(window, 'fillSelectedText', false);
 };
 
 Modules.UNLOADMODULE = function() {

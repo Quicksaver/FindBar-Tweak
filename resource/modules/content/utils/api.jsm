@@ -1,47 +1,53 @@
-// VERSION 1.0.1
+// VERSION 1.1.0
 
 this.api = {
-	onDOMContentLoaded: function(e) {
-		// this is the content document of the loaded page.
-		var doc = e.originalTarget;
-		if(doc instanceof content.HTMLDocument) {
-			// is this an inner frame?
-			// Find the root document:
-			while(doc.defaultView.frameElement) {
-				doc = doc.defaultView.frameElement.ownerDocument;
+	handleEvent: function(e) {
+		let doc = e.originalTarget;
+		if(doc && doc.defaultView && doc instanceof doc.defaultView.HTMLDocument) {
+			// is this an inner frame? Skip if it is
+			if(doc.defaultView.frameElement && doc !== doc.defaultView.frameElement.ownerDocument) { return; }
+
+			if(e.type == 'load') {
+				doc.defaultView.removeEventListener('load', this);
 			}
 
-			if(doc == document) {
-				this.checkPage();
-			}
+			this.checkPage(doc);
 		}
 	},
 
-	checkPage: function() {
+	checkPage: function(document) {
+		let content = document.defaultView;
 		if(document.readyState != 'complete') {
-			var waiting = () => {
-				content.removeEventListener('load', waiting);
-				this.checkPage();
-			};
-			content.addEventListener('load', waiting);
+			content.addEventListener('load', this);
 			return;
 		}
 
 		if(document.documentURI.startsWith(addonUris.development)) {
-			var unwrap = XPCNativeWrapper.unwrap(content);
+			let unwrap = XPCNativeWrapper.unwrap(content);
 			if(unwrap.enable) {
 				unwrap.enable(objPathString);
 			}
 		}
+	},
+
+	onFrameAdded: function(frame) {
+		frame.addEventListener('DOMContentLoaded', this);
+
+		let document = frame.content && frame.content.document;
+		if(document && document instanceof frame.content.HTMLDocument) {
+			this.checkPage(document);
+		}
+	},
+
+	onFrameDeleted: function(frame) {
+		frame.removeEventListener('DOMContentLoaded', this);
 	}
 };
 
 Modules.LOADMODULE = function() {
-	DOMContentLoaded.add(api);
-
-	api.checkPage();
+	Frames.register(api);
 };
 
 Modules.UNLOADMODULE = function() {
-	DOMContentLoaded.remove(api);
+	Frames.unregister(api);
 };

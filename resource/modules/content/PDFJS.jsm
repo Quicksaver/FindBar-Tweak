@@ -1,4 +1,4 @@
-// VERSION 1.1.3
+// VERSION 1.1.4
 
 this.PDFJS = {
 	// We need this to access protected properties, hidden from privileged code
@@ -281,9 +281,10 @@ this.PDFJS = {
 		this.viewerApplication.initialized = inited;
 	},
 
-	onDOMContentLoaded: function(e) {
+	handleEvent: function(e) {
+		// We're listening only for DOMContentLoaded here.
 		// this is the content document of the loaded page.
-		var doc = e.originalTarget;
+		let doc = e.originalTarget;
 		if(doc instanceof content.HTMLDocument) {
 			// is this an inner frame?
 			// Find the root document:

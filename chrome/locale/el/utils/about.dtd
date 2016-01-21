@@ -1,6 +1,6 @@
 <!ENTITY about.paneTitle "Περί">
 <!ENTITY about.version "Έκδοση {v}">
-<!ENTITY about.versionDivider " - ">
+<!ENTITY about.versionDivider "-">
 <!ENTITY about.uptodate "ενημερωμένη, συγχαρητήρια!">
 <!ENTITY about.needsupdate "υπάρχει διαθέσιμη μια ενημέρωση!">
 <!ENTITY about.description "Ελέγξτε τις «Σημειώσεις έκδοσης» και τα «Γνωστά ζητήματα» για αυτή την έκδοση παρακάτω. Επιτρέψτε μου να ξέρω για τυχόν προβλήματα που θα βρείτε, ή αν έχετε κάποιες προτάσεις για μελλοντικές εκδόσεις.">

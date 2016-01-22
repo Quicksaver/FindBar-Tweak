@@ -1,4 +1,4 @@
-// VERSION 1.4.0
+// VERSION 1.4.1
 
 objName = 'findbartweak';
 objPathString = 'findbartweak';
@@ -84,6 +84,8 @@ prefList = {
 	FAYTmode: 'quick',
 
 	// for internal use
+	highlightColorContrast: '',
+	selectColorContrast: '',
 	findButtonMoved: false,
 	findButtonOriginalPos: -1,
 
@@ -116,7 +118,17 @@ function stopAddon(window) {
 }
 
 function onStartup(aReason) {
-	Modules.load('builtinPrefs');
+	// These preferences are proxies for the following native Firefox preferences.
+	Prefs.proxyNative('FAYTtimeout', 'timeout', 5000, 'typeaheadfind', 'accessibility');
+	Prefs.proxyNative('FAYTprefill', 'prefillwithselection', true, 'typeaheadfind', 'accessibility');
+	Prefs.proxyNative('FAYTenabled', 'typeaheadfind', false, 'accessibility', '');
+	Prefs.proxyNative('layoutEatSpaces', 'eat_space_to_next_word', true, 'word_select', 'layout');
+	Prefs.proxyNative('layoutStopAtPunctuation', 'stop_at_punctuation', true, 'word_select', 'layout');
+	Prefs.proxyNative('highlightColor', 'textHighlightBackground', '', 'ui', '');
+	Prefs.proxyNative('highlightColorContrast', 'textHighlightForeground', '', 'ui', '');
+	Prefs.proxyNative('selectColor', 'textSelectBackgroundAttention', '', 'ui', '');
+	Prefs.proxyNative('selectColorContrast', 'textSelectForeground', '', 'ui', '');
+
 	Modules.load('highlightColor');
 	Modules.load('findInTabsSandbox');
 	Modules.load('compatibilityFix/sandboxFixes');
@@ -137,5 +149,4 @@ function onShutdown(aReason) {
 	Modules.unload('compatibilityFix/sandboxFixes');
 	Modules.unload('findInTabsSandbox');
 	Modules.unload('highlightColor');
-	Modules.unload('builtinPrefs');
 }

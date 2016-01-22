@@ -1,4 +1,4 @@
-// VERSION 2.2.5
+// VERSION 2.2.6
 
 this.SIGHTS_SIZE_FOCUS = 400;
 this.SIGHTS_SIZE_CIRCLE = 100;
@@ -261,10 +261,10 @@ this.sights = {
 		var color = Prefs.sightsSameColor ? Prefs.selectColor : Prefs.sightsSameColorAll ? Prefs.highlightColor : Prefs.sightsColor;
 		var m = color.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
 		if(!m) { return; }
-		var rgb = getRGBfromString(m);
+		var rgb = highlightColor.getRGBfromString(m);
 
 		var c = rgb.r+','+rgb.g+','+rgb.b;
-		var o = (darkBackgroundRGB(rgb)) ? '255,255,255' : '0,0,0';
+		var o = (highlightColor.darkBackgroundRGB(rgb)) ? '255,255,255' : '0,0,0';
 		var p = 'rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+',0.85) rgba('+o+',0.5) rgba('+c+',0.4) rgba('+c+',0.15)';
 
 		sscode += '\
@@ -279,10 +279,10 @@ this.sights = {
 		var color = Prefs.sightsAllSameColor ? Prefs.highlightColor : Prefs.sightsAllColor;
 		var m = color.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
 		if(!m) { return; }
-		var rgb = getRGBfromString(m);
+		var rgb = highlightColor.getRGBfromString(m);
 
 		var c = rgb.r+','+rgb.g+','+rgb.b;
-		var o = (darkBackgroundRGB(rgb)) ? '255,255,255' : '0,0,0';
+		var o = (highlightColor.darkBackgroundRGB(rgb)) ? '255,255,255' : '0,0,0';
 		var p = 'rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+',0.85) rgba('+o+',0.5) rgba('+c+',0.4) rgba('+c+',0.15)';
 
 		sscode += '\

@@ -119,6 +119,7 @@ function stopAddon(window) {
 
 function onStartup(aReason) {
 	// These preferences are proxies for the following native Firefox preferences.
+	// No need to undo these on shutdown, they will be removed by the Prefs object deinitialization anyway.
 	Prefs.proxyNative('FAYTtimeout', 'timeout', 5000, 'typeaheadfind', 'accessibility');
 	Prefs.proxyNative('FAYTprefill', 'prefillwithselection', true, 'typeaheadfind', 'accessibility');
 	Prefs.proxyNative('FAYTenabled', 'typeaheadfind', false, 'accessibility', '');

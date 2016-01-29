@@ -1,9 +1,6 @@
-// VERSION 1.1.22
+// VERSION 1.1.23
 
 Modules.LOADMODULE = function() {
-	toggleAttribute(document.documentElement, objName+'-FF43', Services.vc.compare(Services.appinfo.version, "43.0a1") >= 0);
-	toggleAttribute(document.documentElement, objName+'-FF44', Services.vc.compare(Services.appinfo.version, "44.0a1") >= 0);
-
 	if(!viewSource && !FITFull) {
 		AddonManager.getAddonByID('autopager@mozilla.org', function(addon) {
 			Modules.loadIf('compatibilityFix/autopager', (addon && addon.isActive));
@@ -47,7 +44,4 @@ Modules.UNLOADMODULE = function() {
 	Modules.unload('compatibilityFix/noScript');
 	Modules.unload('compatibilityFix/autopager');
 	Modules.unload('compatibilityFix/InstantFox');
-
-	removeAttribute(document.documentElement, objName+'-FF43');
-	removeAttribute(document.documentElement, objName+'-FF44');
 };

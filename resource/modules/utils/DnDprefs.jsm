@@ -1,4 +1,4 @@
-// VERSION 1.0.3
+// VERSION 1.0.4
 Modules.UTILS = true;
 
 // DnDprefs -	this is an adaptation of the browser's gCustomizeMode - http://mxr.mozilla.org/mozilla-central/source/browser/components/customizableui/CustomizeMode.jsm
@@ -361,13 +361,15 @@ this.DnDprefs = {
 		};
 
 		try {
-			let obj = JSON.parse(pref.value) || {};
-			for(let id in obj) {
-				pref.placements.order.push(id);
+			if(pref.value) {
+				let obj = JSON.parse(pref.value) || {};
+				for(let id in obj) {
+					pref.placements.order.push(id);
 
-				let setting = this._newSetting(pref, id);
-				setting._enable = !!obj[id]; // don't trigger _savePlacements()
-				pref.placements.settings.set(id, setting);
+					let setting = this._newSetting(pref, id);
+					setting._enable = !!obj[id]; // don't trigger _savePlacements()
+					pref.placements.settings.set(id, setting);
+				}
 			}
 		}
 		catch(ex) {

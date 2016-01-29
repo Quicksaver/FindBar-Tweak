@@ -1,4 +1,4 @@
-// VERSION 2.6.0
+// VERSION 2.6.1
 Modules.UTILS = true;
 Modules.BASEUTILS = true;
 
@@ -31,6 +31,8 @@ Modules.BASEUTILS = true;
 //	nPrefName - (string) name of the native preference we want to proxy
 //	nPrefDefaultValue - (string/bool/int) default value this preference has in Firefox.
 //	see setDefaults()
+// unProxyNative(cPref, nPrefName) - undoes proxying a native preference by the above proxyNative() method
+//	see proxyNative()
 this.Prefs = {
 	instances: new Map(),
 	natives: new Set(),
@@ -246,6 +248,26 @@ this.Prefs = {
 		this.listen(nPrefName, handler);
 	},
 
+	unProxyNative: function(cPref, nPrefName) {
+		for(let x of this.natives) {
+			if(x.nPref == nPrefName && x.cPref == cPref) {
+				this.shutdownProxy(x);
+				this.natives.delete(x);
+				break;
+			}
+		}
+	},
+
+	shutdownProxy: function(proxy) {
+		this.unlisten(proxy.cPref, proxy);
+		this.unlisten(proxy.nPref, proxy);
+		if(!this.resetNative) {
+			this[proxy.nPref] = proxy.revertValue;
+		} else {
+			this.reset(proxy.nPref);
+		}
+	},
+
 	clean: function() {
 		// Removing our change observer is enough, all actual listeners are just added to a sub-object that's about to be nuked with the add-on anyway.
 		for(let [ pref, instance ] of this.instances) {
@@ -258,13 +280,7 @@ this.Prefs = {
 	cleanNatives: function() {
 		// Restore native preferences to their value before our proxy preferences changed them (if applicable).
 		for(let x of this.natives) {
-			this.unlisten(x.cPref, x);
-			this.unlisten(x.nPref, x);
-			if(!this.resetNative) {
-				this[x.nPref] = x.revertValue;
-			} else {
-				this.reset(x.nPref);
-			}
+			this.shutdownProxy(x);
 		}
 	}
 };

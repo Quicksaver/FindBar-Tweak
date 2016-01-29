@@ -1,4 +1,4 @@
-// VERSION 2.2.6
+// VERSION 2.2.7
 
 this.SIGHTS_SIZE_FOCUS = 400;
 this.SIGHTS_SIZE_CIRCLE = 100;
@@ -258,14 +258,13 @@ this.sights = {
 				url-prefix("chrome://'+objPathString+'/content/utils/preferences.xul"),\n\
 				url-prefix("about:'+objPathString+'") {\n';
 
-		var color = Prefs.sightsSameColor ? Prefs.selectColor : Prefs.sightsSameColorAll ? Prefs.highlightColor : Prefs.sightsColor;
-		var m = color.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
-		if(!m) { return; }
-		var rgb = highlightColor.getRGBfromString(m);
+		let color = Prefs.sightsSameColor ? Prefs.selectColor : Prefs.sightsSameColorAll ? Prefs.highlightColor : Prefs.sightsColor;
+		let rgb = highlightColor.getRGBfromString(color);
+		if(!rgb) { return; }
 
-		var c = rgb.r+','+rgb.g+','+rgb.b;
-		var o = (highlightColor.darkBackgroundRGB(rgb)) ? '255,255,255' : '0,0,0';
-		var p = 'rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+',0.85) rgba('+o+',0.5) rgba('+c+',0.4) rgba('+c+',0.15)';
+		let c = rgb.r+','+rgb.g+','+rgb.b;
+		let o = (highlightColor.darkBackgroundRGB(rgb)) ? '255,255,255' : '0,0,0';
+		let p = 'rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+',0.85) rgba('+o+',0.5) rgba('+c+',0.4) rgba('+c+',0.15)';
 
 		sscode += '\
 				:root['+objName+'_UUID="'+_UUID+'"] box[anonid="highlightSights"][sightsStyle="focus"][current],\n\
@@ -276,14 +275,13 @@ this.sights = {
 					-moz-border-right-colors: '+p+' !important;\n\
 				}\n';
 
-		var color = Prefs.sightsAllSameColor ? Prefs.highlightColor : Prefs.sightsAllColor;
-		var m = color.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
-		if(!m) { return; }
-		var rgb = highlightColor.getRGBfromString(m);
+		color = Prefs.sightsAllSameColor ? Prefs.highlightColor : Prefs.sightsAllColor;
+		rgb = highlightColor.getRGBfromString(color);
+		if(!rgb) { return; }
 
-		var c = rgb.r+','+rgb.g+','+rgb.b;
-		var o = (highlightColor.darkBackgroundRGB(rgb)) ? '255,255,255' : '0,0,0';
-		var p = 'rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+',0.85) rgba('+o+',0.5) rgba('+c+',0.4) rgba('+c+',0.15)';
+		c = rgb.r+','+rgb.g+','+rgb.b;
+		o = (highlightColor.darkBackgroundRGB(rgb)) ? '255,255,255' : '0,0,0';
+		p = 'rgba('+c+',0.25) rgba('+c+',0.95) rgba('+o+',0.7) rgb('+c+') rgba('+c+',0.85) rgba('+o+',0.5) rgba('+c+',0.4) rgba('+c+',0.15)';
 
 		sscode += '\
 				window['+objName+'_UUID="'+_UUID+'"] box[anonid="highlightSights"][sightsStyle="focus"]:not([current]),\n\

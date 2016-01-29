@@ -1,46 +1,25 @@
-// VERSION 1.3.0
+// VERSION 1.3.1
 
 this.highlightColor = {
 	observe: function(aSubject, aTopic, aData) {
 		switch(aSubject) {
 			case 'highlightColor': {
-				let m = Prefs.highlightColor.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
-				if(m) {
-					let rgb = this.getRGBfromString(m);
-
-					Prefs.highlightColorContrast = (this.darkBackgroundRGB(rgb)) ? '#FFFFFF' : '#000000';
-
-					this.setHighlightColorStyleSheet(rgb);
-					Observers.notify('ReHighlightAll');
-				}
+				this.setHighlightColorStyleSheet();
 				break;
 			}
 			case 'selectColor':
 			case 'keepSelectContrast': {
-				let m = Prefs.selectColor.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
-				if(!m) { break; }
-				let rgb = this.getRGBfromString(m);
-
-				if(!Prefs.keepSelectContrast) {
-					Prefs.selectColorContrast = (this.darkBackgroundRGB(rgb)) ? '#FFFFFF' : '#000000';
-				} else {
-					let originalValue = Prefs.natives.get('textSelectForeground').revertValue;
-					if(originalValue) {
-						Prefs.selectColorContrast = originalValue;
-					} else {
-						Prefs.reset('selectColorContrast');
-					}
-				}
-
-				setSelectColorStyleSheet(rgb);
-				Observers.notify('ReHighlightAll');
+				this.setSelectColorStyleSheet();
 				break;
 			}
 
 		}
 	},
 
-	getRGBfromString: function(m) {
+	getRGBfromString: function(str) {
+		let m = str.match(/^\W*([0-9A-F]{3}([0-9A-F]{3})?)\W*$/i);
+		if(!m) { return null; }
+
 		// 6-char notation
 		if(m[1].length === 6) {
 			return {
@@ -61,7 +40,12 @@ this.highlightColor = {
 		return (0.213 *rgb.r /255 + 0.715 *rgb.g /255 + 0.072 *rgb.b /255 < 0.7);
 	},
 
-	setHighlightColorStyleSheet: function(rgb) {
+	setHighlightColorStyleSheet: function() {
+		let rgb = this.getRGBfromString(Prefs.highlightColor);
+		if(!rgb) { return; }
+
+		Prefs.highlightColorContrast = (this.darkBackgroundRGB(rgb)) ? '#FFFFFF' : '#000000';
+
 		let sscode = '\
 			@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n\
 			@-moz-document\n\
@@ -72,7 +56,6 @@ this.highlightColor = {
 						background-color: '+Prefs.highlightColor+';\n\
 					}\n\
 			}';
-
 		Styles.load('highlightColorStyleSheet', sscode, true);
 
 		sscode = '\
@@ -93,11 +76,25 @@ this.highlightColor = {
 					color: '+((this.darkBackgroundRGB(rgb)) ? '#FFFFFF' : '#000000')+';\n\
 				}\n\
 			}';
-
 		Styles.load('otherHighlightColorStyleSheet', sscode, true);
+
+		Observers.notify('ReHighlightAll');
 	},
 
-	setSelectColorStyleSheet: function(rgb) {
+	setSelectColorStyleSheet: function() {
+		let rgb = this.getRGBfromString(Prefs.selectColor);
+		if(!rgb) { return; }
+
+		if(!Prefs.keepSelectContrast) {
+			Prefs.selectColorContrast = (this.darkBackgroundRGB(rgb)) ? '#FFFFFF' : '#000000';
+		} else {
+			let originalValue = Prefs.natives.get('textSelectForeground').revertValue;
+			if(originalValue) {
+				Prefs.selectColorContrast = originalValue;
+			} else {
+				Prefs.reset('selectColorContrast');
+			}
+		}
 		let sscode = '\
 			@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n\
 			@-moz-document\n\
@@ -116,7 +113,6 @@ this.highlightColor = {
 						background-color: '+Prefs.selectColor+';\n\
 					}\n\
 			}';
-
 		Styles.load('selectColorStyleSheet', sscode, true);
 
 		sscode = '\
@@ -139,8 +135,9 @@ this.highlightColor = {
 					color: '+((this.darkBackgroundRGB(rgb)) ? '#FFFFFF' : '#000000')+';\n\
 				}\n\
 			}';
-
 		Styles.load('otherSelectColorStyleSheet', sscode, true);
+
+		Observers.notify('ReHighlightAll');
 	}
 };
 
@@ -148,6 +145,9 @@ Modules.LOADMODULE = function() {
 	Prefs.listen('highlightColor', highlightColor);
 	Prefs.listen('selectColor', highlightColor);
 	Prefs.listen('keepSelectContrast', highlightColor);
+
+	highlightColor.setHighlightColorStyleSheet();
+	highlightColor.setSelectColorStyleSheet();
 };
 
 Modules.UNLOADMODULE = function() {

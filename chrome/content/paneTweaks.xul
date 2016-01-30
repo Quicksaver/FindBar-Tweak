@@ -24,6 +24,7 @@
 			<preference id="pref-emptySelectedText" name="extensions.findbartweak.emptySelectedText" type="bool"/>
 			<preference id="pref-fillTextFromEditable" name="extensions.findbartweak.fillTextFromEditable" type="bool"/>
 			<preference id="pref-fillTextShowFindBar" name="extensions.findbartweak.fillTextShowFindBar" type="bool"/>
+			<preference id="pref-fillTextIntoClipboard" name="extensions.findbartweak.fillTextIntoClipboard" type="bool"/>
 			<preference id="pref-layoutEatSpaces" name="extensions.findbartweak.layoutEatSpaces" type="bool"/>
 			<preference id="pref-layoutStopAtPunctuation" name="extensions.findbartweak.layoutStopAtPunctuation" type="bool"/>
 			<preference id="pref-resetNative" name="extensions.findbartweak.resetNative" type="bool"/>
@@ -85,6 +86,12 @@
 				class="indent"
 				dependson="pref-fillSelectedText"
 				delayPreference="pref-fillTextShowFindBar"/>
+			<checkbox label="&OptfillTextIntoClipboard.label;"
+				helptext="&OptfillTextIntoClipboard.tooltip;"
+				jump="fillTextIntoClipboard"
+				class="indent"
+				dependson="pref-fillSelectedText"
+				delayPreference="pref-fillTextIntoClipboard"/>
 			<vbox id="paneTweaks-text-helptext" collapsed="true">
 				<description style="font-weight:bold;">&OptfillSelectedText.label;</description>
 				<description>&OptfillSelectedText.tooltip.a;</description>

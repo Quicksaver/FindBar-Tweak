@@ -1,7 +1,9 @@
-// VERSION 2.0.5
+// VERSION 2.0.6
+
+XPCOMUtils.defineLazyServiceGetter(this, "gClipboardHelper", "@mozilla.org/widget/clipboardhelper;1", "nsIClipboardHelper");
 
 this.fillSelectedText = function(m) {
-	var selText = m.data;
+	let selText = m.data;
 
 	if((selText || Prefs.emptySelectedText)
 	&& (findQuery != selText || (selText && Prefs.highlightByDefault && !documentHighlighted))
@@ -18,21 +20,28 @@ this.fillSelectedText = function(m) {
 			Finder.workAroundFind = false;
 		}, 0);
 
-		if(selText && Prefs.fillTextShowFindBar && gFindBar.hidden) {
-			gFindBar.open(gFindBar.FIND_TYPEAHEAD);
-			gFindBar._setFindCloseTimeout();
+		if(selText) {
+			if(Prefs.fillTextShowFindBar && gFindBar.hidden) {
+				gFindBar.open(gFindBar.FIND_TYPEAHEAD);
+				gFindBar._setFindCloseTimeout();
 
-			if(gFindBar._findMode == gFindBar.FIND_TYPEAHEAD) {
-				if(gFindBar._keepOpen) {
-					gFindBar._keepOpen.cancel();
+				if(gFindBar._findMode == gFindBar.FIND_TYPEAHEAD) {
+					if(gFindBar._keepOpen) {
+						gFindBar._keepOpen.cancel();
+					}
+
+					(function() {
+						let bar = gFindBar;
+						bar._keepOpen = aSync(function() {
+							delete bar._keepOpen;
+						});
+					})();
 				}
+			}
 
-				(function() {
-					var bar = gFindBar;
-					bar._keepOpen = aSync(function() {
-						delete bar._keepOpen;
-					});
-				})();
+			// Copy to clipboard if user wants this.
+			if(Prefs.fillTextIntoClipboard) {
+				gClipboardHelper.copyString(selText);
 			}
 		}
 	}

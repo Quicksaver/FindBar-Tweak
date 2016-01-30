@@ -132,6 +132,8 @@
 <!ENTITY OptfillTextFromEditable.tooltip "Choose whether you want selections in text boxes or input fields to also fill the Findbar.">
 <!ENTITY OptfillSelectedOpenFindbar.label "Show the Quick Findbar when selected text is used">
 <!ENTITY OptfillSelectedOpenFindbar.tooltip "When the Findbar is filled with the selected text, it will briefly appear to show that this happened.">
+<!ENTITY OptfillTextIntoClipboard.label "Copy the selected text to the clipboard">
+<!ENTITY OptfillTextIntoClipboard.tooltip "The text you select is instantly copied to the clipboard, so you can paste it in other applications.">
 <!ENTITY OptglobalBehavior.warning "Warning: the following preferences are not specific to the Findbar, they affect the browser globally, such as in webpages, the location bar and any other place where text selection is possible. Change these with caution!">
 <!ENTITY OptdblClickEatSpaces.label "Double-clicking on a word also selects the following space">
 <!ENTITY OptdblClickStopAtPunctuation.label "Double-clicking on a word stops selection at punctuation">

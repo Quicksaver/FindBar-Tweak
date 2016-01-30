@@ -1,4 +1,4 @@
-// VERSION 1.4.1
+// VERSION 1.4.2
 
 objName = 'findbartweak';
 objPathString = 'findbartweak';
@@ -75,6 +75,7 @@ prefList = {
 	emptySelectedText: true,
 	fillTextShowFindBar: true,
 	fillTextFromEditable: false,
+	fillTextIntoClipboard: false,
 	layoutEatSpaces: defaultBranch.getBoolPref('layout.word_select.eat_space_to_next_word'),
 	layoutStopAtPunctuation: defaultBranch.getBoolPref('layout.word_select.stop_at_punctuation'),
 

@@ -1,4 +1,4 @@
-// VERSION 1.2.4
+// VERSION 1.2.5
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return FITFull || viewSource || window.gFindBarInitialized; });
@@ -44,8 +44,11 @@ this.baseInit = function(bar) {
 			if(dispatch(this, { type: 'WillOpenFindBar'+suffix, detail: aMode })) {
 				var ret = this._open(aMode);
 
-				Messenger.messageBrowser(this.browser, 'FindBar:State', true);
-				dispatch(this, { type: 'OpenedFindBar'+suffix, cancelable: false, detail: aMode });
+				// Check if the findbar is actually open, another add-on could still have prevented this.
+				if(!this.hidden) {
+					Messenger.messageBrowser(this.browser, 'FindBar:State', true);
+					dispatch(this, { type: 'OpenedFindBar'+suffix, cancelable: false, detail: aMode });
+				}
 				return ret;
 			}
 			return false;
@@ -107,8 +110,11 @@ this.baseInit = function(bar) {
 
 		if(dispatch(this, { type: 'WillCloseFindBar'+suffix })) {
 			this._close();
-			Messenger.messageBrowser(this.browser, 'FindBar:State', false);
-			dispatch(this, { type: 'ClosedFindBar'+suffix, cancelable: false });
+			// Check if the findbar is actually closed, another add-on could still have prevented this.
+			if(this.hidden) {
+				Messenger.messageBrowser(this.browser, 'FindBar:State', false);
+				dispatch(this, { type: 'ClosedFindBar'+suffix, cancelable: false });
+			}
 		}
 	});
 

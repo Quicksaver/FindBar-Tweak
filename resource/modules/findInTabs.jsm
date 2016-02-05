@@ -1,4 +1,4 @@
-// VERSION 2.3.15
+// VERSION 2.3.16
 
 this.__defineGetter__('FITdeferred', function() { return window.FITdeferred; });
 this.__defineGetter__('FITinitialized', function() { return FITdeferred.promise; });
@@ -660,7 +660,7 @@ this.FIT = {
 			// we're sure it will be either pinned or in the visible group, otherwise it couldn't be the current tab,
 			// for that reason we also use it to set _selectedGroup property, i.e. the selected tab surely belongs to the selected tab group
 			let selectedTab = win.gBrowser.selectedTab;
-			this.tabs._selectedGroup = (win.TabView) ? selectedTab._tabViewTabItem.parent : win;
+			this.tabs._selectedGroup = (selectedTab._tabViewTabItem) ? selectedTab._tabViewTabItem.parent : win;
 			this.setTabEntry(win.gBrowser.selectedTab.linkedBrowser);
 
 			// do all the other tabs now, only pinned tabs or those from the visible tab group

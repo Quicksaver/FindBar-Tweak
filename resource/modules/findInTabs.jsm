@@ -1,4 +1,4 @@
-// VERSION 2.3.16
+// VERSION 2.3.17
 
 this.__defineGetter__('FITdeferred', function() { return window.FITdeferred; });
 this.__defineGetter__('FITinitialized', function() { return FITdeferred.promise; });
@@ -24,7 +24,7 @@ this.FIT = {
 
 	// Ctrl+Shift+J should be usable within the FIT window
 	console: function() {
-		let devtools = Cu.import("resource://gre/modules/devtools/shared/Loader.jsm", {}).devtools;
+		let devtools = Cu.import("resource://devtools/shared/Loader.jsm", {}).devtools;
 		let hud = devtools.require("devtools/client/webconsole/hudservice");
 		hud.toggleBrowserConsole();
 	},

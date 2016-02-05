@@ -1,6 +1,12 @@
 {
-	"current":"2.1.6",
+	"current":"2.1.7",
 	"releases": {
+		"2.1.7":{
+			"date":"February 5, 2016",
+			"notes":[
+				["bugfix","Bugfix: compatibility with other add-ons that may attempt to control when the findbar opens or closes"]
+			]
+		},
 		"2.1.6":{
 			"date":"February 5, 2016",
 			"notes":[

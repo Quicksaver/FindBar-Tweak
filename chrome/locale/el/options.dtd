@@ -123,6 +123,8 @@
 <!ENTITY OptfillTextFromEditable.tooltip "Επιλέξτε αν θέλετε να γίνεται συμπλήρωση της γραμμής εύρεσης επίσης και κατά την επιλογή κειμένου εντός πλαισίων κειμένου ή πεδίων εισαγωγής.">
 <!ENTITY OptfillSelectedOpenFindbar.label "Εμφάνιση της γρήγορης γραμμής εύρεσης όταν χρησιμοποιείται επιλεγμένο κείμενο">
 <!ENTITY OptfillSelectedOpenFindbar.tooltip "Όταν η γραμμή εύρεσης συμπληρώνεται με το επιλεγμένο κείμενο, θα εμφανίζεται για λίγο προς ένδειξη του γεγονότος.">
+<!ENTITY OptfillTextIntoClipboard.label "Copy the selected text to the clipboard">
+<!ENTITY OptfillTextIntoClipboard.tooltip "The text you select is instantly copied to the clipboard, so you can paste it in other applications.">
 <!ENTITY OptglobalBehavior.warning "Προειδοποίηση: οι ακόλουθες προτιμήσεις δεν είναι ειδικές για τη γραμμή εύρεσης, επηρεάζουν καθολικά τον περιηγητή, όπως τις ιστοσελίδες, τη γραμμή διευθύνσεων και κάθε άλλο μέρος όπου είναι δυνατή η επιλογή κειμένου. Αλλάξτε τις με προσοχή!">
 <!ENTITY OptdblClickEatSpaces.label "Κάνοντας διπλό κλικ σε μια λέξη, επιλέγεται επίσης και το ακόλουθο διάστημα">
 <!ENTITY OptdblClickStopAtPunctuation.label "Κάνοντας διπλό κλικ σε μια λέξη, επιλέγεται αυτή μέχρι το σημείο στίξης">

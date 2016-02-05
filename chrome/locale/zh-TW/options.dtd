@@ -123,6 +123,8 @@
 <!ENTITY OptfillTextFromEditable.tooltip "Choose whether you want selections in text boxes or input fields to also fill the Findbar.">
 <!ENTITY OptfillSelectedOpenFindbar.label "選擇文字時開啟並填入快速搜尋欄">
 <!ENTITY OptfillSelectedOpenFindbar.tooltip "當搜尋欄填入已選文字時，其將短暫開啟以顯示文字已填入。">
+<!ENTITY OptfillTextIntoClipboard.label "Copy the selected text to the clipboard">
+<!ENTITY OptfillTextIntoClipboard.tooltip "The text you select is instantly copied to the clipboard, so you can paste it in other applications.">
 <!ENTITY OptglobalBehavior.warning "警告：下列選項並不單屬搜尋欄，而會影響整個瀏覽器，如網頁中、位置欄，以及可選擇文字的地方。使用時請額外小心。">
 <!ENTITY OptdblClickEatSpaces.label "連點已選擇文字時包含尾部空格">
 <!ENTITY OptdblClickStopAtPunctuation.label "連點已選擇文字時於標點符號處為止">

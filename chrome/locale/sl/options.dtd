@@ -123,6 +123,8 @@
 <!ENTITY OptfillTextFromEditable.tooltip "Izberite, ali želite, da izbire v besedilnih ali vnosnih poljih izpolnijo tudi iskalno vrstico.">
 <!ENTITY OptfillSelectedOpenFindbar.label "Prikaži vrstico za hitro iskanje, ki je uporabljeno izbrano besedilo">
 <!ENTITY OptfillSelectedOpenFindbar.tooltip "Ko je iskalna vrstica izpolnjena z izbranim besedilom, se bo za kratek čas pojavila, da prikaže dogodek.">
+<!ENTITY OptfillTextIntoClipboard.label "Kopiraj izbrano besedilo na odložišče">
+<!ENTITY OptfillTextIntoClipboard.tooltip "Izbrano besedilo se takoj kopira na odložišče za lepljenje v druge programe.">
 <!ENTITY OptglobalBehavior.warning "Opozorilo: naslednje možnosti niso značilne za iskalno vrstico in splošno vplivajo na brskalnik, kot npr. na straneh, naslovni vrstici ali katerimkoli drugem mestu, kjer je mogoče izbrati besedilo. Bodite pazljivi pri spreminjanju le-teh!">
 <!ENTITY OptdblClickEatSpaces.label "Dvojni klik na besedo izbere tudi naslednji presledek">
 <!ENTITY OptdblClickStopAtPunctuation.label "Dvojni klik na besedo ustavi izbiro ob ločilu">

@@ -123,6 +123,8 @@
 <!ENTITY OptfillTextFromEditable.tooltip "Entscheidet, ob Auswahl in Textboxen oder Eingabefeldern auch in die Suchleiste eingetragen wird.">
 <!ENTITY OptfillSelectedOpenFindbar.label "Die Schnellsuchleiste anzeigen, wenn ausgewählter Text verwendet wird">
 <!ENTITY OptfillSelectedOpenFindbar.tooltip "Wenn die Suchleiste mit dem ausgewählten Text gefüllt ist, erscheint sie kurz, um dies anzuzeigen.">
+<!ENTITY OptfillTextIntoClipboard.label "Ausgewählten Text in die Zwischenablage kopieren">
+<!ENTITY OptfillTextIntoClipboard.tooltip "Der ausgewählte Text wird umgehend in die Zwischenablage kopiert, so dass Sie ihn in anderen Anwendungen einfügen können.">
 <!ENTITY OptglobalBehavior.warning "Warnung: Die folgenden Einstellungen betreffen nicht nur die Suchleiste, sondern den gesamten Browser, wie auf Webseiten, der Adressleiste und allen anderen Stellen, an denen Textauswahl möglich ist. Ändern Sie dies mit Bedacht!">
 <!ENTITY OptdblClickEatSpaces.label "Doppelklick auf ein Wort wählt auch das folgende Leerzeichen aus">
 <!ENTITY OptdblClickStopAtPunctuation.label "Doppelklick auf ein Wort setzt Markierung bis zum nächsten Satzzeiten">

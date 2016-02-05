@@ -123,6 +123,8 @@
 <!ENTITY OptfillTextFromEditable.tooltip "Escolher se selecionar em caixas de texto também preenche a barra de procura.">
 <!ENTITY OptfillSelectedOpenFindbar.label "Mostrar a barra de procura rápida quando o texto selecionado é usado">
 <!ENTITY OptfillSelectedOpenFindbar.tooltip "Quando a barra de procura é preenchida com o texto selecionado, ela aparece brevemente para mostrar que isto aconteceu.">
+<!ENTITY OptfillTextIntoClipboard.label "Copiar o texto selecionado para a área de transferência">
+<!ENTITY OptfillTextIntoClipboard.tooltip "O texto que selecionares é imediatamente copiado para a área de transferência, para que possas colá-lo noutras aplicações.">
 <!ENTITY OptglobalBehavior.warning "Aviso: as opções seguintes não são específicas para a barra de procura, elas afetam todo o navegador, como em páginas, a barra de endereço e qualquer outro local em que é possível selecionar texto. Altera com precaução!">
 <!ENTITY OptdblClickEatSpaces.label "Duplo-clique numa palavra também seleciona o espaço a seguir">
 <!ENTITY OptdblClickStopAtPunctuation.label "Duplo-clique numa palavra termina a seleção na pontuação">

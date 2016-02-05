@@ -123,6 +123,8 @@
 <!ENTITY OptfillTextFromEditable.tooltip "Wybierz, czy chcesz, aby zaznaczenia w polach tekstowych lub pola wejściowe, także wypełniały pasek wyszukiwania.">
 <!ENTITY OptfillSelectedOpenFindbar.label "Pokaż pasek szybkiego wyszukiwania przy używaniu zaznaczonego tekstu">
 <!ENTITY OptfillSelectedOpenFindbar.tooltip "Gdy pasek wyszukiwań wypełni sie zaznaczonym tekstem, na krótko pojawi się, aby zasygnalizować, że to się stało.">
+<!ENTITY OptfillTextIntoClipboard.label "Skopiuj zaznaczony tekst do schowka">
+<!ENTITY OptfillTextIntoClipboard.tooltip "Zaznaczony przez ciebie tekst jest natychmiast kopiowany do schowka, więc możesz wklejać go w innych aplikacjach.">
 <!ENTITY OptglobalBehavior.warning "Uwaga: następujące ustawienia nie są ograniczone do paska wyszukiwań, wpływają one na całą przeglądarkę, choćby na strony internetowe, pasek adresu oraz inne miejsca, gdzie można zaznaczyć tekst. Zmień je ostrożnie!">
 <!ENTITY OptdblClickEatSpaces.label "Podwójne kliknięcie na wyrazie zaznacza także następująca spację">
 <!ENTITY OptdblClickStopAtPunctuation.label "Zaznaczaj tylko do znaku interpunkcyjnego przy podwójnym kliknięciu">

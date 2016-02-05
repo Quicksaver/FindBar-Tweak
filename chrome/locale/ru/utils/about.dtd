@@ -1,0 +1,22 @@
+<!ENTITY about.paneTitle "О дополнении">
+<!ENTITY about.version "Версия {v}">
+<!ENTITY about.versionDivider "-">
+<!ENTITY about.uptodate "актуальное состояние, поздравляем!">
+<!ENTITY about.needsupdate "требуется обновление!">
+<!ENTITY about.description "Проверьте &quot;примечания к выпуску&quot; и &quot;известные проблемы&quot; для этой версии ниже. Дайте мне знать, если вы найдете каких-либо проблемы или если у вас есть какие-либо предложения для будущих релизов.">
+<!ENTITY about.descriptionB "Дополнение бесплатно, но устранение проблем, добавление новых функций и поддержка работоспособности с каждым новым выпуском Firefox является все труднее. Если вам нравится дополнение, пожалуйста поддержите его дальнейшее развитие. Как, укажет ссылка, &quot;Вы можете помочь&quot;!">
+<!ENTITY about.allVersions "Показать заметки из всех предыдущих версий">
+<!ENTITY about.notifyOnUpdates "Покажите мне эту вкладку при следующем обновлении">
+<!ENTITY about.development "Статус разработки">
+<!ENTITY about.helpdevelopment "Вы можете помочь">
+<!ENTITY about.information "Доп. сведения">
+<!ENTITY about.home "Домашняя страница дополнения">
+<!ENTITY about.fullchangelog "Полный список изменений">
+<!ENTITY about.problems "Возникли проблемы?">
+<!ENTITY about.tech "Открыть вопрос на странице поддержки, описывающий вашу проблему">
+<!ENTITY about.email "Или отправить мне письмо об этом">
+<!ENTITY about.author "Больше от автора">
+<!ENTITY about.trymore "Попробуйте одно из моих других дополнений для еще большего опыта с Firefox!">
+<!ENTITY about.profile "Найти их в моем профиле">
+<!ENTITY about.share "Поделиться!">
+<!ENTITY about.friends "Не только наедине с превосходным браузером. Пусть ваши друзья восхитятся!">

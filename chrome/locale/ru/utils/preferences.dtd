@@ -1,0 +1,13 @@
+<!ENTITY preferences.button "Настройки">
+<!ENTITY preferences.undo.label "Отменить">
+<!ENTITY preferences.redo.label "Вернуть">
+<!ENTITY preferences.undoredo.tooltip "Быстро вернуться к любым изменениям, внесённым в настройки дополнения, в том числе импорт из файла и восстановление значений по умолчанию.">
+<!ENTITY preferences.import.label "Импорт из файла...">
+<!ENTITY preferences.import.tooltip "Загрузка настроек дополнения из ранее экспортированного файла на вашем компьютере.">
+<!ENTITY preferences.export.label "Экспорт в файл...">
+<!ENTITY preferences.export.tooltip "Сохранение своих настроек дополнения во внешний файл для хранения.">
+<!ENTITY preferences.reset.label "Восстановление умолчаний">
+<!ENTITY preferences.reset.tooltip.a "Все предпочтения откатываются к значениям по умолчанию, как будто дополнение только что установлено.">
+<!ENTITY preferences.reset.tooltip.b "На расположение кнопок в панели инструментов это не действует. Вместо этого используйте восстановление умолчаний в настройках вида Firefox.">
+<!ENTITY preferences.jumpto.label "Переход к настройкам...">
+<!ENTITY preferences.jumpto.tooltip "Введите слово, и вы будете перенаправлены в первую настройку, которая его содержит.">

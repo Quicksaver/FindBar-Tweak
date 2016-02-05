@@ -89,6 +89,14 @@
 		</em:localized>
 		<em:localized>
 			<Description>
+				<em:locale>ru</em:locale>
+				<em:name>FindBar Tweak</em:name>
+				<em:description>От обычной поисковой строки, до полнофункционального "Поиска по всем вкладкам", все, чтобы сделать поисковую панель инструментов мощным и доступным инструментом исследования!</em:description>
+				<em:translator>sayanvd @ Babelzilla</em:translator>
+			</Description>
+		</em:localized>
+		<em:localized>
+			<Description>
 				<em:locale>sl</em:locale>
 				<em:name>FindBar Tweak</em:name>
 				<em:description>Od preprostih prilagajanj, kot je umestitev iskalne vrstice v zgornji kot, do zmogljivega orodja "Najdi v vseh zavihkih" ima orodna vrstica iskanja vse, da jo naredi zmogljivo in dostopno orodje!</em:description>

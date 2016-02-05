@@ -123,6 +123,8 @@
 <!ENTITY OptfillTextFromEditable.tooltip "Choose whether you want selections in text boxes or input fields to also fill the Findbar.">
 <!ENTITY OptfillSelectedOpenFindbar.label "Afficher la barre rapide lorsque le texte sélectionné est utilisé">
 <!ENTITY OptfillSelectedOpenFindbar.tooltip "Lorsque la barre est remplie avec le texte sélectionné, elle apparaitre brièvement pour montrer que ceci est survenu.">
+<!ENTITY OptfillTextIntoClipboard.label "Copier le texte sélectionné dans le presse-papiers">
+<!ENTITY OptfillTextIntoClipboard.tooltip "Le texte que vous sélectionnez est instantanément copié dans le presse-papiers, afin d'être collé dans d'autres applications.">
 <!ENTITY OptglobalBehavior.warning "Attention : les paramètres suivants ne sont pas spécifiques à la barre d'outils de recherche, ils affectent le navigateur de manière globale, telle que dans les pages Web, la barre d'adresse et tout autre endroit où la sélection de texte est possible. Ne modifiez ces paramètres qu'avec précaution !">
 <!ENTITY OptdblClickEatSpaces.label "Un double-clic sur un mot sélectionne également l'espace suivant">
 <!ENTITY OptdblClickStopAtPunctuation.label "Un double-clic sur un mot arrête la sélection à la ponctuation">

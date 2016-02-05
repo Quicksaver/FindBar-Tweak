@@ -1,6 +1,19 @@
 {
-	"current":"2.1.5",
+	"current":"2.1.6",
 	"releases": {
+		"2.1.6":{
+			"date":"February 5, 2016",
+			"notes":[
+				["new","Option to also copy selected text to the clipboard when using it in the findbar"],
+				["new","ru locale"],
+				["updated","Significant improvement to memory usage, as well as to browser startup time and when opening new tabs"],
+				["removed","Compatibility with Firefox 43 and below"],
+				["bugfix","Some appearance fixes for the findbar on top with the <a=https://addons.mozilla.org/firefox/addon/ft-deepdark/>FT DeepDark</a> theme (may not be perfect)"],
+				["bugfix","Default file name when exporting preferences would have the wrong month"],
+				["bugfix","(Firefox 46) \"Find as You Type\" wouldn't work"],
+				["bugfix","Find All results could not appear for pinned tabs"]
+			]
+		},
 		"2.1.5":{
 			"date":"December 12, 2015",
 			"notes":[

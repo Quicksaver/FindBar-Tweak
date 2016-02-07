@@ -1,10 +1,16 @@
 {
-	"current":"2.1.7",
+	"current":"2.1.8",
 	"releases": {
+		"2.1.8":{
+			"date":"February 7, 2016",
+			"notes":[
+				["bugfix","Sights, highlights grid and other things broke with the last update"]
+			]
+		},
 		"2.1.7":{
 			"date":"February 5, 2016",
 			"notes":[
-				["bugfix","Bugfix: compatibility with other add-ons that may attempt to control when the findbar opens or closes"]
+				["bugfix","Compatibility with other add-ons that may attempt to control when the findbar opens or closes"]
 			]
 		},
 		"2.1.6":{

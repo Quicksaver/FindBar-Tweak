@@ -1,4 +1,4 @@
-// VERSION 1.1.23
+// VERSION 1.1.24
 
 Modules.LOADMODULE = function() {
 	if(!viewSource && !FITFull) {
@@ -32,9 +32,14 @@ Modules.LOADMODULE = function() {
 	AddonManager.getAddonByID('findlist@fewlinx.com', function(addon) {
 		Modules.loadIf('compatibilityFix/findlist', (addon && addon.isActive));
 	});
+
+	AddonManager.getAddonByID('vimperator@mozdev.org', function(addon) {
+		Modules.loadIf('compatibilityFix/vimperator', (addon && addon.isActive));
+	});
 };
 
 Modules.UNLOADMODULE = function() {
+	Modules.unload('compatibilityFix/vimperator');
 	Modules.unload('compatibilityFix/findlist');
 	Modules.unload('compatibilityFix/ClearFields');
 

@@ -1,4 +1,4 @@
-// VERSION 2.1.9
+// VERSION 2.1.10
 
 this.highlights = {
 	observe: function(aSubject, aTopic) {
@@ -298,7 +298,9 @@ Modules.LOADMODULE = function() {
 					if(!Prefs.highlightOnFindAgain
 					&& this.hidden
 					&& !this.browser.finder.documentHighlighted
-					&& !this._highlightAnyway) {
+					&& !this._highlightAnyway
+					// See the note about searching the page through Vimperator's commandline in highlightByDefault.jsm
+					&& (!self.vimperator || !vimperator.proxying(this))) {
 						this.browser.finder.documentHighlighted = false;
 						this.browser.finder.highlightedWord = '';
 						return;

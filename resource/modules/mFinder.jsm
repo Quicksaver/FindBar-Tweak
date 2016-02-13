@@ -1,4 +1,4 @@
-// VERSION 1.0.13
+// VERSION 1.0.14
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -64,8 +64,10 @@ this.RemoteFinder.prototype = {
 		});
 
 		this.addMessage("IsValidResult", (data) => {
-			// don't resend the info back to content, as this comes from there anyway
-			this._documentHighlighted = data.documentHighlighted;
+			if(data.documentHighlighted !== undefined) {
+				// don't resend the info back to content, as this comes from there anyway
+				this._documentHighlighted = data.documentHighlighted;
+			}
 
 			if(this._isValid == data.isValid) { return null; }
 

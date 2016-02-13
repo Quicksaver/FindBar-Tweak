@@ -1,4 +1,4 @@
-// VERSION 2.1.5
+// VERSION 2.1.6
 
 this.highlightByDefault = {
 	apply: function(bar) {
@@ -20,7 +20,9 @@ this.highlightByDefault = {
 				break;
 
 			case 'WillFindFindBar':
-				if((Prefs.highlightOnFindAgain || Finder.workAroundFind) && gFindBar.hidden && !Prefs.hideWhenFinderHidden) {
+				// Typing in Vimperator's commandline to search in the page should work in the same way as typing in the findbar open.
+				if((Prefs.highlightOnFindAgain || Finder.workAroundFind || (self.vimperator && vimperator.proxying(gFindBar)))
+				&& gFindBar.hidden && !Prefs.hideWhenFinderHidden) {
 					this.apply(gFindBar);
 				}
 				break;
@@ -48,7 +50,9 @@ Modules.LOADMODULE = function() {
 					enumerable: true,
 					get: function() { return this._checked; },
 					set: function(v) {
-						if(arguments.callee.caller.toString().includes('bug 253793')) { return this._checked; }
+						try { if(arguments.callee.caller.toString().includes('bug 253793')) { return this._checked; } }
+						// If this fails then we don't really care, just proceed as usual
+						catch(ex) {}
 						return this._checked = v;
 					}
 				});

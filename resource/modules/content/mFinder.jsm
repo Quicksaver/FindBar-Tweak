@@ -1,4 +1,4 @@
-// VERSION 1.0.20
+// VERSION 1.0.21
 
 this.__defineGetter__('isPDFJS', function() { return Finder.isPDFJS; });
 
@@ -1045,15 +1045,17 @@ this.Finder = {
 			|| (document instanceof Ci.nsIDOMXMLDocument && !document.documentElement.hasAttribute('currentcategory'));
 	},
 
-	isFinderValid: function() {
+	isFinderValid: function(requested) {
 		// do aSync so we don't fire more than necessary.
 		// Also update the highlighted status in the main process, as we might be switching between pages that aren't highlighted,
-		// if we didn't do this, the highlights would always be placed when going back and forth in history or when reloading a page
+		// if we didn't do this, the highlights would always be placed when going back and forth in history or when reloading a page.
+		// But don't do this when the status has been requested directly from chrome, as to not overwrite its state while initializing (it knows what it's doing).
 		Timers.init('isFinderValid', () => {
-			message('IsValidResult', {
-				isValid: this.isValid,
-				documentHighlighted: this.documentHighlighted
-			});
+			let data = { isValid: this.isValid };
+			if(!requested) {
+				data.documentHighlighted = this.documentHighlighted;
+			}
+			message('IsValidResult', data);
 		}, 0);
 	},
 
@@ -1228,7 +1230,7 @@ this.RemoteFinderListener = {
 		});
 
 		this.addMessage("IsValid", () => {
-			Finder.isFinderValid();
+			Finder.isFinderValid(true);
 		});
 
 		this.addMessage("InnerText", () => {

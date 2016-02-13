@@ -75,11 +75,7 @@
 	}
 
 	/* for the View Source window */
-	#viewSource hbox[anonid="findSights"] {
-		position: fixed !important;
-		top: 0px;
-	}
-
+	#viewSource hbox[anonid="findSights"],
 	/* for the preferences dialog */
 	prefpane hbox[anonid="findSights"] {
 		position: fixed !important;

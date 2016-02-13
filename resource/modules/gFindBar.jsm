@@ -1,4 +1,4 @@
-// VERSION 1.2.5
+// VERSION 1.2.6
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return FITFull || viewSource || window.gFindBarInitialized; });
@@ -514,6 +514,10 @@ Modules.LOADMODULE = function() {
 
 			// call the original method to actual do the remoteness change
 			this._updateBrowserRemoteness(shouldBeRemote);
+
+			// Make sure the backup of the native finder is trashed, otherwise mFinder.jsm would try to reinitialize it and fail
+			// because it would try to initialize a non-remote finder into a remote browser.
+			delete gFindBar.browser._backupFinder;
 
 			let parent = gFindBar.parentNode;
 			let sibling = gFindBar.nextSibling;

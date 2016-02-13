@@ -1,4 +1,4 @@
-// VERSION 2.2.7
+// VERSION 2.2.8
 
 this.SIGHTS_SIZE_FOCUS = 400;
 this.SIGHTS_SIZE_CIRCLE = 100;
@@ -56,7 +56,6 @@ this.sights = {
 		bar.browser.parentNode.appendChild(boxNode);
 
 		// We need to make sure the box is resized to the proper window size
-
 		this.resizeViewSource();
 
 		return boxNode;
@@ -242,8 +241,8 @@ this.sights = {
 
 	resizeViewSource: function() {
 		let boxObject = gFindBar.browser.boxObject;
-		gFindBar.sights.parentNode.style.top = boxObject.top+'px';
-		gFindBar.sights.parentNode.style.height = boxObject.height+'px';
+		gFindBar.sights.style.top = boxObject.y+'px';
+		gFindBar.sights.style.height = boxObject.height+'px';
 	},
 
 	color: function() {

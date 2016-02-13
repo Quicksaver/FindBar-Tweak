@@ -1,4 +1,4 @@
-// VERSION 2.3.17
+// VERSION 2.3.18
 
 this.__defineGetter__('FITdeferred', function() { return window.FITdeferred; });
 this.__defineGetter__('FITinitialized', function() { return FITdeferred.promise; });
@@ -359,9 +359,12 @@ this.FIT = {
 			win.focus();
 		}
 
-		let tab = win.gBrowser.getTabForBrowser(aBrowser);
-		if(win.gBrowser && win.gBrowser.selectedTab != tab) {
-			win.gBrowser.selectedTab = tab;
+		// This browser could be from a view source window.
+		if(!win[objName].viewSource) {
+			let tab = win.gBrowser.getTabForBrowser(aBrowser);
+			if(win.gBrowser && win.gBrowser.selectedTab != tab) {
+				win.gBrowser.selectedTab = tab;
+			}
 		}
 
 		this.working = false;
@@ -698,7 +701,7 @@ this.FIT = {
 
 		if(this.tabs._selectedGroupI < 2) { // All Tabs and Source Windows or Only Source Windows
 			for(let win of FITSandbox.viewSources) {
-				this.setTabEntry(win.gFindBar.browser);
+				this.setTabEntry(win[objName].gFindBar.browser);
 			}
 		}
 	},

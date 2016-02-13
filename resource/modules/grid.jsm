@@ -1,4 +1,4 @@
-// VERSION 2.1.7
+// VERSION 2.1.8
 
 this.grids = {
 	template: null,
@@ -202,7 +202,7 @@ this.grids = {
 
 	resizeViewSource: function() {
 		let boxObject = gFindBar.browser.boxObject;
-		gFindBar.grid.parentNode.style.top = boxObject.top+'px';
+		gFindBar.grid.parentNode.style.top = boxObject.y+'px';
 		gFindBar.grid.parentNode.style.height = boxObject.height+'px';
 	},
 

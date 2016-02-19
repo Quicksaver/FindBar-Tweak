@@ -1,4 +1,4 @@
-// VERSION 1.0.21
+// VERSION 1.0.22
 
 this.__defineGetter__('isPDFJS', function() { return Finder.isPDFJS; });
 
@@ -214,7 +214,7 @@ this.Finder = {
 
 	// Forcibly set the search string of the find clipboard to the currently selected text in the window, on supported platforms (i.e. OSX).
 	setSearchStringToSelection: function() {
-		let searchString = this.getActiveSelectionText();
+		let searchString = this.getActiveSelectionText().text;
 
 		// Empty strings are rather useless to search for.
 		if(!searchString.length) {
@@ -269,23 +269,27 @@ this.Finder = {
 
 	getActiveSelectionText: function() {
 		let focused = this.getFocused();
-		let selText;
+		let selection = null;
+		let text = "";
 
 		if(focused.element instanceof Ci.nsIDOMNSEditableElement && focused.element.editor) {
 			// The user may have a selection in an input or textarea.
-			selText = focused.element.editor.selectionController.getSelection(Ci.nsISelectionController.SELECTION_NORMAL).toString();
+			selection = focused.element.editor.selectionController.getSelection(Ci.nsISelectionController.SELECTION_NORMAL);
 		} else {
 			// Look for any selected text on the actual page.
-			selText = focused.window.getSelection().toString();
+			selection = focused.window.getSelection();
 		}
 
-		if(!selText) {
-			return "";
+		if(selection) {
+			// Process our text to get rid of unwanted characters.
+			text = this.trimText(selection.toString());
 		}
 
-		// Process our text to get rid of unwanted characters.
-		//return selText.trim().replace(/\s+/g, " ").substr(0, 150);
-		return selText.trim().replace(/\s+/g, " ");
+		return { focusedElement: focused.element, selection, text };
+	},
+
+	trimText: function(str) {
+		return str.trim().replace(/\s+/g, " ");
 	},
 
 	enableSelection: function() {
@@ -1193,12 +1197,12 @@ this.RemoteFinderListener = {
 
 		this.addMessage("GetInitialSelection", () => {
 			var selection = Finder.getActiveSelectionText();
-			message("CurrentSelectionResult", { selection: selection, initial: true });
+			message("CurrentSelectionResult", { selection: selection.text, initial: true });
 		});
 
 		this.addMessage("GetTextSelection", () => {
 			var selection = Finder.getActiveSelectionText();
-			message("TextSelectionResult", selection);
+			message("TextSelectionResult", selection.text);
 		});
 
 		this.addMessage("FastFind", (data) => {

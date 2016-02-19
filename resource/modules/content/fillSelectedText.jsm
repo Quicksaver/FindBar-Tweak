@@ -1,4 +1,4 @@
-// VERSION 2.0.7
+// VERSION 2.0.8
 
 this.selectedText = {
 	handleEvent: function(e) {
@@ -57,24 +57,42 @@ this.selectedText = {
 			// there's no point in autofilling the find bar if it won't work in this page
 			if(!Finder.isValid) { return; }
 
-			let selText = Finder.getActiveSelectionText();
+			let activeText = Finder.getActiveSelectionText();
 
 			// don't autofill if we're selecitng text in an editable node and the user doesn't want that,
 			// but we do want to erase the findbar when there's no text selection
-			if(selText && !Prefs.fillTextFromEditable) {
-				let focused = Finder.getFocused();
-				if(focused.element) {
-					// instances of any editable element (i.e. input,textarea) are of course editable
-					if(focused.element instanceof Ci.nsIDOMNSEditableElement) { return; }
+			if(activeText.text && !Prefs.fillTextFromEditable && activeText.focusedElement) {
+				// instances of any editable element (i.e. input,textarea) are of course editable
+				if(activeText.focusedElement instanceof Ci.nsIDOMNSEditableElement) { return; }
 
-					// in HTML5, elements with contenteditable="true" are freely editable
-					if(trueAttribute(focused.element, 'contenteditable')) { return; }
+				// in HTML5, elements with contenteditable="true" are freely editable
+				if(trueAttribute(activeText.focusedElement, 'contenteditable')) { return; }
+
+				// To fix a very specific case for gmail's new reply box, while trying to generalize for other possible similar cases.
+				// see https://github.com/Quicksaver/FindBar-Tweak/issues/106#issuecomment-186307441
+				if(activeText.selection && activeText.selection.rangeCount == 1) {
+					let range = activeText.selection.getRangeAt(0);
+					if(range.startContainer == range.endContainer && range.startContainer.childNodes.length) {
+						// This string can differ from the above. For instance when quoting text, the above string will include the ">" characters,
+						// while this will not as the text will be preformated into quote blocks.
+						let rangeText = Finder.trimText(range.toString());
+
+						let doc = range.startContainer.ownerDocument;
+						let editable = $$('[contenteditable="true"]', range.startContainer);
+						for(let child of editable) {
+							try{
+								let textContent = Finder.trimText(child.textContent);
+								if(textContent == rangeText) { return; }
+							}
+							catch(ex) { /* ignore */ }
+						}
+					}
 				}
 			}
 
 			this.noSights(true);
 
-			message('FillSelectedText', selText);
+			message('FillSelectedText', activeText.text);
 		}, 0);
 	}
 };

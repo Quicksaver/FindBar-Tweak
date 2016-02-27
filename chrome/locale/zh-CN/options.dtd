@@ -114,17 +114,17 @@
 <!ENTITY OptctrlFOnFocused.label "仅在它有焦点时关闭">
 <!ENTITY OptctrlFOnFocused.tooltip "如果上面的选项已启用，快捷键的首要操作将始终是将输入符放入查找栏。如果此选项被启用，将只在输入符在查找栏中时关闭查找栏。">
 <!ENTITY OptSelectingText.label "选择文本时">
-<!ENTITY OptfillSelectedText.label "选中文本时打开并填写查找栏">
-<!ENTITY OptfillSelectedText.tooltip.a "每次选择网页中的任何文本时，将自动复制到查找栏并开始一次查找。">
-<!ENTITY OptfillSelectedText.tooltip.b "如果“默认高亮所有匹配项”已启用，选择网页中的文本将立即高亮选中内容的所有出现位置。">
+<!ENTITY OptfillSelectedText.label "选中文本时填入查找栏">
+<!ENTITY OptfillSelectedText.tooltip.a "每次选中网页中的任何文本时，自动将其复制到查找栏并执行一次查找。">
+<!ENTITY OptfillSelectedText.tooltip.b "如果“默认高亮所有匹配项”已启用，选择网页中的文本将会立即高亮选中内容的所有出现位置。">
 <!ENTITY OptemptySelectedText.label "没有文本被选中时关闭查找栏">
 <!ENTITY OptemptySelectedText.tooltip "如前所述，如果您点击网页中的任何地方以取消选中文本的状态，查找栏将自动去除，所有高亮也将自动去除。">
 <!ENTITY OptfillTextFromEditable.label "填入可编辑元素中的选中文本">
-<!ENTITY OptfillTextFromEditable.tooltip "您可以用此项选择，是否也想要将文本框或输入框中的选中文本填入查找栏。">
+<!ENTITY OptfillTextFromEditable.tooltip "您可以用此项决定，是否也要将文本框或输入框中的选中文本填入查找栏。">
 <!ENTITY OptfillSelectedOpenFindbar.label "选中文本时填写并显示快速查找栏">
-<!ENTITY OptfillSelectedOpenFindbar.tooltip "在查找栏已填入选中文本时，它将出现以简要的表示此情况。">
-<!ENTITY OptfillTextIntoClipboard.label "Copy the selected text to the clipboard">
-<!ENTITY OptfillTextIntoClipboard.tooltip "The text you select is instantly copied to the clipboard, so you can paste it in other applications.">
+<!ENTITY OptfillSelectedOpenFindbar.tooltip "在向查找栏填入已选中文本时，查找栏将出现以明示此情况。">
+<!ENTITY OptfillTextIntoClipboard.label "复制选中文本到剪贴板">
+<!ENTITY OptfillTextIntoClipboard.tooltip "您已选中的文本将即刻复制到您的剪贴板，然后您可以粘贴它到其他地方。">
 <!ENTITY OptglobalBehavior.warning "警告：下列首选项不止用于查找栏，它们也影响浏览器中包括网页、地址栏以及所有可选择文本的地方的行为。请谨慎更改！">
 <!ENTITY OptdblClickEatSpaces.label "双击选中字词时纳入尾部空格">
 <!ENTITY OptdblClickStopAtPunctuation.label "双击选中字词时在标点处截止">

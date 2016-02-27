@@ -474,9 +474,12 @@ h5 {
 
 /* #matchhead promo */
 
-page:not([currentcategory="paneAbout"]) .promo-matchhead,
-page:not([showPromo="true"]) .promo-matchhead {
-	display: none !important;
+page[currentcategory="paneAbout"][showPromo="true"] #promo-matchhead-desc {
+	display: block !important;
+}
+
+page[currentcategory="paneAbout"][showPromo="true"] #promo-matchhead {
+	display: flex !important;
 }
 
 #promo-matchhead {
@@ -484,7 +487,6 @@ page:not([showPromo="true"]) .promo-matchhead {
 	position: absolute;
 	bottom: 0;
 	left: 0;
-	display: flex;
 	overflow: hidden;
 	transition: bottom 500ms linear;
 }

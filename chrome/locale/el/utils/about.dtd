@@ -5,6 +5,7 @@
 <!ENTITY about.needsupdate "υπάρχει διαθέσιμη μια ενημέρωση!">
 <!ENTITY about.description "Ελέγξτε τις «Σημειώσεις έκδοσης» και τα «Γνωστά ζητήματα» για αυτή την έκδοση παρακάτω. Επιτρέψτε μου να ξέρω για τυχόν προβλήματα που θα βρείτε, ή αν έχετε κάποιες προτάσεις για μελλοντικές εκδόσεις.">
 <!ENTITY about.descriptionB "Η επέκταση είναι δωρεάν, αλλά η επίλυση προβλημάτων, η προσθήκη νέων χαρακτηριστικών και η εξασφάλιση ότι όλα λειτουργούν με κάθε νέα έκδοση του Firefox, είναι επίπονες και μερικές φορές μπορεί να είναι και δύσκολες διαδικασίες. Αν σας αρέσει η επέκταση, σας παρακαλώ υποστηρίξτε την περαιτέρω ανάπτυξή της. Όπως λέει και ο δεσμός, «ΜΠΟΡΕΙΤΕ ΝΑ ΒΟΗΘΗΣΕΤΕ»!">
+<!ENTITY about.descriptionC "Also watch the latest episode in my web series about life with a Firefox, made for all of you, the most supportive users a developer could ask for! Just point at the bouncing icon at the bottom corner of this page. Love it. Hate it. Share it.">
 <!ENTITY about.allVersions "Εμφάνιση σημειώσεων από όλες τις προηγούμενες εκδόσεις">
 <!ENTITY about.notifyOnUpdates "Προβολή αυτής της καρτέλας κατά την επόμενη ενημέρωση">
 <!ENTITY about.development "Κατάσταση ανάπτυξης">
@@ -20,3 +21,7 @@
 <!ENTITY about.profile "Μπορείτε να τις βρείτε στο προφίλ μου">
 <!ENTITY about.share "Μοιραστείτε!">
 <!ENTITY about.friends "Μην είστε ο μοναδικός χρήστης με έναν υπέροχο περιηγητή. Αφήστε και τους φίλους σας να είναι μέσα στο καταπληκτικό!">
+<!ENTITY about.hidePromo "X">
+<!ENTITY about.hideThisPromo "show again when there's a new episode">
+<!ENTITY about.hideAllPromos "never show me promos like this">
+<!ENTITY about.clicktowatch "watch on YouTube">

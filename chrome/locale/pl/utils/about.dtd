@@ -5,6 +5,7 @@
 <!ENTITY about.needsupdate "dostępna aktualizacja!">
 <!ENTITY about.description "Przejrzyj &quot;Informacje o wydaniu&quot; oraz &quot;Znane problemy&quot; wersji poniżej. Powiadom mnie, jeżeli znajdziesz jakieś problemy albo masz propozycje dla przyszłych wydań.">
 <!ENTITY about.descriptionB "Ten dodatek jest darmowy, ale naprawianie błędów, dodawanie nowych opcji oraz dbanie, aby wszystko działało w nowych wydaniach Firefoksa, jest pracochłonne i może czasami być trudne. Jeżeli podoba ci się ten dodatek, proszę wesprzeć kontynuowanie jego rozwoju. Jak podaje łącze &quot;Możesz pomóc&quot;!">
+<!ENTITY about.descriptionC "Obejrzyj również ostatni odcinek mojego serialu internetowego o życiu z Firefoksem, stworzonego dla was wszystkich, najbardziej wspierających użytkowników, których programista może mieć! Po prostu wskaż na podskakującą ikonę w dolnym rogu tej strony. Pokochaj to. Znienawidź to. Udostępnij to.">
 <!ENTITY about.allVersions "Pokaż notatki ze wszystkich poprzednich wersji">
 <!ENTITY about.notifyOnUpdates "Pokaż mi tę kartę przy następnej aktualizacji">
 <!ENTITY about.development "Stan rozwoju">
@@ -20,3 +21,7 @@
 <!ENTITY about.profile "Znajdź je na moim profilu">
 <!ENTITY about.share "Podziel się!">
 <!ENTITY about.friends "Nie bądź jedynym z tą świętną przeglądarką. Dopuść znajomych do tej wspaniałości!">
+<!ENTITY about.hidePromo "X">
+<!ENTITY about.hideThisPromo "ponownie pokaż, gdy będzie dostępny nowy odcinek">
+<!ENTITY about.hideAllPromos "nigdy nie pokazuj mi takich materiałów promocyjnych">
+<!ENTITY about.clicktowatch "obejrzyj na YouTube">

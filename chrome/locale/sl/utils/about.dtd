@@ -5,6 +5,7 @@
 <!ENTITY about.needsupdate "posodobitev je na voljo!">
 <!ENTITY about.description "Spodaj preverite &quot;Opombe ob izdaji&quot; in &quot;Znane težave&quot; za to različico. Obvestite me o kakršnikoli težavi, ki jo najdete ali vprašanjih za prihodnje izdaje.">
 <!ENTITY about.descriptionB "Ta dodatek je brezplačen, vendar dodajanje novih značilnosti in zagotovitev, da vse deluje z novimi izdajami Firefoxa, zahteva veliko dela in je včasih lahko težavno. Če vam je dodatek všeč, prosim podprite njegov nadaljnji razvoj. Kot pravi povezava, &quot;lahko pomagate&quot;!">
+<!ENTITY about.descriptionC "Oglejte si tudi najnovejšo epizodo moje spletne serije o življenju s Firefoxom, ki je bila narejena prav za vas, vse najboljše podpornike, katere si razvijalec želi imeti. Pokažite na skakajočo ikono v spodnjem kotu te strani. Ljubite, zasovražite in delite jo.">
 <!ENTITY about.allVersions "Prikaži opombe vseh prejšnjih različic">
 <!ENTITY about.notifyOnUpdates "Prikaži ta zavihek ob naslednji posodobitvi">
 <!ENTITY about.development "Stanje razvoja">
@@ -20,3 +21,7 @@
 <!ENTITY about.profile "Poiščite jih v mojem profilu">
 <!ENTITY about.share "Deli!">
 <!ENTITY about.friends "Ne bodite edini z odličnim brskalnikom. Povabite prijatelje v nepozabno izkušnjo!">
+<!ENTITY about.hidePromo "X">
+<!ENTITY about.hideThisPromo "prikaži znova obnovi epizodi">
+<!ENTITY about.hideAllPromos "nikoli mi ne prikazuj takih oglasov">
+<!ENTITY about.clicktowatch "oglej si na YouTubu">

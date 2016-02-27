@@ -5,6 +5,7 @@
 <!ENTITY about.needsupdate "最新バージョンがあります！">
 <!ENTITY about.description "このバージョンのリリース・ノートを読んで、既知の問題かどうかを確認してください。あなたが見つけた問題点、又は将来のリリースのための提案があれば、私に知らせてください。">
 <!ENTITY about.descriptionB "このアドオンはフリーです。しかしバグ修正、機能追加、新しい Firefox で確実に動作させることは大変であり、時には困難な場合があります。このアドオンを愛用してくれるなら、開発継続のために、支援して頂けませんか。リンク先を参照してください。">
+<!ENTITY about.descriptionC "Also watch the latest episode in my web series about life with a Firefox, made for all of you, the most supportive users a developer could ask for! Just point at the bouncing icon at the bottom corner of this page. Love it. Hate it. Share it.">
 <!ENTITY about.allVersions "以前のバージョンからの変更事項">
 <!ENTITY about.notifyOnUpdates "アップデートしたときに、このタブを表示します">
 <!ENTITY about.development "開発状況">
@@ -20,3 +21,7 @@
 <!ENTITY about.profile "私のプロフィールを参照してください。">
 <!ENTITY about.share "共有！">
 <!ENTITY about.friends "この素晴らしいブラウザを、独り占めしてはダメです。素晴らしいものは、友人と共有しましょう！">
+<!ENTITY about.hidePromo "X">
+<!ENTITY about.hideThisPromo "show again when there's a new episode">
+<!ENTITY about.hideAllPromos "never show me promos like this">
+<!ENTITY about.clicktowatch "watch on YouTube">

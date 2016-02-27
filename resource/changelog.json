@@ -1,6 +1,18 @@
 {
-	"current":"2.1.8",
+	"current":"2.1.9",
 	"releases": {
+		"2.1.9":{
+			"date":"February 27, 2016",
+			"notes":[
+				["updated","zh-CN and zh-TW locales"],
+				["bugfix","View source windows were broken with the add-on"],
+				["bugfix","Finding in page through <a=https://addons.mozilla.org/firefox/addon/vimperator/>Vimperator</a>'s commandline should highlight all matches by default if that preference is enabled"],
+				["bugfix","(OSX and Linux) the add-on's preferences would be exported into a file without the \".json\" extension that the add-on couldn't immediately recognize afterwards"],
+				["bugfix","The new gmail's reply box was not respecting the preference to not use selected text from editable elements (<a=https://github.com/Quicksaver/FindBar-Tweak/issues/106>issue #106</a>)"],
+				["bugfix","On some systems, the preference to stop selection at punctuation when double-clicking a word would be reset when restarting Firefox (<a=https://github.com/Quicksaver/FindBar-Tweak/issues/244>issue #244</a>)"],
+				["general","Added a small section to this page to promote my new web series \"A dude and his Firefox\"; it will be completely out of your way unless you point at the icon at the bottom corner, and you can dismiss it completely by clicking its close button."]
+			]
+		},
 		"2.1.8":{
 			"date":"February 7, 2016",
 			"notes":[

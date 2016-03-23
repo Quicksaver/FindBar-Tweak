@@ -1,4 +1,4 @@
-// VERSION 1.0.23
+// VERSION 1.0.24
 
 this.__defineGetter__('isPDFJS', function() { return Finder.isPDFJS; });
 
@@ -454,6 +454,10 @@ this.Finder = {
 					}
 				}
 			}
+		}
+
+		if(!selection.rangeCount || selection.isCollapsed) {
+			return null;
 		}
 
 		let utils = topWin.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIDOMWindowUtils);

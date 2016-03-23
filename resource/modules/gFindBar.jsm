@@ -1,4 +1,4 @@
-// VERSION 1.2.6
+// VERSION 1.2.7
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return FITFull || viewSource || window.gFindBarInitialized; });
@@ -205,64 +205,6 @@ this.baseInit = function(bar) {
 	Piggyback.add('gFindBar', bar, '_updateMatchesCount', function() {});
 	bar._foundMatches.value = '';
 	bar._foundMatches.hidden = true;
-
-	// opening the findbar is a somewhat asynchronous process, it needs to fetch the value to prefill from content,
-	// if the user types in the findbar after it's opened, but before the prefill value is fetched, it can lead to some weirdness with the search query
-	// see https://github.com/Quicksaver/FindBar-Tweak/issues/198 and https://bugzilla.mozilla.org/show_bug.cgi?id=1198465
-	if(Services.vc.compare(Services.appinfo.version, "45.0a1") < 0) {
-		Piggyback.add('gFindBar', bar, 'onCurrentSelection', function(aSelectionString, aIsInitialSelection) {
-			// no-op in case something resolved and nulled startFindDeferred in the meantime
-			return !aIsInitialSelection || this._startFindDeferred;
-		}, Piggyback.MODE_BEFORE);
-
-		// keypresses are communicated through a message sent from content
-		Piggyback.add('gFindBar', bar, '_onBrowserKeypress', function(aFakeEvent) {
-			// in theory, fast keypresses could stack up when the process is slow/hanging, especially in e10s-code which has a high degree of asynchronicity here.
-			// we should make sure the findbar isn't "opened" several times, otherwise it could lead to erroneous find queries
-			// see https://github.com/Quicksaver/FindBar-Tweak/issues/198 and https://bugzilla.mozilla.org/show_bug.cgi?id=1198465
-			if(!this.hidden && document.activeElement == this._findField.inputField) {
-				this._dispatchKeypressEvent(this._findField.inputField, aFakeEvent);
-				return false;
-			}
-
-			let FAYT_LINKS_KEY = "'";
-			let FAYT_TEXT_KEY = "/";
-
-			if(this._findMode != this.FIND_NORMAL && this._quickFindTimeout) {
-				if(!aFakeEvent.charCode) {
-					return true;
-				}
-
-				this._findField.select();
-				this._findField.focus();
-				this._dispatchKeypressEvent(this._findField.inputField, aFakeEvent);
-				return false;
-			}
-
-			let key = aFakeEvent.charCode ? String.fromCharCode(aFakeEvent.charCode) : null;
-			let manualstartFAYT = (key == FAYT_LINKS_KEY || key == FAYT_TEXT_KEY);
-			let autostartFAYT = !manualstartFAYT && Prefs.FAYTenabled && key && key != " ";
-			if(manualstartFAYT || autostartFAYT) {
-				let mode = (key == FAYT_LINKS_KEY || (autostartFAYT && this._typeAheadLinksOnly)) ? this.FIND_LINKS : this.FIND_TYPEAHEAD;
-
-				// Clear bar first, so that when open() calls setCaseSensitivity() it doesn't get confused by a lingering value
-				this._findField.value = "";
-
-				this.open(mode);
-				this._setFindCloseTimeout();
-				this._findField.select();
-				this._findField.focus();
-
-				if(autostartFAYT) {
-					this._dispatchKeypressEvent(this._findField.inputField, aFakeEvent);
-				} else {
-					this._updateStatusUI(this.nsITypeAheadFind.FIND_FOUND);
-				}
-
-				return false;
-			}
-		});
-	}
 };
 
 this.baseDeinit = function(bar) {
@@ -291,10 +233,6 @@ this.baseDeinit = function(bar) {
 		Piggyback.revert('gFindBar', bar, '_findAgain');
 		Piggyback.revert('gFindBar', bar, 'onFindAgainCommand');
 		Piggyback.revert('gFindBar', bar, '_updateMatchesCount');
-		if(Services.vc.compare(Services.appinfo.version, "45.0a1") < 0) {
-			Piggyback.revert('gFindBar', bar, 'onCurrentSelection');
-			Piggyback.revert('gFindBar', bar, '_onBrowserKeypress');
-		}
 
 		// this should always be resolved just after opening the sidebar,
 		// but in case any of our initialization listeners hangs around for some reason, better ret rid of it

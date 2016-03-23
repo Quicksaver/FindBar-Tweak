@@ -1,4 +1,4 @@
-// VERSION 1.0.22
+// VERSION 1.0.23
 
 this.__defineGetter__('isPDFJS', function() { return Finder.isPDFJS; });
 
@@ -1079,11 +1079,7 @@ this.Finder = {
 				}
 				else {
 					let body = (document instanceof Ci.nsIDOMHTMLDocument && document.body) ? document.body : document.documentElement;
-					if(Services.vc.compare(Services.appinfo.version, "45.0a1") >= 0) {
-						text = body.innerText;
-					} else {
-						text = innerText(body);
-					}
+					text = body.innerText;
 				}
 				resolve(text);
 			});
@@ -1115,11 +1111,7 @@ this.Finder = {
 			let doc = (aWindow.frames[i]) ? aWindow.frames[i].document : null;
 			if(!doc) { continue; }
 			let body = (doc instanceof Ci.nsIDOMHTMLDocument && doc.body) ? doc.body : doc.documentElement;
-			if(Services.vc.compare(Services.appinfo.version, "45.0a1") >= 0) {
-				text += body.innerText;
-			} else {
-				text += innerText(body);
-			}
+			text += body.innerText;
 			text += this.getInnerTextFrames(aWindow.frames[i]);
 		}
 		return text;

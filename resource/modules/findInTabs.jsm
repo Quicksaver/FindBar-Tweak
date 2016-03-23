@@ -1,4 +1,4 @@
-// VERSION 2.3.18
+// VERSION 2.3.19
 
 this.__defineGetter__('FITdeferred', function() { return window.FITdeferred; });
 this.__defineGetter__('FITinitialized', function() { return FITdeferred.promise; });
@@ -776,28 +776,7 @@ this.FIT = {
 	getTabGroupName: function(aGroup) {
 		if(aGroup.linkedWindow.TabView) {
 			// Tab Groups add-on provides an easy way to get the group title
-			if(aGroup.linkedWindow.TabView.getGroupTitle) {
-				return aGroup.linkedWindow.TabView.getGroupTitle(aGroup);
-			}
-
-			// This is a copy of what happens in TabView._createGroupMenuItem()
-			// can be removed in FF45
-			let name = aGroup.getTitle();
-			if(!name.trim()) {
-				let topChildLabel = aGroup.getTopChild().tab.label;
-				let childNum = aGroup.getChildren().length;
-
-				if(childNum > 1) {
-					Windows.callOnMostRecent(function(win) {
-						let num = childNum -1;
-						name = win.gNavigatorBundle.getString("tabview.moveToUnnamedGroup.label");
-						name = win.PluralForm.get(num, name).replace("#1", topChildLabel).replace("#2", num);
-					}, 'navigator:browser');
-				} else {
-					name = topChildLabel;
-				}
-			}
-			return name;
+			return aGroup.linkedWindow.TabView.getGroupTitle(aGroup);
 		}
 
 		// Tab Groups are gone, so we make up our own "group" name, which represents the full window

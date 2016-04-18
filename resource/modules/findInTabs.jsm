@@ -1,4 +1,4 @@
-// VERSION 2.3.19
+// VERSION 2.3.20
 
 this.__defineGetter__('FITdeferred', function() { return window.FITdeferred; });
 this.__defineGetter__('FITinitialized', function() { return FITdeferred.promise; });
@@ -616,7 +616,7 @@ this.FIT = {
 
 		for(let win of FITSandbox.navigators) {
 			if(win.TabView) {
-				for(let groupItem of win.TabView._window.GroupItems.groupItems) {
+				for(let groupItem of win.TabView._window.GroupItems) {
 					if(groupItem.hidden) { continue; }
 
 					groupItem.linkedWindow = win;
@@ -774,13 +774,13 @@ this.FIT = {
 	},
 
 	getTabGroupName: function(aGroup) {
-		if(aGroup.linkedWindow.TabView) {
+		if(aGroup.isAGroupItem && aGroup.linkedWindow.TabView) {
 			// Tab Groups add-on provides an easy way to get the group title
 			return aGroup.linkedWindow.TabView.getGroupTitle(aGroup);
 		}
 
 		// Tab Groups are gone, so we make up our own "group" name, which represents the full window
-		let name = aGroup.linkedWindow.gBrowser.selectedTab.getAttribute('visibleLabel');
+		let name = aGroup.linkedWindow.gBrowser.selectedTab.label;
 		let num = aGroup.linkedWindow.gBrowser.tabs.length;
 		if(num > 1) {
 			name += ' +'+(num -1);

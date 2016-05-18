@@ -1,4 +1,4 @@
-// VERSION 1.0.24
+// VERSION 1.0.25
 
 this.__defineGetter__('isPDFJS', function() { return Finder.isPDFJS; });
 
@@ -447,10 +447,15 @@ this.Finder = {
 			let nodes = $$("input, textarea", win.document);
 			for(let node of nodes) {
 				if(node instanceof Ci.nsIDOMNSEditableElement && node.editor) {
-					let sc = node.editor.selectionController;
-					selection = sc.getSelection(Ci.nsISelectionController.SELECTION_NORMAL);
-					if(selection.rangeCount && !selection.isCollapsed) {
-						break;
+					try {
+						let sc = node.editor.selectionController;
+						selection = sc.getSelection(Ci.nsISelectionController.SELECTION_NORMAL);
+						if(selection.rangeCount && !selection.isCollapsed) {
+							break;
+						}
+					}
+					catch(ex) {
+						// If this textarea is hidden, then its selection controller might not be intialized. Ignore the failure.
 					}
 				}
 			}

@@ -1,4 +1,4 @@
-// VERSION 1.0.14
+// VERSION 1.0.15
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -19,6 +19,7 @@ this.__defineSetter__('highlightedText', function(v) { if(!gFindBarInitialized) 
 // Because I can't access Finder.jsm in its active context (for some reason), I need to completely replace it.
 // A lot of the code here is based on http://mxr.mozilla.org/mozilla-central/source/toolkit/modules/RemoteFinder.jsm
 
+XPCOMUtils.defineLazyModuleGetter(this, "Rect", "resource://gre/modules/Geometry.jsm");
 XPCOMUtils.defineLazyGetter(this, "GetClipboardSearchString",
 	() => Cu.import("resource://gre/modules/Finder.jsm", {}).GetClipboardSearchString
 );
@@ -49,6 +50,10 @@ this.RemoteFinder.prototype = {
 
 		this.addMessage("Result", (data) => {
 			this._searchString = data.searchString;
+			// The rect stops being a Geometry.jsm:Rect when the data object is sent from one process to another.
+			if(data.rect) {
+				data.rect = Rect.fromRect(data.rect);
+			}
 			return { callback: "onFindResult", params: [ data, this._browser ] };
 		});
 

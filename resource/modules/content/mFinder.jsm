@@ -1,4 +1,4 @@
-// VERSION 1.0.25
+// VERSION 1.0.26
 
 this.__defineGetter__('isPDFJS', function() { return Finder.isPDFJS; });
 
@@ -597,6 +597,7 @@ this.Finder = {
 				let curSel = controller.getSelection(Ci.nsISelectionController.SELECTION_NORMAL);
 				if(curSel.rangeCount == 1) {
 					controller.setDisplaySelection(Ci.nsISelectionController.SELECTION_ATTENTION);
+					controller.repaintSelection(Ci.nsISelectionController.SELECTION_NORMAL);
 				}
 			}
 		}

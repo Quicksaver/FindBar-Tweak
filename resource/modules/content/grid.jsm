@@ -1,4 +1,4 @@
-// VERSION 1.2.0
+// VERSION 1.2.1
 
 this.grids = {
 	allHits: new Set(),
@@ -158,7 +158,9 @@ this.grids = {
 		// the offset values apparently can't be trusted if .offsetParent is static (even though by definition .offsetParent should return the closest positioned ancestor),
 		// although it's doubtful it will happen, here's to hoping I don't break websites with this change
 		// see https://github.com/Quicksaver/FindBar-Tweak/issues/197
-		if(getComputedStyle(frame.frameElement.offsetParent).position == 'static') {
+		// There's also no need to relative position the root element. See https://github.com/Quicksaver/FindBar-Tweak/issues/255.
+		let isRootElement = (frame.frameElement.offsetParent == owner.body || frame.frameElement.offsetParent == owner.documentElement);
+		if(!isRootElement && getComputedStyle(frame.frameElement.offsetParent).position == 'static') {
 			frame.frameElement.offsetParent.style.position = 'relative';
 		}
 

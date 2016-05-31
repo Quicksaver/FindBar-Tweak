@@ -1,7 +1,6 @@
 content   findbartweak                    chrome/content/
 resource  findbartweak                    resource/
 
-locale    findbartweak-en   en-US         chrome/locale/en-US/
 locale    findbartweak      en-US         chrome/locale/en-US/
 locale    findbartweak      de            chrome/locale/de/
 locale    findbartweak      el            chrome/locale/el/

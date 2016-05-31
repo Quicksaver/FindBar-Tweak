@@ -1,7 +1,6 @@
 <!ENTITY about.paneTitle "About">
 
 <!ENTITY about.version "Version {v}">
-<!ENTITY about.versionDivider "-">
 <!ENTITY about.uptodate "up-to-date, congratulations!">
 <!ENTITY about.needsupdate "update available!">
 

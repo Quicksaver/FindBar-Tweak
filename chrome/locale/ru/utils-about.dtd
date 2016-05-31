@@ -1,6 +1,5 @@
 <!ENTITY about.paneTitle "О дополнении">
 <!ENTITY about.version "Версия {v}">
-<!ENTITY about.versionDivider "-">
 <!ENTITY about.uptodate "актуальное состояние, поздравляем!">
 <!ENTITY about.needsupdate "требуется обновление!">
 <!ENTITY about.description "Проверьте &quot;примечания к выпуску&quot; и &quot;известные проблемы&quot; для этой версии ниже. Дайте мне знать, если вы найдете каких-либо проблемы или если у вас есть какие-либо предложения для будущих релизов.">

@@ -1,11 +1,10 @@
 <!ENTITY about.paneTitle "Acerca de">
 <!ENTITY about.version "Versión {v}">
-<!ENTITY about.versionDivider "-">
 <!ENTITY about.uptodate "actualizado, ¡felicidades!">
 <!ENTITY about.needsupdate "¡actualización disponible!">
 <!ENTITY about.description "Revise debajo las &quot;Notas de la versión&quot; y los &quot;Problemas conocidos&quot; para esta versión. Hágame saber cualquier problema que encuentre, o si tiene alguna sugerencia para futuras versiones.">
 <!ENTITY about.descriptionB "Este complemento es gratuito, pero reparar problemas, añadir nuevas características y asegurarse de que todo funciona con cada nueva versión de Firefox, es laborioso y puede ser difícil en algunos momentos. Si disfruta de este complemento, por favor, apoye su desarrollo continuado. Tal como el enlace indica, ¡&quot;usted puede ayudar&quot;!">
-<!ENTITY about.descriptionC "Vea también el último episodio de mi serie web acerca de la vida con un Firefox, realizado para todos ustedes, ¡los usuarios más colaborativos que un desarrollador podría pedir! Tan solo señale al icono saltarín en la esquina inferior de esta página. Ámelo, Ódielo. Compártalo.">
+<!ENTITY about.descriptionC "Vea también el último episodio de mi serie web acerca de la vida con Firefox, realizado para todos ustedes, ¡los usuarios más colaborativos que un desarrollador podría pedir! Tan solo señale al icono saltarín en la esquina inferior de esta página. Ámelo, Ódielo. Compártalo.">
 <!ENTITY about.allVersions "Mostrar notas de todas las versiones anteriores">
 <!ENTITY about.notifyOnUpdates "Mostrarme esta pestaña en la próxima actualización">
 <!ENTITY about.development "Estado del desarrollo">

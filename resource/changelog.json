@@ -1,6 +1,22 @@
 {
-	"current":"2.1.9",
+	"current":"2.1.10",
 	"releases": {
+		"2.1.10":{
+			"date":"May 31, 2016",
+			"notes":[
+				["updated","el, es and fr locales"],
+				["removed","Compatibility with Firefox 44 and below, compatibility with Firefox 45 will be maintained for the duration of the ESR 45 life cycle"],
+				["bugfix","(Firefox 48) preferences tab wouldn't work"],
+				["bugfix","(non-e10s) find bar wouldn't work right after updating the add-on until the browser was restarted"],
+				["bugfix","After navigating away from the preferences tab, navigating back (through the back button) wouldn't work"],
+				["bugfix","Compatibility with <a=https://addons.mozilla.org/firefox/addon/tab-groups-panorama/>Tab Groups 2</a>"],
+				["bugfix","(Firefox 47) could fail to detect customize mode during startup"],
+				["bugfix","Small memory leak when disabling the add-on (thanks to the8472)"],
+				["bugfix","Sometimes after finding, the current match wouldn't have the correct color (<a=https://github.com/Quicksaver/FindBar-Tweak/issues/257>issue #257</a>)"],
+				["bugfix","Certain websites would be broken after finding in them, such as ZeroHello (<a=https://github.com/Quicksaver/FindBar-Tweak/issues/255>issue #255</a>)"],
+				["","Other minor updates"]
+			]
+		},
 		"2.1.9":{
 			"date":"February 27, 2016",
 			"notes":[

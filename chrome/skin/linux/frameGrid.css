@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 /* Grid stuff for frame grids */
 div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"]:not([gridSpacers="none"]) div.topSpacer[flex="0"],
 div[ownedbyfindbartweak][anonid="gridBox"] div[anonid="findGrid"][gridSpacers="single"] div.bottomSpacer[flex="0"] {

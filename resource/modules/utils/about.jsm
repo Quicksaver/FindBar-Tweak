@@ -2,26 +2,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// VERSION 1.2.3
+// VERSION 1.3.1
 
 this.about = {
 	kNS: 'http://www.w3.org/1999/xhtml',
-
-	_gNotifyOnUpdates: null,
-	get gNotifyOnUpdates() {
-		if(!this._gNotifyOnUpdates) {
-			this._gNotifyOnUpdates = $('notifyOnUpdates');
-		}
-		return this._gNotifyOnUpdates;
-	},
-
-	_gShowTabOnUpdates: null,
-	get gShowTabOnUpdates() {
-		if(!this._gShowTabOnUpdates) {
-			this._gShowTabOnUpdates = $('showTabOnUpdates');
-		}
-		return this._gShowTabOnUpdates;
-	},
 
 	get openAddonsMgrLink() { return $('openAddonsMgr'); },
 	get allVersionsLink() { return $('allVersions'); },
@@ -31,6 +15,9 @@ this.about = {
 	handleEvent: function(e) {
 		switch(e.type) {
 			case 'click':
+				// Clicking a "#" anchor seems to "reset" the page's location (FF51+), which in turn changes panes because of the categories handlers.
+				e.preventDefault();
+
 				switch(e.target) {
 					case this.openAddonsMgrLink:
 						this.openAddonsMgr();
@@ -44,11 +31,6 @@ this.about = {
 
 			case 'mouseup':
 			case 'mouseover':
-				// are we mousing over the Show On Updates checkbox? That requires a specific action
-				if(e.target == this.gShowTabOnUpdates) {
-					this.disableNoticeShowOnUpdates();
-				}
-
 				// only do this for links and checkboxes
 				if(e.target.nodeName != 'a' && e.target.nodeName != 'html:a' && e.target.nodeName != 'checkbox') { return; }
 
@@ -57,11 +39,6 @@ this.about = {
 				}
 				break;
 		}
-	},
-
-	observe: function(aSubject, aTopic, aData) {
-		// we only listen for changes to the showTabOnUpdates preference here
-		this.disableNoticeShowOnUpdates();
 	},
 
 	init: function() {
@@ -79,9 +56,6 @@ this.about = {
 		setAttribute($('paneAbout-email'), 'href', addonUris.email);
 		setAttribute($('paneAbout-profile'), 'href', addonUris.profile);
 		setAttribute($('paneAbout-development'), 'href', addonUris.development);
-
-		// blink the "Show on updates" checkbox if necessary, so the user can easily notice it and disable them if he doesn't want them
-		this.noticeShowOnUpdates();
 
 		// check to see if there is a more recent version available
 		this.checkUpdates();
@@ -219,10 +193,7 @@ this.about = {
 		ul.appendChild(li);
 	},
 
-	// there's no need to keep assigning these on each parseTextMarkup call
-	markupExp: /<(b|a=([^<]*)?)?>/,
-	markupAExp: /<\/a>/,
-	markupBExp: /<\/b>/,
+	markupExp: /<([baie]{1})(?:=([^<]*)?)?>(?:([^<]*)?<\/\1>)?/,
 
 	parseTextMarkup: function(textNode) {
 		// textNode should always be a #text element
@@ -230,57 +201,51 @@ this.about = {
 			// if there's no valid beginning markup tag, bail out already
 			if(!this.markupExp.test(textNode.textContent)) { break; }
 
-			let matchBegin = this.markupExp.exec(textNode.textContent);
-			let markup = matchBegin[1][0]; // first character == tag name
+			let match = this.markupExp.exec(textNode.textContent);
+			let tag = match[1];
+			let href = match[2];
+			let text = match[3];
 
-			// we always split the #text nodes here, even if we end up not actually creating any sub nodes (i.e. no valid closing tag),
-			// it's just easier to continue processing the rest this way
-			let tempTextNode = textNode.splitText(matchBegin.index);
-
-			// unless our regexps fail, we should always have a valid expression for finding the closing node
-			let endExp;
-			switch(markup) {
-				case 'a':
-					endExp = this.markupAExp;
-					break;
-
-				case 'b':
-					endExp = this.markupBExp;
-					break;
-			}
-
-			// there's no valid closing tag, so continue processing the rest of the text for any other opening tags
-			if(!endExp.test(tempTextNode.textContent)) {
-				textNode = tempTextNode;
-				continue;
-			}
-
-			let matchEnd = endExp.exec(tempTextNode.textContent);
-			let endTextNode = tempTextNode.splitText(matchEnd.index +matchEnd[0].length);
-
+			let tagNode = textNode.splitText(match.index);
+			let endNode = tagNode.splitText(match[0].length);
 			let addNode;
-			switch(markup) {
-				case 'a':
-					addNode = document.createElementNS(this.kNS, 'a');
-					setAttribute(addNode, 'target', '_blank');
-					setAttribute(addNode, 'href', matchBegin[2]);
-					break;
 
+			switch(tag) {
 				case 'b':
 					addNode = document.createElementNS(this.kNS, 'span');
 					addNode.style.fontWeight = 'bold';
 					break;
+
+				case 'i':
+					text = 'issue #' + href;
+					addNode = this.createLinkNode(addonUris.support + "/" + href);
+					break;
+
+				case 'e':
+					addNode = this.createLinkNode("https://addons.mozilla.org/firefox/addon/" + href + "/");
+					break;
+
+				case 'a':
+					addNode = this.createLinkNode(href);
+					break;
 			}
 
-			addNode.textContent = tempTextNode.textContent.substring(matchBegin[0].length, matchEnd.index);
-			tempTextNode.parentNode.replaceChild(addNode, tempTextNode);
+			addNode.textContent = text;
+			tagNode.parentNode.replaceChild(addNode, tagNode);
 
 			// process the just added node for any nested tags
 			this.parseTextMarkup(addNode.firstChild);
 
 			// continue processing the rest of the text for more markup tags
-			textNode = endTextNode;
+			textNode = endNode;
 		}
+	},
+
+	createLinkNode: function(href) {
+		let node = document.createElementNS(this.kNS, 'a');
+		setAttribute(node, 'target', '_blank');
+		setAttribute(node, 'href', href);
+		return node;
 	},
 
 	// Since I can't use a local iframe to load remote content, I have to include and build the buttons myself.
@@ -369,38 +334,6 @@ this.about = {
 		}, 'JSON');
 	},
 
-	noticeShowOnUpdates: function() {
-		// don't blink the checkbox if the user has noticed it previously
-		if(Prefs.userNoticedTabOnUpdates) { return; }
-
-		// or if the user has disabled show on updates already (which is a sign he noticed it of course)
-		if(!Prefs.showTabOnUpdates) {
-			Prefs.userNoticedTabOnUpdates = false;
-			return;
-		}
-
-		// or if the user manually opened the About tab
-		if(!PrefPanes.previousVersion) { return; }
-
-		// so this is apparently the first time the About pane has been shown automatically on an update,
-		// let's make sure the user knows this can easily be disabled
-		setAttribute(this.gNotifyOnUpdates, 'blink', 'true');
-
-		// if the mouse goes over the checkbox, or if the user toggles it, it's a good sign it has been noticed, so we can disable this from now on
-		Listeners.add(this.gShowTabOnUpdates, 'mouseover', this);
-		Prefs.listen('showTabOnUpdates', this);
-	},
-
-	disableNoticeShowOnUpdates: function() {
-		if(Prefs.userNoticedTabOnUpdates) { return; }
-		Prefs.userNoticedTabOnUpdates = true;
-
-		removeAttribute(this.gNotifyOnUpdates, 'blink');
-
-		Listeners.remove(this.gShowTabOnUpdates, 'mouseover', this);
-		Prefs.unlisten('showTabOnUpdates', this);
-	},
-
 	openAddonsMgr: function() {
 		gWindow.BrowserOpenAddonsMgr();
 	}
@@ -422,6 +355,9 @@ this.promo = {
 	handleEvent: function(e) {
 		switch(e.type) {
 			case 'click':
+				// Clicking a "#" anchor seems to "reset" the page's location (FF51+), which in turn changes panes because of the categories handlers.
+				e.preventDefault();
+
 				switch(e.target) {
 					// User wants to close this promo, it will not be shown again, but remains visible for now so the user
 					// can decide whether this is just for this promo or for all (possible) future promos.

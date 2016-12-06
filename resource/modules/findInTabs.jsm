@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// VERSION 2.3.20
+// VERSION 2.3.21
 
 this.__defineGetter__('FITdeferred', function() { return window.FITdeferred; });
 this.__defineGetter__('FITinitialized', function() { return FITdeferred.promise; });
@@ -338,7 +338,8 @@ this.FIT = {
 			item: hits.selectedIndex,
 			hit: hits.currentItem.hitIdx,
 			query: findQuery,
-			caseSensitive: gFindBar.getElement("find-case-sensitive").checked
+			caseSensitive: gFindBar.getElement("find-case-sensitive").checked,
+			entireWord: (gFx50) ? gFindBar.getElement("find-entire-word").checked : false
 		});
 	},
 
@@ -947,7 +948,8 @@ this.FIT = {
 
 		Messenger.messageBrowser(aBrowser, 'FIT:ProcessText', {
 			query: findQuery,
-			caseSensitive: gFindBar.getElement("find-case-sensitive").checked
+			caseSensitive: gFindBar.getElement("find-case-sensitive").checked,
+			entireWord: (gFx50) ? gFindBar.getElement("find-entire-word").checked : false
 		});
 
 		// this task doesn't finish until we hear back from the browser
@@ -1057,7 +1059,7 @@ this.FIT = {
 
 	// When the user finds for text or uses the find again button, select the corresponding item in the hits list
 	currentHit: function(item, hitIdx) {
-		let hit = item.linkedHits.hits.get(hitIdx);
+		let hit = item && item.linkedHits.hits.get(hitIdx);
 		if(!hit) { return; }
 
 		// make sure the lists for this tab hasn't reset in the meantime
@@ -1203,12 +1205,38 @@ Modules.LOADMODULE = function() {
 				this._typeAheadCaseSensitive = (val) ? 1 : 0;
 				FIT.shouldFindAll();
 			};
+			if(Services.vc.compare(Services.appinfo.version, "51.0a1") >= 0) {
+				bar._setEntireWord = function() { return; };
+				bar.toggleEntireWord = function(val) {
+					this._entireWord = val;
+					FIT.shouldFindAll();
+				};
+			}
+			else if(gFx50) {
+				bar._updateEntireWord = function() { return; };
+				bar._setEntireWord = function(val) {
+					this._entireWord = val;
+					FIT.shouldFindAll();
+				};
+			}
 
 			Piggyback.add('findInTabs', bar, 'startFind', function(aMode) {
 				this.open(aMode);
 				this._findField.select();
 				this._findField.focus();
 			});
+
+			let prefsvc = (gFx50) ? bar._prefsvc : Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
+			prefsvc.removeObserver("accessibility.typeaheadfind", bar._observer);
+			prefsvc.removeObserver("accessibility.typeaheadfind.linksonly", bar._observer);
+			prefsvc.removeObserver("accessibility.typeaheadfind.casesensitive", bar._observer);
+			if(gFx50) {
+				prefsvc.removeObserver("findbar.entireword", bar._observer);
+				prefsvc.removeObserver("findbar.highlightAll", bar._observer);
+				prefsvc.removeObserver("findbar.modalHighlight", bar._observer);
+			}
+			// Not really, but there's no need to "destroy" it again. ;)
+			bar._destroyed = true;
 		},
 		function(bar) {
 			// No need to undo the modifications we do in the special case of FITFull, the window will be closed anyway

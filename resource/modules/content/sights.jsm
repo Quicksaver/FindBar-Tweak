@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// VERSION 1.1.10
+// VERSION 1.1.11
 
 this.sights = {
 	noCurrent: false,
@@ -487,6 +487,10 @@ Modules.UNLOADMODULE = function() {
 		Listeners.remove(Scope, 'scroll', sights, true);
 	}
 	catch(ex) {}
+
+	if(sights.scheduled) {
+		sights.scheduled.cancel();
+	}
 
 	RemoteFinderListener.removeMessage('Sights:Remove');
 	RemoteFinderListener.removeMessage('Sights.doCurrent');

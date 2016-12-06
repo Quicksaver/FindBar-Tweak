@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// VERSION 1.2.1
+// VERSION 1.2.2
 
 this.getDocProperty = function(doc, prop, min) {
 	try {
@@ -24,7 +24,7 @@ this.highlights = {
 	pagesTextsExtracted: new Set(),
 
 	onPDFResult: function(aAction, pIdx) {
-		if(!this.pagesTextsExtracted.has(pIdx)) {
+		if(findQuery && !this.pagesTextsExtracted.has(pIdx)) {
 			PDFJS.matches += PDFJS.findController.pageMatches[pIdx].length;
 			this.pagesTextsExtracted.add(pIdx);
 			this.pageTextExtracted(pIdx);
@@ -72,25 +72,28 @@ this.highlights = {
 
 	// Tab progress listeners, handles opening and closing of pages and location changes
 	// Commands a reHighlight if needed, triggered from history navigation as well
-	onLocationChange: function(aWebProgress, aRequest, aLocation) {
+	onLocationChange: function(aWebProgress, aRequest, aLocation, aFlags) {
 		// Frames don't need to trigger this
-		if(aWebProgress.isTopLevel) {
-			documentReHighlight = true;
+		if(!aWebProgress.isTopLevel) { return; }
 
-			// Bugfix: This used to be (request && !request.isPending()),
-			// I'm not sure why I made it that way before, maybe I saw it in an example somewhere?
-			// But by also reHighlighting when !request, we successfully reHighlight when there is dynamic content loaded (e.g. AJAX)
-			// e.g. "Show more" button in deviantart
-			if(!aRequest || !aRequest.isPending()) {
-				this.delay();
-			}
+		// Ignore events that don't change the document.
+		if(aFlags & Ci.nsIWebProgressListener.LOCATION_CHANGE_SAME_DOCUMENT) { return; }
 
-			// Bugfix issue #42: when opening an image file, highlights from previous loaded document would remain
-			else if(aRequest.contentType && aRequest.contentType.startsWith('image/')) {
-				Timers.cancel('delayReHighlight');
-				documentHighlighted = false;
-				this.apply(false);
-			}
+		documentReHighlight = true;
+
+		// Bugfix: This used to be (request && !request.isPending()),
+		// I'm not sure why I made it that way before, maybe I saw it in an example somewhere?
+		// But by also reHighlighting when !request, we successfully reHighlight when there is dynamic content loaded (e.g. AJAX)
+		// e.g. "Show more" button in deviantart
+		if(!aRequest || !aRequest.isPending()) {
+			this.delay();
+		}
+
+		// Bugfix issue #42: when opening an image file, highlights from previous loaded document would remain
+		else if(aRequest.contentType && aRequest.contentType.startsWith('image/')) {
+			Timers.cancel('delayReHighlight');
+			documentHighlighted = false;
+			this.apply(false);
 		}
 	},
 

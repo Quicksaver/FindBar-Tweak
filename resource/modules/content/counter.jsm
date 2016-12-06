@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// VERSION 1.0.6
+// VERSION 1.0.7
 
 this.counter = {
 	redoing: false,
@@ -28,14 +28,10 @@ this.counter = {
 		this.fill();
 	},
 
-	onFindResult: function() {
-		if(document instanceof Ci.nsIDOMXMLDocument) {
+	onFindResult: function(data) {
+		if(data.findAgain || document instanceof Ci.nsIDOMXMLDocument) {
 			this.fill();
 		}
-	},
-
-	onFindAgain: function() {
-		this.fill();
 	},
 
 	clear: function() {

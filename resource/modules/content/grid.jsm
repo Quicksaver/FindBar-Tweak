@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// VERSION 1.2.1
+// VERSION 1.2.2
 
 this.grids = {
 	allHits: new Set(),
@@ -64,8 +64,10 @@ this.grids = {
 		}
 	},
 
-	onFindAgain: function() {
-		this.followCurrent();
+	onFindResult: function(data) {
+		if(data.findAgain) {
+			this.followCurrent();
+		}
 	},
 
 	onPDFResult: function(aAction) {
@@ -285,10 +287,11 @@ this.grids = {
 			}
 
 			// If the page is rendered, place the actual highlights positions
+			let RenderingStates = (Services.vc.compare(Services.appinfo.version, "48.0a1") < 0) ? PDFJS.unWrap.RenderingStates : PDFJS.unWrap.pdfjsWebLibs.pdfjsWebPDFRenderingQueue.RenderingStates;
 			let pageView = PDFJS.getPageView(pIdx);
 			if(pageView.textLayer
 			&& pageView.textLayer.renderingDone
-			&& pageView.renderingState == PDFJS.unWrap.RenderingStates.FINISHED) {
+			&& pageView.renderingState == RenderingStates.FINISHED) {
 				this.fillWithPDFPage(grid, pIdx);
 			}
 

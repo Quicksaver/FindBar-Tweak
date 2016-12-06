@@ -153,6 +153,7 @@ html|div.findInTabs-match-label {
 
 window[FITSidebar] .findInTabs-bar hbox[anonid="findbar-textbox-wrapper"],
 window[FITSidebar] .findInTabs-bar toolbarbutton[anonid="find-case-sensitive"],
+window[FITSidebar] .findInTabs-bar toolbarbutton[anonid="find-entire-word"],
 window[FITSidebar] #findbartweak-findInTabs-filterBox,
 window[FITSidebar]:not([showTabs]) #findbartweak-findInTabs-tabs,
 window[FITSidebar]:not([showTabs]) #findbartweak-findInTabs-splitter {

@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// VERSION 1.8.4
+// VERSION 1.8.5
 
 this.findbarUI = {
 	get button() {
@@ -303,6 +303,7 @@ this.buttonLabels = {
 	btns: [
 		'highlight',
 		'find-case-sensitive',
+		'find-entire-word',
 		objName+'-find-tabs',
 		objName+'-find-tabs-tabs',
 		objName+'-find-tabs-goto'

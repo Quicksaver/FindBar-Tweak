@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// VERSION 1.1.4
+// VERSION 1.1.5
 
 this.PDFJS = {
 	// We need this to access protected properties, hidden from privileged code
@@ -57,7 +57,9 @@ this.PDFJS = {
 			this.findController.dirtyMatch = true;
 		}
 		this.findController.state = fakeEvent;
-		this.findController.updateUIState(this.unWrap.FindStates.FIND_PENDING);
+
+		let FindStates = (Services.vc.compare(Services.appinfo.version, "48.0a1") < 0) ? this.unWrap.FindStates : this.unWrap.pdfjsWebLibs.pdfjsWebPDFFindController.FindStates;
+		this.findController.updateUIState(FindStates.FIND_PENDING);
 
 		Timers.cancel('PDFFindTimeout');
 
@@ -187,7 +189,12 @@ this.PDFJS = {
 						top: PDFJS.unWrap.FIND_SCROLL_OFFSET_TOP,
 						left: PDFJS.unWrap.FIND_SCROLL_OFFSET_LEFT
 					}, PDFJS.unWrap);
-					PDFJS.unWrap.scrollIntoView(element, spot, true);
+
+					if(Services.vc.compare(Services.appinfo.version, "48.0a1") < 0) {
+						PDFJS.unWrap.scrollIntoView(element, spot, true);
+					} else {
+						PDFJS.unWrap.pdfjsWebLibs.pdfjsWebUIUtils.scrollIntoView(element, spot, true);
+					}
 				}
 			});
 
@@ -199,7 +206,11 @@ this.PDFJS = {
 					if(!PDFJS.isElementInView(page.div, true)) {
 						// If the page is selected, scroll the page into view, which triggers rendering the page, which adds the textLayer.
 						// Once the textLayer is build, it will scroll onto the selected match.
-						PDFJS.pdfViewer.scrollPageIntoView(index +1);
+						if(Services.vc.compare(Services.appinfo.version, "51.0a1") < 0) {
+							PDFJS.pdfViewer.scrollPageIntoView(index + 1);
+						} else {
+							PDFJS.pdfViewer.currentPageNumber = index + 1;
+						}
 					}
 				}
 
@@ -303,9 +314,12 @@ this.PDFJS = {
 	},
 
 	onLocationChange: function(aWebProgress, aRequest, aLocation, aFlags) {
-		if(aWebProgress.isTopLevel) {
-			this.reset();
-		}
+		if(!aWebProgress.isTopLevel) { return; }
+
+		// Ignore events that don't change the document.
+		if(aFlags & Ci.nsIWebProgressListener.LOCATION_CHANGE_SAME_DOCUMENT) { return; }
+
+		this.reset();
 	},
 
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIWebProgressListener, Ci.nsISupportsWeakReference])

@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// VERSION 1.0.15
+// VERSION 1.0.16
 
 this.SHORT_DELAY = 25;
 this.LONG_DELAY = 1500;
@@ -171,6 +171,12 @@ this.RemoteFinder.prototype = {
 	set caseSensitive(aSensitive) { Messenger.messageBrowser(this._browser, 'CaseSensitive', { caseSensitive: aSensitive }); },
 	getInitialSelection: function() { Messenger.messageBrowser(this._browser, 'GetInitialSelection', {}); },
 
+	set entireWord(aEntireWord) {
+		if(gFx50) {
+			Messenger.messageBrowser(this._browser, 'EntireWord', { entireWord: aEntireWord });
+		}
+	},
+
 	// gets the current text selection in the content browser in the form of a promise
 	_getTextSelection: null,
 	get getTextSelection() {
@@ -236,6 +242,14 @@ this.RemoteFinder.prototype = {
 
 		this._browser.focus();
 		Messenger.messageBrowser(this._browser, 'FocusContent');
+	},
+
+	onFindbarClose: function() {
+		Messenger.messageBrowser(this._browser, 'FindbarClose');
+	},
+
+	onFindbarOpen: function() {
+		Messenger.messageBrowser(this._browser, 'FindbarOpen');
 	},
 
 	keyPress: function(e) {

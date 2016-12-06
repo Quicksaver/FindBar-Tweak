@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// VERSION 1.0.2
+// VERSION 1.0.3
 
 this.highlightByDefault = {
 	hook: function() {
@@ -27,12 +27,15 @@ this.highlightByDefault = {
 	},
 
 	// Commands a reHighlight if needed, triggered from history navigation as well
-	onLocationChange: function(aWebProgress, aRequest, aLocation) {
+	onLocationChange: function(aWebProgress, aRequest, aLocation, aFlags) {
 		// Frames don't need to trigger this
-		if(aWebProgress.isTopLevel) {
-			if(aRequest && !aRequest.isPending()) {
-				this.hook();
-			}
+		if(!aWebProgress.isTopLevel) { return; }
+
+		// Ignore events that don't change the document.
+		if(aFlags & Ci.nsIWebProgressListener.LOCATION_CHANGE_SAME_DOCUMENT) { return; }
+
+		if(aRequest && !aRequest.isPending()) {
+			this.hook();
 		}
 	},
 

@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// VERSION 2.1.4
+// VERSION 2.1.5
 
 this.counter = {
 	heldStatus: null,
@@ -46,12 +46,15 @@ Modules.LOADMODULE = function() {
 				// we shouldn't update the status if it's relative to a previous query
 				if(data.searchString != findQuery) { return; }
 
-				var res = (data.result || !findQuery || !Finder.searchString) ? Ci.nsITypeAheadFind.FIND_FOUND : Ci.nsITypeAheadFind.FIND_NOTFOUND;
-				var aFindPrevious = null;
+				let res = Ci.nsITypeAheadFind.FIND_NOTFOUND;
+				let aFindPrevious = null;
 				if(counter.heldStatus) {
 					res = counter.heldStatus.res;
 					aFindPrevious = counter.heldStatus.aFindPrevious;
 					counter.heldStatus = null;
+				}
+				else if(data.result || !data.searchString) {
+					res = Ci.nsITypeAheadFind.FIND_FOUND;
 				}
 
 				// don't forget that this should bypass our checks to go straight to the actual method

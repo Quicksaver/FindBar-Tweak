@@ -2,11 +2,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// VERSION 2.1.6
+// VERSION 2.1.7
 
 this.highlightByDefault = {
 	apply: function(bar) {
 		bar.getElement("highlight").checked = true;
+		if(gFx50) {
+			bar._highlightAll = true;
+			Prefs.highlightAll = true;
+		}
 	},
 
 	handleEvent: function(e) {
@@ -35,6 +39,13 @@ this.highlightByDefault = {
 };
 
 Modules.LOADMODULE = function() {
+	if(gFx50) {
+		let defaults = Services.prefs.getDefaultBranch('findbar.');
+		Prefs.setDefaults({
+			highlightAll: defaults.getBoolPref('highlightAll')
+		}, 'findbar', '');
+	}
+
 	findbar.init('highlightByDefault',
 		function(bar) {
 			bar.browser.finder.addMessage('HighlightByDefault', () => {
@@ -43,7 +54,7 @@ Modules.LOADMODULE = function() {
 
 			Messenger.loadInBrowser(bar.browser, 'highlightByDefault');
 
-			if(!viewSource) {
+			if(!viewSource && Services.vc.compare(Services.appinfo.version, "51.0a1") < 0) {
 				// We so don't want the tabbrowser's onLocationChange handler to unset the highlight button,
 				// but it's so hard to override it correctly... This works great, so here's to hoping this use of
 				// arguments.callee.caller is acceptable.
@@ -73,7 +84,7 @@ Modules.LOADMODULE = function() {
 
 			bar.browser.finder.removeMessage('HighlightByDefault');
 
-			if(!viewSource) {
+			if(!viewSource && Services.vc.compare(Services.appinfo.version, "51.0a1") < 0) {
 				var highlightBtn = bar.getElement('highlight');
 				Object.defineProperty(highlightBtn, 'checked', Object.getOwnPropertyDescriptor(Object.getPrototypeOf(highlightBtn), 'checked'));
 				delete highlightBtn._checked;
@@ -103,4 +114,8 @@ Modules.UNLOADMODULE = function() {
 	Listeners.remove(window, 'WillOpenFindBarBackground', highlightByDefault);
 	Listeners.remove(window, 'WillFillSelectedText', highlightByDefault);
 	Listeners.remove(window, 'WillFindFindBar', highlightByDefault);
+
+	if(gFx50) {
+		Prefs.reset('highlightAll');
+	}
 };

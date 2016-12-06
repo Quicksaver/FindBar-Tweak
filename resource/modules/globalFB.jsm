@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// VERSION 2.0.7
+// VERSION 2.0.8
 
 this.globalFB = {
 	hidden: true,
@@ -37,9 +37,12 @@ this.globalFB = {
 					let word = currentTab._findBar._findField.value;
 					let caseSensitive = currentTab._findBar.getElement('find-case-sensitive').checked;
 					let highlightAll = currentTab._findBar.getElement('highlight').checked;
+					let entireWord = gFx50 && currentTab._findBar.getElement('find-entire-word').checked;
 
 					// make sure the status is reset when the query is changed
-					if(findQuery != word || gFindBar.getElement('find-case-sensitive').checked != caseSensitive) {
+					if(findQuery != word
+					|| gFindBar.getElement('find-case-sensitive').checked != caseSensitive
+					|| (gFx50 && gFindBar.getElement('find-entire-word').checked != entireWord)) {
 						gFindBar.__updateStatusUI(gFindBar.nsITypeAheadFind.FIND_FOUND);
 					}
 
@@ -49,6 +52,9 @@ this.globalFB = {
 					gFindBar._findField.selectionEnd = currentTab._findBar._findField.selectionEnd;
 					gFindBar.getElement('highlight').checked = highlightAll;
 					gFindBar.getElement('find-case-sensitive').checked = caseSensitive;
+					if(gFx50) {
+						gFindBar.getElement('find-entire-word').checked = entireWord;
+					}
 					gFindBar._enableFindButtons(word);
 
 					// try to mimic the focused status from one findbar to another.

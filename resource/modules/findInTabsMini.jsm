@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// VERSION 2.2.8
+// VERSION 2.2.9
 
 this.FITMini = {
 	get broadcaster() { return $(FITSandbox.kBroadcasterId); },
@@ -182,6 +182,9 @@ this.FITMini = {
 		if(gFindBarInitialized && ((!gFindBar.hidden && findQuery) || forceEmpty)) {
 			state.query = findQuery;
 			state.caseSensitive = gFindBar.getElement("find-case-sensitive").checked;
+			if(gFx50) {
+				state.entireWord = gFindBar.getElement("find-entire-word").checked;
+			}
 		}
 
 		return state;
@@ -246,7 +249,10 @@ this.FITMini = {
 				setAttribute(toggleButton, 'anonid', objName+'-find-tabs');
 				setAttribute(toggleButton, 'class', 'findbar-button findbar-tabs tabbable findbar-no-find-fast');
 				setAttribute(toggleButton, 'observes', objName+'-findInTabs-broadcaster');
-				bar.getElement("findbar-container").insertBefore(toggleButton, bar.getElement('find-case-sensitive').nextSibling);
+
+				let siblingId = (gFx50) ? 'find-entire-word' : 'find-case-sensitive';
+				let sibling = bar.getElement(siblingId).nextSibling;
+				bar.getElement("findbar-container").insertBefore(toggleButton, sibling);
 
 				// make sure the australis styling is also applied to the FIT button
 				buttonLabels.toggle();

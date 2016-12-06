@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// VERSION 1.0.2
+// VERSION 1.0.3
 
 Modules.LOADMODULE = function() {
 	// define when we're in a PDF file
@@ -53,6 +53,7 @@ Modules.LOADMODULE = function() {
 						type: 'find'+aType,
 						query: this._findField.value,
 						caseSensitive: !!this._typeAheadCaseSensitive,
+						entireWord: (gFx50) ? this._entireWord : false,
 						highlightAll: this.getElement("highlight").checked,
 						findPrevious: aFindPrevious,
 						delay: delay,

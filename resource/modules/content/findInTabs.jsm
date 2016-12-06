@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// VERSION 1.2.8
+// VERSION 1.2.9
 
 this.FIT = {
 	// this keeps a list of all hits in a page, mapped to an id that can be used to keep things sync'ed up with the chrome process
@@ -16,6 +16,7 @@ this.FIT = {
 	_lastText: '',
 	_lastQuery: '',
 	_lastCaseSensitive: false,
+	_lastEntireWord: false,
 	_lastMatch: -1,
 
 	_holdingHit: null,
@@ -95,12 +96,15 @@ this.FIT = {
 		}
 	},
 
-	onLocationChange: function(aWebProgress, aRequest, aLocation) {
+	onLocationChange: function(aWebProgress, aRequest, aLocation, aFlags) {
 		// Frames don't need to trigger this
-		if(aWebProgress.isTopLevel) {
-			this.resetHits();
-			message('FIT:Update');
-		}
+		if(!aWebProgress.isTopLevel) { return; }
+
+		// Ignore events that don't change the document.
+		if(aFlags & Ci.nsIWebProgressListener.LOCATION_CHANGE_SAME_DOCUMENT) { return; }
+
+		this.resetHits();
+		message('FIT:Update');
 	},
 
 	onStateChange: function(aWebProgress, aRequest, aStateFlags, aStatus) {
@@ -121,7 +125,14 @@ this.FIT = {
 	},
 
 	reNotify: function() {
-		Finder._notify(Finder.searchString, Finder._lastFindResult, false, Finder._previousLink);
+		Finder._notify({
+			searchString: Finder.searchString,
+			result: Finder._lastFindResult,
+			findBackwards: false,
+			findAgain: false,
+			drawOutline: Finder._previousLink,
+			linksOnly: false
+		});
 	},
 
 	selectHit: function(data) {
@@ -177,7 +188,8 @@ this.FIT = {
 		}
 
 		if(Finder.searchString != data.query
-		|| Finder._fastFind.caseSensitive != data.caseSensitive) {
+		|| Finder._fastFind.caseSensitive != data.caseSensitive
+		|| (gFx50 && Finder._fastFind.entireWord != data.entireWord)) {
 			// selecting a hit from the FIT lists should highlight all the matches
 			documentHighlighted = true;
 
@@ -293,7 +305,9 @@ this.FIT = {
 			};
 
 			aSync(() => {
-				if(data.query == this._lastQuery && data.caseSensitive == this._lastCaseSensitive) {
+				if(data.query == this._lastQuery
+				&& data.caseSensitive == this._lastCaseSensitive
+				&& data.entireWord == this._lastEntireWord) {
 					resolve();
 				} else {
 					reject();
@@ -385,49 +399,51 @@ this.FIT = {
 		if(this._lastText
 		&& this._lastText == textContent
 		&& this._lastQuery == data.query
-		&& this._lastCaseSensitive == data.caseSensitive) {
+		&& this._lastCaseSensitive == data.caseSensitive
+		&& this._lastEntireWord == data.entireWord) {
 			resolve();
 			return;
 		}
 
 		this._lastQuery = data.query;
 		this._lastCaseSensitive = data.caseSensitive;
+		this._lastEntireWord = data.entireWord;
 		this.resetHits();
 
-		yield this._getAllHits(data.query, data.caseSensitive);
+		yield this._getAllHits(data.query, data.caseSensitive, data.entireWord);
 
 		message('FIT:CountResult', {
 			hits: this.hits.all.size,
 			query: data.query
 		});
 
-		yield this._segment(data.query, data.caseSensitive);
+		yield this._segment(data.query, data.caseSensitive, data.entireWord);
 
 		this._lastText = textContent;
 		resolve();
 	}),
 
-	_getAllHits: Task.async(function* (aWord, aCaseSensitive, aWindow) {
+	_getAllHits: Task.async(function* (aWord, aCaseSensitive, aEntireWord, aWindow) {
 		let win = aWindow || Finder.getWindow;
 
 		// for both pdfjs and html pages, the distinction is made inside
-		yield this._hitIterator(aWord, aCaseSensitive, win);
+		yield this._hitIterator(aWord, aCaseSensitive, aEntireWord, win);
 
 		if(!isPDFJS) {
 			// frames
 			for(let i = 0; win.frames && i < win.frames.length; i++) {
-				yield this._hitIterator(aWord, aCaseSensitive, win.frames[i]);
+				yield this._hitIterator(aWord, aCaseSensitive, aEntireWord, win.frames[i]);
 			}
 		}
 	}),
 
-	_hitIterator: Task.async(function* (aWord, aCaseSensitive, aWindow) {
+	_hitIterator: Task.async(function* (aWord, aCaseSensitive, aEntireWord, aWindow) {
 		let iterator = (isPDFJS) ? 'pdf' : 'find';
 		let hits = new Map();
 		let first = null;
 		let count = 0;
 
-		for(let hit of this['_'+iterator+'Iterator'](aWord, aCaseSensitive, aWindow)) {
+		for(let hit of this['_'+iterator+'Iterator'](aWord, aCaseSensitive, aEntireWord, aWindow)) {
 			if(first === null) {
 				first = this.hits.all.size;
 			}
@@ -441,7 +457,8 @@ this.FIT = {
 				count = 0;
 				yield this._processSleep(0, {
 					query: aWord,
-					caseSensitive: aCaseSensitive
+					caseSensitive: aCaseSensitive,
+					entireWord: aEntireWord
 				});
 			}
 		}
@@ -470,7 +487,7 @@ this.FIT = {
 		}
 	},
 
-	_findIterator: function* (aWord, aCaseSensitive, aWindow) {
+	_findIterator: function* (aWord, aCaseSensitive, aEntireWord, aWindow) {
 		let doc = aWindow.document;
 		let body = (doc instanceof Ci.nsIDOMHTMLDocument && doc.body) ? doc.body : doc.documentElement;
 		if(!body) { return; }
@@ -485,7 +502,7 @@ this.FIT = {
 		endPt.collapse(false);
 
 		let retRange = null;
-		let finder = new rangeFinder(aWord, aCaseSensitive);
+		let finder = new rangeFinder(aWord, aCaseSensitive, aEntireWord);
 
 		while((retRange = finder.Find(searchRange, startPt, endPt))) {
 			yield retRange;
@@ -495,7 +512,7 @@ this.FIT = {
 	},
 
 	// This segments the text around the matches to construct the richlistitems for the hits list (in chrome)
-	_segment: Task.async(function* (aWord, aCaseSensitive) {
+	_segment: Task.async(function* (aWord, aCaseSensitive, aEntireWord) {
 		let count = 0;
 
 		let isPDF = isPDFJS;
@@ -694,7 +711,8 @@ this.FIT = {
 				count = 0;
 				yield this._processSleep(0, {
 					query: aWord,
-					caseSensitive: aCaseSensitive
+					caseSensitive: aCaseSensitive,
+					entireWord: aEntireWord
 				});
 			}
 		}

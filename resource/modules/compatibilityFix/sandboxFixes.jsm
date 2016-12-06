@@ -2,7 +2,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// VERSION 1.0.8
+// VERSION 1.0.9
+
+this.gFx50 = Services.vc.compare(Services.appinfo.version, "50.0a1") >= 0;
 
 Modules.LOADMODULE = function() {
 	AddonManager.getAddonByID('{097d3191-e6fa-4728-9826-b533d755359d}', function(addon) {
@@ -15,6 +17,7 @@ Modules.LOADMODULE = function() {
 
 	Modules.loadIf('compatibilityFix/Mac', DARWIN);
 	Modules.load('compatibilityFix/omnisidebar');
+	Modules.loadIf('compatibilityFix/modalHighlight', gFx50);
 };
 
 Modules.UNLOADMODULE = function() {
@@ -22,4 +25,5 @@ Modules.UNLOADMODULE = function() {
 	Modules.unload('compatibilityFix/FTDeepDark');
 	Modules.unload('compatibilityFix/Mac');
 	Modules.unload('compatibilityFix/omnisidebar');
+	Modules.unload('compatibilityFix/modalHighlight');
 };

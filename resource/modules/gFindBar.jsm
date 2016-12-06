@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// VERSION 1.2.7
+// VERSION 1.2.8
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return FITFull || viewSource || window.gFindBarInitialized; });
@@ -154,9 +154,16 @@ this.baseInit = function(bar) {
 					Messenger.messageBrowser(this.browser, 'Sights.doCurrent', true);
 				}
 
-				this._enableFindButtons(val);
+				if(Services.vc.compare(Services.appinfo.version, "53.0a1") < 0) {
+					this._enableFindButtons(val);
+				}
 
 				this._updateCaseSensitivity(val);
+				if(Services.vc.compare(Services.appinfo.version, "51.0a1") >= 0) {
+					this._setEntireWord();
+				} else if(gFx50) {
+					this._updateEntireWord();
+				}
 				this.browser.finder.tweakFastFind(val, this._findMode == this.FIND_LINKS, this._findMode != this.FIND_NORMAL);
 
 				// We always set the highlight timeout when performing a new find, otherwise the counter would not be updated.
@@ -374,6 +381,9 @@ this.findbar = {
 				highlight: bar.getElement('highlight').checked,
 				caseSensitive: bar.getElement('find-case-sensitive').checked
 			};
+			if(gFx50) {
+				tab._findBar_state.entireWord = bar.getElement('find-entire-word').checked;
+			}
 			return tab._findBar_state;
 		}
 
@@ -387,6 +397,9 @@ this.findbar = {
 		bar._findField.value = state.value;
 		bar.getElement('highlight').checked = state.highlight;
 		bar.getElement('find-case-sensitive').checked = state.caseSensitive;
+		if(gFx50) {
+			bar.getElement('find-entire-word').checked = state.entireWord;
+		}
 		bar.open();
 
 		return true;

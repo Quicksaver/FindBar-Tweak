@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// VERSION 2.1.10
+// VERSION 2.1.11
 
 this.highlights = {
 	observe: function(aSubject, aTopic) {
@@ -326,6 +326,12 @@ Modules.LOADMODULE = function() {
 				this.browser.finder.highlight(aHighlight, word, this._findMode == this.FIND_LINKS);
 			});
 
+			if(Services.vc.compare(Services.appinfo.version, "51.0a1") >= 0) {
+				Piggyback.add('gFindBar', bar, '_maybeHighlightAll', function() {
+					this._setHighlightTimeou();
+				});
+			}
+
 			bar.browser.finder.addResultListener(highlights);
 
 			bar.browser.finder.addMessage('ReHighlight', data => {
@@ -357,6 +363,9 @@ Modules.LOADMODULE = function() {
 
 			Piggyback.revert('highlights', bar, '_setHighlightTimeout');
 			Piggyback.revert('highlights', bar, 'toggleHighlight');
+			if(Services.vc.compare(Services.appinfo.version, "51.0a1") >= 0) {
+				Piggyback.revert('gFindBar', bar, '_maybeHighlightAll');
+			}
 			delete bar._highlightAnyway;
 		}
 	);

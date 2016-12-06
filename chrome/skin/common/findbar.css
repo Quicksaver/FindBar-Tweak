@@ -57,12 +57,17 @@ findbar[hideLabels] toolbarbutton[anonid="find-case-sensitive"] {
 	-moz-image-region: rect(0px 16px 16px 0px);
 }
 
+findbar[hideLabels] toolbarbutton[anonid="find-entire-word"] {
+	list-style-image: url("chrome://findbartweak/skin/toolbar.png");
+	-moz-image-region: rect(0px 48px 16px 32px);
+}
+
 findbar[keepButtons] toolbarbutton[hidden].tabbable:not(.findbar-no-find-fast):not(.findbar-find-fast),
 findbar[keepButtons] spacer {
 	display: -moz-box;
 }
 
-findbar[keepButtons] label[anonid="match-case-status"] {
+findbar[keepButtons] label:-moz-any([anonid="match-case-status"],[anonid="entire-word-status"]) {
 	display: none;
 }
 

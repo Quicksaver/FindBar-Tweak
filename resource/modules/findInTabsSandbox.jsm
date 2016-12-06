@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// VERSION 2.2.1
+// VERSION 2.2.2
 
 this.FITSandbox = {
 	kBroadcasterId: objName+'-findInTabs-broadcaster',
@@ -185,9 +185,15 @@ this.FITSandbox = {
 
 		let findbar = aWindow[objName].gFindBar;
 		if((state.query || forceEmpty)
-		&& (state.query != findbar._findField.value || state.caseSensitive != findbar.getElement("find-case-sensitive").checked)) {
+		&&	(state.query != findbar._findField.value
+			|| state.caseSensitive != findbar.getElement("find-case-sensitive").checked)
+			|| (gFx50 && state.entireWord != findbar.getElement("find-entire-word").checked)) {
+
 			findbar._findField.value = state.query;
 			findbar.getElement("find-case-sensitive").checked = state.caseSensitive;
+			if(gFx50) {
+				findbar.getElement("find-entire-word").checked = state.entireWord;
+			}
 			return true;
 		}
 

@@ -2,7 +2,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// VERSION 1.0.26
+// VERSION 1.0.27
+
+this.gFx50 = Services.vc.compare(Services.appinfo.version, "50.0a1") >= 0;
 
 this.__defineGetter__('isPDFJS', function() { return Finder.isPDFJS; });
 
@@ -18,6 +20,7 @@ this.__defineSetter__('highlightedWord', function(v) { return Finder.highlighted
 // A lot of the code here is based on http://mxr.mozilla.org/mozilla-central/source/toolkit/modules/Finder.jsm
 
 XPCOMUtils.defineLazyModuleGetter(this, "Rect", "resource://gre/modules/Geometry.jsm");
+XPCOMUtils.defineLazyModuleGetter(this, "BrowserUtils", "resource://gre/modules/BrowserUtils.jsm");
 XPCOMUtils.defineLazyServiceGetter(this, "Clipboard", "@mozilla.org/widget/clipboard;1", "nsIClipboard");
 XPCOMUtils.defineLazyServiceGetter(this, "ClipboardHelper", "@mozilla.org/widget/clipboardhelper;1", "nsIClipboardHelper");
 XPCOMUtils.defineLazyServiceGetter(this, "TextToSubURIService", "@mozilla.org/intl/texttosuburi;1", "nsITextToSubURI");
@@ -62,12 +65,15 @@ this.Finder = {
 		this._listeners.delete(aListener);
 	},
 
-	_notify: function(aSearchString, aResult, aFindBackwards, aDrawOutline, aStoreResult = true) {
-		if(aStoreResult) {
-			this._searchString = aSearchString;
-			this.clipboardSearchString = aSearchString
+	_notify: function(options) {
+		if(options.storeResult === undefined) {
+			options.storeResult = true;
 		}
-		this._outlineLink(aDrawOutline);
+
+		if(options.storeResult) {
+			this._searchString = options.searchString;
+			this.clipboardSearchString = options.searchString
+		}
 
 		let foundLink = this._fastFind.foundLink;
 		let linkURL = null;
@@ -81,27 +87,15 @@ this.Finder = {
 			linkURL = TextToSubURIService.unEscapeURIForUI(docCharset, foundLink.href);
 		}
 
-		let data = {
-			result: aResult,
-			findBackwards: aFindBackwards,
-			linkURL: linkURL,
-			rect: this._getResultRect(),
-			searchString: this._searchString,
-			storeResult: aStoreResult
-		};
+		options.linkURL = linkURL;
+		options.rect = this._getResultRect();
+		options.searchString = this._searchString;
+
+		this._outlineLink(options.drawOutline);
 
 		for(let l of this._listeners) {
 			if(l.onFindResult) {
-				try { l.onFindResult(data); }
-				catch(ex) { Cu.reportError(ex); }
-			}
-		}
-	},
-
-	_notifyFindAgain: function(aFindBackwards) {
-		for(let l of this._listeners) {
-			if(l.onFindAgain) {
-				try { l.onFindAgain(aFindBackwards); }
+				try { l.onFindResult(options); }
 				catch(ex) { Cu.reportError(ex); }
 			}
 		}
@@ -125,7 +119,15 @@ this.Finder = {
 	},
 
 	set caseSensitive(aSensitive) {
-		this._fastFind.caseSensitive = aSensitive;
+		if(this._fastFind.caseSensitive != aSensitive) {
+			this._fastFind.caseSensitive = aSensitive;
+		}
+	},
+
+	set entireWord(aEntireWord) {
+		if(gFx50 && this._fastFind.entireWord != aEntireWord) {
+			this._fastFind.entireWord = aEntireWord;
+		}
 	},
 
 	_lastFindResult: null,
@@ -138,7 +140,14 @@ this.Finder = {
 	fastFind: function(aSearchString, aLinksOnly, aDrawOutline) {
 		this._lastFindResult = this._fastFind.find(aSearchString, aLinksOnly);
 		this._lastFindPrevious = false;
-		this._notify(this._fastFind.searchString, this._lastFindResult, false, aDrawOutline);
+		this._notify({
+			searchString: this._fastFind.searchString,
+			result: this._lastFindResult,
+			findBackwards: false,
+			findAgain: false,
+			drawOutline: aDrawOutline,
+			linksOnly: aLinksOnly
+		});
 	},
 
 	// Repeat the previous search. Should only be called after a previous call to Finder.fastFind.
@@ -157,10 +166,14 @@ this.Finder = {
 
 		this._lastFindResult = this._fastFind.findAgain(aFindBackwards, aLinksOnly);
 		this._lastFindPrevious = aFindBackwards;
-		this._notify(this._fastFind.searchString, this._lastFindResult, aFindBackwards, aDrawOutline);
-
-		// _notify doesn't distinguish between fastFind, findAgain and highlight operations
-		this._notifyFindAgain(aFindBackwards);
+		this._notify({
+			searchString: this._fastFind.searchString,
+			result: this._lastFindResult,
+			findBackwards: aFindBackwards,
+			findAgain: true,
+			drawOutline: aDrawOutline,
+			linksOnly: aLinksOnly
+		});
 	},
 
 	// Search until we find a specific range, to move fastFind's pointer to it.
@@ -170,16 +183,23 @@ this.Finder = {
 	// - aLimit How many findAgain loops should it do; basically how many hits does the page have.
 	//   Using this speeds up the search, because we don't have to keep checking for defaultViews and editableNodes and stuff
 	findRange: function(aSearchString, aRange, aCaseSensitive, aFindBackwards, aLimit) {
-		let notifyAgain = true;
+		let aFindAgain = true;
 		if(this.searchString != aSearchString || this._fastFind.caseSensitive != aCaseSensitive) {
 			this._fastFind.caseSensitive = aCaseSensitive;
 			this._lastFindResult = this._fastFind.find(aSearchString, false);
-			notifyAgain = false;
+			aFindAgain = false;
 		}
 
 		// obviously we can't proceed if the search term doesn't exist, although this really shouldn't happen at all
 		if(this._lastFindResult == Ci.nsITypeAheadFind.FIND_NOTFOUND) {
-			this._notify(this._fastFind.searchString, this._lastFindResult, false, false);
+			this._notify({
+				searchString: this._fastFind.searchString,
+				result: this._lastFindResult,
+				findBackwards: false,
+				findAgain: false,
+				drawOutline: false,
+				linksOnly: false
+			});
 			return;
 		}
 
@@ -197,10 +217,14 @@ this.Finder = {
 			&& this._fastFind.foundEditable == editableNode) {
 				let sel = controller.getSelection(Ci.nsISelectionController.SELECTION_NORMAL);
 				if(sel.rangeCount == 1 && this.compareRanges(aRange, sel.getRangeAt(0))) {
-					this._notify(this._fastFind.searchString, this._lastFindResult, aFindBackwards, false);
-					if(notifyAgain) {
-						this._notifyFindAgain(aFindBackwards);
-					}
+					this._notify({
+						searchString: this._fastFind.searchString,
+						result: this._lastFindResult,
+						findBackwards: aFindBackwards,
+						findAgain: aFindAgain,
+						drawOutline: false,
+						linksOnly: false
+					});
 					return;
 				}
 			}
@@ -213,7 +237,14 @@ this.Finder = {
 
 		// if we get here, we couldn't find our range
 		this._lastFindResult = Ci.nsITypeAheadFind.FIND_NOTFOUND;
-		this._notify(this._fastFind.searchString, this._lastFindResult, false, false);
+		this._notify({
+			searchString: this._fastFind.searchString,
+			result: this._lastFindResult,
+			findBackwards: false,
+			findAgain: false,
+			drawOutline: false,
+			linksOnly: false
+		});
 	},
 
 	// Forcibly set the search string of the find clipboard to the currently selected text in the window, on supported platforms (i.e. OSX).
@@ -256,7 +287,15 @@ this.Finder = {
 		}
 
 		if(aHighlight) {
-			this._notify(aWord, this._lastFindResult, false, false, false);
+			this._notify({
+				searchString: aWord,
+				result: this._lastFindResult,
+				findBackwards: false,
+				findAgain: false,
+				drawOutline: false,
+				storeResult: false,
+				linksOnly: aLinksOnly
+			});
 		}
 
 		message('HighlightsFinished');
@@ -332,6 +371,19 @@ this.Finder = {
 			}
 		}
 		catch(ex) {}
+	},
+
+	onFindbarClose: function() {
+		this.enableSelection();
+		if(Services.vc.compare(Services.appinfo.version, "51.0a1") >= 0) {
+			BrowserUtils.trackToolbarVisibility(this._docShell, "findbar", false);
+		}
+	},
+
+	onFindbarOpen: function() {
+		if(Services.vc.compare(Services.appinfo.version, "51.0a1") >= 0) {
+			BrowserUtils.trackToolbarVisibility(this._docShell, "findbar", true);
+		}
 	},
 
 	keyPress: function(e) {
@@ -883,12 +935,16 @@ this.Finder = {
 	// Start of nsIWebProgressListener implementation.
 
 	onLocationChange: function(aWebProgress, aRequest, aLocation, aFlags) {
-		if(aWebProgress.isTopLevel) {
-			this.isFinderValid();
+		if(!aWebProgress.isTopLevel) { return; }
 
-			// Avoid leaking if we change the page.
-			this._previousLink = null;
-		}
+		// Ignore events that don't change the document.
+		if(aFlags & Ci.nsIWebProgressListener.LOCATION_CHANGE_SAME_DOCUMENT) { return; }
+
+		this.isFinderValid();
+
+		// Avoid leaking if we change the page.
+		this._previousLink = null;
+		this._lastFindResult = null;
 	},
 
 	// Most of the update work fall either here or in onStateChange events, which seem to be the most reliable to track for;
@@ -1196,6 +1252,10 @@ this.RemoteFinderListener = {
 			Finder.caseSensitive = data.caseSensitive;
 		});
 
+		this.addMessage("EntireWord", (data) => {
+			Finder.entireWord = data.entireWord;
+		});
+
 		this.addMessage("SetSearchStringToSelection", () => {
 			var selection = Finder.setSearchStringToSelection();
 			message("CurrentSelectionResult", { selection: selection, initial: false });
@@ -1235,6 +1295,14 @@ this.RemoteFinderListener = {
 			Finder.focusContent();
 		});
 
+		this.addMessage("FindbarClose", () => {
+			Finder.onFindbarClose();
+		});
+
+		this.addMessage("FindbarOpen", () => {
+			Finder.onFindbarOpen();
+		});
+
 		this.addMessage("KeyPress", (data) => {
 			Finder.keyPress(data);
 		});
@@ -1260,7 +1328,13 @@ this.RemoteFinderListener = {
 		});
 
 		this.addMessage("SetSearchString", (data) => {
-			Finder._notify(data, Ci.nsITypeAheadFind.FIND_FOUND, false, false);
+			Finder._notify({
+				searchString: data,
+				result: Ci.nsITypeAheadFind.FIND_FOUND,
+				findBackwards: false,
+				findAgain: false,
+				drawOutline: false
+			});
 		});
 	},
 
@@ -1300,9 +1374,12 @@ this.RemoteFinderListener = {
 	}
 };
 
-this.rangeFinder = function(aWord, caseSensitive) {
+this.rangeFinder = function(aWord, caseSensitive, entireWord) {
 	this._finder = Cc["@mozilla.org/embedcomp/rangefind;1"].createInstance().QueryInterface(Ci.nsIFind);
 	this._finder.caseSensitive = (caseSensitive !== undefined) ? caseSensitive : Finder._fastFind.caseSensitive;
+	if(gFx50) {
+		this._finder.entireWord = (entireWord !== undefined) ? entireWord : Finder._fastFind.entireWord;
+	}
 	this._word = aWord;
 };
 

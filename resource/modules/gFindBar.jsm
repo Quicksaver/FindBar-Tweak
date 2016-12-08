@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// VERSION 1.2.8
+// VERSION 1.2.9
 
 this.__defineGetter__('gFindBar', function() { return window.gFindBar || $('FindToolbar'); });
 this.__defineGetter__('gFindBarInitialized', function() { return FITFull || viewSource || window.gFindBarInitialized; });
@@ -234,6 +234,11 @@ this.baseDeinit = function(bar) {
 
 			bar._findStatusDesc.hidden = false;
 			bar._findStatusIcon.hidden = false;
+
+			if(!viewSource) {
+				// Sometimes we add a unique id to each findbar, to identify it in stylesheets. These need to be removed when disabling the add-on.
+				bar.id = '';
+			}
 		}
 
 		delete bar._quickFindTimeoutLength;
@@ -309,6 +314,14 @@ this.findbar = {
 
 	getCurrentTab: function() {
 		this.currentTab = gBrowser.selectedTab;
+	},
+
+	// Some things need to identify individual findbars, such as calculating their position at the top with Tile Tabs.
+	getUniqueId: function(bar) {
+		if(!bar.id) {
+			bar.id = 'FindToolbar-'+gBrowser.getNotificationBox(bar.browser).id;
+		}
+		return bar.id;
 	},
 
 	newBar: function(bar) {

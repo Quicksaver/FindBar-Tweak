@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// VERSION 3.1.4
+// VERSION 3.1.5
 
 this.__defineGetter__('DevEdition', function() { return window.DevEdition; });
 this.__defineGetter__('SidebarUI', function() { return window.SidebarUI; });
@@ -41,7 +41,8 @@ this.moveToTop = {
 
 			case 'TabClose':
 				if(gBrowser.isFindBarInitialized(e.target)) {
-					let sheetId = this.kSheetId+'-'+gBrowser.getFindBar(e.target).id;
+					let id = findbar.getUniqueId(gBrowser.getFindBar(e.target));
+					let sheetId = this.kSheetId+'-'+id;
 					if(this.onTopSheets.has(sheetId)) {
 						Styles.unload(sheetId);
 						this.onTopSheets.delete(sheetId);
@@ -121,7 +122,9 @@ this.moveToTop = {
 			Watchers.removeAttributeWatcher(SidebarUI._box, 'hidden', this);
 
 			Listeners.remove(gBrowser.tabContainer, 'TabSelect', this);
-			Listeners.remove(gBrowser.tabContainer, 'TabClose', this);
+			if(window.tileTabs) {
+				Listeners.remove(gBrowser.tabContainer, 'TabClose', this);
+			}
 			Observers.remove(this, "lightweight-theme-styling-update");
 
 			findbar.deinit('DevEdition');
@@ -290,8 +293,9 @@ this.moveToTop = {
 
 		// Tile Tabs requires maxWidths for individual findbars, as not all tabs will have the same width
 		if(window.tileTabs) {
-			selector += "#"+gFindBar.id;
-			sheetId += '-'+gFindBar.id;
+			let id = findbar.getUniqueId(gFindBar);
+			selector += "#"+id;
+			sheetId += '-'+id;
 		}
 
 		let sscode = '\
@@ -355,10 +359,6 @@ this.moveToTop = {
 
 		findbar.init('movetotop',
 			function(bar) {
-				// necessary for the Tile Tabs compatibility fix in .calc() above
-				if(window.tileTabs) {
-					bar.id = 'FindToolbar-'+gBrowser.getNotificationBox(bar.browser).id;
-				}
 				setAttribute(bar, 'movetotop', 'true');
 				bar.style.maxHeight = height+'px';
 			},
@@ -367,10 +367,6 @@ this.moveToTop = {
 
 				removeAttribute(bar, 'movetotop');
 				bar.style.maxHeight = '';
-
-				if(window.tileTabs) {
-					bar.id = '';
-				}
 			},
 			true
 		);

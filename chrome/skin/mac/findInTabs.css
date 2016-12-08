@@ -8,18 +8,48 @@
 	min-height: 14px;
 }
 
-findbar toolbarbutton[anonid="findbartweak-find-tabs"] + toolbarbutton[anonid="highlight"] {
-	-moz-margin-start: 0;
+.findInTabs-bar {
+	border-top: none;
+	background: none;
+}
+
+.findInTabs-bar toolbarbutton[anonid="find-case-sensitive"] {
+	-moz-margin-start: 8px;
 }
 
 .findInTabs-bar textbox {
 	border-radius: 10000px;
 }
 
-#findbartweak-findInTabs-box {
-	background-image: -moz-linear-gradient(50% 0%, rgb(208,208,208), rgb(232,232,232));
+@media (-moz-mac-yosemite-theme) {
+	.findInTabs-bar textbox {
+		border-radius: 3px;
+	}
 }
 
-#contentBox {
-	background-color: #D0D0D0;
+window:not([FITSidebar]) #contentBox {
+	background: rgb(252,252,252);
+}
+
+window[FITSidebar]:not([FF48]) #contentBox {
+	-moz-appearance: -moz-mac-vibrancy-light;
+	background-color: #e2e7ed;
+}
+
+window[FITSidebar]:not([FF48]) #contentBox:-moz-window-inactive {
+	background-color: #e8e8e8;
+}
+
+window[FITSidebar][FF48]:not([FF52]) #contentBox {
+	background-color: hsl(212,19%,85%);
+	background-image: linear-gradient(hsl(213,26%,93%), hsl(212,19%,85%));
+}
+
+window[FITSidebar][FF48]:not([FF52]) #contentBox:-moz-window-inactive {
+	background-color: hsl(0,0%,92%);
+	background-image: linear-gradient(hsl(0,0%,97%), hsl(0,0%,92%));
+}
+
+window[FITSidebar][FF52] #contentBox {
+	-moz-appearance: -moz-mac-source-list;
 }

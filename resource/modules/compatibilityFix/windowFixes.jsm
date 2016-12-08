@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// VERSION 1.1.24
+// VERSION 1.1.25
 
 Modules.LOADMODULE = function() {
 	if(!viewSource && !FITFull) {
@@ -27,6 +27,7 @@ Modules.LOADMODULE = function() {
 		});
 
 		Modules.load('compatibilityFix/InstantFox');
+		Modules.load('compatibilityFix/theFoxOnlyBetter');
 	}
 
 	AddonManager.getAddonByID('clearfields@alex.alexander.googlepages.com', function(addon) {
@@ -53,4 +54,5 @@ Modules.UNLOADMODULE = function() {
 	Modules.unload('compatibilityFix/noScript');
 	Modules.unload('compatibilityFix/autopager');
 	Modules.unload('compatibilityFix/InstantFox');
+	Modules.unload('compatibilityFix/theFoxOnlyBetter');
 };

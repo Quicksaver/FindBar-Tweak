@@ -175,6 +175,12 @@ findbar[movetotop]:not([DevEdition]):not([inPDFJS]):-moz-lwtheme:after {
 	display: none;
 }
 
+/* Using Beyond Australis, we need to position the findbar above the slimmer */
+
+#navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]) {
+	z-index: 2;
+}
+
 /* Find Toolbar styled for PDF.JS documents */
 
 findbar[movetotop][inPDFJS]:-moz-locale-dir(ltr):before,
@@ -195,8 +201,8 @@ findbar[movetotop][inPDFJS]:-moz-locale-dir(rtl):before {
 
 findbar[movetotop][inPDFJS] {
 	border: none;
-	background-color: rgb(71,71,71);
-	background-image: url("resource://pdf.js/web/images/texture.png"), linear-gradient(rgba(68,68,68,0.95), rgba(68,68,68,0.95));
+	background-color: rgb(71,71,71) !important;
+	background-image: url("resource://pdf.js/web/images/texture.png"), linear-gradient(rgba(68,68,68,0.95), rgba(68,68,68,0.95)) !important;
 	background-repeat: repeat;
 	background-size: auto auto;
 	color: rgb(216,216,216);

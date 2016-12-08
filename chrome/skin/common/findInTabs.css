@@ -134,6 +134,7 @@ html|div.findInTabs-match-label {
 .findInTabs-bar toolbarbutton[anonid="find-closebutton"],
 .findInTabs-bar toolbarbutton[anonid="highlight"],
 .findInTabs-bar label[anonid="match-case-status"],
+.findInTabs-bar label[anonid="entire-word-status"],
 .findInTabs-bar label[anonid="found-matches"],
 .findInTabs-bar description[anonid="find-status"] {
 	display: none;

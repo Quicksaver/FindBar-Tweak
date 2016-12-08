@@ -26,6 +26,22 @@ findbar toolbarbutton[anonid="findbartweak-find-tabs-tabs"] {
 /* small findbar at the top */
 
 findbar[movetotop] {
+	--findbar-bg-color: hsl(0,0%,83%);
+	--findbar-bg-image: url(chrome://browser/skin/Toolbar-background-noise.png);
+	--findbar-border-color: #ababab;
+}
+
+@media (-moz-mac-yosemite-theme) {
+	findbar[movetotop]:not(:-moz-lwtheme) {
+		--findbar-bg-image: none;
+	}
+
+	findbar[movetotop]:-moz-window-inactive:not(:-moz-lwtheme) {
+		--findbar-bg-color: hsl(0,0%,95%);
+	}
+}
+
+findbar[movetotop] {
 	z-index: 50;
 }
 
@@ -62,56 +78,76 @@ findbar[movetotop]:not([movetoright]):-moz-locale-dir(rtl) .findbar-closebutton 
 
 findbar[movetotop]:not([inPDFJS]) {
 	-moz-appearance: none !important;
-	background: url(chrome://browser/skin/Toolbar-background-noise.png) hsl(0,0%,83%);
-	border-right: 1px solid #ababab;
-	border-left: 1px solid #ababab;
-	border-bottom: 1px solid #ababab;
-	-moz-border-right-colors: #ababab;
-	-moz-border-left-colors: #ababab;
-	-moz-border-bottom-colors: #ababab;
+	background-color: var(--findbar-bg-color);
+	background-image: var(--findbar-bg-image);
+	border-right: 1px solid var(--findbar-border-color);
+	border-left: 1px solid var(--findbar-border-color);
+	border-bottom: 1px solid var(--findbar-border-color);
+	-moz-border-right-colors: var(--findbar-border-color);
+	-moz-border-left-colors: var(--findbar-border-color);
+	-moz-border-bottom-colors: var(--findbar-border-color);
 }
 
-findbar[movetotop]:not([inPDFJS]):not([DevEdition]) .findbar-container:-moz-lwtheme {
-	background-color: rgba(253,253,253,0.45);
+findbar[movetotop]:not([inPDFJS]) toolbarbutton:-moz-any(.findbar-find-next,.findbar-find-previous,.findbar-highlight,.findbar-case-sensitive,.findbar-entire-word) {
+	color: inherit;
+}
+
+findbar[movetotop]:not([inPDFJS]):-moz-lwtheme-brighttext .close-icon:not(:hover) {
+	-moz-image-region: rect(0, 64px, 16px, 48px);
+}
+
+@media (min-resolution: 2dppx) {
+	findbar[movetotop]:not([inPDFJS]):-moz-lwtheme-brighttext .close-icon:not(:hover) {
+		-moz-image-region: rect(0, 128px, 32px, 96px);
+	}
 }
 
 /* Rounded inner corners */
 
 findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
 findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
-	box-shadow:	2px -2px 0 -2px #ababab,
-			7px -4px 0px -4px hsl(0,0%,83%),
-			6px -4px 0px -4px hsl(0,0%,83%);
+	box-shadow:	2px -2px 0 -2px var(--findbar-border-color),
+			7px -4px 0px -4px var(--findbar-bg-color),
+			6px -4px 0px -4px var(--findbar-bg-color);
 }
 findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
 findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
-	box-shadow: 	-2px -2px 0 -2px #ababab,
-			-7px -4px 0px -4px hsl(0,0%,83%),
-			-6px -4px 0px -4px hsl(0,0%,83%);
+	box-shadow: -2px -2px 0 -2px var(--findbar-border-color),
+			-7px -4px 0px -4px var(--findbar-bg-color),
+			-6px -4px 0px -4px var(--findbar-bg-color);
 }
-
 
 /* Using Beyond Australis, the bottom color of the slimmer isn't the same, so we (try to) apply the same style as the nav-bar */
 
-#navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]) .findbar-container:not(:-moz-lwtheme) {
-	background-image: linear-gradient(hsl(0,0%,91%), hsl(0,0%,83%));
+#navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):not(:-moz-lwtheme) {
+	--findbar-bg-image: url(chrome://browser/skin/Toolbar-background-noise.png), linear-gradient(hsl(0,0%,91%), hsl(0,0%,83%));
 }
 
-#navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):before,
-#navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):after {
-	box-shadow: 	2px -2px 0 -2px #ababab,
+#navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):not(:-moz-window-inactive):not(:-moz-lwtheme):before,
+#navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):not(:-moz-window-inactive):not(:-moz-lwtheme):after {
+	box-shadow: 	2px -2px 0 -2px var(--findbar-border-color),
 	                7px -4px 0px -4px hsl(0,0%,90%),
 	                6px -4px 0px -4px hsl(0,0%,90%),
 	                7px -4px 0px -4px hsl(0,0%,83%),
 	                6px -4px 0px -4px hsl(0,0%,83%);
 }
-#navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):after,
-#navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):before {
-	box-shadow: 	-2px -2px 0 -2px #ababab,
+#navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(ltr):not(:-moz-window-inactive):not(:-moz-lwtheme):after,
+#navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-locale-dir(rtl):not(:-moz-window-inactive):not(:-moz-lwtheme):before {
+	box-shadow: 	-2px -2px 0 -2px var(--findbar-border-color),
 	                -7px -4px 0px -4px hsl(0,0%,90%),
 	                -6px -4px 0px -4px hsl(0,0%,90%),
 	                -7px -4px 0px -4px hsl(0,0%,83%),
 	                -6px -4px 0px -4px hsl(0,0%,83%);
+}
+
+@media (-moz-mac-yosemite-theme) {
+	#navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):not(:-moz-lwtheme) {
+		--findbar-bg-image: linear-gradient(hsl(0,0%,91%), hsl(0,0%,83%));
+	}
+
+	#navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):not(:-moz-lwtheme):-moz-window-inactive {
+		--findbar-bg-image: linear-gradient(hsl(0,0%,97%), hsl(0,0%,95%));
+	}
 }
 
 /* Textbox resizers */

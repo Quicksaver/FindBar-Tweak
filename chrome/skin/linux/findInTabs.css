@@ -6,8 +6,15 @@
 
 findbar.findInTabs-bar {
 	-moz-padding-end: 8px;
+}
+
+window:not([FITSidebar]) findbar.findInTabs-bar {
 	border-top: 1px solid;
 	-moz-border-top-colors: ThreeDHighlight;
+}
+
+window[FITSidebar] findbar.findInTabs-bar {
+	border-top: none;
 }
 
 .findInTabs-bar textbox {

@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// VERSION 2.2.2
+// VERSION 2.2.3
 
 this.FITSandbox = {
 	kBroadcasterId: objName+'-findInTabs-broadcaster',
@@ -122,6 +122,10 @@ this.FITSandbox = {
 
 		// it should know to differentiate itself from the standalone dialog (we use the same XUL file for both)
 		toggleAttribute(aWindow.document.documentElement, 'FITSidebar', isSidebar);
+		if(isSidebar) {
+			toggleAttribute(aWindow.document.documentElement, 'FF48', Services.vc.compare(Services.appinfo.version, "48.0a1") >= 0);
+			toggleAttribute(aWindow.document.documentElement, 'FF52', Services.vc.compare(Services.appinfo.version, "52.0a1") >= 0);
+		}
 
 		startAddon(aWindow);
 

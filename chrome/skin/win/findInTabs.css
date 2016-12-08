@@ -6,7 +6,8 @@
 
 findbar.findInTabs-bar {
 	-moz-padding-end: 8px;
-	background-image: linear-gradient(rgba(255,255,255,.15) 1px, transparent);
+	background-image: none;
+	box-shadow: none;
 	background-size: 100% 2px;
 }
 
@@ -15,6 +16,10 @@ findbar.findInTabs-bar {
 }
 
 #contentBox {
+	background-color: rgb(252,252,252);
+}
+
+window[FITSidebar] #contentBox {
 	background-color: -moz-dialog;
 }
 
@@ -25,14 +30,6 @@ findbar.findInTabs-bar {
 		window:not([FITSidebar]) #contentBox {
 			background-color: hsl(210,75%,92%);
 		}
-	}
-}
-
-/* FIT sidebar */
-
-@media (-moz-windows-default-theme) {
-	@media	(-moz-os-version: windows-vista),
-		(-moz-os-version: windows-win7) {
 
 		window[FITSidebar] #contentBox {
 			background-color: #EEF3FA;

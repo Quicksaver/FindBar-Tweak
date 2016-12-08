@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// VERSION 3.1.3
+// VERSION 3.1.4
 
 this.__defineGetter__('DevEdition', function() { return window.DevEdition; });
 this.__defineGetter__('SidebarUI', function() { return window.SidebarUI; });
@@ -155,11 +155,11 @@ this.moveToTop = {
 
 		if(!gFindBarInitialized || gFindBar.hidden) { return false; }
 
+		this.calc();
+		this.apply();
 		if(!viewSource) {
 			this.placePersona();
 		}
-		this.calc();
-		this.apply();
 
 		return true;
 	},
@@ -202,13 +202,38 @@ this.moveToTop = {
 			return;
 		}
 
+		let bgImage = this.lwtheme.bgImage;
+		let bgGradient;
+		let bgFlat;
+		if(WINNT) {
+			bgGradient = 'rgba(255,255,255,.35) 0px, rgba(255,255,255,0) 36px, rgba(255,255,255,0)';
+			bgFlat = 'rgba(255,255,255,.4), rgba(255,255,255,.4)';
+		} else if(DARWIN) {
+			bgGradient = 'rgba(253,253,253,0.45), rgba(253,253,253,0.45)';
+			bgFlat = 'rgba(253,253,253,0.45), rgba(253,253,253,0.45)';
+			bgImage += ', url("chrome://browser/skin/Toolbar-background-noise.png")'
+		} else {
+			bgGradient = 'rgba(255,255,255,.4), rgba(255,255,255,.4)';
+			bgFlat = 'rgba(255,255,255,.4), rgba(255,255,255,.4)';
+		}
+
 		let sscode = '\
 			@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n\
 			@-moz-document url("'+document.baseURI+'") {\n\
 				window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:not([inPDFJS]):-moz-lwtheme {\n\
-					background-image: ' + this.lwtheme.bgImage + ';\n\
+					background-image: linear-gradient('+bgFlat+'), ' + bgImage + ' !important;\n\
 					background-color: ' + this.lwtheme.bgColor + ';\n\
 					color: ' + this.lwtheme.color + ';\n\
+				}\n\
+				@media	(-moz-os-version: windows-xp),\n\
+					(-moz-os-version: windows-vista),\n\
+					(-moz-os-version: windows-win7) {\n\
+					window['+objName+'_UUID="'+_UUID+'"] #navigator-toolbox:not([slimChromeNavBar]) ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-lwtheme {\n\
+						background-image: linear-gradient(transparent, transparent), ' + bgImage + ' !important;\n\
+					}\n\
+					window['+objName+'_UUID="'+_UUID+'"] #navigator-toolbox[slimChromeNavBar] ~ #content-deck findbar[movetotop]:not([inPDFJS]):-moz-lwtheme {\n\
+						background-image: linear-gradient('+bgGradient+'), ' + bgImage + ' !important;\n\
+					}\n\
 				}\n\
 			}';
 
@@ -244,7 +269,7 @@ this.moveToTop = {
 			@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n\
 			@-moz-document url("'+document.baseURI+'") {\n\
 				window['+objName+'_UUID="'+_UUID+'"] findbar[movetotop]:not([inPDFJS]):-moz-lwtheme {\n\
-					background-position: '+offsetSide+' '+offsetX+'px top '+offsetY+'px;\n\
+					background-position: 0% 0%, '+offsetSide+' '+offsetX+'px top '+offsetY+'px;\n\
 				}\n\
 			}';
 

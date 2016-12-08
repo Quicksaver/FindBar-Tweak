@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// VERSION 2.2.9
+// VERSION 2.2.10
 
 this.FITMini = {
 	get broadcaster() { return $(FITSandbox.kBroadcasterId); },
@@ -169,7 +169,9 @@ this.FITMini = {
 	},
 
 	getState: function(forceEmpty) {
-		let state = {};
+		let state = {
+			query: ''
+		};
 
 		if(FITFull) {
 			state.lastBrowser = FIT.lastBrowser;
@@ -278,7 +280,7 @@ this.FITMini = {
 			Listeners.add(gBrowser.tabContainer, 'TabRemotenessChange', this);
 
 			Piggyback.add('FITmini', gBrowser, 'showOnlyTheseTabs', () => {
-				if(this.sidebar) {
+				if(this.sidebar && this.sidebar[objName]) {
 					this.sidebar[objName].FIT.shouldFindAll();
 				}
 			}, Piggyback.MODE_AFTER);

@@ -5,12 +5,16 @@
 @namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
 @-moz-document url("chrome://browser/content/browser.xul") {
 
-	/* ideally, this should be included in FTDeepDark itself */
+	/* ideally, this should be included in FXChrome itself */
 
 	findbar[movetotop] {
-		--findbar-bg-color: rgb(40,40,40) !important;
-		--findbar-bg-gradient-color: rgb(40,40,40) !important;
+		--findbar-bg-color: #F2F2F2 !important;
+		--findbar-bg-gradient-color: #F2F2F2 !important;
 		--findbar-bg-image: none !important;
-		--findbar-border-color: rgb(0,0,0) !important;
+	}
+
+	#main-window[privatebrowsingmode=temporary] findbar[movetotop] {
+		--findbar-bg-color: #505050 !important;
+		--findbar-bg-gradient-color: #505050 !important;
 	}
 }

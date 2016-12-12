@@ -1,6 +1,25 @@
 {
-	"current":"2.1.10",
+	"current":"2.1.11",
+	"knownissues": [
+		["The add-on does not work with the new modal highlights mode (enabled by default in Nightly), so when using the add-on it will disable that mode entirely"]
+	],
 	"releases": {
+		"2.1.11":{
+			"date":"December 12, 2016",
+			"notes":[
+				["changed","When the add-on is automatically updated, it now shows a less intrusive notification toaster message linking to the release notes; as before, this can still be disabled in the About page in the add-on's preferences"],
+				["updated","de, fr, and zh-TW locales"],
+				["bugfix","In small windows, the add-on's preferences page could overflow and lose its scrollbars, where some content would be inaccessible"],
+				["bugfix","Small compatibility fixes for Firefox 51"],
+				["bugfix","In a few cases (multi-window + e10s + sometimes) the add-on could fail to fully initialize"],
+				["bugfix","Several compatibility fixes with the most recent versions of Firefox, in particular with its Whole Word search ability (<i=263>, <i=268>, <i=270>, <i=274>, <i=276>, <i=280>)"],
+				["bugfix","Searching in PDF files works again (<i=265>)"],
+				["bugfix","Several appearance tweaks and fixes"],
+				["bugfix","Compatibility with <e=tile-tabs>Tile Tabs</e>, setting the findbar on top and on the right would cause it to appear on the left the first time it was opened (<i=273>)"],
+				["general","Added MPL license headers to source files"],
+				["","Other minor fixes"]
+			]
+		},
 		"2.1.10":{
 			"date":"May 31, 2016",
 			"notes":[

@@ -50,7 +50,7 @@
 <!ENTITY OptgridLimit.tooltip "Dies betrifft nur den Hervorhebungsbalken in der Bildlaufleiste! Wenn es zu viele Ergebnisse gibt, was den Prozess und den Browser verlangsamen könnte, wird der Hervorhebungsbalken in der Bildlaufleiste nicht verwendet.">
 <!ENTITY OptminNoDelay.labela "Hervorhebungen verzögert einblenden bei weniger als">
 <!ENTITY OptminNoDelay.labelb "Zeichen">
-<!ENTITY OptminNoDelay.tooltip "Wenn Sie das erste Mal etwas in die Suchleiste eingeben, wird Ihr Suchbegriff vermutlich nicht mit den ersten zwei Zeichen gefunden. Dies verzögert die Suchaktion bei kurzen Worten für 1,5 Sekunden, um Ihnen Zeit zur Eingabe Ihrer restlichen Anfrage zu geben. Beachten Sie, dass Sie weiterhin Treffer für kurze Wörter finden können, wenn Sie die Zeit verstreichen lassen, ohne weiterer Zeichen einzugeben.">
+<!ENTITY OptminNoDelay.tooltip "Wenn Sie das erste Mal etwas in die Suchleiste eingeben, wird Ihr Suchbegriff vermutlich nicht mit den ersten zwei Zeichen gefunden. Dies verzögert die Suchaktion bei kurzen Worten für 1,5 Sekunden, um Ihnen Zeit zur Eingabe Ihrer restlichen Anfrage zu geben. Beachten Sie, dass Sie weiterhin Treffer für kurze Wörter finden können, wenn Sie die Zeit verstreichen lassen, ohne weitere Zeichen einzugeben.">
 <!ENTITY OptadjustGridPadding.labela "Abstand zwischen Muster und Rand anpassen:">
 <!ENTITY OptadjustGridPadding.labelb "Pixel">
 <!ENTITY OptadjustGridPadding.tooltip "Die relative Position des Hervorhebungsbalkens, falls nötig, anpassen, um besser zu Themes zu passen, die das Aussehen der Bildlaufleiste ändern.">
@@ -127,7 +127,7 @@
 <!ENTITY OptfillTextIntoClipboard.tooltip "Der ausgewählte Text wird umgehend in die Zwischenablage kopiert, so dass Sie ihn in anderen Anwendungen einfügen können.">
 <!ENTITY OptglobalBehavior.warning "Warnung: Die folgenden Einstellungen betreffen nicht nur die Suchleiste, sondern den gesamten Browser, wie auf Webseiten, der Adressleiste und allen anderen Stellen, an denen Textauswahl möglich ist. Ändern Sie dies mit Bedacht!">
 <!ENTITY OptdblClickEatSpaces.label "Doppelklick auf ein Wort wählt auch das folgende Leerzeichen aus">
-<!ENTITY OptdblClickStopAtPunctuation.label "Doppelklick auf ein Wort setzt Markierung bis zum nächsten Satzzeiten">
+<!ENTITY OptdblClickStopAtPunctuation.label "Doppelklick auf ein Wort setzt Markierung bis zum nächsten Satzzeichen">
 <!ENTITY OptNativePrefs.label "Firefox-Standardeinstellungen">
 <!ENTITY OptNativePrefs.description "Einige Einstellungen, wie die Farben zum Hervorheben oder die Einstellungen der Schnellsuchleiste existieren in Firefox bereits, sie werden hier nur angezeigt, um einfacher zugänglich und anpassbar zu sein. Das Add-on sollte automatisch damit umgehen können, verwenden Sie diese daher nur, wenn es unbedingt nötig ist!">
 <!ENTITY OptResetNativeOnDisabled.label "Alle geänderten Standardeinstellungen beim Deaktivieren des Add-ons zurücksetzen">

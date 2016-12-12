@@ -7,6 +7,7 @@
 <!ENTITY about.descriptionC "Obejrzyj również ostatni odcinek mojego serialu internetowego o życiu z Firefoksem, stworzonego dla was wszystkich, najbardziej wspierających użytkowników, których programista może mieć! Po prostu wskaż na podskakującą ikonę w dolnym rogu tej strony. Pokochaj to. Znienawidź to. Udostępnij to.">
 <!ENTITY about.allVersions "Pokaż notatki ze wszystkich poprzednich wersji">
 <!ENTITY about.notifyOnUpdates "Pokaż mi tę kartę przy następnej aktualizacji">
+<!ENTITY about.silentUpdates "Nie informuj mnie o następnej aktualizacji">
 <!ENTITY about.development "Stan rozwoju">
 <!ENTITY about.helpdevelopment "MOŻESZ POMÓC">
 <!ENTITY about.information "Więcej informacji">

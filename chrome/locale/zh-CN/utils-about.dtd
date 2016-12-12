@@ -7,6 +7,7 @@
 <!ENTITY about.descriptionC "也邀请您观看我最新为 Firefox 和在座各位拍摄的网络短片，献给支持 Firefox 的你们。只需点击本页面右下角弹跳的图标。无论你喜欢它，不喜欢它，都希望您能分享它。">
 <!ENTITY about.allVersions "显示此前所有版本的发行说明">
 <!ENTITY about.notifyOnUpdates "在下次更新后显示此标签页">
+<!ENTITY about.silentUpdates "下次更新时不要通知我">
 <!ENTITY about.development "开发状态">
 <!ENTITY about.helpdevelopment "您可以帮助">
 <!ENTITY about.information "更多信息">

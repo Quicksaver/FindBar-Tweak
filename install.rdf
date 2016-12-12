@@ -96,7 +96,7 @@
 				<em:locale>ru</em:locale>
 				<em:name>FindBar Tweak</em:name>
 				<em:description>От обычной поисковой строки, до полнофункционального "Поиска по всем вкладкам", все, чтобы сделать поисковую панель инструментов мощным и доступным инструментом исследования!</em:description>
-				<em:translator>sayanvd @ Babelzilla</em:translator>
+				<em:translator>sayanvd @ Babelzilla, cozmoid @ Babelzilla</em:translator>
 			</Description>
 		</em:localized>
 		<em:localized>
@@ -112,7 +112,7 @@
 				<em:locale>zh-CN</em:locale>
 				<em:name>FindBar Tweak</em:name>
 				<em:description>诸多简单实用的改进，从简单的调整查找栏到右上角，到强大的“查找所有标签页”工具等。一切都是为了将您的“查找工具栏”变成一个强大又易于使用的搜索工具！</em:description>
-				<em:translator>http://t.qq.com/HeartBlade, YFdyh000</em:translator>
+				<em:translator>http://t.qq.com/HeartBlade, YFdyh000, EMLVIRUS @ Babelzilla</em:translator>
 			</Description>
 		</em:localized>
 		<em:localized>

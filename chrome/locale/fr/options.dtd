@@ -119,8 +119,8 @@
 <!ENTITY OptfillSelectedText.tooltip.b "Si « Surligner toutes les occurrences par défaut » est activé, sélectionner du texte dans une page web surlignera automatiquement toutes les occurrences de la sélection.">
 <!ENTITY OptemptySelectedText.label "Vider la barre lorsqu'aucun texte n'est sélectionné">
 <!ENTITY OptemptySelectedText.tooltip "De même que ci-dessus, si vous cliquez n'importe où dans la page web afin de supprimer une sélection de texte, la barre sera vidée et le surlignage sera retiré de toutes les occurrences.">
-<!ENTITY OptfillTextFromEditable.label "Fill with text selected in editable elements">
-<!ENTITY OptfillTextFromEditable.tooltip "Choose whether you want selections in text boxes or input fields to also fill the Findbar.">
+<!ENTITY OptfillTextFromEditable.label "Remplir la barre avec le texte sélectionné dans des éléments d'édition">
+<!ENTITY OptfillTextFromEditable.tooltip "Choisir si vous souhaitez que les sélections dans les boites de texte ou les champs de saisie remplissent également la barre de recherche.">
 <!ENTITY OptfillSelectedOpenFindbar.label "Afficher la barre rapide lorsque le texte sélectionné est utilisé">
 <!ENTITY OptfillSelectedOpenFindbar.tooltip "Lorsque la barre est remplie avec le texte sélectionné, elle apparaitre brièvement pour montrer que ceci est survenu.">
 <!ENTITY OptfillTextIntoClipboard.label "Copier le texte sélectionné dans le presse-papiers">

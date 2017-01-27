@@ -109,6 +109,14 @@
 		</em:localized>
 		<em:localized>
 			<Description>
+				<em:locale>sv-SE</em:locale>
+				<em:name>FindBar Tweak</em:name>
+				<em:description>Bland enkla justeringar som att placera sökfälten i det övre hörnet, till det kraftfulla verktyget "Hitta i alla flikar" har det allting för att göra sökfälten ett kraftfullt och tillgängligt researchverktyg!</em:description>
+				<em:translator>Mikael Hiort af Ornäs, A. Regnander</em:translator>
+			</Description>
+		</em:localized>
+		<em:localized>
+			<Description>
 				<em:locale>zh-CN</em:locale>
 				<em:name>FindBar Tweak</em:name>
 				<em:description>诸多简单实用的改进，从简单的调整查找栏到右上角，到强大的“查找所有标签页”工具等。一切都是为了将您的“查找工具栏”变成一个强大又易于使用的搜索工具！</em:description>

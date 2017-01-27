@@ -1,0 +1,136 @@
+<!ENTITY OptHighlights.label "Färgmarkeringar">
+<!ENTITY OptSightsTab.label "Sikten">
+<!ENTITY OptGeneral.label "Allmänt">
+<!ENTITY OptAppearance.label "Utseende">
+<!ENTITY Opttweaks.label "Justeringar">
+<!ENTITY OptFindAll.label "Hitta alla">
+<!ENTITY Optgen.label "Sökfältsalternativ">
+<!ENTITY Optdisplay.label "Sökfältets position">
+<!ENTITY OptButtonAndLabels.label "Knappar och etiketter">
+<!ENTITY Optgrid.label "Visning av markeringspositioner">
+<!ENTITY OpthighlightByDefault.label "Färgmarkera alla träffar som standard">
+<!ENTITY OpthighlightByDefault.tooltip "När sökfältet öppnas kommer knappen &quot;Markera alla&quot; redan vara markerad, så när du kör en sökning kommer det visa dig alla matchningar från början.">
+<!ENTITY OpthideWhenFinderHidden.label "Ta bort färgmarkeringar när sökfältet stängs">
+<!ENTITY OpthideWhenFinderHidden.tooltip "Sammanfattningsvis, inget öppet sökfält = inga färgmarkeringar visas. Detta inkluderar snabbsökfältet! Så fort sökfältet stängs tas alla matchningar bort från sidan.">
+<!ENTITY OptgridInScrollbar.label "Visa markeringspositionslinjalen i rullningslisten">
+<!ENTITY OptgridInScrollbar.tooltip "Den relativa positionen för varje färgmarkering på webbsidan kommer att visas på rullisten.">
+<!ENTITY OptuseCounter.label "Visa träffräknare i sökfältet">
+<!ENTITY OptuseCounter.tooltip "Vid varje sökning visas antalet matchningar på webbsidan längst ut i sökfältet.">
+<!ENTITY OptfindAll.label "Aktivera &quot;Hitta alla&quot;">
+<!ENTITY OptfindAll.tooltip "Listar alla hittade matchningar i alla dina öppnade flikar och fönster.">
+<!ENTITY OptfindInTabsAction.caption "När knappen &quot;Hitta alla&quot; trycks...">
+<!ENTITY OptfindInTabsAction.sidebar.label "visa/dölj sidofältet &quot;Hitta alla&quot;">
+<!ENTITY OptfindInTabsAction.sidebar.tooltip.a "Visar listan i ett sidofält intill webbsidan som innehåller alla matchningar som hittas på sidan. Du kan även se matchningar från andra flikar i samma fönster och växla till dem från sidofältet.">
+<!ENTITY OptfindInTabsAction.sidebar.tooltip.b "Kom ihåg att så länge detta sidofält är öppet kommer sökfältet att bete sig som ett enda globalt sökfält, även om du inte har aktiverat inställningen!">
+<!ENTITY OptfindInTabsAction.full.label "öppna fönstret &quot;Hitta i alla flikar&quot;">
+<!ENTITY OptfindInTabsAction.full.tooltip "Använd ett separat fönster för att hitta matchningar i alla öppnade flikar och fönster.">
+<!ENTITY OptfindInTabsSidebar.caption "Sidofältet &quot;Hitta alla&quot;">
+<!ENTITY OptautoShowHideFIT.label "Visa och dölj med sökfältet">
+<!ENTITY OptautoShowHideFIT.tooltip "Sidofältets listor visas och döljs automatiskt när du öppnar och stänger sökfältet, så du behöver inte trycka på knappen &quot;Hitta alla&quot;.">
+<!ENTITY OptgetOSB.description "Du kan kontrollera positionen och beteendet för sidofältet &quot;Hitta alla&quot; ytterligare med mitt andra tillägg, OmniSidebar. Klicka här för att hämta det!">
+<!ENTITY OpthasOSB.description "Konfigurera dina inställningar för OmniSidebar för att kontrollera positionen och beteendet för sidofältet &quot;Hitta alla&quot;. T.ex. kom ihåg att inställningen nedan endast fungerar om själva tvillingsidofältet är aktiverat.">
+<!ENTITY OpttwinFITSidebar.label "Öppna i tvillingsidofältet">
+<!ENTITY OpttwinFITSidebar.tooltip "Sidofältet &quot;Hitta alla&quot; kommer alltid att öppna tvillingsidofältet på fönstrets motsatta sida utifrån huvudsidofältet, så att du kan ha dina bokmärken eller historik framme samtidigt.">
+<!ENTITY OptfindInTabsFull.caption "Fönstret &quot;Hitta i alla flikar&quot;">
+<!ENTITY OptmultipleFITFull.label.b "Tillåt flera instanser">
+<!ENTITY OptmultipleFITFull.tooltip.b "Öppnar ett nytt fönster varje gång knappen &quot;Hitta i alla flikar&quot; klickas, annars återanvänds redan öppnade fönster.">
+<!ENTITY Optcolor.label "Markeringsfärg">
+<!ENTITY Optcolor.tooltip "Ändra färgen som används för att färgmarkera matchningar på sidan.">
+<!ENTITY OptselectColor.label "Färg för aktuell träff">
+<!ENTITY OptselectColor.tooltip "När du söker för första gången, trycker på F3 eller klickar på knapparna för föregående/nästa träff bör den aktuella matchningen visas i annan färg från de andra färgmarkeringarna för att särskilja den.">
+<!ENTITY OptcolorReset.label "(återställ)">
+<!ENTITY OptcolorKeepOSdefault.label "Behåll standardkontrastfärgen (rekommenderas)">
+<!ENTITY OptcolorKeepOSdefault.tooltip.a "Kontrastfärgen förlitar sig på webbsidans bakgrund, antingen textens färg där den aktuella träffens färg används som dess bakgrund eller vice versa. Den är antingen vit eller svart, beroende på den valda färgen ovan.">
+<!ENTITY OptcolorKeepOSdefault.tooltip.b "Medan färginställningen ovan endast påverkar den aktuella träffen i sökningar kan dess kontrastfärg inte ändras utan att även ändra kontrasten för markeringar.">
+<!ENTITY OptcolorKeepOSdefault.tooltip.c "Inaktivera detta med varsamhet för att inte göra textmarkeringar oläsbara!">
+<!ENTITY OpthighlightOnFindAgain.label "Färgmarkera även vid &quot;Sök igen&quot; (F3)">
+<!ENTITY OpthighlightOnFindAgain.tooltip "Om knappen &quot;Markera alla&quot; är markerad kommer även alla matchningar att färgmarkeras när du trycker på F3 eller klickar på knapparna för föregående/nästa matchning, om de inte redan är färgmarkerade.">
+<!ENTITY OptgridLimit.labela "Använd inte linjalen vid fler än">
+<!ENTITY OptgridLimit.labelb "markeringar">
+<!ENTITY OptgridLimit.tooltip "Detta är endast för färgmarkeringslinjalen i rullisten! Om det finns för många resultat, som kan sega ned processen och få webbläsarens prestanda att sjunka, kommer färgmarkeringslinjalen i rullisten inte användas.">
+<!ENTITY OptminNoDelay.labela "Fördröj färgmarkeringar om söktermen är kortare än">
+<!ENTITY OptminNoDelay.labelb "tecken">
+<!ENTITY OptminNoDelay.tooltip "När du börjar skriva i sökfältet är det osannolikt att du bara letar efter de första två tecknen. Detta fördröjer sökningen för korta ord i 1,5 sekunder för att ge dig tid att skriva resten av din sökterm. Observera att det fortfarande kommer att söka efter korta ord om du låter tiden passera utan att skriva några fler tecken.">
+<!ENTITY OptadjustGridPadding.labela "Justera avståndet mellan linjalen och kanten:">
+<!ENTITY OptadjustGridPadding.labelb "bildpunkter">
+<!ENTITY OptadjustGridPadding.tooltip "Justera den relativa positionen för färgmarkeringslinjalen vid behov, för att passa bättre i teman som ändrar rullistens utseende.">
+<!ENTITY OptadjustGridWidth.labela "Justera linjalens bredd:">
+<!ENTITY OptadjustGridWidth.labelb "bildpunkter">
+<!ENTITY OptadjustGridWidth.tooltip "Justera bredden för markörerna i färgmarkeringslinjalen vid behov, för att få bättre plats i teman som ändrar utseendet för rullisten.">
+<!ENTITY OptsightsCurrentHit.label "Aktuell träff">
+<!ENTITY OptsightsAllHighlights.label "Alla färgmarkeringar">
+<!ENTITY OptsightsCurrent.label "Visa fokuseringssikte för den aktuella sökträffen">
+<!ENTITY OptsightsCurrent.tooltip "När du hittar ett ord eller när du bläddrar igenom matchningarna genom att trycka på F3 eller klicka på knapparna för nästa/föregående matchning kommer ett sikte att visas på skärmen runt den aktuella träffen, så att du kan se den lättare utan att faktiskt behöva leta efter den.">
+<!ENTITY OptsightsHighlights.label "Visa fokuseringssikten för alla färgmarkerade sökträffar">
+<!ENTITY OptsightsHighlights.tooltip "Placera ett sikte runt varje synlig färgmarkering på webbsidan. När du rullar upp/ned på sidan kommer fler sikten att placeras alltefter flera färgmarkeringen dyker upp i vy.">
+<!ENTITY OptsightsHighlights.warning "Varning: Detta kan vara mycket resurskrävande! Rendering och sidrullning kan bli långsammare!">
+<!ENTITY OptsightsStyle.label "Format för sikten (klicka för förhandsvisning)">
+<!ENTITY OptsightsStyle.focus "Fokuseringens plats">
+<!ENTITY OptsightsStyle.circle "Cirkelns plats">
+<!ENTITY OptsightsRepeat.label "Upprepningar av animering:">
+<!ENTITY OptsightsColor.tooltip "Konfigurera färgen som används för dessa sikten.">
+<!ENTITY OptsightsSameColor.label "Använd samma färg som vid färgmarkering">
+<!ENTITY OptsightsSameColor.tooltip "Färgen som används för dessa sikten kommer att ha samma färg som används för att markera alla matchningar på webbsidan (panelen Markeringar).">
+<!ENTITY OptsightsSameColorCurrent.label "Använd samma färg som för den aktuella träffen">
+<!ENTITY OptsightsSameColorCurrent.tooltip "Färgen som används för dessa sikten kommer att vara densamma som färgen som används för att särskilja den aktuella matchningen (panelen Avancerat).">
+<!ENTITY OptsightsLimit.label "Högsta tillåtna antal sikten på skärmen:">
+<!ENTITY OptsightsLimit.tooltip "Denna funktion kan vara resurskrävande. Det är bäst att begränsa antalet maximala synliga sikten till en mängd som inte får webbläsaren att förlora prestanda när de renderas.">
+<!ENTITY OpthideLabels.label "Visa knappikoner i stället för etiketter">
+<!ENTITY OpthideLabels.tooltip "Som standard har knapparna i verktygsfältet etiketter. Detta ändrar dem till bilder, vilket gör dem mer urskiljbara och även mer kompakta.">
+<!ENTITY OpthideClose.label "Dölj sökfältets stängningsknapp">
+<!ENTITY OpthideClose.tooltip "Sökfältets stängningsknapp kommer inte finnas tillgänglig för att stänga den.">
+<!ENTITY OptmovetoTop.label "Placera längst upp i webbläsaren">
+<!ENTITY OptmovetoTop.tooltip "Ett smalare sökfält kommer att placeras längst upp i webbsidan, i ett hörn ovanför den.">
+<!ENTITY OptmovetoRight.label "Placera till höger i fönstret">
+<!ENTITY OptmovetoRight.tooltip "Sökfältets inmatningsfält och knappar kommer att omvändas och läggas till höger. Om sökfältet flyttas längst upp visas hela sökfältet i det övre högra hörnet i stället för det vänstra.">
+<!ENTITY OptblurCloses.label "Stäng sökfältet när det förlorar fokus">
+<!ENTITY OptblurCloses.tooltip "Så fort du klickar någonstans på webbsidan, eller flyttar muspekaren t.ex. till adressfältet kommer sökfältet stängas automatiskt.">
+<!ENTITY OptglobalFB.label "Använd ett enda globalt sökfält för alla flikar">
+<!ENTITY OptglobalFB.tooltip "När du öppnar sökfältet i en flik och sedan byter till en annan flik bör du se att sökfältet fortfarande är öppet i den nya fliken.">
+<!ENTITY OptonStartup.label "Kom ihåg sökfältets öppnade/stängda tillstånd vid programstart">
+<!ENTITY OptonStartup.tooltip "Om du stänger webbläsaren när sökfältet fortfarande är öppet kommer det redan vara öppet nästa gång du startar webbläsaren.">
+<!ENTITY OptquickFindOptions.label "Snabbsökfält">
+<!ENTITY OptkeepButtons.label "Visa knappar in snabbsökfältet">
+<!ENTITY OptkeepButtons.tooltip "Som standard har snabbsökfältet inte några knappar, det är bara inmatningsfältet för snabba sökningar. Med detta kan du fortfarande komma åt knapparna &quot;Markera alla&quot; och &quot;Matcha VERSALER/gemener&quot; när du använder den.">
+<!ENTITY OptFAYT.label "Sök efter text medan jag skriver">
+<!ENTITY OptFAYT.tooltip "Tryck på valfri tangent när du besöker en webbsida kommer snabbsökfältet att dyka upp med texten. Textmarkören placeras inuti det så du kan fortsätta att skriva på söktermen.">
+<!ENTITY OptFAYTTimeout.beforeLabel "Stäng automatiskt efter">
+<!ENTITY OptFAYTTimeout.afterLabel "sekunder">
+<!ENTITY OptFAYTTimeout.tooltip "Snabbsökfältet kommer automatiskt stängas efter en tids inaktivitet. Kom även ihåg att det även stängs om du fokuserar på någonting annat, t.ex. när du klickar på webbsidan.">
+<!ENTITY OptFAYTmode.caption "Sökfältsläge">
+<!ENTITY OptFAYTmode.quickFind.label "Använd snabbsökfältet för att söka efter text medan jag skriver">
+<!ENTITY OptFAYTmode.quickFind.tooltip "Standardläge. Snabbsökfältet används när du skriver någonstans på webbsidan, medan du måste använda kortkommandot eller knappen i verktygsfältet för att komma åt det vanliga sökfältet.">
+<!ENTITY OptFAYTmode.normalFind.label "Använd alltid det vanliga sökfältet">
+<!ENTITY OptFAYTmode.normalFind.tooltip "Det vanliga sökfältet används även om du skriver någonstans på webbsidan, det kommer inte att stängas automatiskt efter en stund eller när det förlorar fokus (såvida du aktiverar inställningen ovan).">
+<!ENTITY OptFAYTmode.alwaysQuick.label "Använd alltid snabbsökfältet">
+<!ENTITY OptFAYTmode.alwaysQuick.tooltip "Snabbsökfältet används även om du använder kortkommandot, det kommer alltid att stängas automatiskt efter en stund eller när det förlorar fokus.">
+<!ENTITY OptkeyboardShortcut.label "Kortkommando">
+<!ENTITY OptctrlFCloses.win "Ctrl+F stänger också sökfältet">
+<!ENTITY OptctrlFCloses.mac "Command+F stänger också sökfältet">
+<!ENTITY OptctrlFCloses.tooltip "Du kan öppna sökfältet och sedan stänga det när du inte längre behöver det med samma kortkommando.">
+<!ENTITY OptctrlFprefill.label "Kopiera markerad text till sökfältet när det öppnas">
+<!ENTITY OptctrlFprefill.tooltip.a "Om någon text markeras på webbsidan när sökfältet är öppet kommer denna text automatiskt kopieras till sökfältet för att användas i en sökning.">
+<!ENTITY OptctrlFprefill.tooltip.b "Om &quot;Färgmarkera alla matchningar som standard&quot; är aktiverat kommer alla förekomster av den markerade texten hittas omedelbart.">
+<!ENTITY OptctrlFOnFocused.label "Stäng endast när det redan har fokus">
+<!ENTITY OptctrlFOnFocused.tooltip "Kortkommandot kommer alltid placera pekaren i sökfältet och kopiera all markerad text på webbsidan till det om inställningen ovan är aktiverad.">
+<!ENTITY OptSelectingText.label "Vid markering av text">
+<!ENTITY OptfillSelectedText.label "Kopiera markerad text till sökfältet">
+<!ENTITY OptfillSelectedText.tooltip.a "Varje gång ett ord markeras på en webbsida kommer det automatiskt kopieras till sökfältet för att användas i en sökning.">
+<!ENTITY OptfillSelectedText.tooltip.b "Om &quot;Färgmarkera alla matchningar som standard&quot; är aktiverat kommer markerad text på en webbsida omedelbart färgmarkera alla förekomster av markeringen.">
+<!ENTITY OptemptySelectedText.label "Töm sökfältet när ingen text är markerad">
+<!ENTITY OptemptySelectedText.tooltip "Samma som ovan, om du klickar någonstans på webbsidan för att avmarkera texten kommer även sökfältet att rensas och ta bort alla färgmarkeringar.">
+<!ENTITY OptfillTextFromEditable.label "Kopiera markerad text i redigerbara element">
+<!ENTITY OptfillTextFromEditable.tooltip "Välj om du vill att markeringar i textrutor eller inmatningsfält också ska kopieras till sökfältet.">
+<!ENTITY OptfillSelectedOpenFindbar.label "Visa snabbsökfältet när markerad text används">
+<!ENTITY OptfillSelectedOpenFindbar.tooltip "När sökfältet fylls med den markerade texten kommer det som hastigast att visas när det händer.">
+<!ENTITY OptfillTextIntoClipboard.label "Kopiera markerad text till urklipp">
+<!ENTITY OptfillTextIntoClipboard.tooltip "Texten du markerar kopieras direkt till urklipp så du kan klistra in den i andra applikationer.">
+<!ENTITY OptglobalBehavior.warning "Varning: Följande inställningar är inte enbart för sökfältet, de påverkar webbläsaren globalt, som i webbsidor, adressfältet och några andra stället där det är möjligt att markera text. Var försiktig när du ändrar dessa!">
+<!ENTITY OptdblClickEatSpaces.label "Dubbelklick på ord markerar även det efterföljande blanksteget">
+<!ENTITY OptdblClickStopAtPunctuation.label "Dubbelklick på ord markerar inte det efterföljande skiljetecknet">
+<!ENTITY OptNativePrefs.label "Firefox egna inställningar">
+<!ENTITY OptNativePrefs.description "En del inställningar, t.ex. färgmarkeringarnas färger eller snabbsökfältets inställningar, finns redan i Firefox, de visas endast här för enklare åtkomst och anpassningsbarhet. Tillägget bör hantera dem automatiskt, så använd endast dessa om du verkligen behöver det!">
+<!ENTITY OptResetNativeOnDisabled.label "Återställ alla ändrade Firefox-inställningar när tillägget inaktiveras">
+<!ENTITY OptResetNativeOnDisabled.tooltip "Om några återstående ändringar kvarstår, t.ex. att färgen för färgmarkeringar inte återställs till standard när du inaktiverar detta tillägg, kan du aktivera detta för att se till att dem återställs.">
+<!ENTITY OptResetNativeNow.label "Återställ alla ändrade Firefox-inställningar">
+<!ENTITY OptResetNativeNow.tooltip "Återställ dem till dess standardvärden nu.">

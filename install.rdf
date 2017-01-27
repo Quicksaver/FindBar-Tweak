@@ -8,7 +8,7 @@
 		<em:id>fbt@quicksaver</em:id>
 
 		<em:name>FindBar Tweak</em:name>
-		<em:version>2.1.11</em:version>
+		<em:version>2.1.12</em:version>
 
 		<em:creator>Quicksaver</em:creator>
 		<em:optionsURL>about:findbartweak</em:optionsURL>
@@ -24,7 +24,7 @@
 			<Description>
 				<em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
 				<em:minVersion>45.0</em:minVersion>
-				<em:maxVersion>53.0a1</em:maxVersion>
+				<em:maxVersion>54.0a1</em:maxVersion>
 			</Description>
 		</em:targetApplication>
 

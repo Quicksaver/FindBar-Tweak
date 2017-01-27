@@ -1,9 +1,17 @@
 {
-	"current":"2.1.11",
+	"current":"2.1.12",
 	"knownissues": [
 		["The add-on does not work with the new modal highlights mode (enabled by default in Nightly), so when using the add-on it will disable that mode entirely"]
 	],
 	"releases": {
+		"2.1.12":{
+			"date":"January 27, 2017",
+			"notes":[
+				["","<b>This is the last update!</b> The add-on will stop working by next November with Firefox 57. <a=http://fasezero.com/lastnotice.html>Click here</a> for more info."],
+				["new","sv-SE locale"],
+				["updated","el and fr locales"]
+			]
+		},
 		"2.1.11":{
 			"date":"December 12, 2016",
 			"notes":[
